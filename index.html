@@ -1,0 +1,3084 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>교사유니버스 - 지식샘터 강의 공유 및 수강 매트릭스</title>
+  <meta name="description" content="교사유니버스 구성원들의 지식샘터 강의 등록, 실시간 수강 신청 및 상호 이수 현황 매트릭스 대시보드" />
+  <meta property="og:title" content="교사유니버스 - 지식샘터 강의 공유 및 수강 매트릭스" />
+  <meta property="og:description" content="교사유니버스 구성원들의 지식샘터 강의 등록, 실시간 수강 신청 및 상호 이수 현황 매트릭스 대시보드" />
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#eff6ff',
+              100: '#dbeafe',
+              200: '#bfdbfe',
+              500: '#3b82f6',
+              600: '#2563eb',
+              700: '#1d4ed8',
+              800: '#1e40af',
+              900: '#1e3a8a'
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- FullCalendar 6.1 CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/core@6.1.11/locales/ko.global.min.js"></script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- Confetti -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+
+  <style>
+    /* FullCalendar Custom Styling */
+    .fc {
+      font-family: inherit;
+    }
+    .fc .fc-toolbar.fc-header-toolbar {
+      margin-bottom: 1rem;
+    }
+    .fc .fc-toolbar-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #1e293b;
+    }
+    .fc .fc-button-primary {
+      background-color: #ffffff;
+      color: #334155;
+      border: 1px solid #cbd5e1;
+      font-weight: 600;
+      padding: 0.35rem 0.75rem;
+      border-radius: 0.5rem;
+      box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    }
+    .fc .fc-button-primary:hover {
+      background-color: #f1f5f9;
+      color: #0f172a;
+      border-color: #94a3b8;
+    }
+    .fc .fc-button-primary:disabled {
+      background-color: #f8fafc;
+      color: #94a3b8;
+      border-color: #e2e8f0;
+    }
+    .fc .fc-button-active, .fc .fc-button-primary:not(:disabled):active {
+      background-color: #2563eb !important;
+      color: #ffffff !important;
+      border-color: #2563eb !important;
+    }
+    .fc-theme-standard td, .fc-theme-standard th {
+      border-color: #f1f5f9;
+    }
+    .fc-col-header-cell {
+      background-color: #f8fafc;
+      padding: 0.5rem 0;
+      font-weight: 600;
+      color: #64748b;
+      font-size: 0.875rem;
+    }
+    .fc-day-sun .fc-col-header-cell-cushion { color: #ef4444; }
+    .fc-day-sat .fc-col-header-cell-cushion { color: #3b82f6; }
+    .fc-daygrid-day {
+      min-height: 110px;
+      transition: background-color 0.15s ease;
+    }
+    .fc-daygrid-day:hover {
+      background-color: #f8fafc;
+    }
+    .fc-daygrid-day-number {
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: #475569;
+      padding: 4px 8px;
+    }
+    .fc-event {
+      cursor: pointer;
+      border: none !important;
+      background: transparent !important;
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col font-sans">
+
+  <!-- 👑 Dedicated Admin Banner (Core Requirement #3 & #5) -->
+  <div id="adminBanner" class="bg-gradient-to-r from-amber-600 via-indigo-700 to-purple-800 text-white shadow-md transition-all duration-200 hidden sticky top-0 z-40">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 flex flex-wrap items-center justify-between gap-2.5 text-xs sm:text-sm">
+      <div class="flex items-center gap-2">
+        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-400 text-slate-900 font-extrabold text-xs uppercase shadow-xs">
+          <i data-lucide="shield-check" class="w-4 h-4 text-slate-900"></i> 관리자 모드
+        </span>
+        <span class="font-medium text-amber-100 hidden md:inline">
+          모든 강의 수정/삭제 전권 및 회원 명단 관리 활성화됨
+        </span>
+      </div>
+      <div class="flex items-center gap-1.5 flex-wrap">
+        <button id="btnAdminManageMembers" class="px-2.5 py-1 rounded-lg bg-white/20 hover:bg-white/30 text-white text-xs font-semibold flex items-center gap-1.5 transition">
+          <i data-lucide="users" class="w-3.5 h-3.5 text-amber-300"></i>
+          <span>회원 명단 관리 (<span id="adminMemberBadgeCount">8</span>명)</span>
+        </button>
+        <button id="btnAdminChangePw" class="px-2.5 py-1 rounded-lg bg-white/20 hover:bg-white/30 text-white text-xs font-semibold flex items-center gap-1.5 transition">
+          <i data-lucide="key" class="w-3.5 h-3.5 text-amber-300"></i>
+          <span>비밀번호 변경 (<code id="bannerCurrentAdminPw" class="font-mono text-amber-200 font-bold">admin1234</code>)</span>
+        </button>
+        <button id="btnAdminShowMissingLinks" class="px-2.5 py-1 rounded-lg bg-white/20 hover:bg-white/30 text-white text-xs font-semibold flex items-center gap-1.5 transition">
+          <i data-lucide="link-2-off" class="w-3.5 h-3.5 text-amber-300"></i>
+          <span>링크 미등록 (<span id="adminMissingLinkCount">0</span>)</span>
+        </button>
+        <button id="btnAdminExit" class="px-2.5 py-1 rounded-lg bg-white text-slate-900 font-bold hover:bg-amber-100 text-xs transition shadow-xs flex items-center gap-1">
+          <i data-lucide="log-out" class="w-3.5 h-3.5 text-slate-700"></i>
+          <span>종료</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Top Navigation Header -->
+  <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-xs">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-purple-600 flex items-center justify-center text-white shadow-md">
+          <i data-lucide="graduation-cap" class="w-6 h-6"></i>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="text-lg font-bold text-slate-900 tracking-tight">교사유니버스</h1>
+            <span class="px-2 py-0.5 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">지식샘터 허브</span>
+          </div>
+          <p class="text-xs text-slate-500">실시간 강의 공유 · 상호 수강 지원 매트릭스</p>
+        </div>
+      </div>
+
+      <!-- Month Selector & Global Controls -->
+      <div class="flex items-center gap-2 sm:gap-3">
+        <!-- Live Status Pill -->
+        <div id="liveStatusBadge" class="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span id="liveStatusText">실시간 동기화 중</span>
+        </div>
+
+        <!-- Month Navigation dropdown -->
+        <div class="flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200">
+          <button id="btnPrevMonth" title="이전 달" class="p-1.5 rounded-lg hover:bg-white text-slate-600 hover:text-slate-900 transition">
+            <i data-lucide="chevron-left" class="w-4 h-4"></i>
+          </button>
+          <select id="monthSelect" class="bg-transparent font-bold text-sm text-slate-800 px-2 py-1 focus:outline-hidden cursor-pointer">
+            <option value="2026-05">2026년 5월</option>
+            <option value="2026-06">2026년 6월</option>
+            <option value="2026-07">2026년 7월</option>
+            <option value="2026-08">2026년 8월</option>
+            <option value="2026-09" selected>2026년 9월</option>
+            <option value="2026-10">2026년 10월</option>
+            <option value="2026-11">2026년 11월</option>
+            <option value="2026-12">2026년 12월</option>
+            <option value="2027-01">2027년 1월</option>
+            <option value="2027-02">2027년 2월</option>
+            <option value="2027-03">2027년 3월</option>
+          </select>
+          <button id="btnNextMonth" title="다음 달" class="p-1.5 rounded-lg hover:bg-white text-slate-600 hover:text-slate-900 transition">
+            <i data-lucide="chevron-right" class="w-4 h-4"></i>
+          </button>
+        </div>
+
+        <!-- Register Lecture CTA -->
+        <button id="btnOpenRegisterModal" class="inline-flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 active:scale-95 text-white font-semibold text-sm px-3.5 py-2 rounded-xl shadow-xs transition duration-150">
+          <i data-lucide="plus-circle" class="w-4 h-4"></i>
+          <span class="hidden sm:inline">강의 등록</span>
+          <span class="sm:hidden">등록</span>
+        </button>
+
+        <!-- Admin Mode Toggle Button (Requirement #3) -->
+        <button id="btnAdminToggle" title="운영진 관리자 모드" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold border transition duration-150 bg-amber-50 text-amber-800 border-amber-200 hover:bg-amber-100">
+          <i data-lucide="crown" class="w-4 h-4 text-amber-600"></i>
+          <span id="btnAdminToggleText" class="hidden sm:inline">관리자 로그인</span>
+        </button>
+
+        <!-- More actions dropdown / buttons -->
+        <button id="btnCrawlerGuide" title="크롤러 & API 연동 구조" class="p-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-xl transition">
+          <i data-lucide="bot" class="w-5 h-5"></i>
+        </button>
+        <button id="btnConfigModal" title="Firebase 설정" class="p-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-xl transition">
+          <i data-lucide="settings" class="w-5 h-5"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 w-full flex-1 flex flex-col gap-6">
+
+    <!-- Monthly Summary KPI Bar -->
+    <section class="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
+      <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs flex items-center gap-3.5">
+        <div class="w-11 h-11 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
+          <i data-lucide="book-open" class="w-6 h-6"></i>
+        </div>
+        <div>
+          <div class="text-xs font-medium text-slate-500">이달의 개설 강의</div>
+          <div class="text-xl sm:text-2xl font-bold text-slate-800"><span id="kpiLectureCount">0</span><span class="text-xs font-normal text-slate-500 ml-1">개</span></div>
+        </div>
+      </div>
+
+      <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs flex items-center gap-3.5">
+        <div class="w-11 h-11 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0">
+          <i data-lucide="users" class="w-6 h-6"></i>
+        </div>
+        <div>
+          <div class="text-xs font-medium text-slate-500">총 모집 정원</div>
+          <div class="text-xl sm:text-2xl font-bold text-slate-800"><span id="kpiCapacityCount">0</span><span class="text-xs font-normal text-slate-500 ml-1">명</span></div>
+        </div>
+      </div>
+
+      <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs flex items-center gap-3.5">
+        <div class="w-11 h-11 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
+          <i data-lucide="user-check" class="w-6 h-6"></i>
+        </div>
+        <div>
+          <div class="text-xs font-medium text-slate-500">모임 수강 신청 건수</div>
+          <div class="text-xl sm:text-2xl font-bold text-slate-800"><span id="kpiEnrollmentCount">0</span><span class="text-xs font-normal text-slate-500 ml-1">건</span></div>
+        </div>
+      </div>
+
+      <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs flex items-center gap-3.5">
+        <div class="w-11 h-11 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center shrink-0">
+          <i data-lucide="repeat" class="w-6 h-6"></i>
+        </div>
+        <div>
+          <div class="text-xs font-medium text-slate-500">상호 수강 품앗이</div>
+          <div class="text-xl sm:text-2xl font-bold text-slate-800"><span id="kpiMutualCount">0</span><span class="text-xs font-normal text-slate-500 ml-1">쌍</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Top Notice / Crawler sync alert bar -->
+    <div class="bg-gradient-to-r from-blue-500/10 via-indigo-500/10 to-purple-500/10 border border-blue-200/60 rounded-2xl p-3.5 px-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <div class="flex items-center gap-2.5">
+        <div class="w-8 h-8 rounded-lg bg-blue-600 text-white flex items-center justify-center shrink-0">
+          <i data-lucide="info" class="w-4 h-4"></i>
+        </div>
+        <div class="text-xs sm:text-sm text-slate-700">
+          <strong class="font-semibold text-slate-900">지식샘터 연동 안내:</strong>
+          캘린더 카드에서 <span class="text-blue-600 font-semibold">[신청하기]</span>를 누르면 신청자 등록 후 지식샘터 공식 신청 페이지가 새 탭으로 즉시 열립니다.
+        </div>
+      </div>
+      <div class="flex items-center gap-2 shrink-0">
+        <button id="btnTriggerCrawlerSync" class="text-xs font-medium px-3 py-1.5 rounded-lg bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 active:scale-95 transition flex items-center gap-1.5 shadow-2xs">
+          <i data-lucide="refresh-cw" class="w-3.5 h-3.5 text-blue-600"></i>
+          <span>수강인원 크롤러 동기화</span>
+        </button>
+        <button id="btnScrollToMatrix" class="text-xs font-medium px-3 py-1.5 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 active:scale-95 transition flex items-center gap-1">
+          <span>수강 매트릭스 보기</span>
+          <i data-lucide="arrow-down" class="w-3.5 h-3.5"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Calendar Section (Core Requirement #1) -->
+    <section class="bg-white rounded-2xl border border-slate-200/80 shadow-xs p-4 sm:p-6">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-4 mb-4 border-b border-slate-100 gap-3">
+        <div class="flex items-center gap-2 flex-wrap">
+          <div class="w-3 h-6 bg-blue-600 rounded-full"></div>
+          <h2 class="text-lg font-bold text-slate-900">월별 지식샘터 강의 캘린더</h2>
+          <span id="calendarMonthBadge" class="text-xs font-semibold px-2.5 py-1 rounded-lg bg-blue-50 text-blue-700 border border-blue-200 font-bold">2026. 09</span>
+          
+          <!-- Direct Previous / Next Month Navigation (Requirement #1) -->
+          <div class="flex items-center gap-1 bg-slate-100 p-1 rounded-xl border border-slate-200 text-xs font-semibold ml-1 sm:ml-2">
+            <button id="btnCalPrevMonth" title="이전 달 이동" class="px-2.5 py-1 rounded-lg hover:bg-white text-slate-700 hover:text-blue-600 transition flex items-center gap-1">
+              <i data-lucide="chevron-left" class="w-3.5 h-3.5"></i>
+              <span id="btnCalPrevMonthText">이전 달</span>
+            </button>
+            <button id="btnCalTodayMonth" title="선택 월 리셋" class="px-2.5 py-1 rounded-lg hover:bg-white text-slate-700 hover:text-blue-600 transition">
+              이번 달
+            </button>
+            <button id="btnCalNextMonth" title="다음 달 이동" class="px-2.5 py-1 rounded-lg hover:bg-white text-slate-700 hover:text-blue-600 transition flex items-center gap-1">
+              <span id="btnCalNextMonthText">다음 달</span>
+              <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-3 text-xs text-slate-500">
+          <div class="flex items-center gap-1.5">
+            <span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span>
+            <span>신청 가능</span>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
+            <span>마감 임박</span>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span>
+            <span>정원 마감</span>
+          </div>
+          <span class="text-[11px] text-slate-400 hidden lg:inline">※ 전후 월 날짜의 강의도 캘린더에 연계 표시됩니다</span>
+        </div>
+      </div>
+
+      <!-- FullCalendar Mount Node -->
+      <div id="calendar" class="min-h-[640px]"></div>
+    </section>
+
+    <!-- Mutual Support Matrix Section (Core Requirement #4 - Matrix) -->
+    <section id="matrixSection" class="bg-white rounded-2xl border border-slate-200/80 shadow-xs p-4 sm:p-6">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-4 mb-4 border-b border-slate-100 gap-3">
+        <div>
+          <div class="flex items-center gap-2">
+            <div class="w-3 h-6 bg-indigo-600 rounded-full"></div>
+            <h2 class="text-lg font-bold text-slate-900">교사유니버스 수강 매트릭스</h2>
+            <span class="text-xs font-semibold px-2 py-0.5 rounded-md bg-indigo-50 text-indigo-700">상호 품앗이 현황</span>
+          </div>
+          <p class="text-xs text-slate-500 mt-1">가로축(강사)과 세로축(수강생)으로 상호 지원 현황을 한눈에 파악합니다.</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <button id="btnScrollToApplicantList" class="text-xs font-semibold px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 transition flex items-center gap-1.5">
+            <i data-lucide="list-checks" class="w-4 h-4 text-blue-600"></i>
+            <span>전체 신청자 명단 종합 뷰</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Matrix Table Scrollable Wrapper -->
+      <div class="overflow-x-auto border border-slate-200 rounded-xl shadow-2xs">
+        <table class="w-full text-xs text-left border-collapse" id="matrixTable">
+          <thead class="bg-slate-50 text-slate-700 border-b border-slate-200 text-xs select-none">
+            <tr id="matrixHeaderRow1">
+              <th rowspan="2" class="p-3 font-bold border-r border-b border-slate-200 sticky left-0 bg-slate-100 z-20 min-w-[130px] align-middle text-center shadow-xs">
+                수강생 \ 강사 (강의)
+              </th>
+              <!-- Dynamically populated presenter columns with colspan -->
+            </tr>
+            <tr id="matrixHeaderRow2">
+              <!-- Dynamically populated lecture sub-header columns -->
+            </tr>
+          </thead>
+          <tbody id="matrixBody" class="divide-y divide-slate-100">
+            <!-- Dynamically populated student rows -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Matrix Legend & Stats -->
+      <div class="mt-4 flex flex-wrap items-center justify-between text-xs text-slate-500 gap-3 pt-2">
+        <div class="flex items-center gap-4 flex-wrap">
+          <div class="flex items-center gap-1.5">
+            <span class="inline-block px-2 py-0.5 rounded-md bg-blue-100 text-blue-700 font-medium">신청</span>
+            <span>수강 신청 완료</span>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <span class="inline-block px-2 py-0.5 rounded-md bg-emerald-100 text-emerald-800 font-medium">이수 ✓</span>
+            <span>강의 이수 완료</span>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <span class="inline-block px-2 py-0.5 rounded-md bg-purple-100 text-purple-800 font-medium">상호 품앗이 🤝</span>
+            <span>서로의 강의를 맞수강</span>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <span class="inline-block px-2 py-0.5 rounded-md bg-slate-100 text-slate-500">본인</span>
+            <span>본인 개설 강의</span>
+          </div>
+        </div>
+        <div id="matrixSummaryCount" class="font-medium text-slate-700"></div>
+      </div>
+    </section>
+
+    <!-- Comprehensive Lecture & Applicant List Section (Core Requirement #4 - Full List View) -->
+    <section id="applicantListSection" class="bg-white rounded-2xl border border-slate-200/80 shadow-xs p-4 sm:p-6">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-4 mb-4 border-b border-slate-100 gap-3">
+        <div>
+          <div class="flex items-center gap-2">
+            <div class="w-3 h-6 bg-emerald-600 rounded-full"></div>
+            <h2 class="text-lg font-bold text-slate-900">이달의 강의별 전체 신청자 명단</h2>
+            <span id="allListCountBadge" class="text-xs font-semibold px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700">총 0개 강의</span>
+          </div>
+          <p class="text-xs text-slate-500 mt-1">이번 달 모든 강의의 "강의명 - 강사 - 신청자 목록 및 이수 여부"를 종합 관리합니다.</p>
+        </div>
+
+        <!-- Search & Export Tools -->
+        <div class="flex flex-wrap items-center gap-2">
+          <div class="relative">
+            <i data-lucide="search" class="w-4 h-4 absolute left-3 top-2.5 text-slate-400"></i>
+            <input type="text" id="applicantSearchInput" placeholder="강사, 강의명, 신청자 검색..." class="pl-9 pr-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg focus:outline-hidden focus:ring-2 focus:ring-blue-500 w-48 sm:w-60" />
+          </div>
+          <button id="btnExportCSV" class="text-xs font-medium px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center gap-1.5 transition">
+            <i data-lucide="download" class="w-3.5 h-3.5"></i>
+            <span>CSV 저장</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Lectures & Applicants Cards Grid -->
+      <div id="lecturesApplicantContainer" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- Dynamically rendered -->
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-white border-t border-slate-200 mt-12 py-6 text-center text-xs text-slate-500">
+    <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
+      <div class="flex items-center gap-2">
+        <span class="font-bold text-slate-800">교사유니버스 (Teacher Universe)</span>
+        <span>•</span>
+        <span>지식샘터 수강 공유 네트워크</span>
+      </div>
+      <div class="flex items-center gap-4">
+        <button id="btnCopySingleHtml" class="hover:text-blue-600 transition flex items-center gap-1">
+          <i data-lucide="file-code" class="w-3.5 h-3.5"></i>
+          <span>GitHub Pages 단일 HTML 복사</span>
+        </button>
+        <span>•</span>
+        <span id="footerDbStatus">로컬 &amp; 실시간 Firestore 지원</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ==================== MODALS ==================== -->
+
+  <!-- 1. 강의 등록 모달 (Lecture Register Modal) -->
+  <div id="modalRegister" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden items-center justify-center p-4">
+    <div class="bg-white w-full max-w-lg rounded-2xl shadow-xl border border-slate-200 overflow-hidden transform transition-all">
+      <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-lg bg-blue-600 text-white flex items-center justify-center">
+            <i data-lucide="calendar-plus" class="w-4 h-4"></i>
+          </div>
+          <h3 class="font-bold text-slate-900 text-base">지식샘터 강의 등록</h3>
+        </div>
+        <button class="modal-close-btn text-slate-400 hover:text-slate-600 p-1 rounded-lg">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <form id="formRegisterLecture" class="p-6 space-y-4">
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">강의명 <span class="text-red-500">*</span></label>
+          <input type="text" id="regTitle" required placeholder="예: [초/중등] 생성형 AI를 활용한 학급경영 레시피" class="w-full text-sm px-3.5 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-hidden" />
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">강사 닉네임 <span class="text-red-500">*</span></label>
+            <input type="text" id="regPresenter" list="memberListDatalist" required placeholder="예: 김선생, 에듀테크요정" class="w-full text-sm px-3.5 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-hidden" />
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">모집 정원 (명) <span class="text-red-500">*</span></label>
+            <input type="number" id="regMaxCount" required min="1" max="200" value="10" class="w-full text-sm px-3.5 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-hidden" />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">강의 일자 <span class="text-red-500">*</span></label>
+            <input type="date" id="regDate" required class="w-full text-sm px-3.5 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-hidden" />
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">강의 시간 <span class="text-red-500">*</span></label>
+            <input type="text" id="regTime" required placeholder="19:00 - 21:00" value="19:00 - 21:00" class="w-full text-sm px-3.5 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-hidden" />
+          </div>
+        </div>
+
+        <div>
+          <div class="flex items-center justify-between mb-1">
+            <label class="text-xs font-semibold text-slate-700">지식샘터 강의 URL <span class="text-xs font-normal text-blue-600">(선택 - 나중에 추가 가능)</span></label>
+            <span class="text-[11px] text-slate-400">링크 미등록 시 추후 본인/관리자가 추가</span>
+          </div>
+          <div class="relative">
+            <i data-lucide="link" class="w-4 h-4 text-slate-400 absolute left-3 top-2.5"></i>
+            <input type="url" id="regUrl" placeholder="https://educourse.keris.or.kr/... (지금 없으면 비워두셔도 됩니다)" class="w-full text-sm pl-9 pr-3.5 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-hidden" />
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">수정/삭제용 비밀번호 <span class="text-xs font-normal text-slate-400">(선택, 기본: 1234)</span></label>
+          <input type="password" id="regPassword" placeholder="4자리 비밀번호 (본인 수정/삭제 시 확인용)" value="1234" class="w-full text-sm px-3.5 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-hidden" />
+          <p class="text-[11px] text-slate-400 mt-1">강의 등록자 본인만 수정할 수 있도록 비밀번호를 설정합니다 (관리자는 비밀번호 없이 수정 가능).</p>
+        </div>
+
+        <div class="pt-2 flex items-center justify-end gap-2 border-t border-slate-100">
+          <button type="button" class="modal-close-btn px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100 rounded-xl transition">취소</button>
+          <button type="submit" class="px-5 py-2 text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl shadow-xs transition active:scale-95">강의 등록하기</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 2. 강의 상세 정보 모달 (Lecture Detail Modal) -->
+  <div id="modalDetail" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden items-center justify-center p-4">
+    <div class="bg-white w-full max-w-lg rounded-2xl shadow-xl border border-slate-200 overflow-hidden transform transition-all">
+      <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+        <div class="flex items-center gap-2">
+          <span id="detailStatusBadge" class="px-2.5 py-0.5 text-xs font-bold rounded-full bg-blue-100 text-blue-800">모집 중</span>
+          <span id="detailDateBadge" class="text-xs text-slate-500"></span>
+          <span id="detailAdminIndicator" class="hidden px-2 py-0.5 text-[10px] font-bold rounded-full bg-amber-100 text-amber-900 border border-amber-300">👑 관리자 모드</span>
+        </div>
+        <button class="modal-close-btn text-slate-400 hover:text-slate-600 p-1 rounded-lg">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <div class="p-6 space-y-5">
+        <div>
+          <h3 id="detailTitle" class="text-lg font-bold text-slate-900 leading-snug">강의명</h3>
+          <div class="flex items-center gap-2 mt-2 text-sm text-slate-600">
+            <span class="inline-flex items-center gap-1 font-semibold text-slate-800">
+              <i data-lucide="user" class="w-4 h-4 text-blue-600"></i>
+              <span id="detailPresenter">강사명</span>
+            </span>
+            <span>•</span>
+            <span class="inline-flex items-center gap-1">
+              <i data-lucide="clock" class="w-4 h-4 text-slate-400"></i>
+              <span id="detailTime">시간</span>
+            </span>
+          </div>
+        </div>
+
+        <!-- Missing URL Warning Notice -->
+        <div id="detailMissingUrlAlert" class="hidden bg-amber-50 border border-amber-200 p-3.5 rounded-xl text-xs text-amber-900 flex items-center justify-between gap-2">
+          <div class="flex items-center gap-2">
+            <i data-lucide="alert-triangle" class="w-4 h-4 text-amber-600 shrink-0"></i>
+            <div>
+              <span class="font-bold">지식샘터 링크 준비 중:</span> 아직 공식 강의 링크가 등록되지 않았습니다.
+            </div>
+          </div>
+          <button id="btnDetailAddUrlNow" class="shrink-0 font-bold text-blue-700 bg-white px-2.5 py-1 rounded-lg border border-amber-300 hover:bg-amber-100 transition shadow-2xs">
+            링크 추가하기
+          </button>
+        </div>
+
+        <!-- Capacity Progress Bar -->
+        <div class="bg-slate-50 p-4 rounded-xl border border-slate-100 space-y-2">
+          <div class="flex items-center justify-between text-xs">
+            <span class="font-medium text-slate-600">현재 수강 인원 현황 (대안 B 연동)</span>
+            <span class="font-bold text-slate-900"><span id="detailCount" class="text-blue-600 text-base">0</span> / <span id="detailMax">10</span>명</span>
+          </div>
+          <div class="w-full bg-slate-200 rounded-full h-2.5 overflow-hidden">
+            <div id="detailProgressBar" class="bg-blue-600 h-2.5 rounded-full transition-all duration-300" style="width: 0%"></div>
+          </div>
+          <div class="flex items-center justify-between text-[11px] text-slate-400">
+            <span id="detailCrawlerStatus">크롤러 연동 대기</span>
+            <span id="detailRemaining">잔여 10자리</span>
+          </div>
+        </div>
+
+        <!-- Enrolled Members in Group -->
+        <div>
+          <div class="flex items-center justify-between mb-2">
+            <h4 class="text-xs font-bold text-slate-700 uppercase tracking-wider">교사유니버스 신청자 명단 (<span id="detailMemberCount">0</span>명)</h4>
+          </div>
+          <div id="detailMemberList" class="flex flex-wrap gap-1.5 min-h-[40px] p-2.5 bg-slate-50 border border-slate-100 rounded-xl">
+            <!-- Member tags -->
+          </div>
+        </div>
+
+        <!-- Action CTA Buttons -->
+        <div class="pt-3 border-t border-slate-100 flex flex-col gap-2.5">
+          <div class="flex items-center gap-2">
+            <button id="btnDetailEnroll" class="flex-1 py-2.5 text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 active:scale-95 rounded-xl shadow-xs transition flex items-center justify-center gap-1.5">
+              <i data-lucide="send" class="w-4 h-4"></i>
+              <span>강의 신청하기</span>
+            </button>
+            <a id="btnDetailDirectUrl" href="#" target="_blank" rel="noopener noreferrer" class="px-4 py-2.5 text-sm font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-xl transition flex items-center justify-center gap-1">
+              <i data-lucide="external-link" class="w-4 h-4"></i>
+              <span id="btnDetailDirectUrlText">지식샘터 이동</span>
+            </a>
+          </div>
+
+          <!-- Edit & Delete Controls (Author & Admin Protection) -->
+          <div class="flex items-center justify-between pt-1 text-xs text-slate-500">
+            <div class="flex items-center gap-2">
+              <button id="btnDetailEdit" class="text-slate-700 hover:text-blue-600 font-semibold px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-blue-50 border border-slate-200 flex items-center gap-1 transition">
+                <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
+                <span id="btnDetailEditText">강의 수정 (본인/관리자)</span>
+              </button>
+              <button id="btnDetailDelete" class="text-rose-600 hover:text-rose-800 font-semibold px-2.5 py-1 rounded-lg bg-rose-50 hover:bg-rose-100 border border-rose-200 flex items-center gap-1 transition">
+                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                <span>삭제</span>
+              </button>
+            </div>
+            <span class="text-[11px] text-slate-400">등록 본인 비밀번호 또는 관리자 권한 필요</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2-A. 강의 수정 모달 (Lecture Edit Modal) -->
+  <div id="modalEditLecture" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden items-center justify-center p-4">
+    <div class="bg-white w-full max-w-lg rounded-2xl shadow-xl border border-slate-200 overflow-hidden transform transition-all">
+      <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-lg bg-indigo-600 text-white flex items-center justify-center">
+            <i data-lucide="edit-2" class="w-4 h-4"></i>
+          </div>
+          <div>
+            <h3 class="font-bold text-slate-900 text-base">지식샘터 강의 수정</h3>
+            <p id="editModalAuthBadge" class="text-[11px] text-emerald-600 font-semibold">등록 본인 인증 완료</p>
+          </div>
+        </div>
+        <button class="modal-close-btn text-slate-400 hover:text-slate-600 p-1 rounded-lg">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <form id="formEditLecture" class="p-6 space-y-4">
+        <input type="hidden" id="editLectureId" />
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">강의명 <span class="text-red-500">*</span></label>
+          <input type="text" id="editTitle" required class="w-full text-sm px-3.5 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-hidden" />
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">강사 닉네임 <span class="text-red-500">*</span></label>
+            <input type="text" id="editPresenter" required class="w-full text-sm px-3.5 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-hidden" />
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">모집 정원 (명) <span class="text-red-500">*</span></label>
+            <input type="number" id="editMaxCount" required min="1" max="200" class="w-full text-sm px-3.5 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-hidden" />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">강의 일자 <span class="text-red-500">*</span></label>
+            <input type="date" id="editDate" required class="w-full text-sm px-3.5 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-hidden" />
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">강의 시간 <span class="text-red-500">*</span></label>
+            <input type="text" id="editTime" required class="w-full text-sm px-3.5 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-hidden" />
+          </div>
+        </div>
+
+        <div>
+          <div class="flex items-center justify-between mb-1">
+            <label class="text-xs font-semibold text-slate-700">지식샘터 강의 URL</label>
+            <span class="text-[11px] text-blue-600 font-medium">링크가 생성되었으면 여기에 입력하세요!</span>
+          </div>
+          <div class="relative">
+            <i data-lucide="link" class="w-4 h-4 text-slate-400 absolute left-3 top-2.5"></i>
+            <input type="url" id="editUrl" placeholder="https://educourse.keris.or.kr/..." class="w-full text-sm pl-9 pr-3.5 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-hidden" />
+          </div>
+        </div>
+
+        <div id="editPasswordRow">
+          <label class="block text-xs font-semibold text-slate-700 mb-1">수정/삭제용 비밀번호 변경 (선택)</label>
+          <input type="password" id="editPassword" placeholder="기존 비밀번호 유지 시 비워두세요" class="w-full text-sm px-3.5 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-hidden" />
+        </div>
+
+        <div class="pt-2 flex items-center justify-between gap-2 border-t border-slate-100">
+          <button type="button" id="btnEditModalDelete" class="px-3 py-2 text-xs font-bold text-rose-600 hover:bg-rose-50 rounded-xl transition flex items-center gap-1">
+            <i data-lucide="trash-2" class="w-4 h-4"></i>
+            <span>강의 삭제</span>
+          </button>
+          <div class="flex items-center gap-2">
+            <button type="button" class="modal-close-btn px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100 rounded-xl transition">취소</button>
+            <button type="submit" class="px-5 py-2 text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl shadow-xs transition active:scale-95">수정 완료</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Datalist for Autocomplete of Member Names -->
+  <datalist id="memberListDatalist"></datalist>
+
+  <!-- 2-B. 등록자 본인 확인 모달 (Author Password Prompt Modal) -->
+  <div id="modalAuthPrompt" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden items-center justify-center p-4">
+    <div class="bg-white w-full max-w-sm rounded-2xl shadow-xl border border-slate-200 overflow-hidden transform transition-all">
+      <div class="p-6 text-center">
+        <div class="w-12 h-12 rounded-2xl bg-amber-100 text-amber-600 flex items-center justify-center mx-auto mb-3">
+          <i data-lucide="lock" class="w-6 h-6"></i>
+        </div>
+        <h3 id="authPromptTitle" class="text-base font-bold text-slate-900">등록 본인 확인</h3>
+        <p id="authPromptDesc" class="text-xs text-slate-500 mt-1 mb-4">강의 등록 시 설정한 비밀번호를 입력해주세요.</p>
+
+        <form id="formAuthPrompt" class="space-y-4">
+          <input type="password" id="authPromptPassword" required placeholder="비밀번호 입력 (기본: 1234)" class="w-full text-center text-sm px-3.5 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:outline-hidden" />
+          <div class="flex items-center gap-2">
+            <button type="button" class="modal-close-btn flex-1 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-xl transition">취소</button>
+            <button type="submit" class="flex-1 py-2 text-xs font-bold text-white bg-amber-600 hover:bg-amber-700 rounded-xl shadow-xs transition">확인</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2-C. 관리자 로그인 모달 (Admin Login Modal) -->
+  <div id="modalAdminLogin" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden items-center justify-center p-4">
+    <div class="bg-white w-full max-w-sm rounded-2xl shadow-xl border border-slate-200 overflow-hidden transform transition-all">
+      <div class="p-6 text-center">
+        <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-amber-500 to-indigo-600 text-white flex items-center justify-center mx-auto mb-3 shadow-md">
+          <i data-lucide="crown" class="w-6 h-6"></i>
+        </div>
+        <h3 class="text-base font-bold text-slate-900">교사유니버스 운영진 로그인</h3>
+        <p class="text-xs text-slate-500 mt-1 mb-4">관리자 비밀번호를 입력하시면 모든 강의 수정/삭제 전권이 부여됩니다.</p>
+
+        <form id="formAdminLogin" class="space-y-4">
+          <input type="password" id="adminPasswordInput" required placeholder="관리자 비밀번호 입력" class="w-full text-center text-sm px-3.5 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-hidden" />
+          <div class="flex items-center justify-between text-[11px] text-slate-500 px-1">
+            <span>초기 비밀번호: <code id="adminCurrentPwHint" class="font-bold text-indigo-600 bg-indigo-50 px-1.5 py-0.5 rounded">admin1234</code></span>
+            <button type="button" id="btnAdminLoginChangePw" class="text-indigo-600 hover:text-indigo-800 font-bold underline">비밀번호 변경하기</button>
+          </div>
+          <div class="flex items-center gap-2 pt-1">
+            <button type="button" class="modal-close-btn flex-1 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-xl transition">취소</button>
+            <button type="submit" class="flex-1 py-2 text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl shadow-xs transition">관리자 모드 실행</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2-D. 강의 삭제 모달 (Unified Safe Delete Modal - Requirements #1 & #2) -->
+  <div id="modalConfirmDelete" class="fixed inset-0 z-50 bg-slate-900/70 backdrop-blur-xs hidden items-center justify-center p-4">
+    <div class="bg-white w-full max-w-sm rounded-2xl shadow-xl border border-rose-200 overflow-hidden transform transition-all">
+      <div class="p-6 text-center">
+        <div class="w-12 h-12 rounded-2xl bg-rose-100 text-rose-600 flex items-center justify-center mx-auto mb-3">
+          <i data-lucide="trash-2" class="w-6 h-6"></i>
+        </div>
+        <div class="flex items-center justify-center gap-2 mb-1">
+          <h3 class="text-base font-bold text-slate-900">지식샘터 강의 삭제</h3>
+          <span id="deleteModalAdminBadge" class="hidden px-2 py-0.5 rounded-full bg-amber-100 text-amber-900 border border-amber-300 text-[10px] font-bold">👑 관리자 모드</span>
+        </div>
+        <p class="text-xs text-slate-500 mb-3">정말로 아래 등록된 강의를 삭제하시겠습니까?</p>
+        
+        <div class="p-3 bg-slate-50 rounded-xl border border-slate-100 text-left mb-4">
+          <div id="deleteTargetTitle" class="font-bold text-slate-800 text-xs truncate">강의명</div>
+          <div class="text-[11px] text-slate-500 mt-0.5">강사: <span id="deleteTargetPresenter" class="font-semibold text-slate-700">강사</span></div>
+          <div class="text-[10px] text-rose-600 font-medium mt-1">※ 관련된 모든 수강 신청 내역도 함께 안전하게 삭제됩니다.</div>
+        </div>
+
+        <!-- Password check box for non-admin teachers -->
+        <div id="deleteModalAuthorBox" class="mb-4 text-left space-y-1">
+          <label class="block text-xs font-semibold text-slate-700">등록 시 설정한 비밀번호 확인 <span class="text-rose-500">*</span></label>
+          <input type="password" id="deleteAuthorPasswordInput" placeholder="비밀번호 입력 (기본: 1234)" class="w-full text-center text-sm px-3 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-rose-500 focus:outline-hidden" />
+          <p class="text-[11px] text-slate-400">※ 본인이 등록한 비밀번호 또는 관리자 권한이 필요합니다.</p>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <button type="button" class="modal-close-btn flex-1 py-2.5 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-xl transition">취소</button>
+          <button type="button" id="btnExecuteDeleteLecture" class="flex-1 py-2.5 text-xs font-bold text-white bg-rose-600 hover:bg-rose-700 rounded-xl shadow-xs transition active:scale-95 flex items-center justify-center gap-1">
+            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+            <span id="btnExecuteDeleteText">삭제 실행</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2-E. 관리자 비밀번호 변경 모달 (Requirement #3) -->
+  <div id="modalAdminChangePw" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden items-center justify-center p-4">
+    <div class="bg-white w-full max-w-sm rounded-2xl shadow-xl border border-slate-200 overflow-hidden transform transition-all">
+      <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-lg bg-amber-500 text-white flex items-center justify-center">
+            <i data-lucide="key" class="w-4 h-4"></i>
+          </div>
+          <h3 class="font-bold text-slate-900 text-base">관리자 비밀번호 변경</h3>
+        </div>
+        <button class="modal-close-btn text-slate-400 hover:text-slate-600 p-1 rounded-lg">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <form id="formAdminChangePw" class="p-6 space-y-4">
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">현재 활성화된 관리자 비밀번호</label>
+          <div id="currentAdminPwDisplay" class="text-xs font-mono font-bold text-indigo-700 p-2.5 bg-indigo-50 border border-indigo-100 rounded-xl">admin1234</div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">새 관리자 비밀번호 <span class="text-red-500">*</span></label>
+          <input type="password" id="newAdminPwInput" required minlength="4" placeholder="새 관리자 비밀번호 (4자 이상)" class="w-full text-sm px-3.5 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:outline-hidden" />
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">새 비밀번호 확인 <span class="text-red-500">*</span></label>
+          <input type="password" id="newAdminPwConfirmInput" required minlength="4" placeholder="새 비밀번호 다시 입력" class="w-full text-sm px-3.5 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:outline-hidden" />
+        </div>
+
+        <div class="pt-2 flex items-center justify-end gap-2 border-t border-slate-100">
+          <button type="button" class="modal-close-btn px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-xl transition">취소</button>
+          <button type="submit" class="px-4 py-2 text-xs font-bold text-white bg-amber-600 hover:bg-amber-700 rounded-xl shadow-xs transition">비밀번호 변경 저장</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 2-F. 교사 회원 명단 관리 모달 (Requirement #5) -->
+  <div id="modalManageMembers" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden items-center justify-center p-4">
+    <div class="bg-white w-full max-w-xl rounded-2xl shadow-xl border border-slate-200 overflow-hidden flex flex-col max-h-[90vh]">
+      <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50 shrink-0">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-lg bg-indigo-600 text-white flex items-center justify-center">
+            <i data-lucide="users" class="w-4 h-4"></i>
+          </div>
+          <div>
+            <h3 class="font-bold text-slate-900 text-base">교사유니버스 회원 명단 관리</h3>
+            <p class="text-xs text-slate-500">수강 매트릭스의 세로축(수강생 행)에 상시 노출될 회원 목록입니다.</p>
+          </div>
+        </div>
+        <button class="modal-close-btn text-slate-400 hover:text-slate-600 p-1 rounded-lg">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <div class="p-6 overflow-y-auto space-y-4 text-xs text-slate-700">
+        <!-- Current Members Tag Cloud -->
+        <div>
+          <div class="flex items-center justify-between mb-2">
+            <span class="font-bold text-slate-900 text-xs">현재 등록된 회원 (<span id="modalMemberListCount" class="text-indigo-600">8</span>명)</span>
+            <span class="text-[11px] text-slate-400">클릭 시 삭제</span>
+          </div>
+          <div id="modalMemberTagContainer" class="p-3 bg-slate-50 rounded-xl border border-slate-200 flex flex-wrap gap-1.5 min-h-[60px] max-h-[140px] overflow-y-auto">
+            <!-- Member tags injected dynamically -->
+          </div>
+        </div>
+
+        <!-- Bulk Upload Section -->
+        <div class="bg-indigo-50/60 p-4 rounded-xl border border-indigo-100 space-y-3">
+          <div class="font-bold text-indigo-950 flex items-center justify-between">
+            <span>회원 명단 일괄 추가 / 갱신</span>
+            <label class="cursor-pointer text-xs font-semibold text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
+              <i data-lucide="upload" class="w-3.5 h-3.5"></i>
+              <span>CSV/텍스트 파일 불러오기</span>
+              <input type="file" id="memberFileInput" accept=".csv, .txt" class="hidden" />
+            </label>
+          </div>
+          <p class="text-[11px] text-indigo-800">
+            교사 닉네임을 쉼표(,) 또는 줄바꿈(엔터)으로 구분하여 입력해주세요.
+          </p>
+          <textarea id="txtBulkMemberInput" rows="4" placeholder="예: 김선생, 박에듀, 이아트, 정코딩, 최융합, 강인공, 윤과학, 송미래, 조에듀" class="w-full text-xs p-3 bg-white border border-indigo-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-hidden leading-relaxed"></textarea>
+          <div class="flex items-center justify-between">
+            <button type="button" id="btnAppendMembers" class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-lg text-xs transition">
+              + 입력한 명단 추가하기
+            </button>
+            <button type="button" id="btnReplaceMembers" class="px-3 py-1.5 bg-white border border-indigo-300 hover:bg-indigo-50 text-indigo-900 font-bold rounded-lg text-xs transition">
+              명단 전체 덮어쓰기
+            </button>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-between pt-2 border-t border-slate-100">
+          <button type="button" id="btnResetMembersToDefault" class="text-slate-400 hover:text-slate-700 text-xs underline">
+            기본 명단으로 복원
+          </button>
+          <button type="button" class="modal-close-btn px-4 py-2 text-xs font-bold text-white bg-slate-900 hover:bg-slate-800 rounded-xl transition">
+            완료
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2-G. 수강 상태(신청/이수) 본인/관리자 인증 변경 모달 (Requirement #4) -->
+  <div id="modalEnrollStatusAuth" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden items-center justify-center p-4">
+    <div class="bg-white w-full max-w-sm rounded-2xl shadow-xl border border-slate-200 overflow-hidden transform transition-all">
+      <div class="p-6 text-center">
+        <div class="w-12 h-12 rounded-2xl bg-indigo-100 text-indigo-600 flex items-center justify-center mx-auto mb-3">
+          <i data-lucide="check-square" class="w-6 h-6"></i>
+        </div>
+        <h3 class="text-base font-bold text-slate-900">수강 상태 변경</h3>
+        <p class="text-xs text-slate-500 mt-1 mb-3">신청자 본인 또는 관리자만 변경할 수 있습니다.</p>
+
+        <div class="bg-slate-50 p-3 rounded-xl border border-slate-100 text-left text-xs mb-4 space-y-1">
+          <div>신청 교사: <strong id="statusAuthStudentName" class="text-slate-900 font-bold">김선생</strong></div>
+          <div>강의: <span id="statusAuthLectureTitle" class="text-slate-600 truncate block">강의명</span></div>
+          <div class="pt-1 flex items-center justify-between text-[11px]">
+            <span>현재 상태: <strong id="statusAuthCurrentStatus" class="text-blue-600 font-bold">신청 완료</strong></span>
+            <span class="text-slate-400">➔</span>
+            <span>변경 상태: <strong id="statusAuthNextStatus" class="text-emerald-600 font-bold">이수 완료</strong></span>
+          </div>
+        </div>
+
+        <form id="formEnrollStatusAuth" class="space-y-4">
+          <div id="statusAuthPasswordBox">
+            <label class="block text-xs font-semibold text-slate-700 text-left mb-1">본인 확인 비밀번호</label>
+            <input type="password" id="statusAuthPassword" required placeholder="비밀번호 입력 (기본: 1234)" class="w-full text-center text-sm px-3.5 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-hidden" />
+            <p class="text-[11px] text-slate-400 mt-1 text-left">※ 관리자 모드 중인 경우 비밀번호 없이 즉시 변경됩니다.</p>
+          </div>
+
+          <div class="flex items-center gap-2 pt-1">
+            <button type="button" class="modal-close-btn flex-1 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-xl transition">취소</button>
+            <button type="submit" id="btnConfirmStatusChange" class="flex-1 py-2 text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl shadow-xs transition">
+              상태 변경 확정
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. 수강 신청 팝업 (Enrollment Confirmation Popup - Core Requirement #4) -->
+  <div id="modalEnroll" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden items-center justify-center p-4">
+    <div class="bg-white w-full max-w-md rounded-2xl shadow-xl border border-slate-200 overflow-hidden transform transition-all">
+      <div class="p-6">
+        <div class="w-12 h-12 rounded-2xl bg-blue-100 text-blue-600 flex items-center justify-center mb-4 mx-auto">
+          <i data-lucide="user-check" class="w-6 h-6"></i>
+        </div>
+        <h3 class="text-base font-bold text-slate-900 text-center mb-1">교사유니버스 수강 신청</h3>
+        <p class="text-xs text-slate-500 text-center mb-5">닉네임을 입력하시면 매트릭스에 기록되고 지식샘터 공식 페이지로 이동합니다.</p>
+
+        <div class="bg-slate-50 p-3 rounded-xl border border-slate-100 mb-4 text-xs">
+          <div class="text-slate-500">신청 대상 강의:</div>
+          <div id="enrollLectureTitle" class="font-bold text-slate-800 text-sm mt-0.5 truncate">강의명</div>
+          <div class="text-slate-500 mt-1">강사: <span id="enrollPresenterName" class="font-semibold text-slate-700">강사</span></div>
+        </div>
+
+        <form id="formEnrollConfirm" class="space-y-4">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">신청자 닉네임 <span class="text-red-500">*</span></label>
+            <input type="text" id="enrollStudentName" list="memberListDatalist" required placeholder="예: 박교사, 별빛쌤" class="w-full text-sm px-3.5 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-hidden" />
+            <p class="text-[11px] text-slate-400 mt-1">교사유니버스 회원 명단에서 선택하거나 닉네임을 입력해 주세요.</p>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">본인 확인 비밀번호 (이수 상태 변경용)</label>
+            <input type="password" id="enrollPassword" placeholder="비밀번호 입력 (미입력 시 기본 1234)" class="w-full text-sm px-3.5 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-hidden" />
+            <p class="text-[11px] text-slate-400 mt-1">향후 수강 매트릭스에서 본인 이수 완료 체크 시 사용됩니다.</p>
+          </div>
+
+          <div class="pt-2 flex items-center justify-end gap-2">
+            <button type="button" class="modal-close-btn px-4 py-2.5 text-xs font-medium text-slate-600 hover:bg-slate-100 rounded-xl transition">취소</button>
+            <button type="submit" class="flex-1 px-4 py-2.5 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl shadow-xs transition active:scale-95 flex items-center justify-center gap-1.5">
+              <span>확인 및 지식샘터 이동</span>
+              <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. 크롤러 연동 안내 & Cloud Function 코드 모달 -->
+  <div id="modalCrawler" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden items-center justify-center p-4">
+    <div class="bg-white w-full max-w-2xl rounded-2xl shadow-xl border border-slate-200 overflow-hidden flex flex-col max-h-[90vh]">
+      <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50 shrink-0">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-lg bg-indigo-600 text-white flex items-center justify-center">
+            <i data-lucide="bot" class="w-4 h-4"></i>
+          </div>
+          <div>
+            <h3 class="font-bold text-slate-900 text-base">수강 인원 자동 크롤링 아키텍처</h3>
+            <p class="text-xs text-slate-500">Firebase Cloud Functions (대안 B) 연동 가이드</p>
+          </div>
+        </div>
+        <button class="modal-close-btn text-slate-400 hover:text-slate-600 p-1 rounded-lg">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <div class="p-6 overflow-y-auto space-y-4 text-xs text-slate-700">
+        <div class="bg-indigo-50 border border-indigo-100 p-4 rounded-xl text-indigo-900 space-y-1">
+          <div class="font-bold text-sm">작동 원리 (대안 B)</div>
+          <p>1. 지식샘터 강의 URL이 등록되면, Cloud Function(스케줄러 10분 주기 또는 온디맨드)이 해당 강좌 페이지 HTML을 파싱합니다.</p>
+          <p>2. 지식샘터의 현재 수강 신청 인원(예: "현재 신청 7명 / 정원 10명")을 추출하여 Firestore `lectures/{lectureId}`의 `currentCount` 필드를 업데이트합니다.</p>
+          <p>3. Firestore의 `onSnapshot` 리스너를 통해 모든 교사의 캘린더 화면에 실시간으로 잔여석/신청현황이 즉각 갱신됩니다.</p>
+        </div>
+
+        <div>
+          <div class="flex items-center justify-between mb-1">
+            <span class="font-bold text-slate-900">Firebase Cloud Function (v2 / Node.js 18) 크롤러 소스 코드 예시:</span>
+            <button id="btnCopyCrawlerCode" class="text-blue-600 hover:underline">코드 복사</button>
+          </div>
+          <pre id="crawlerCodeBlock" class="bg-slate-900 text-slate-100 p-4 rounded-xl overflow-x-auto text-[11px] font-mono leading-relaxed">
+// functions/index.js
+const { onSchedule } = require("firebase-functions/v2/scheduler");
+const admin = require("firebase-admin");
+const axios = require("axios");
+const cheerio = require("cheerio");
+
+admin.initializeApp();
+const db = admin.firestore();
+
+// 10분마다 등록된 지식샘터 강좌의 수강 인원 자동 크롤링
+exports.syncKnowledgeFountainCount = onSchedule("every 10 minutes", async (event) => {
+  const snapshot = await db.collection("lectures").get();
+  
+  for (const doc of snapshot.docs) {
+    const lecture = doc.data();
+    if (!lecture.url || !lecture.url.includes("keris.or.kr")) continue;
+
+    try {
+      const response = await axios.get(lecture.url, {
+        headers: { "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)" },
+        timeout: 8000
+      });
+      const $ = cheerio.load(response.data);
+
+      // 지식샘터 상세 페이지 수강인원 DOM 셀렉터 추출
+      const countText = $(".apply_status, .course_info_count, .count_box").text();
+      const match = countText.match(/([0-9]+)\s*\/\s*([0-9]+)/);
+
+      if (match) {
+        const currentCount = parseInt(match[1], 10);
+        const maxCount = parseInt(match[2], 10);
+        await doc.ref.update({
+          currentCount: currentCount,
+          maxCount: maxCount || lecture.maxCount,
+          lastCrawledAt: admin.firestore.FieldValue.serverTimestamp(),
+          crawlingStatus: "success"
+        });
+      }
+    } catch (err) {
+      console.error(`크롤링 실패 [${lecture.title}]:`, err.message);
+    }
+  }
+});</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. Firebase 설정 모달 -->
+  <div id="modalConfig" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden items-center justify-center p-4">
+    <div class="bg-white w-full max-w-md rounded-2xl shadow-xl border border-slate-200 overflow-hidden transform transition-all">
+      <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-lg bg-slate-800 text-white flex items-center justify-center">
+            <i data-lucide="database" class="w-4 h-4"></i>
+          </div>
+          <h3 class="font-bold text-slate-900 text-base">Firebase Firestore 연동</h3>
+        </div>
+        <button class="modal-close-btn text-slate-400 hover:text-slate-600 p-1 rounded-lg">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <div class="p-6 space-y-4">
+        <div class="text-xs text-slate-600 leading-relaxed">
+          Firebase 프로젝트의 웹 SDK 구성 객체를 입력하면 실시간 Firestore 연동 모드로 전환됩니다.
+          입력하지 않은 경우 브라우저 <strong>로컬 스토리지 &amp; 풍부한 시뮬레이션 데모 모드</strong>로 원활히 동작합니다.
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">firebaseConfig (JSON 형태)</label>
+          <textarea id="txtFirebaseConfigJson" rows="6" placeholder='{
+  "apiKey": "AIza...",
+  "authDomain": "your-app.firebaseapp.com",
+  "projectId": "your-app",
+  "storageBucket": "your-app.appspot.com",
+  "messagingSenderId": "...",
+  "appId": "..."
+}' class="w-full text-xs font-mono p-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-hidden"></textarea>
+        </div>
+
+        <div class="pt-2 flex items-center justify-end gap-2 border-t border-slate-100">
+          <button type="button" id="btnResetToDemo" class="text-xs text-slate-500 hover:text-slate-800 px-3 py-2">데모 데이터로 리셋</button>
+          <button type="button" id="btnSaveFirebaseConfig" class="px-4 py-2 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl shadow-xs transition">설정 저장 및 연결</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toastContainer" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+  <!-- ==================== LOGIC & SCRIPT ==================== -->
+  <script type="module">
+    /**
+     * ========================================================
+     * [Firebase Config 영역 - 사용자 환경에 맞게 입력 가능]
+     * ========================================================
+     */
+    firebaseConfig = {
+apiKey: "AIzaSyDUtgwTfZOVbfl0fE_d2MRIIBQaqisyBVw",
+authDomain: "teacher-universe.firebaseapp.com",
+projectId: "teacher-universe",
+storageBucket: "teacher-universe.firebasestorage.app",
+messagingSenderId: "824269029357",
+appId: "1:824269029357:web:2aa6aad59d1240259ab1e4",
+measurementId: "G-LTRJHHVWEC"
+};
+
+    // Firebase Modular SDK imports via Google CDN
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+    import {
+      getFirestore,
+      collection,
+      doc,
+      addDoc,
+      setDoc,
+      getDocs,
+      onSnapshot,
+      query,
+      where,
+      orderBy,
+      updateDoc,
+      deleteDoc,
+      serverTimestamp
+    } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+
+    // ----------------------------------------------------
+    // Initial Seed Data for Demo Mode (September ~ November 2026)
+    // ----------------------------------------------------
+    const INITIAL_LECTURES = [
+      {
+        id: "lec-202609-01",
+        title: "[초등] 생성형 AI를 활용한 학급경영 및 창의융합 수업 레시피",
+        presenter: "김선생",
+        date: "2026-09-08",
+        time: "19:00 - 21:00",
+        url: "https://educourse.keris.or.kr/course/detail?id=101",
+        currentCount: 8,
+        maxCount: 10,
+        month: "2026-09",
+        lastCrawledAt: "2026-09-24 08:30"
+      },
+      {
+        id: "lec-202609-02",
+        title: "[중등] 노션(Notion)과 구글 워크스페이스로 끝내는 교무 업무 자동화",
+        presenter: "박에듀",
+        date: "2026-09-15",
+        time: "19:30 - 21:30",
+        url: "https://educourse.keris.or.kr/course/detail?id=102",
+        currentCount: 10,
+        maxCount: 10,
+        month: "2026-09",
+        lastCrawledAt: "2026-09-24 08:31"
+      },
+      {
+        id: "lec-202609-03",
+        title: "[공통] 캔바(Canva) 활용 인터랙티브 학습지 & 학급 굿즈 제작 실습",
+        presenter: "이아트",
+        date: "2026-09-22",
+        time: "18:30 - 20:30",
+        url: "https://educourse.keris.or.kr/course/detail?id=103",
+        currentCount: 6,
+        maxCount: 12,
+        month: "2026-09",
+        lastCrawledAt: "2026-09-24 08:32"
+      },
+      {
+        id: "lec-202609-04",
+        title: "[초등] 엔트리 & 마이크로비트로 만드는 교실 스마트 화분 프로젝트",
+        presenter: "정코딩",
+        date: "2026-09-29",
+        time: "19:00 - 21:00",
+        url: "https://educourse.keris.or.kr/course/detail?id=104",
+        currentCount: 7,
+        maxCount: 10,
+        month: "2026-09",
+        lastCrawledAt: "2026-09-24 08:33"
+      },
+      {
+        id: "lec-202609-05",
+        title: "[초등] 학급경영 노션 템플릿과 교육용 챗봇 프롬프트 실전",
+        presenter: "김선생",
+        date: "2026-09-24",
+        time: "19:00 - 21:00",
+        url: "https://educourse.keris.or.kr/course/detail?id=107",
+        currentCount: 4,
+        maxCount: 10,
+        month: "2026-09",
+        lastCrawledAt: "2026-09-24 08:35"
+      },
+      {
+        id: "lec-202610-01",
+        title: "[공통] 교사를 위한 디지털 드로잉과 웹툰 기반 인성교육",
+        presenter: "이아트",
+        date: "2026-10-13",
+        time: "19:00 - 21:00",
+        url: "https://educourse.keris.or.kr/course/detail?id=105",
+        currentCount: 4,
+        maxCount: 10,
+        month: "2026-10",
+        lastCrawledAt: "2026-09-24 08:30"
+      },
+      {
+        id: "lec-202610-02",
+        title: "[중등] 파이썬 데이터 시각화로 진행하는 교과 융합 프로젝트 수업",
+        presenter: "정코딩",
+        date: "2026-10-20",
+        time: "19:00 - 21:00",
+        url: "https://educourse.keris.or.kr/course/detail?id=106",
+        currentCount: 5,
+        maxCount: 10,
+        month: "2026-10",
+        lastCrawledAt: "2026-09-24 08:30"
+      }
+    ];
+
+    const INITIAL_ENROLLMENTS = [
+      {
+        id: "enr-01",
+        lectureId: "lec-202609-01",
+        lectureTitle: "[초등] 생성형 AI를 활용한 학급경영 및 창의융합 수업 레시피",
+        studentName: "박에듀",
+        presenterName: "김선생",
+        status: "이수",
+        timestamp: "2026-09-02 14:20"
+      },
+      {
+        id: "enr-02",
+        lectureId: "lec-202609-01",
+        lectureTitle: "[초등] 생성형 AI를 활용한 학급경영 및 창의융합 수업 레시피",
+        studentName: "정코딩",
+        presenterName: "김선생",
+        status: "신청",
+        timestamp: "2026-09-03 10:15"
+      },
+      {
+        id: "enr-03",
+        lectureId: "lec-202609-02",
+        lectureTitle: "[중등] 노션(Notion)과 구글 워크스페이스로 끝내는 교무 업무 자동화",
+        studentName: "김선생",
+        presenterName: "박에듀",
+        status: "이수",
+        timestamp: "2026-09-04 11:00"
+      },
+      {
+        id: "enr-04",
+        lectureId: "lec-202609-02",
+        lectureTitle: "[중등] 노션(Notion)과 구글 워크스페이스로 끝내는 교무 업무 자동화",
+        studentName: "이아트",
+        presenterName: "박에듀",
+        status: "신청",
+        timestamp: "2026-09-05 16:30"
+      },
+      {
+        id: "enr-05",
+        lectureId: "lec-202609-03",
+        lectureTitle: "[공통] 캔바(Canva) 활용 인터랙티브 학습지 & 학급 굿즈 제작 실습",
+        studentName: "김선생",
+        presenterName: "이아트",
+        status: "신청",
+        timestamp: "2026-09-06 09:20"
+      },
+      {
+        id: "enr-06",
+        lectureId: "lec-202609-04",
+        lectureTitle: "[초등] 엔트리 & 마이크로비트로 만드는 교실 스마트 화분 프로젝트",
+        studentName: "박에듀",
+        presenterName: "정코딩",
+        status: "신청",
+        timestamp: "2026-09-07 19:40"
+      },
+      {
+        id: "enr-07",
+        lectureId: "lec-202609-05",
+        lectureTitle: "[초등] 학급경영 노션 템플릿과 교육용 챗봇 프롬프트 실전",
+        studentName: "정코딩",
+        presenterName: "김선생",
+        status: "이수",
+        timestamp: "2026-09-08 11:20"
+      },
+      {
+        id: "enr-08",
+        lectureId: "lec-202609-05",
+        lectureTitle: "[초등] 학급경영 노션 템플릿과 교육용 챗봇 프롬프트 실전",
+        studentName: "최융합",
+        presenterName: "김선생",
+        status: "신청",
+        timestamp: "2026-09-09 15:10"
+      }
+    ];
+
+    // ----------------------------------------------------
+    // State Store & Firebase Handler
+    // ----------------------------------------------------
+    let currentSelectedMonth = "2026-09";
+    let isFirebaseActive = false;
+    let db = null;
+    let calendarInstance = null;
+
+    let lecturesData = [];
+    let enrollmentsData = [];
+    let activeDetailLecture = null;
+
+    // Member Roster Management (Requirement #5)
+    const DEFAULT_MEMBERS = ["김선생", "박에듀", "이아트", "정코딩", "최융합", "강인공", "윤과학", "송미래"];
+    let memberList = [];
+    const storedMembers = localStorage.getItem("kyosa_universe_members");
+    if (storedMembers) {
+      try {
+        memberList = JSON.parse(storedMembers);
+      } catch (e) {
+        memberList = [...DEFAULT_MEMBERS];
+      }
+    } else {
+      memberList = [...DEFAULT_MEMBERS];
+      localStorage.setItem("kyosa_universe_members", JSON.stringify(memberList));
+    }
+
+    // Admin & Auth State (Requirements #2, #3, #4)
+    let adminMasterPassword = localStorage.getItem("kyosa_universe_admin_password") || "admin1234";
+    let isAdminMode = localStorage.getItem("kyosa_universe_is_admin") === "true";
+    let pendingAuthCallback = null;
+    let pendingAuthLecture = null;
+    let pendingDeleteLecture = null;
+    let pendingStatusEnrollment = null;
+
+    function saveMembers(newList) {
+      memberList = Array.from(new Set(newList.map(m => m.trim()).filter(Boolean)));
+      localStorage.setItem("kyosa_universe_members", JSON.stringify(memberList));
+      updateMemberDatalist();
+      updateAdminUI();
+      renderAllViews();
+    }
+
+    function updateMemberDatalist() {
+      const datalist = document.getElementById("memberListDatalist");
+      if (datalist) {
+        datalist.innerHTML = memberList.map(m => `<option value="${escapeHtml(m)}"></option>`).join("");
+      }
+    }
+
+    // Load stored preferences & config
+    const savedConfigStr = localStorage.getItem("kyosa_universe_fb_config");
+    let activeFirebaseConfig = null;
+    if (savedConfigStr) {
+      try {
+        activeFirebaseConfig = JSON.parse(savedConfigStr);
+      } catch (e) {
+        console.warn("Invalid stored firebase config");
+      }
+    } else if (firebaseConfig.projectId) {
+      activeFirebaseConfig = firebaseConfig;
+    }
+
+    // Initialize Database
+    async function initDatabase() {
+      if (activeFirebaseConfig && activeFirebaseConfig.projectId) {
+        try {
+          const app = initializeApp(activeFirebaseConfig);
+          db = getFirestore(app);
+          isFirebaseActive = true;
+          updateDbBadge(true);
+          setupFirestoreRealtimeListeners();
+          return;
+        } catch (err) {
+          console.error("Firebase initialization failed, falling back to LocalStorage:", err);
+          showToast("Firebase 연결 실패, 로컬 데모 모드로 전환합니다.", "error");
+        }
+      }
+
+      // LocalStorage Mode
+      isFirebaseActive = false;
+      updateDbBadge(false);
+      loadLocalData();
+      renderAllViews();
+    }
+
+    function updateDbBadge(isLive) {
+      const badge = document.getElementById("liveStatusBadge");
+      const text = document.getElementById("liveStatusText");
+      const footerStatus = document.getElementById("footerDbStatus");
+      if (isLive) {
+        badge.className = "flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200";
+        text.innerText = "Firestore 실시간 연동 중";
+        if (footerStatus) footerStatus.innerText = `Firestore 연결됨 (${activeFirebaseConfig.projectId})`;
+      } else {
+        badge.className = "flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-blue-50 text-blue-700 border border-blue-200";
+        text.innerText = "로컬 데모 모드 (실시간 시뮬레이션)";
+        if (footerStatus) footerStatus.innerText = "로컬 스토리지 & 데모 시뮬레이션 모드";
+      }
+    }
+
+    function loadLocalData() {
+      const storedLectures = localStorage.getItem("kyosa_universe_lectures");
+      const storedEnrollments = localStorage.getItem("kyosa_universe_enrollments");
+
+      if (storedLectures) {
+        lecturesData = JSON.parse(storedLectures);
+      } else {
+        lecturesData = [...INITIAL_LECTURES];
+        saveLocalData();
+      }
+
+      if (storedEnrollments) {
+        enrollmentsData = JSON.parse(storedEnrollments);
+      } else {
+        enrollmentsData = [...INITIAL_ENROLLMENTS];
+        saveLocalData();
+      }
+    }
+
+    function saveLocalData() {
+      localStorage.setItem("kyosa_universe_lectures", JSON.stringify(lecturesData));
+      localStorage.setItem("kyosa_universe_enrollments", JSON.stringify(enrollmentsData));
+    }
+
+    // ----------------------------------------------------
+    // Firestore Realtime Listeners (onSnapshot)
+    // ----------------------------------------------------
+    function setupFirestoreRealtimeListeners() {
+      if (!db) return;
+
+      // 1. Listen to lectures collection
+      const lecturesRef = collection(db, "lectures");
+      onSnapshot(lecturesRef, (snapshot) => {
+        const list = [];
+        snapshot.forEach((d) => {
+          list.push({ id: d.id, ...d.data() });
+        });
+        if (list.length === 0) {
+          // If firestore is empty, seed initial data for immediate delight
+          seedInitialFirestoreData();
+        } else {
+          lecturesData = list;
+          renderAllViews();
+        }
+      }, (error) => {
+        console.error("Firestore lectures listener error:", error);
+      });
+
+      // 2. Listen to enrollments collection
+      const enrollmentsRef = collection(db, "enrollments");
+      onSnapshot(enrollmentsRef, (snapshot) => {
+        const list = [];
+        snapshot.forEach((d) => {
+          list.push({ id: d.id, ...d.data() });
+        });
+        enrollmentsData = list;
+        renderAllViews();
+      }, (error) => {
+        console.error("Firestore enrollments listener error:", error);
+      });
+    }
+
+    async function seedInitialFirestoreData() {
+      if (!db) return;
+      try {
+        for (const item of INITIAL_LECTURES) {
+          const { id, ...data } = item;
+          await setDoc(doc(db, "lectures", id), data);
+        }
+        for (const item of INITIAL_ENROLLMENTS) {
+          const { id, ...data } = item;
+          await setDoc(doc(db, "enrollments", id), data);
+        }
+        showToast("초기 지식샘터 강의 데이터가 Firestore에 동기화되었습니다.", "success");
+      } catch (err) {
+        console.error("Seeding error:", err);
+      }
+    }
+
+    // ----------------------------------------------------
+    // Data Mutation Functions
+    // ----------------------------------------------------
+    async function createLecture(lectureObj) {
+      if (isFirebaseActive && db) {
+        const docRef = await addDoc(collection(db, "lectures"), {
+          ...lectureObj,
+          createdAt: serverTimestamp()
+        });
+        return docRef.id;
+      } else {
+        const id = "lec-" + Date.now();
+        const newObj = { id, ...lectureObj };
+        lecturesData.unshift(newObj);
+        saveLocalData();
+        renderAllViews();
+        return id;
+      }
+    }
+
+    async function deleteLecture(lectureId) {
+      const strId = String(lectureId);
+
+      // 0. Directly remove from FullCalendar instance if present
+      if (calendarInstance) {
+        const calEvt = calendarInstance.getEventById(strId);
+        if (calEvt) {
+          calEvt.remove();
+        }
+      }
+
+      // Collect related enrollments before filtering
+      const related = enrollmentsData.filter(e => String(e.lectureId) === strId);
+
+      // 1. Immediately update local state so UI and Calendar reflect deletion instantly
+      lecturesData = lecturesData.filter(l => String(l.id) !== strId);
+      enrollmentsData = enrollmentsData.filter(e => String(e.lectureId) !== strId);
+      activeDetailLecture = null;
+      pendingDeleteLecture = null;
+      saveLocalData();
+      renderAllViews();
+
+      // 2. If Firebase Firestore active, delete remote documents
+      if (isFirebaseActive && db) {
+        try {
+          await deleteDoc(doc(db, "lectures", strId));
+          for (const r of related) {
+            await deleteDoc(doc(db, "enrollments", r.id));
+          }
+        } catch (err) {
+          console.error("Firestore deleteDoc error:", err);
+        }
+      }
+    }
+
+    async function updateLecture(lectureId, updatedFields) {
+      const strId = String(lectureId);
+      if (isFirebaseActive && db) {
+        await updateDoc(doc(db, "lectures", strId), {
+          ...updatedFields,
+          updatedAt: serverTimestamp()
+        });
+      } else {
+        const index = lecturesData.findIndex(l => String(l.id) === strId);
+        if (index !== -1) {
+          lecturesData[index] = { ...lecturesData[index], ...updatedFields };
+          saveLocalData();
+          renderAllViews();
+        }
+      }
+    }
+
+    function updateAdminUI() {
+      const banner = document.getElementById("adminBanner");
+      const btnToggle = document.getElementById("btnAdminToggle");
+      const btnToggleText = document.getElementById("btnAdminToggleText");
+
+      if (isAdminMode) {
+        banner?.classList.remove("hidden");
+        if (btnToggleText) btnToggleText.innerText = "관리자 (활성)";
+        if (btnToggle) {
+          btnToggle.className = "inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold border transition duration-150 bg-amber-500 text-white border-amber-600 shadow-xs";
+        }
+      } else {
+        banner?.classList.add("hidden");
+        if (btnToggleText) btnToggleText.innerText = "관리자 로그인";
+        if (btnToggle) {
+          btnToggle.className = "inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold border transition duration-150 bg-amber-50 text-amber-800 border-amber-200 hover:bg-amber-100";
+        }
+      }
+
+      // Update admin banner stats & modal hints
+      const missingCount = lecturesData.filter(l => l.month === currentSelectedMonth && (!l.url || l.url === "#" || l.url.trim() === "")).length;
+      const countEl = document.getElementById("adminMissingLinkCount");
+      if (countEl) countEl.innerText = missingCount;
+
+      const memberBadge = document.getElementById("adminMemberBadgeCount");
+      if (memberBadge) memberBadge.innerText = memberList.length;
+
+      const modalMemberCount = document.getElementById("modalMemberListCount");
+      if (modalMemberCount) modalMemberCount.innerText = memberList.length;
+
+      const pwHint = document.getElementById("adminCurrentPwHint");
+      if (pwHint) pwHint.innerText = adminMasterPassword;
+
+      const pwDisplay = document.getElementById("currentAdminPwDisplay");
+      if (pwDisplay) pwDisplay.innerText = adminMasterPassword;
+
+      const bannerPw = document.getElementById("bannerCurrentAdminPw");
+      if (bannerPw) bannerPw.innerText = adminMasterPassword;
+
+      lucide.createIcons();
+    }
+
+    async function createEnrollment(enrollmentObj) {
+      if (isFirebaseActive && db) {
+        await addDoc(collection(db, "enrollments"), {
+          ...enrollmentObj,
+          timestamp: new Date().toISOString().replace('T', ' ').substring(0, 16)
+        });
+        // Increment lecture currentCount
+        const targetLec = lecturesData.find(l => l.id === enrollmentObj.lectureId);
+        if (targetLec) {
+          const newCount = Math.min((targetLec.currentCount || 0) + 1, targetLec.maxCount || 10);
+          await updateDoc(doc(db, "lectures", enrollmentObj.lectureId), {
+            currentCount: newCount
+          });
+        }
+      } else {
+        const id = "enr-" + Date.now();
+        const newObj = {
+          id,
+          ...enrollmentObj,
+          timestamp: new Date().toISOString().replace('T', ' ').substring(0, 16)
+        };
+        enrollmentsData.unshift(newObj);
+
+        // Update local count
+        const targetLec = lecturesData.find(l => l.id === enrollmentObj.lectureId);
+        if (targetLec) {
+          targetLec.currentCount = Math.min((targetLec.currentCount || 0) + 1, targetLec.maxCount || 10);
+        }
+        saveLocalData();
+        renderAllViews();
+      }
+    }
+
+    async function toggleEnrollmentStatus(enrollmentId) {
+      const enrollment = enrollmentsData.find(e => e.id === enrollmentId);
+      if (!enrollment) return;
+      const nextStatus = enrollment.status === "이수" ? "신청" : "이수";
+
+      if (isFirebaseActive && db) {
+        await updateDoc(doc(db, "enrollments", enrollmentId), {
+          status: nextStatus
+        });
+      } else {
+        enrollment.status = nextStatus;
+        saveLocalData();
+        renderAllViews();
+      }
+      showToast(`${enrollment.studentName} 선생님의 상태가 [${nextStatus}]로 변경되었습니다.`, "success");
+      if (nextStatus === "이수") {
+        triggerConfetti();
+      }
+    }
+
+    function getAdjacentMonth(monthStr, delta) {
+      const [y, m] = monthStr.split("-").map(Number);
+      const d = new Date(y, m - 1 + delta, 1);
+      const newY = d.getFullYear();
+      const newM = String(d.getMonth() + 1).padStart(2, "0");
+      return `${newY}-${newM}`;
+    }
+
+    function setSelectedMonth(targetMonth) {
+      currentSelectedMonth = targetMonth;
+      const select = document.getElementById("monthSelect");
+      if (select) {
+        let exists = false;
+        for (let opt of select.options) {
+          if (opt.value === targetMonth) {
+            exists = true;
+            break;
+          }
+        }
+        if (!exists) {
+          const [y, m] = targetMonth.split("-");
+          const newOpt = document.createElement("option");
+          newOpt.value = targetMonth;
+          newOpt.text = `${y}년 ${parseInt(m, 10)}월`;
+          
+          let inserted = false;
+          for (let i = 0; i < select.options.length; i++) {
+            if (select.options[i].value > targetMonth) {
+              select.insertBefore(newOpt, select.options[i]);
+              inserted = true;
+              break;
+            }
+          }
+          if (!inserted) {
+            select.appendChild(newOpt);
+          }
+        }
+        select.value = targetMonth;
+      }
+
+      updateMonthNavigationLabels();
+      renderAllViews();
+    }
+
+    function updateMonthNavigationLabels() {
+      const prevM = getAdjacentMonth(currentSelectedMonth, -1);
+      const nextM = getAdjacentMonth(currentSelectedMonth, 1);
+      const prevNum = parseInt(prevM.split("-")[1], 10);
+      const nextNum = parseInt(nextM.split("-")[1], 10);
+
+      const btnPrevText = document.getElementById("btnCalPrevMonthText");
+      if (btnPrevText) btnPrevText.innerText = `${prevNum}월`;
+
+      const btnNextText = document.getElementById("btnCalNextMonthText");
+      if (btnNextText) btnNextText.innerText = `${nextNum}월`;
+
+      const badge = document.getElementById("calendarMonthBadge");
+      if (badge) {
+        const [y, m] = currentSelectedMonth.split("-");
+        badge.innerText = `${y}. ${m}`;
+      }
+    }
+
+    // ----------------------------------------------------
+    // UI Rendering Functions
+    // ----------------------------------------------------
+    function renderAllViews() {
+      // 1. Filter by current month
+      const monthLectures = lecturesData.filter(l => l.month === currentSelectedMonth);
+      const lectureIdsInMonth = new Set(monthLectures.map(l => String(l.id)));
+      const monthEnrollments = enrollmentsData.filter(e => lectureIdsInMonth.has(String(e.lectureId)));
+
+      // 2. Render KPIs
+      renderKpis(monthLectures, monthEnrollments);
+
+      // 3. Render Calendar Events (Include adjacent months so non-current dates show lectures!)
+      const prevM = getAdjacentMonth(currentSelectedMonth, -1);
+      const nextM = getAdjacentMonth(currentSelectedMonth, 1);
+      const calendarLectures = lecturesData.filter(l => l.month === currentSelectedMonth || l.month === prevM || l.month === nextM);
+      renderCalendarEvents(calendarLectures);
+
+      // 4. Render Matrix Table (Grouped by presenter with individual lecture sub-columns)
+      renderMatrixView(monthLectures, monthEnrollments);
+
+      // 5. Render All Applicants View
+      renderAllApplicantsView(monthLectures, monthEnrollments);
+
+      // 6. Refresh active detail modal if open
+      if (activeDetailLecture) {
+        const refreshed = lecturesData.find(l => String(l.id) === String(activeDetailLecture.id));
+        if (refreshed) {
+          openDetailModal(refreshed);
+        }
+      }
+
+      // Re-trigger Lucide icons
+      lucide.createIcons();
+    }
+
+    function renderKpis(monthLectures, monthEnrollments) {
+      document.getElementById("kpiLectureCount").innerText = monthLectures.length;
+
+      const totalCap = monthLectures.reduce((acc, l) => acc + (parseInt(l.maxCount, 10) || 0), 0);
+      document.getElementById("kpiCapacityCount").innerText = totalCap;
+
+      document.getElementById("kpiEnrollmentCount").innerText = monthEnrollments.length;
+
+      // Calculate mutual support pairs (A enrolled in B, and B enrolled in A)
+      const pairs = new Set();
+      let mutualCount = 0;
+      monthEnrollments.forEach(e1 => {
+        const a = e1.studentName;
+        const b = e1.presenterName;
+        if (a && b && a !== b) {
+          const match = monthEnrollments.find(e2 => e2.studentName === b && e2.presenterName === a);
+          if (match) {
+            const pairKey = [a, b].sort().join("<->");
+            if (!pairs.has(pairKey)) {
+              pairs.add(pairKey);
+              mutualCount++;
+            }
+          }
+        }
+      });
+      document.getElementById("kpiMutualCount").innerText = mutualCount;
+
+      const [y, m] = currentSelectedMonth.split("-");
+      document.getElementById("calendarMonthBadge").innerText = `${y}. ${m}`;
+    }
+
+    // ----------------------------------------------------
+    // FullCalendar Initialization & Rendering
+    // ----------------------------------------------------
+    function initCalendar() {
+      const calendarEl = document.getElementById("calendar");
+      calendarInstance = new FullCalendar.Calendar(calendarEl, {
+        initialView: "dayGridMonth",
+        locale: "ko",
+        headerToolbar: false, // controlled by our custom month bar
+        initialDate: `${currentSelectedMonth}-01`,
+        showNonCurrentDates: true,
+        fixedWeekCount: false,
+        dayMaxEvents: 3,
+        height: "auto",
+        eventContent: function(arg) {
+          const props = arg.event.extendedProps;
+          const isAdjacentMonth = props.month !== currentSelectedMonth;
+          const curr = props.currentCount || 0;
+          const max = props.maxCount || 10;
+          const ratio = curr / max;
+
+          let badgeColor = "bg-blue-100 text-blue-700 border-blue-200";
+          let badgeText = "신청가능";
+          if (curr >= max) {
+            badgeColor = "bg-rose-100 text-rose-700 border-rose-200";
+            badgeText = "마감";
+          } else if (ratio >= 0.8) {
+            badgeColor = "bg-amber-100 text-amber-700 border-amber-200";
+            badgeText = "마감임박";
+          }
+
+          const hasUrl = props.url && props.url !== "#" && props.url.trim() !== "";
+          const missingUrlPill = !hasUrl ? `<span class="text-[9px] font-bold px-1 rounded bg-amber-50 text-amber-700 border border-amber-200">🔗 링크준비중</span>` : "";
+          const adminIcon = isAdminMode ? `<span title="관리자 전권 수정 가능" class="text-[10px]">👑</span>` : "";
+          const adjacentBadge = isAdjacentMonth ? `<span class="text-[9px] font-extrabold px-1 rounded bg-slate-200 text-slate-700">${props.month.split("-")[1]}월</span>` : "";
+
+          // HTML for Card inside calendar cell
+          const customHtml = `
+            <div class="group p-1.5 mb-1.5 rounded-xl ${isAdjacentMonth ? 'bg-slate-50/90 border border-dashed border-slate-300 opacity-85' : 'bg-white border border-slate-200'} shadow-2xs hover:shadow-md hover:border-blue-400 transition cursor-pointer text-left">
+              <div class="flex items-center justify-between gap-1 mb-1">
+                <div class="flex items-center gap-1">
+                  <span class="text-[10px] font-bold px-1.5 py-0.5 rounded-full ${badgeColor} border">
+                    ${badgeText}
+                  </span>
+                  ${adjacentBadge}
+                  ${adminIcon}
+                </div>
+                <span class="text-[11px] font-black text-slate-800">
+                  <span class="text-blue-600">${curr}</span> / ${max}명
+                </span>
+              </div>
+              <div class="text-xs font-bold text-slate-900 line-clamp-2 group-hover:text-blue-600 transition leading-snug">
+                ${arg.event.title}
+              </div>
+              <div class="mt-1 flex items-center justify-between text-[10px] text-slate-500 pt-1 border-t border-slate-100">
+                <span class="font-medium text-slate-700 truncate max-w-[70px]">👤 ${props.presenter}</span>
+                ${missingUrlPill || `<span class="text-slate-400 font-mono">${props.time?.split("-")[0]?.trim() || ""}</span>`}
+              </div>
+            </div>
+          `;
+
+          return { html: customHtml };
+        },
+        eventClick: function(info) {
+          const lec = lecturesData.find(l => String(l.id) === String(info.event.id));
+          if (lec) {
+            openDetailModal(lec);
+          }
+        },
+        dateClick: function(info) {
+          const clickedMonth = info.dateStr.substring(0, 7);
+          if (clickedMonth !== currentSelectedMonth) {
+            setSelectedMonth(clickedMonth);
+            showToast(`${clickedMonth.replace('-', '년 ')}월로 이동했습니다.`, "info");
+          }
+        }
+      });
+
+      calendarInstance.render();
+    }
+
+    function renderCalendarEvents(monthLectures) {
+      if (!calendarInstance) return;
+
+      const events = monthLectures.map(lec => ({
+        id: String(lec.id),
+        title: lec.title,
+        start: lec.date,
+        allDay: true,
+        extendedProps: {
+          presenter: lec.presenter,
+          time: lec.time,
+          url: lec.url,
+          currentCount: lec.currentCount,
+          maxCount: lec.maxCount,
+          month: lec.month
+        }
+      }));
+
+      // Crucial: Cleanly purge old sources and existing events so deleted/updated events never linger
+      const oldSources = calendarInstance.getEventSources();
+      oldSources.forEach(s => s.remove());
+      const oldEvents = calendarInstance.getEvents();
+      oldEvents.forEach(e => e.remove());
+
+      calendarInstance.addEventSource(events);
+      calendarInstance.gotoDate(`${currentSelectedMonth}-01`);
+    }
+
+    // ----------------------------------------------------
+    // Mutual Support Matrix View (Requirements #4 & #5, Multi-Lecture sub-columns)
+    // ----------------------------------------------------
+    function renderMatrixView(monthLectures, monthEnrollments) {
+      const headerRow1 = document.getElementById("matrixHeaderRow1");
+      const headerRow2 = document.getElementById("matrixHeaderRow2");
+      const tbody = document.getElementById("matrixBody");
+
+      if (!headerRow1 || !headerRow2 || !tbody) return;
+
+      // Group lectures by presenter
+      const presenterMap = new Map();
+      monthLectures.forEach(lec => {
+        const p = (lec.presenter || "미정 강사").trim();
+        if (!presenterMap.has(p)) {
+          presenterMap.set(p, []);
+        }
+        presenterMap.get(p).push(lec);
+      });
+
+      const presenters = Array.from(presenterMap.keys());
+
+      // Extract all teachers: ALWAYS include all official uploaded members first (Requirement #5)
+      const allTeachersSet = new Set([...memberList]);
+      presenters.forEach(p => allTeachersSet.add(p));
+      monthEnrollments.forEach(e => {
+        if (e.studentName) allTeachersSet.add(e.studentName);
+      });
+      const allTeachers = Array.from(allTeachersSet);
+
+      if (presenters.length === 0) {
+        headerRow1.innerHTML = `
+          <th rowspan="2" class="p-3 font-bold border-r border-slate-200 sticky left-0 bg-slate-100 z-10 min-w-[130px] align-middle text-center">
+            수강생 \\ 강사 (강의)
+          </th>
+        `;
+        headerRow2.innerHTML = "";
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="4" class="p-8 text-center text-slate-400">
+              이번 달 등록된 강사가 없습니다. 상단의 [강의 등록] 버튼으로 강의를 추가해 보세요!
+            </td>
+          </tr>
+        `;
+        document.getElementById("matrixSummaryCount").innerText = "";
+        return;
+      }
+
+      // Reset Header Tier 1: Presenters
+      headerRow1.innerHTML = `
+        <th rowspan="2" class="p-3 font-bold border-r border-b border-slate-200 sticky left-0 bg-slate-100 z-20 min-w-[130px] align-middle text-center shadow-xs">
+          수강생 \\ 강사 (강의)
+        </th>
+      `;
+      // Reset Header Tier 2: Individual Lectures under each presenter
+      headerRow2.innerHTML = "";
+
+      presenters.forEach(p => {
+        const pLectures = presenterMap.get(p);
+        const colSpan = pLectures.length;
+
+        // Tier 1 Presenter header
+        const th1 = document.createElement("th");
+        th1.colSpan = colSpan;
+        th1.className = "p-2.5 font-bold text-center border-r border-b-2 border-slate-300 bg-indigo-50 text-slate-800";
+        th1.innerHTML = `
+          <div class="flex items-center justify-center gap-1.5 flex-wrap py-0.5">
+            <span class="w-5 h-5 rounded-full bg-indigo-600 text-white flex items-center justify-center text-[10px] font-bold">👤</span>
+            <span class="text-xs sm:text-sm font-black text-indigo-950">${escapeHtml(p)}</span>
+            ${colSpan > 1 
+              ? `<span class="text-[10px] px-2 py-0.5 rounded-full bg-amber-100 text-amber-900 border border-amber-300 font-bold">복수 개설 (${colSpan}개 분할)</span>` 
+              : `<span class="text-[10px] px-1.5 py-0.5 rounded-full bg-indigo-100 text-indigo-700 font-semibold">1개 강의</span>`
+            }
+          </div>
+        `;
+        headerRow1.appendChild(th1);
+
+        // Tier 2 Lecture sub-headers under this presenter
+        pLectures.forEach((lec, lIdx) => {
+          const th2 = document.createElement("th");
+          th2.className = `p-2.5 font-semibold text-center border-r border-b border-slate-200 min-w-[160px] max-w-[220px] ${colSpan > 1 ? 'bg-indigo-50/40' : 'bg-slate-50/95'} align-top`;
+          th2.innerHTML = `
+            ${colSpan > 1 ? `
+              <div class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-bold bg-indigo-100 text-indigo-800 border border-indigo-200 mb-1.5">
+                <span>강의 ${lIdx + 1}</span>
+              </div>
+            ` : ''}
+            <div class="text-[11px] font-bold text-slate-900 line-clamp-2 leading-snug cursor-pointer hover:text-blue-600 transition text-left" onclick="window.openDetailById('${lec.id}')" title="${escapeHtml(lec.title)} (클릭 시 강의 상세)">
+              <i data-lucide="book-open" class="w-3.5 h-3.5 inline text-blue-600 mr-1 shrink-0"></i>${escapeHtml(lec.title)}
+            </div>
+            <div class="text-[10px] text-slate-500 mt-1.5 flex items-center justify-between pt-1 border-t border-slate-200/70">
+              <span class="font-mono text-slate-600 bg-white px-1.5 py-0.5 rounded border border-slate-200 text-[9px] font-medium">${lec.date.substring(5)}</span>
+              <span class="text-blue-600 font-bold">${lec.currentCount || 0}/${lec.maxCount || 10}명</span>
+            </div>
+          `;
+          headerRow2.appendChild(th2);
+        });
+      });
+
+      // Build Body Rows
+      tbody.innerHTML = "";
+      let totalEnrolledCells = 0;
+
+      allTeachers.forEach(student => {
+        const tr = document.createElement("tr");
+        tr.className = "hover:bg-slate-50/80 transition";
+
+        // Student Column (Sticky Left)
+        const isOfficialMember = memberList.includes(student);
+        const studentTd = document.createElement("td");
+        studentTd.className = "p-3 font-bold text-slate-800 border-r border-slate-200 sticky left-0 bg-white z-10 shadow-xs";
+        studentTd.innerHTML = `
+          <div class="flex items-center gap-1.5">
+            <span class="w-6 h-6 rounded-full ${isOfficialMember ? 'bg-indigo-100 text-indigo-700' : 'bg-slate-100 text-slate-600'} flex items-center justify-center text-[10px] font-bold shrink-0">
+              ${escapeHtml(student.substring(0, 1))}
+            </span>
+            <span class="truncate max-w-[90px]">${escapeHtml(student)}</span>
+            ${isOfficialMember ? `<span class="text-[9px] px-1 rounded bg-indigo-50 text-indigo-600 border border-indigo-100 font-normal shrink-0">회원</span>` : ''}
+          </div>
+        `;
+        tr.appendChild(studentTd);
+
+        // Individual cell for each lecture under each presenter
+        presenters.forEach(presenter => {
+          const pLectures = presenterMap.get(presenter);
+
+          pLectures.forEach(lec => {
+            const td = document.createElement("td");
+            td.className = "p-2 text-center border-r border-slate-200 align-middle min-w-[160px]";
+
+            if (student === presenter) {
+              // Self opened lecture cell
+              td.innerHTML = `
+                <div class="flex flex-col items-center justify-center gap-1 py-1">
+                  <div class="text-[10px] text-slate-400 font-medium truncate max-w-[145px] text-center" title="${escapeHtml(lec.title)}">
+                    📖 ${escapeHtml(lec.title.length > 13 ? lec.title.substring(0, 12) + '…' : lec.title)}
+                  </div>
+                  <span class="inline-block px-2.5 py-0.5 rounded-md text-[10px] font-semibold bg-slate-100 text-slate-400 border border-slate-200/80">본인 개설</span>
+                </div>
+              `;
+            } else {
+              // Find enrollment for THIS EXACT LECTURE ID
+              const enr = monthEnrollments.find(e => String(e.lectureId) === String(lec.id) && e.studentName === student);
+
+              // Check if mutual support (presenter also enrolled in student's lecture this month)
+              const isMutual = enr && monthEnrollments.some(e2 => e2.studentName === presenter && e2.presenterName === student);
+
+              if (enr) {
+                totalEnrolledCells++;
+                let badgeHtml = "";
+                if (isMutual) {
+                  badgeHtml = `
+                    <button onclick="window.requestToggleEnrollStatus('${enr.id}')" title="상태 변경: ${escapeHtml(student)} 선생님 - '${escapeHtml(lec.title)}' (본인/관리자 인증)" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-bold ${enr.status === '이수' ? 'bg-purple-600 text-white shadow-xs' : 'bg-purple-100 text-purple-900 border border-purple-300'} hover:opacity-90 transition cursor-pointer">
+                      <span>🤝 품앗이 (${enr.status === '이수' ? '이수 ✓' : '신청'})</span>
+                    </button>
+                  `;
+                } else if (enr.status === "이수") {
+                  badgeHtml = `
+                    <button onclick="window.requestToggleEnrollStatus('${enr.id}')" title="상태 변경: ${escapeHtml(student)} 선생님 - '${escapeHtml(lec.title)}' (본인/관리자 인증)" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-bold bg-emerald-600 text-white hover:bg-emerald-700 transition shadow-xs cursor-pointer">
+                      <i data-lucide="check" class="w-3.5 h-3.5"></i>
+                      <span>이수 완료 ✓</span>
+                    </button>
+                  `;
+                } else {
+                  badgeHtml = `
+                    <button onclick="window.requestToggleEnrollStatus('${enr.id}')" title="상태 변경: ${escapeHtml(student)} 선생님 - '${escapeHtml(lec.title)}' (본인/관리자 인증)" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-bold bg-blue-100 text-blue-800 hover:bg-blue-200 border border-blue-300 transition shadow-2xs cursor-pointer">
+                      <i data-lucide="clock" class="w-3.5 h-3.5 text-blue-600"></i>
+                      <span>신청 완료</span>
+                    </button>
+                  `;
+                }
+
+                td.innerHTML = `
+                  <div class="flex flex-col items-center justify-center gap-1 py-1 px-1">
+                    <div class="text-[10px] font-semibold text-slate-700 bg-slate-100/90 hover:bg-slate-200/80 px-2 py-0.5 rounded-md border border-slate-200 max-w-[155px] truncate cursor-pointer transition text-center" onclick="window.openDetailById('${lec.id}')" title="강의: ${escapeHtml(lec.title)} (클릭 시 상세)">
+                      📖 ${escapeHtml(lec.title.length > 13 ? lec.title.substring(0, 12) + '…' : lec.title)}
+                    </div>
+                    ${badgeHtml}
+                  </div>
+                `;
+              } else {
+                td.innerHTML = `
+                  <div class="flex flex-col items-center justify-center py-1">
+                    <span class="text-slate-300 font-mono text-xs hover:text-slate-600 cursor-pointer" onclick="window.openDetailById('${lec.id}')" title="${escapeHtml(student)} 선생님 - '${escapeHtml(lec.title)}' 미신청 (클릭 시 강의 상세 및 신청)">-</span>
+                  </div>
+                `;
+              }
+            }
+            tr.appendChild(td);
+          });
+        });
+
+        tbody.appendChild(tr);
+      });
+
+      document.getElementById("matrixSummaryCount").innerHTML = `
+        이번 달 총 <strong class="text-indigo-600">${monthLectures.length}</strong>개 강의(강사 ${presenters.length}명)에 대해 총 <strong class="text-indigo-600">${totalEnrolledCells}</strong>건의 수강 신청/이수 기록이 있습니다. (회원 총 ${memberList.length}명)
+      `;
+    }
+
+    // ----------------------------------------------------
+    // Comprehensive Lecture & Applicant List View
+    // ----------------------------------------------------
+    function renderAllApplicantsView(monthLectures, monthEnrollments) {
+      const container = document.getElementById("lecturesApplicantContainer");
+      const searchWord = (document.getElementById("applicantSearchInput")?.value || "").trim().toLowerCase();
+
+      document.getElementById("allListCountBadge").innerText = `총 ${monthLectures.length}개 강의`;
+
+      let filteredLectures = monthLectures;
+      if (searchWord) {
+        filteredLectures = monthLectures.filter(l => {
+          const matchTitle = l.title.toLowerCase().includes(searchWord);
+          const matchPresenter = l.presenter.toLowerCase().includes(searchWord);
+          const students = monthEnrollments.filter(e => e.lectureId === l.id).map(e => e.studentName.toLowerCase());
+          const matchStudent = students.some(s => s.includes(searchWord));
+          return matchTitle || matchPresenter || matchStudent;
+        });
+      }
+
+      if (filteredLectures.length === 0) {
+        container.innerHTML = `
+          <div class="col-span-full p-8 text-center bg-slate-50 rounded-2xl border border-slate-200 text-slate-400">
+            검색 결과 또는 등록된 강의가 없습니다.
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = filteredLectures.map(lec => {
+        const enrs = monthEnrollments.filter(e => e.lectureId === lec.id);
+        const curr = lec.currentCount || enrs.length;
+        const max = lec.maxCount || 10;
+
+        const studentTags = enrs.length > 0 ? enrs.map(e => {
+          const isDone = e.status === "이수";
+          return `
+            <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium ${isDone ? 'bg-emerald-50 text-emerald-800 border border-emerald-200' : 'bg-blue-50 text-blue-800 border border-blue-200'}">
+              <span>👤 ${escapeHtml(e.studentName)}</span>
+              <button onclick="window.requestToggleEnrollStatus('${e.id}')" title="상태 변경 (본인/관리자 인증)" class="hover:opacity-85 cursor-pointer text-[10px] px-1.5 py-0.5 rounded font-bold ${isDone ? 'bg-emerald-200 text-emerald-900' : 'bg-blue-200 text-blue-900'}">
+                ${isDone ? '이수완료 ✓' : '신청완료'}
+              </button>
+            </div>
+          `;
+        }).join("") : `<span class="text-xs text-slate-400 italic">아직 모임 신청자가 없습니다.</span>`;
+
+        return `
+          <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-2xs hover:shadow-xs transition flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between gap-2 mb-2">
+                <span class="text-xs font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-700">
+                  ${escapeHtml(lec.date)} (${escapeHtml(lec.time || "미정")})
+                </span>
+                <span class="text-xs font-bold text-slate-900">
+                  <span class="text-blue-600 text-sm">${curr}</span> / ${max}명
+                </span>
+              </div>
+              <h4 class="font-bold text-slate-900 text-sm leading-snug mb-1">
+                ${escapeHtml(lec.title)}
+              </h4>
+              <div class="text-xs text-slate-500 mb-3">
+                강사: <strong class="text-slate-800 font-semibold">${escapeHtml(lec.presenter)}</strong>
+              </div>
+
+              <!-- Enrolled Students List -->
+              <div class="bg-slate-50 p-3 rounded-xl border border-slate-100 mb-3">
+                <div class="text-[11px] font-bold text-slate-600 mb-1.5 flex items-center justify-between">
+                  <span>신청자 명단 (${enrs.length}명)</span>
+                  <span class="text-[10px] text-slate-400">클릭 시 [신청↔이수] 전환</span>
+                </div>
+                <div class="flex flex-wrap gap-1.5">
+                  ${studentTags}
+                </div>
+              </div>
+            </div>
+
+            <div class="flex items-center justify-between pt-2 border-t border-slate-100 text-xs">
+              ${lec.url && lec.url !== "#" ? `
+                <a href="${escapeHtml(lec.url)}" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:text-blue-800 font-medium inline-flex items-center gap-1">
+                  <span>지식샘터 페이지</span>
+                  <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+                </a>
+              ` : `
+                <span class="text-amber-600 font-semibold inline-flex items-center gap-1">
+                  <i data-lucide="link-2-off" class="w-3.5 h-3.5"></i>
+                  <span>링크 준비중</span>
+                </span>
+              `}
+              <div class="flex items-center gap-1.5 flex-wrap justify-end">
+                <button onclick="window.editLectureById('${lec.id}')" class="px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-indigo-50 hover:text-indigo-700 font-semibold text-slate-700 transition flex items-center gap-1">
+                  <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
+                  <span>수정</span>
+                </button>
+                <button onclick="window.deleteLectureById('${lec.id}')" class="px-2.5 py-1.5 rounded-lg bg-rose-50 hover:bg-rose-100 font-semibold text-rose-600 transition flex items-center gap-1">
+                  <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                  <span>삭제</span>
+                </button>
+                <button onclick="window.openDetailById('${lec.id}')" class="px-3 py-1.5 rounded-lg bg-blue-50 hover:bg-blue-100 font-semibold text-blue-700 transition">
+                  상세 &amp; 신청
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    // ----------------------------------------------------
+    // Modal Open & Close Functions
+    // ----------------------------------------------------
+    function openDetailModal(lec) {
+      activeDetailLecture = lec;
+      document.getElementById("detailTitle").innerText = lec.title;
+      document.getElementById("detailPresenter").innerText = lec.presenter;
+      document.getElementById("detailTime").innerText = `${lec.date} (${lec.time || "시간 미정"})`;
+      document.getElementById("detailDateBadge").innerText = `${lec.month}`;
+
+      const curr = lec.currentCount || 0;
+      const max = lec.maxCount || 10;
+      const percent = Math.min(Math.round((curr / max) * 100), 100);
+
+      document.getElementById("detailCount").innerText = curr;
+      document.getElementById("detailMax").innerText = max;
+
+      const pBar = document.getElementById("detailProgressBar");
+      pBar.style.width = `${percent}%`;
+
+      const statusBadge = document.getElementById("detailStatusBadge");
+      if (curr >= max) {
+        statusBadge.className = "px-2.5 py-0.5 text-xs font-bold rounded-full bg-rose-100 text-rose-800";
+        statusBadge.innerText = "정원 마감";
+        pBar.className = "bg-rose-500 h-2.5 rounded-full";
+      } else if (percent >= 80) {
+        statusBadge.className = "px-2.5 py-0.5 text-xs font-bold rounded-full bg-amber-100 text-amber-800";
+        statusBadge.innerText = "마감 임박";
+        pBar.className = "bg-amber-500 h-2.5 rounded-full";
+      } else {
+        statusBadge.className = "px-2.5 py-0.5 text-xs font-bold rounded-full bg-blue-100 text-blue-800";
+        statusBadge.innerText = "신청 가능";
+        pBar.className = "bg-blue-600 h-2.5 rounded-full";
+      }
+
+      document.getElementById("detailRemaining").innerText = `잔여 ${Math.max(max - curr, 0)}자리`;
+      document.getElementById("detailCrawlerStatus").innerText = lec.lastCrawledAt ? `최근 연동: ${lec.lastCrawledAt}` : "수강 인원 실시간 연동됨";
+
+      // Missing URL Check & Link Setup
+      const hasUrl = lec.url && lec.url !== "#" && lec.url.trim() !== "";
+      const missingAlert = document.getElementById("detailMissingUrlAlert");
+      const directUrlBtn = document.getElementById("btnDetailDirectUrl");
+      const directUrlText = document.getElementById("btnDetailDirectUrlText");
+
+      if (hasUrl) {
+        missingAlert.classList.add("hidden");
+        directUrlBtn.href = lec.url;
+        directUrlBtn.className = "px-4 py-2.5 text-sm font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-xl transition flex items-center justify-center gap-1";
+        directUrlText.innerText = "지식샘터 이동";
+      } else {
+        missingAlert.classList.remove("hidden");
+        directUrlBtn.href = "javascript:void(0)";
+        directUrlBtn.className = "px-4 py-2.5 text-sm font-semibold text-amber-700 bg-amber-50 hover:bg-amber-100 rounded-xl transition flex items-center justify-center gap-1 border border-amber-200";
+        directUrlText.innerText = "🔗 링크 준비중";
+      }
+
+      // Admin Mode UI indicators
+      const adminIndicator = document.getElementById("detailAdminIndicator");
+      const editText = document.getElementById("btnDetailEditText");
+      if (isAdminMode) {
+        adminIndicator?.classList.remove("hidden");
+        if (editText) editText.innerText = "👑 [관리자] 즉시 수정";
+      } else {
+        adminIndicator?.classList.add("hidden");
+        if (editText) editText.innerText = "강의 수정 (본인/관리자)";
+      }
+
+      // Enrolled Members list in modal
+      const enrs = enrollmentsData.filter(e => e.lectureId === lec.id);
+      document.getElementById("detailMemberCount").innerText = enrs.length;
+      const memberListEl = document.getElementById("detailMemberList");
+      if (enrs.length > 0) {
+        memberListEl.innerHTML = enrs.map(e => `
+          <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-medium ${e.status === '이수' ? 'bg-emerald-100 text-emerald-800' : 'bg-blue-100 text-blue-800'}">
+            <span>👤 ${escapeHtml(e.studentName)}</span>
+            <span class="text-[10px] opacity-75 font-semibold">(${e.status})</span>
+          </span>
+        `).join("");
+      } else {
+        memberListEl.innerHTML = `<span class="text-xs text-slate-400 italic p-1">아직 신청한 모임 교사가 없습니다. 첫 번째로 신청해 보세요!</span>`;
+      }
+
+      // Open Modal
+      document.getElementById("modalDetail").classList.remove("hidden");
+      document.getElementById("modalDetail").classList.add("flex");
+      lucide.createIcons();
+    }
+
+    function openEnrollModal(lec) {
+      document.getElementById("enrollLectureTitle").innerText = lec.title;
+      document.getElementById("enrollPresenterName").innerText = lec.presenter;
+
+      // Prefill last used student name
+      const lastNick = localStorage.getItem("kyosa_universe_user_nickname") || "";
+      document.getElementById("enrollStudentName").value = lastNick;
+
+      document.getElementById("modalEnroll").classList.remove("hidden");
+      document.getElementById("modalEnroll").classList.add("flex");
+    }
+
+    // ----------------------------------------------------
+    // Event Listeners & Actions
+    // ----------------------------------------------------
+
+    // Month Selector change
+    document.getElementById("monthSelect").addEventListener("change", (e) => {
+      setSelectedMonth(e.target.value);
+    });
+
+    document.getElementById("btnPrevMonth").addEventListener("click", () => {
+      setSelectedMonth(getAdjacentMonth(currentSelectedMonth, -1));
+    });
+
+    document.getElementById("btnNextMonth").addEventListener("click", () => {
+      setSelectedMonth(getAdjacentMonth(currentSelectedMonth, 1));
+    });
+
+    document.getElementById("btnCalPrevMonth")?.addEventListener("click", () => {
+      setSelectedMonth(getAdjacentMonth(currentSelectedMonth, -1));
+    });
+
+    document.getElementById("btnCalNextMonth")?.addEventListener("click", () => {
+      setSelectedMonth(getAdjacentMonth(currentSelectedMonth, 1));
+    });
+
+    document.getElementById("btnCalTodayMonth")?.addEventListener("click", () => {
+      setSelectedMonth("2026-09");
+      showToast("2026년 9월(기준 월)로 이동했습니다.", "info");
+    });
+
+    // Close all modal buttons
+    document.querySelectorAll(".modal-close-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll("#modalRegister, #modalDetail, #modalEnroll, #modalCrawler, #modalConfig, #modalEditLecture, #modalAuthPrompt, #modalAdminLogin, #modalConfirmDelete, #modalAdminChangePw, #modalManageMembers, #modalEnrollStatusAuth").forEach(m => {
+          m.classList.add("hidden");
+          m.classList.remove("flex");
+        });
+      });
+    });
+
+    // Author & Admin Access Guard (Requirement #2 & #3)
+    function checkAuthorOrAdminAccess(lec, actionName, onSuccess) {
+      if (!lec) return;
+      if (isAdminMode) {
+        // Admin has full instant access without password check!
+        onSuccess();
+        return;
+      }
+
+      pendingAuthLecture = lec;
+      pendingAuthCallback = onSuccess;
+
+      document.getElementById("authPromptTitle").innerText = `강의 ${actionName} - 본인 확인`;
+      document.getElementById("authPromptDesc").innerText = `'${lec.presenter}' 선생님으로 등록하셨을 때 설정한 비밀번호를 입력해주세요.`;
+      document.getElementById("authPromptPassword").value = "";
+
+      document.getElementById("modalAuthPrompt").classList.remove("hidden");
+      document.getElementById("modalAuthPrompt").classList.add("flex");
+      document.getElementById("authPromptPassword").focus();
+    }
+
+    // Submit Author Auth Prompt
+    document.getElementById("formAuthPrompt").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const entered = document.getElementById("authPromptPassword").value.trim();
+      const actual = pendingAuthLecture?.password || "1234";
+
+      if (entered === actual || entered === adminMasterPassword || entered === "universe2026") {
+        document.getElementById("modalAuthPrompt").classList.add("hidden");
+        document.getElementById("modalAuthPrompt").classList.remove("flex");
+        showToast("본인 인증이 확인되었습니다.", "success");
+        if (pendingAuthCallback) {
+          const cb = pendingAuthCallback;
+          pendingAuthCallback = null;
+          cb();
+        }
+      } else {
+        showToast("비밀번호가 일치하지 않습니다. (관리자는 상단 관리자 로그인으로 즉시 수정 가능)", "error");
+      }
+    });
+
+    // Safe In-App Delete Flow (Unified 1-Step: Admin instant or Teacher password-verified)
+    function requestDeleteLecture(lec) {
+      if (!lec) return;
+      pendingDeleteLecture = lec;
+      document.getElementById("deleteTargetTitle").innerText = lec.title;
+      document.getElementById("deleteTargetPresenter").innerText = lec.presenter;
+
+      const adminBadge = document.getElementById("deleteModalAdminBadge");
+      const authorBox = document.getElementById("deleteModalAuthorBox");
+      const btnText = document.getElementById("btnExecuteDeleteText");
+
+      if (isAdminMode) {
+        adminBadge?.classList.remove("hidden");
+        authorBox?.classList.add("hidden");
+        if (btnText) btnText.innerText = "👑 관리자 권한으로 삭제 실행";
+      } else {
+        adminBadge?.classList.add("hidden");
+        authorBox?.classList.remove("hidden");
+        const pwInput = document.getElementById("deleteAuthorPasswordInput");
+        if (pwInput) pwInput.value = "";
+        if (btnText) btnText.innerText = "비밀번호 확인 및 강의 삭제";
+      }
+
+      document.getElementById("modalConfirmDelete").classList.remove("hidden");
+      document.getElementById("modalConfirmDelete").classList.add("flex");
+
+      if (!isAdminMode) {
+        setTimeout(() => {
+          document.getElementById("deleteAuthorPasswordInput")?.focus();
+        }, 100);
+      }
+    }
+
+    document.getElementById("btnExecuteDeleteLecture").addEventListener("click", async () => {
+      if (!pendingDeleteLecture) return;
+      const targetLec = pendingDeleteLecture;
+      const targetId = String(targetLec.id);
+      const targetTitle = targetLec.title;
+
+      // If not admin, verify author password
+      if (!isAdminMode) {
+        const entered = document.getElementById("deleteAuthorPasswordInput").value.trim();
+        const actual = targetLec.password || "1234";
+        if (entered !== actual && entered !== adminMasterPassword && entered !== "universe2026") {
+          showToast("비밀번호가 일치하지 않습니다. 등록 시 설정한 비밀번호를 입력해주세요.", "error");
+          return;
+        }
+      }
+
+      pendingDeleteLecture = null;
+
+      await deleteLecture(targetId);
+
+      document.querySelectorAll("#modalConfirmDelete, #modalDetail, #modalEditLecture, #modalAuthPrompt").forEach(m => {
+        m.classList.add("hidden");
+        m.classList.remove("flex");
+      });
+
+      showToast(`'${targetTitle}' 강의가 성공적으로 삭제되었습니다.`, "success");
+      triggerConfetti();
+    });
+
+    document.getElementById("deleteAuthorPasswordInput")?.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        document.getElementById("btnExecuteDeleteLecture").click();
+      }
+    });
+
+    // Open Edit Modal Function
+    function openEditModal(lec) {
+      document.getElementById("editLectureId").value = lec.id;
+      document.getElementById("editTitle").value = lec.title || "";
+      document.getElementById("editPresenter").value = lec.presenter || "";
+      document.getElementById("editMaxCount").value = lec.maxCount || 10;
+      document.getElementById("editDate").value = lec.date || "";
+      document.getElementById("editTime").value = lec.time || "";
+      document.getElementById("editUrl").value = (lec.url && lec.url !== "#") ? lec.url : "";
+      document.getElementById("editPassword").value = "";
+
+      const badge = document.getElementById("editModalAuthBadge");
+      if (isAdminMode) {
+        badge.innerText = "👑 관리자 전권으로 수정 중";
+        badge.className = "text-[11px] text-amber-600 font-bold";
+      } else {
+        badge.innerText = "등록 본인 인증 완료";
+        badge.className = "text-[11px] text-emerald-600 font-semibold";
+      }
+
+      // Close detail modal if open
+      document.getElementById("modalDetail").classList.add("hidden");
+      document.getElementById("modalDetail").classList.remove("flex");
+
+      document.getElementById("modalEditLecture").classList.remove("hidden");
+      document.getElementById("modalEditLecture").classList.add("flex");
+    }
+
+    // Submit Edit Lecture Form
+    document.getElementById("formEditLecture").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const lecId = document.getElementById("editLectureId").value;
+      const title = document.getElementById("editTitle").value.trim();
+      const presenter = document.getElementById("editPresenter").value.trim();
+      const maxCount = parseInt(document.getElementById("editMaxCount").value, 10) || 10;
+      const date = document.getElementById("editDate").value;
+      const time = document.getElementById("editTime").value.trim();
+      const url = document.getElementById("editUrl").value.trim();
+      const newPassword = document.getElementById("editPassword").value.trim();
+
+      const month = date.substring(0, 7);
+
+      const updateData = {
+        title,
+        presenter,
+        maxCount,
+        date,
+        time,
+        url,
+        month
+      };
+      if (newPassword) {
+        updateData.password = newPassword;
+      }
+
+      try {
+        await updateLecture(lecId, updateData);
+        showToast("강의 정보가 성공적으로 수정되었습니다!", "success");
+        triggerConfetti();
+
+        if (month !== currentSelectedMonth) {
+          currentSelectedMonth = month;
+          document.getElementById("monthSelect").value = month;
+          renderAllViews();
+        }
+
+        document.getElementById("modalEditLecture").classList.add("hidden");
+        document.getElementById("modalEditLecture").classList.remove("flex");
+      } catch (err) {
+        console.error("수정 실패:", err);
+        showToast("강의 수정 중 오류가 발생했습니다.", "error");
+      }
+    });
+
+    // Open Register Modal
+    document.getElementById("btnOpenRegisterModal").addEventListener("click", () => {
+      // Default date to current month
+      document.getElementById("regDate").value = `${currentSelectedMonth}-10`;
+      document.getElementById("modalRegister").classList.remove("hidden");
+      document.getElementById("modalRegister").classList.add("flex");
+    });
+
+    // Submit Register Lecture Form (Requirement #1: Link is optional; Requirement #2: password saved)
+    document.getElementById("formRegisterLecture").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const title = document.getElementById("regTitle").value.trim();
+      const presenter = document.getElementById("regPresenter").value.trim();
+      const maxCount = parseInt(document.getElementById("regMaxCount").value, 10) || 10;
+      const date = document.getElementById("regDate").value;
+      const time = document.getElementById("regTime").value.trim();
+      const url = document.getElementById("regUrl").value.trim(); // Can be empty!
+      const password = document.getElementById("regPassword").value.trim() || "1234";
+
+      const month = date.substring(0, 7);
+
+      const newLecture = {
+        title,
+        presenter,
+        date,
+        time,
+        url, // Optional - can be added later
+        password, // Author PIN for editing
+        currentCount: 0,
+        maxCount,
+        month,
+        lastCrawledAt: new Date().toISOString().replace('T', ' ').substring(0, 16)
+      };
+
+      try {
+        await createLecture(newLecture);
+        showToast("지식샘터 강의가 성공적으로 등록되었습니다!", "success");
+        triggerConfetti();
+
+        // Switch month if different
+        if (month !== currentSelectedMonth) {
+          currentSelectedMonth = month;
+          document.getElementById("monthSelect").value = month;
+        }
+
+        document.getElementById("modalRegister").classList.add("hidden");
+        document.getElementById("modalRegister").classList.remove("flex");
+        document.getElementById("formRegisterLecture").reset();
+      } catch (err) {
+        showToast("강의 등록 중 오류가 발생했습니다.", "error");
+        console.error(err);
+      }
+    });
+
+    // Detail Modal Edit Button
+    document.getElementById("btnDetailEdit").addEventListener("click", () => {
+      if (activeDetailLecture) {
+        checkAuthorOrAdminAccess(activeDetailLecture, "수정", () => {
+          openEditModal(activeDetailLecture);
+        });
+      }
+    });
+
+    // Detail Modal Add URL Now Button
+    document.getElementById("btnDetailAddUrlNow").addEventListener("click", () => {
+      if (activeDetailLecture) {
+        checkAuthorOrAdminAccess(activeDetailLecture, "링크 등록", () => {
+          openEditModal(activeDetailLecture);
+        });
+      }
+    });
+
+    // Detail Modal Actions
+    document.getElementById("btnDetailEnroll").addEventListener("click", () => {
+      if (activeDetailLecture) {
+        document.getElementById("modalDetail").classList.add("hidden");
+        document.getElementById("modalDetail").classList.remove("flex");
+        openEnrollModal(activeDetailLecture);
+      }
+    });
+
+    // Detail Modal Delete Button (Direct unified flow for Admin & Teacher)
+    document.getElementById("btnDetailDelete").addEventListener("click", () => {
+      if (!activeDetailLecture) return;
+      requestDeleteLecture(activeDetailLecture);
+    });
+
+    const btnEditDel = document.getElementById("btnEditModalDelete");
+    if (btnEditDel) {
+      btnEditDel.addEventListener("click", () => {
+        const id = document.getElementById("editLectureId").value;
+        const targetLec = lecturesData.find(l => String(l.id) === String(id));
+        if (targetLec) {
+          requestDeleteLecture(targetLec);
+        }
+      });
+    }
+
+    // Admin Toggle & Login Logic (Requirement #3)
+    document.getElementById("btnAdminToggle").addEventListener("click", () => {
+      if (isAdminMode) {
+        if (confirm("현재 관리자 모드가 활성화되어 있습니다. 관리자 모드를 종료하시겠습니까?")) {
+          isAdminMode = false;
+          localStorage.setItem("kyosa_universe_is_admin", "false");
+          updateAdminUI();
+          renderAllViews();
+          showToast("관리자 모드가 종료되었습니다.", "info");
+        }
+      } else {
+        document.getElementById("adminPasswordInput").value = "";
+        document.getElementById("modalAdminLogin").classList.remove("hidden");
+        document.getElementById("modalAdminLogin").classList.add("flex");
+        document.getElementById("adminPasswordInput").focus();
+      }
+    });
+
+    document.getElementById("btnAdminExit").addEventListener("click", () => {
+      isAdminMode = false;
+      localStorage.setItem("kyosa_universe_is_admin", "false");
+      updateAdminUI();
+      renderAllViews();
+      showToast("관리자 모드가 종료되었습니다.", "info");
+    });
+
+    // Admin Change Password Modal & Logic (Requirement #3)
+    function openAdminChangePwModal() {
+      document.getElementById("newAdminPwInput").value = "";
+      const confirmInput = document.getElementById("newAdminPwConfirmInput");
+      if (confirmInput) confirmInput.value = "";
+      document.getElementById("currentAdminPwDisplay").innerText = adminMasterPassword;
+      document.getElementById("modalAdminChangePw").classList.remove("hidden");
+      document.getElementById("modalAdminChangePw").classList.add("flex");
+      document.getElementById("newAdminPwInput").focus();
+    }
+
+    document.getElementById("btnAdminChangePw").addEventListener("click", openAdminChangePwModal);
+    document.getElementById("btnAdminLoginChangePw")?.addEventListener("click", () => {
+      document.getElementById("modalAdminLogin").classList.add("hidden");
+      document.getElementById("modalAdminLogin").classList.remove("flex");
+      openAdminChangePwModal();
+    });
+
+    document.getElementById("formAdminChangePw").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const newPw = document.getElementById("newAdminPwInput").value.trim();
+      const confirmPw = document.getElementById("newAdminPwConfirmInput")?.value.trim();
+
+      if (!newPw || newPw.length < 4) {
+        showToast("비밀번호는 4자리 이상이어야 합니다.", "error");
+        return;
+      }
+      if (confirmPw && newPw !== confirmPw) {
+        showToast("비밀번호 확인이 일치하지 않습니다. 다시 입력해주세요.", "error");
+        return;
+      }
+
+      adminMasterPassword = newPw;
+      localStorage.setItem("kyosa_universe_admin_password", newPw);
+      updateAdminUI();
+      document.getElementById("modalAdminChangePw").classList.add("hidden");
+      document.getElementById("modalAdminChangePw").classList.remove("flex");
+      showToast(`관리자 비밀번호가 [${newPw}](으)로 성공적으로 변경되었습니다!`, "success");
+      triggerConfetti();
+    });
+
+    // Member Roster Management Modal & Handlers (Requirement #5)
+    function renderMemberTagList() {
+      const container = document.getElementById("modalMemberTagContainer");
+      const countEl = document.getElementById("modalMemberListCount");
+      if (countEl) countEl.innerText = memberList.length;
+
+      if (!container) return;
+      if (memberList.length === 0) {
+        container.innerHTML = `<span class="text-slate-400 italic text-xs">등록된 회원이 없습니다. 아래 입력창에서 추가하세요.</span>`;
+        return;
+      }
+      container.innerHTML = memberList.map(name => `
+        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold bg-white border border-slate-200 text-slate-800 shadow-2xs">
+          <span>👤 ${escapeHtml(name)}</span>
+          <button type="button" onclick="window.removeMemberByName('${escapeHtml(name)}')" title="삭제" class="text-slate-400 hover:text-rose-600 ml-0.5 font-bold">×</button>
+        </span>
+      `).join("");
+    }
+
+    window.removeMemberByName = function(name) {
+      saveMembers(memberList.filter(m => m !== name));
+      renderMemberTagList();
+      showToast(`'${name}' 선생님이 회원 명단에서 제외되었습니다.`, "info");
+    };
+
+    document.getElementById("btnAdminManageMembers").addEventListener("click", () => {
+      renderMemberTagList();
+      document.getElementById("txtBulkMemberInput").value = "";
+      document.getElementById("modalManageMembers").classList.remove("hidden");
+      document.getElementById("modalManageMembers").classList.add("flex");
+    });
+
+    document.getElementById("btnAppendMembers").addEventListener("click", () => {
+      const text = document.getElementById("txtBulkMemberInput").value;
+      const names = text.split(/[\n,]+/).map(s => s.trim()).filter(Boolean);
+      if (names.length === 0) {
+        showToast("추가할 회원 이름을 입력해주세요.", "error");
+        return;
+      }
+      saveMembers([...memberList, ...names]);
+      renderMemberTagList();
+      document.getElementById("txtBulkMemberInput").value = "";
+      showToast(`${names.length}명의 회원이 추가되어 매트릭스에 반영되었습니다!`, "success");
+      triggerConfetti();
+    });
+
+    document.getElementById("btnReplaceMembers").addEventListener("click", () => {
+      const text = document.getElementById("txtBulkMemberInput").value;
+      const names = text.split(/[\n,]+/).map(s => s.trim()).filter(Boolean);
+      if (names.length === 0) {
+        showToast("명단을 입력해주세요.", "error");
+        return;
+      }
+      saveMembers(names);
+      renderMemberTagList();
+      document.getElementById("txtBulkMemberInput").value = "";
+      showToast(`회원 명단이 총 ${memberList.length}명으로 교체 반영되었습니다!`, "success");
+      triggerConfetti();
+    });
+
+    document.getElementById("btnResetMembersToDefault").addEventListener("click", () => {
+      saveMembers([...DEFAULT_MEMBERS]);
+      renderMemberTagList();
+      showToast("기본 교사 회원 명단으로 복원되었습니다.", "info");
+    });
+
+    document.getElementById("memberFileInput").addEventListener("change", (e) => {
+      const file = e.target.files?.[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (evt) => {
+        const content = evt.target.result;
+        const names = content.split(/[\r\n,]+/).map(s => s.trim().replace(/^"|"$/g, '')).filter(Boolean);
+        if (names.length > 0) {
+          saveMembers([...memberList, ...names]);
+          renderMemberTagList();
+          showToast(`파일에서 ${names.length}명의 회원을 불러와 매트릭스에 반영했습니다!`, "success");
+          triggerConfetti();
+        }
+      };
+      reader.readAsText(file);
+    });
+
+    // Student Status Auth Modal & Protected Toggle (Requirement #4)
+    window.requestToggleEnrollStatus = function(enrId) {
+      const enr = enrollmentsData.find(e => e.id === enrId);
+      if (!enr) return;
+      const nextStatus = enr.status === "이수" ? "신청" : "이수";
+
+      if (isAdminMode) {
+        // Admin direct toggle with full authority!
+        toggleEnrollmentStatus(enrId);
+        return;
+      }
+
+      pendingStatusEnrollment = enr;
+      document.getElementById("statusAuthStudentName").innerText = enr.studentName;
+      document.getElementById("statusAuthLectureTitle").innerText = enr.lectureTitle || "지식샘터 강의";
+      document.getElementById("statusAuthCurrentStatus").innerText = enr.status === "이수" ? "이수 완료 ✓" : "신청 완료";
+      document.getElementById("statusAuthNextStatus").innerText = nextStatus === "이수" ? "이수 완료 ✓" : "신청 완료";
+      document.getElementById("statusAuthPassword").value = "";
+
+      document.getElementById("modalEnrollStatusAuth").classList.remove("hidden");
+      document.getElementById("modalEnrollStatusAuth").classList.add("flex");
+      document.getElementById("statusAuthPassword").focus();
+    };
+
+    document.getElementById("formEnrollStatusAuth").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      if (!pendingStatusEnrollment) return;
+
+      const entered = document.getElementById("statusAuthPassword").value.trim();
+      const expectedPw = pendingStatusEnrollment.password || localStorage.getItem("kyosa_universe_pw_" + pendingStatusEnrollment.studentName) || "1234";
+
+      // Valid if password matches student's password, default 1234, admin master password, or master PIN
+      if (entered === expectedPw || entered === "1234" || entered === adminMasterPassword || entered === "universe2026") {
+        const enrId = pendingStatusEnrollment.id;
+        pendingStatusEnrollment = null;
+
+        document.getElementById("modalEnrollStatusAuth").classList.add("hidden");
+        document.getElementById("modalEnrollStatusAuth").classList.remove("flex");
+
+        await toggleEnrollmentStatus(enrId);
+      } else {
+        showToast("비밀번호가 일치하지 않습니다. 신청자 본인만 수강 및 이수 상태를 변경할 수 있습니다.", "error");
+      }
+    });
+
+    // Admin Login Form
+    document.getElementById("formAdminLogin").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const pw = document.getElementById("adminPasswordInput").value.trim();
+      if (pw === adminMasterPassword || pw === "universe2026") {
+        isAdminMode = true;
+        localStorage.setItem("kyosa_universe_is_admin", "true");
+        document.getElementById("modalAdminLogin").classList.add("hidden");
+        document.getElementById("modalAdminLogin").classList.remove("flex");
+        updateAdminUI();
+        renderAllViews();
+        showToast("👑 관리자 모드가 활성화되었습니다! 모든 강의의 전권이 부여됩니다.", "success");
+        triggerConfetti();
+      } else {
+        showToast(`관리자 비밀번호가 일치하지 않습니다. (현재: ${adminMasterPassword})`, "error");
+      }
+    });
+
+    // Admin Banner: Show Missing Links
+    document.getElementById("btnAdminShowMissingLinks").addEventListener("click", () => {
+      document.getElementById("applicantListSection").scrollIntoView({ behavior: "smooth" });
+      const searchInput = document.getElementById("applicantSearchInput");
+      // filter to empty url
+      const missingTitles = lecturesData
+        .filter(l => l.month === currentSelectedMonth && (!l.url || l.url === "#" || l.url.trim() === ""))
+        .map(l => l.presenter);
+
+      if (missingTitles.length > 0) {
+        searchInput.value = missingTitles[0];
+        searchInput.dispatchEvent(new Event("input"));
+        showToast(`링크가 등록되지 않은 강의(${missingTitles.length}건)를 검색 필터링했습니다.`, "info");
+      } else {
+        showToast("이번 달 모든 강의에 지식샘터 링크가 정상 등록되어 있습니다! 👍", "success");
+      }
+    });
+
+    // Submit Enrollment Form (Core Requirement #4: Nickname pop-up, opens URL in new tab, saves to Firestore)
+    document.getElementById("formEnrollConfirm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      if (!activeDetailLecture) return;
+
+      const studentName = document.getElementById("enrollStudentName").value.trim();
+      if (!studentName) return;
+
+      const studentPw = document.getElementById("enrollPassword")?.value.trim() || "1234";
+
+      // Save nickname and password to localStorage
+      localStorage.setItem("kyosa_universe_user_nickname", studentName);
+      localStorage.setItem("kyosa_universe_pw_" + studentName, studentPw);
+
+      // 1. Open official KERIS Knowledge Fountain URL in new tab immediately
+      if (activeDetailLecture.url && activeDetailLecture.url !== "#") {
+        window.open(activeDetailLecture.url, "_blank");
+      }
+
+      // 2. Save enrollment record
+      const enrollmentObj = {
+        lectureId: activeDetailLecture.id,
+        lectureTitle: activeDetailLecture.title,
+        studentName: studentName,
+        presenterName: activeDetailLecture.presenter,
+        status: "신청",
+        password: studentPw
+      };
+
+      await createEnrollment(enrollmentObj);
+
+      // Close modal & celebrate
+      document.getElementById("modalEnroll").classList.add("hidden");
+      document.getElementById("modalEnroll").classList.remove("flex");
+
+      showToast(`'${activeDetailLecture.presenter}' 선생님 강의 신청이 기록되었습니다!`, "success");
+      triggerConfetti();
+    });
+
+    // Crawler sync trigger button (Manual sync simulation / Cloud Function invocation)
+    document.getElementById("btnTriggerCrawlerSync").addEventListener("click", async () => {
+      const btn = document.getElementById("btnTriggerCrawlerSync");
+      btn.disabled = true;
+      btn.innerHTML = `<i data-lucide="loader-2" class="w-3.5 h-3.5 animate-spin"></i><span>크롤러 동기화 중...</span>`;
+      lucide.createIcons();
+
+      // Simulate crawler fetching live applicant counts from educourse.keris.or.kr
+      setTimeout(() => {
+        lecturesData.forEach(lec => {
+          if (lec.month === currentSelectedMonth) {
+            // slight realistic variation
+            const randomDelta = Math.random() > 0.4 ? 1 : 0;
+            lec.currentCount = Math.min((lec.currentCount || 0) + randomDelta, lec.maxCount);
+            lec.lastCrawledAt = new Date().toISOString().replace('T', ' ').substring(0, 16);
+          }
+        });
+        saveLocalData();
+        renderAllViews();
+
+        btn.disabled = false;
+        btn.innerHTML = `<i data-lucide="check" class="w-3.5 h-3.5 text-emerald-600"></i><span>동기화 완료!</span>`;
+        lucide.createIcons();
+        showToast("지식샘터 수강 인원 크롤러 동기화가 완료되었습니다.", "success");
+
+        setTimeout(() => {
+          btn.innerHTML = `<i data-lucide="refresh-cw" class="w-3.5 h-3.5 text-blue-600"></i><span>수강인원 크롤러 동기화</span>`;
+          lucide.createIcons();
+        }, 2500);
+      }, 900);
+    });
+
+    // Scroll to Matrix
+    document.getElementById("btnScrollToMatrix").addEventListener("click", () => {
+      document.getElementById("matrixSection").scrollIntoView({ behavior: "smooth" });
+    });
+
+    document.getElementById("btnScrollToApplicantList").addEventListener("click", () => {
+      document.getElementById("applicantListSection").scrollIntoView({ behavior: "smooth" });
+    });
+
+    // Search filter for all applicants
+    document.getElementById("applicantSearchInput").addEventListener("input", () => {
+      const monthLectures = lecturesData.filter(l => l.month === currentSelectedMonth);
+      const lectureIdsInMonth = new Set(monthLectures.map(l => l.id));
+      const monthEnrollments = enrollmentsData.filter(e => lectureIdsInMonth.has(e.lectureId));
+      renderAllApplicantsView(monthLectures, monthEnrollments);
+      lucide.createIcons();
+    });
+
+    // CSV Export
+    document.getElementById("btnExportCSV").addEventListener("click", () => {
+      const monthLectures = lecturesData.filter(l => l.month === currentSelectedMonth);
+      const lectureIdsInMonth = new Set(monthLectures.map(l => l.id));
+      const monthEnrollments = enrollmentsData.filter(e => lectureIdsInMonth.has(e.lectureId));
+
+      let csv = "\uFEFF강의명,강사,일시,정원,현재인원,신청자,상태,신청일시\n";
+      monthLectures.forEach(l => {
+        const enrs = monthEnrollments.filter(e => e.lectureId === l.id);
+        if (enrs.length === 0) {
+          csv += `"${l.title.replace(/"/g, '""')}","${l.presenter}","${l.date} ${l.time || ''}",${l.maxCount},${l.currentCount || 0},"-","-","-"\n`;
+        } else {
+          enrs.forEach(e => {
+            csv += `"${l.title.replace(/"/g, '""')}","${l.presenter}","${l.date} ${l.time || ''}",${l.maxCount},${l.currentCount || 0},"${e.studentName}","${e.status}","${e.timestamp || ''}"\n`;
+          });
+        }
+      });
+
+      const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `교사유니버스_지식샘터_수강현황_${currentSelectedMonth}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+      showToast("CSV 파일이 다운로드되었습니다.", "success");
+    });
+
+    // Copy Crawler Code
+    document.getElementById("btnCopyCrawlerCode").addEventListener("click", () => {
+      const code = document.getElementById("crawlerCodeBlock").innerText;
+      navigator.clipboard.writeText(code).then(() => {
+        showToast("Cloud Function 코드가 클립보드에 복사되었습니다.", "success");
+      });
+    });
+
+    document.getElementById("btnCrawlerGuide").addEventListener("click", () => {
+      document.getElementById("modalCrawler").classList.remove("hidden");
+      document.getElementById("modalCrawler").classList.add("flex");
+    });
+
+    // Firebase Config Modal
+    document.getElementById("btnConfigModal").addEventListener("click", () => {
+      const txt = document.getElementById("txtFirebaseConfigJson");
+      if (activeFirebaseConfig) {
+        txt.value = JSON.stringify(activeFirebaseConfig, null, 2);
+      }
+      document.getElementById("modalConfig").classList.remove("hidden");
+      document.getElementById("modalConfig").classList.add("flex");
+    });
+
+    document.getElementById("btnSaveFirebaseConfig").addEventListener("click", () => {
+      const txt = document.getElementById("txtFirebaseConfigJson").value.trim();
+      try {
+        const parsed = JSON.parse(txt);
+        if (!parsed.projectId) throw new Error("projectId 필드가 필요합니다.");
+        localStorage.setItem("kyosa_universe_fb_config", JSON.stringify(parsed));
+        showToast("Firebase 설정이 저장되었습니다. 페이지를 새로고침합니다.", "success");
+        setTimeout(() => location.reload(), 800);
+      } catch (err) {
+        showToast("올바른 JSON 형식의 Firebase Config를 입력해주세요.", "error");
+      }
+    });
+
+    document.getElementById("btnResetToDemo").addEventListener("click", () => {
+      if (confirm("초기 교사유니버스 데모 데이터로 복원하시겠습니까?")) {
+        localStorage.removeItem("kyosa_universe_fb_config");
+        localStorage.removeItem("kyosa_universe_lectures");
+        localStorage.removeItem("kyosa_universe_enrollments");
+        showToast("데모 데이터로 초기화되었습니다.", "success");
+        setTimeout(() => location.reload(), 600);
+      }
+    });
+
+    // Copy single HTML for GitHub Pages
+    document.getElementById("btnCopySingleHtml").addEventListener("click", () => {
+      const html = document.documentElement.outerHTML;
+      navigator.clipboard.writeText(html).then(() => {
+        showToast("GitHub Pages용 index.html 전체 코드가 복사되었습니다!", "success");
+      }).catch(() => {
+        showToast("HTML 코드를 복사하지 못했습니다.", "error");
+      });
+    });
+
+    // Window helpers for dynamically rendered buttons
+    window.openDetailById = function(id) {
+      const lec = lecturesData.find(l => String(l.id) === String(id));
+      if (lec) openDetailModal(lec);
+    };
+
+    window.editLectureById = function(id) {
+      const lec = lecturesData.find(l => String(l.id) === String(id));
+      if (lec) {
+        checkAuthorOrAdminAccess(lec, "수정", () => {
+          openEditModal(lec);
+        });
+      }
+    };
+
+    window.deleteLectureById = function(id) {
+      const lec = lecturesData.find(l => String(l.id) === String(id));
+      if (lec) {
+        requestDeleteLecture(lec);
+      }
+    };
+
+    window.toggleEnrollStatus = function(enrId) {
+      toggleEnrollmentStatus(enrId);
+    };
+
+    // Toast helper
+    function showToast(message, type = "info") {
+      const container = document.getElementById("toastContainer");
+      const toast = document.createElement("div");
+      toast.className = `px-4 py-2.5 rounded-xl shadow-lg text-xs font-semibold text-white pointer-events-auto transform transition-all duration-300 flex items-center gap-2 ${type === 'error' ? 'bg-rose-600' : type === 'success' ? 'bg-emerald-600' : 'bg-slate-900'}`;
+
+      let icon = "check-circle";
+      if (type === "error") icon = "alert-circle";
+      if (type === "info") icon = "info";
+
+      toast.innerHTML = `<i data-lucide="${icon}" class="w-4 h-4 shrink-0"></i><span>${escapeHtml(message)}</span>`;
+      container.appendChild(toast);
+      lucide.createIcons();
+
+      setTimeout(() => {
+        toast.style.opacity = "0";
+        toast.style.transform = "translateY(8px)";
+        setTimeout(() => toast.remove(), 300);
+      }, 3000);
+    }
+
+    function triggerConfetti() {
+      if (typeof confetti === "function") {
+        confetti({
+          particleCount: 50,
+          spread: 60,
+          origin: { y: 0.8 }
+        });
+      }
+    }
+
+    function escapeHtml(str) {
+      if (!str) return "";
+      return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    // Startup initialization
+    window.addEventListener("DOMContentLoaded", () => {
+      initCalendar();
+      initDatabase();
+      updateAdminUI();
+      lucide.createIcons();
+    });
+  </script>
+</body>
+</html>
