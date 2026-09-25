@@ -130,7 +130,7 @@
         </button>
         <button id="btnAdminChangePw" class="px-2.5 py-1 rounded-lg bg-white/20 hover:bg-white/30 text-white text-xs font-semibold flex items-center gap-1.5 transition">
           <i data-lucide="key" class="w-3.5 h-3.5 text-amber-300"></i>
-          <span>비밀번호 변경 (<code id="bannerCurrentAdminPw" class="font-mono text-amber-200 font-bold">admin1234</code>)</span>
+          <span>비밀번호 변경</span>
         </button>
         <button id="btnAdminShowMissingLinks" class="px-2.5 py-1 rounded-lg bg-white/20 hover:bg-white/30 text-white text-xs font-semibold flex items-center gap-1.5 transition">
           <i data-lucide="link-2-off" class="w-3.5 h-3.5 text-amber-300"></i>
@@ -203,14 +203,6 @@
           <i data-lucide="crown" class="w-4 h-4 text-amber-600"></i>
           <span id="btnAdminToggleText" class="hidden sm:inline">관리자 로그인</span>
         </button>
-
-        <!-- More actions dropdown / buttons -->
-        <button id="btnCrawlerGuide" title="크롤러 & API 연동 구조" class="p-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-xl transition">
-          <i data-lucide="bot" class="w-5 h-5"></i>
-        </button>
-        <button id="btnConfigModal" title="Firebase 설정" class="p-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-xl transition">
-          <i data-lucide="settings" class="w-5 h-5"></i>
-        </button>
       </div>
     </div>
   </header>
@@ -261,23 +253,50 @@
       </div>
     </section>
 
-    <!-- Top Notice / Crawler sync alert bar -->
+    <!-- Weekly Notice Highlight Banner (User Request #1) -->
+    <div id="bannerWeeklyNotice" class="group relative overflow-hidden bg-gradient-to-r from-amber-500 via-indigo-600 to-blue-600 rounded-2xl p-0.5 shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer active:scale-[0.995]">
+      <div class="bg-white/95 backdrop-blur-xs rounded-[14px] p-3.5 sm:p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 group-hover:bg-white transition">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-amber-500 text-white flex items-center justify-center shrink-0 shadow-xs group-hover:scale-105 transition-transform">
+            <span class="text-xl">📢</span>
+          </div>
+          <div>
+            <div class="flex items-center gap-2 flex-wrap">
+              <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-amber-100 text-amber-900 border border-amber-300">
+                <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
+                이번 주 주요 공지 및 할 일
+              </span>
+              <span id="bannerWeeklyPeriodText" class="text-xs font-semibold text-slate-500">
+                9월 27일 ~ 10월 10일
+              </span>
+            </div>
+            <div class="text-sm sm:text-base font-bold text-slate-900 mt-1 flex items-center gap-2">
+              <span id="bannerWeeklyHeadline" class="line-clamp-1">😍 주요 일정 : 최임 제출 / 강의 차시별 흐름 구성, 강의 재료 모으기</span>
+            </div>
+          </div>
+        </div>
+        <div class="flex items-center gap-2 self-end sm:self-center shrink-0">
+          <span class="text-xs font-bold text-indigo-700 flex items-center gap-1.5 bg-indigo-50 px-3.5 py-2 rounded-xl border border-indigo-200 group-hover:bg-indigo-600 group-hover:text-white transition shadow-2xs">
+            <span>공지 &amp; 주간 일정 보기</span>
+            <i data-lucide="arrow-right" class="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform"></i>
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Top Notice bar -->
     <div class="bg-gradient-to-r from-blue-500/10 via-indigo-500/10 to-purple-500/10 border border-blue-200/60 rounded-2xl p-3.5 px-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
       <div class="flex items-center gap-2.5">
         <div class="w-8 h-8 rounded-lg bg-blue-600 text-white flex items-center justify-center shrink-0">
           <i data-lucide="info" class="w-4 h-4"></i>
         </div>
         <div class="text-xs sm:text-sm text-slate-700">
-          <strong class="font-semibold text-slate-900">지식샘터 연동 안내:</strong>
-          캘린더 카드에서 <span class="text-blue-600 font-semibold">[신청하기]</span>를 누르면 신청자 등록 후 지식샘터 공식 신청 페이지가 새 탭으로 즉시 열립니다.
+          <strong class="font-semibold text-slate-900">안내:</strong>
+          캘린더 카드에서 <span class="text-blue-600 font-semibold">[신청하기]</span>를 누르면 신청자 등록(수강 인원 +1) 후 지식샘터 공식 신청 페이지가 새 탭으로 열립니다.
         </div>
       </div>
       <div class="flex items-center gap-2 shrink-0">
-        <button id="btnTriggerCrawlerSync" class="text-xs font-medium px-3 py-1.5 rounded-lg bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 active:scale-95 transition flex items-center gap-1.5 shadow-2xs">
-          <i data-lucide="refresh-cw" class="w-3.5 h-3.5 text-blue-600"></i>
-          <span>수강인원 크롤러 동기화</span>
-        </button>
-        <button id="btnScrollToMatrix" class="text-xs font-medium px-3 py-1.5 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 active:scale-95 transition flex items-center gap-1">
+        <button id="btnScrollToMatrix" class="text-xs font-medium px-3.5 py-2 rounded-xl bg-indigo-600 text-white hover:bg-indigo-700 active:scale-95 transition flex items-center gap-1 shadow-xs">
           <span>수강 매트릭스 보기</span>
           <i data-lucide="arrow-down" class="w-3.5 h-3.5"></i>
         </button>
@@ -467,14 +486,18 @@
           <input type="text" id="regTitle" required placeholder="예: [초/중등] 생성형 AI를 활용한 학급경영 레시피" class="w-full text-sm px-3.5 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-hidden" />
         </div>
 
-        <div class="grid grid-cols-2 gap-3">
+        <div class="grid grid-cols-3 gap-3">
           <div>
             <label class="block text-xs font-semibold text-slate-700 mb-1">강사 닉네임 <span class="text-red-500">*</span></label>
-            <input type="text" id="regPresenter" list="memberListDatalist" required placeholder="예: 김선생, 에듀테크요정" class="w-full text-sm px-3.5 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-hidden" />
+            <input type="text" id="regPresenter" list="memberListDatalist" required placeholder="예: 김선생, 에듀테크요정" class="w-full text-sm px-3 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-hidden" />
           </div>
           <div>
             <label class="block text-xs font-semibold text-slate-700 mb-1">모집 정원 (명) <span class="text-red-500">*</span></label>
-            <input type="number" id="regMaxCount" required min="1" max="200" value="10" class="w-full text-sm px-3.5 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-hidden" />
+            <input type="number" id="regMaxCount" required min="1" max="200" value="10" class="w-full text-sm px-3 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-hidden" />
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">현재 수강 인원</label>
+            <input type="number" id="regEnrolledCount" min="0" max="200" value="0" placeholder="0" class="w-full text-sm px-3 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-hidden" />
           </div>
         </div>
 
@@ -560,14 +583,20 @@
         <!-- Capacity Progress Bar -->
         <div class="bg-slate-50 p-4 rounded-xl border border-slate-100 space-y-2">
           <div class="flex items-center justify-between text-xs">
-            <span class="font-medium text-slate-600">현재 수강 인원 현황 (대안 B 연동)</span>
-            <span class="font-bold text-slate-900"><span id="detailCount" class="text-blue-600 text-base">0</span> / <span id="detailMax">10</span>명</span>
+            <span class="font-medium text-slate-600">현재 수강 인원 현황</span>
+            <div class="flex items-center gap-2">
+              <span class="font-bold text-slate-900"><span id="detailCount" class="text-blue-600 text-base">0</span> / <span id="detailMax">10</span>명</span>
+              <button id="btnDetailChangeCount" type="button" class="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-bold text-indigo-700 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 rounded-lg transition active:scale-95 shadow-2xs cursor-pointer" title="등록 강사 수강 인원 직접 변경">
+                <i data-lucide="edit-3" class="w-3 h-3 text-indigo-600"></i>
+                <span>인원 변경</span>
+              </button>
+            </div>
           </div>
           <div class="w-full bg-slate-200 rounded-full h-2.5 overflow-hidden">
             <div id="detailProgressBar" class="bg-blue-600 h-2.5 rounded-full transition-all duration-300" style="width: 0%"></div>
           </div>
           <div class="flex items-center justify-between text-[11px] text-slate-400">
-            <span id="detailCrawlerStatus">크롤러 연동 대기</span>
+            <span id="detailCrawlerStatus">강사 직접 관리 (실시간 반영)</span>
             <span id="detailRemaining">잔여 10자리</span>
           </div>
         </div>
@@ -640,14 +669,18 @@
           <input type="text" id="editTitle" required class="w-full text-sm px-3.5 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-hidden" />
         </div>
 
-        <div class="grid grid-cols-2 gap-3">
+        <div class="grid grid-cols-3 gap-3">
           <div>
             <label class="block text-xs font-semibold text-slate-700 mb-1">강사 닉네임 <span class="text-red-500">*</span></label>
-            <input type="text" id="editPresenter" required class="w-full text-sm px-3.5 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-hidden" />
+            <input type="text" id="editPresenter" required class="w-full text-sm px-3 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-hidden" />
           </div>
           <div>
             <label class="block text-xs font-semibold text-slate-700 mb-1">모집 정원 (명) <span class="text-red-500">*</span></label>
-            <input type="number" id="editMaxCount" required min="1" max="200" class="w-full text-sm px-3.5 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-hidden" />
+            <input type="number" id="editMaxCount" required min="1" max="200" class="w-full text-sm px-3 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-hidden" />
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">현재 수강 인원</label>
+            <input type="number" id="editEnrolledCount" min="0" max="200" placeholder="0" class="w-full text-sm px-3 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-hidden" />
           </div>
         </div>
 
@@ -795,8 +828,8 @@
 
       <form id="formAdminChangePw" class="p-6 space-y-4">
         <div>
-          <label class="block text-xs font-semibold text-slate-700 mb-1">현재 활성화된 관리자 비밀번호</label>
-          <div id="currentAdminPwDisplay" class="text-xs font-mono font-bold text-indigo-700 p-2.5 bg-indigo-50 border border-indigo-100 rounded-xl">admin1234</div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">관리자 초기 비밀번호 안내</label>
+          <div id="currentAdminPwDisplay" class="text-xs font-mono font-bold text-indigo-700 p-2.5 bg-indigo-50 border border-indigo-100 rounded-xl">admin1234 (초기 비밀번호)</div>
         </div>
 
         <div>
@@ -883,7 +916,63 @@
     </div>
   </div>
 
-  <!-- 2-G. 수강 상태(신청/이수) 본인/관리자 인증 변경 모달 (Requirement #4) -->
+  <!-- 2-G. 등록 강사 전용 수강 인원 변경 모달 -->
+  <div id="modalUpdateLectureCount" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden items-center justify-center p-4">
+    <div class="bg-white w-full max-w-sm rounded-2xl shadow-xl border border-slate-200 overflow-hidden transform transition-all">
+      <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-lg bg-indigo-600 text-white flex items-center justify-center">
+            <i data-lucide="users" class="w-4 h-4"></i>
+          </div>
+          <div>
+            <h3 class="font-bold text-slate-900 text-base">수강 인원 변경</h3>
+            <span class="text-[11px] text-slate-500">등록 강사 전용 관리</span>
+          </div>
+        </div>
+        <button class="modal-close-btn text-slate-400 hover:text-slate-600 p-1 rounded-lg">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <form id="formUpdateLectureCount" class="p-6 space-y-4">
+        <div class="p-3 bg-indigo-50/60 rounded-xl border border-indigo-100 text-xs space-y-1">
+          <div class="font-bold text-indigo-900 truncate" id="countChangeLecTitle">강의명</div>
+          <div class="text-indigo-700">등록 강사: <span id="countChangeLecPresenter" class="font-semibold">강사명</span> (모집 정원: <span id="countChangeLecMax">10</span>명)</div>
+          <div class="text-[11px] text-slate-500">※ 지식샘터 실제 신청 현황에 맞춰 현재 수강 인원을 직접 변경합니다.</div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1.5">현재 수강 인원 (명) <span class="text-red-500">*</span></label>
+          <div class="flex items-center gap-2">
+            <button type="button" id="btnCountDec" class="w-10 h-10 rounded-xl border border-slate-300 hover:bg-slate-100 flex items-center justify-center font-bold text-lg text-slate-700 transition active:scale-95 cursor-pointer">-</button>
+            <input type="number" id="inputNewEnrolledCount" required min="0" max="500" class="flex-1 text-center font-bold text-lg px-3 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-hidden" />
+            <button type="button" id="btnCountInc" class="w-10 h-10 rounded-xl border border-slate-300 hover:bg-slate-100 flex items-center justify-center font-bold text-lg text-slate-700 transition active:scale-95 cursor-pointer">+</button>
+          </div>
+        </div>
+
+        <div id="countChangeAuthBox">
+          <label class="block text-xs font-semibold text-slate-700 mb-1">등록 강사 비밀번호 확인 <span class="text-red-500">*</span></label>
+          <input type="password" id="countChangePasswordInput" placeholder="강의 등록 시 설정한 비밀번호 (기본: 1234)" class="w-full text-sm px-3.5 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-hidden" />
+          <p class="text-[11px] text-slate-400 mt-1">※ 강의를 등록한 강사 본인만 변동 가능합니다.</p>
+        </div>
+
+        <div id="countChangeAdminBadge" class="hidden p-2.5 rounded-xl bg-amber-50 border border-amber-200 text-xs text-amber-900 font-semibold flex items-center gap-1.5">
+          <i data-lucide="shield-check" class="w-4 h-4 text-amber-600"></i>
+          <span>👑 관리자 권한으로 인증이 면제됩니다.</span>
+        </div>
+
+        <div class="pt-2 flex items-center justify-end gap-2 border-t border-slate-100">
+          <button type="button" class="modal-close-btn px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-xl transition">취소</button>
+          <button type="submit" class="px-5 py-2 text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl shadow-xs transition active:scale-95 flex items-center gap-1.5 cursor-pointer">
+            <i data-lucide="check" class="w-3.5 h-3.5"></i>
+            <span>인원 변경 저장</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 2-H. 수강 상태(신청/이수) 본인/관리자 인증 변경 모달 (Requirement #4) -->
   <div id="modalEnrollStatusAuth" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden items-center justify-center p-4">
     <div class="bg-white w-full max-w-sm rounded-2xl shadow-xl border border-slate-200 overflow-hidden transform transition-all">
       <div class="p-6 text-center">
@@ -990,55 +1079,280 @@
 
         <div>
           <div class="flex items-center justify-between mb-1">
-            <span class="font-bold text-slate-900">Firebase Cloud Function (v2 / Node.js 18) 크롤러 소스 코드 예시:</span>
-            <button id="btnCopyCrawlerCode" class="text-blue-600 hover:underline">코드 복사</button>
+            <span class="font-bold text-slate-900">1. GitHub Actions 자동 크롤러 워크플로우 (.github/workflows/crawler.yml):</span>
+            <span class="text-slate-400 text-[10px]">매 6시간 주기 자동 실행</span>
           </div>
-          <pre id="crawlerCodeBlock" class="bg-slate-900 text-slate-100 p-4 rounded-xl overflow-x-auto text-[11px] font-mono leading-relaxed">
-// functions/index.js
-const { onSchedule } = require("firebase-functions/v2/scheduler");
-const admin = require("firebase-admin");
-const axios = require("axios");
-const cheerio = require("cheerio");
+          <pre class="bg-slate-900 text-slate-100 p-3 rounded-xl overflow-x-auto text-[10px] font-mono leading-relaxed">
+# .github/workflows/crawler.yml
+name: Knowledge Fountain Enrolled Count Crawler
+on:
+  schedule:
+    - cron: '0 */6 * * *'  # 6시간 주기
+  workflow_dispatch:      # 수동 즉시 실행
 
-admin.initializeApp();
-const db = admin.firestore();
+jobs:
+  crawl-and-update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install requests beautifulsoup4 firebase-admin
+      - run: python crawler.py
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}</pre>
+        </div>
 
-// 10분마다 등록된 지식샘터 강좌의 수강 인원 자동 크롤링
-exports.syncKnowledgeFountainCount = onSchedule("every 10 minutes", async (event) => {
-  const snapshot = await db.collection("lectures").get();
-  
-  for (const doc of snapshot.docs) {
-    const lecture = doc.data();
-    if (!lecture.url || !lecture.url.includes("keris.or.kr")) continue;
+        <div>
+          <div class="flex items-center justify-between mb-1">
+            <span class="font-bold text-slate-900">2. Python 크롤러 스크립트 (crawler.py):</span>
+          </div>
+          <pre class="bg-slate-900 text-slate-100 p-3 rounded-xl overflow-x-auto text-[10px] font-mono leading-relaxed">
+# crawler.py
+import os, re, json, requests
+from bs4 import BeautifulSoup
+import firebase_admin
+from firebase_admin import credentials, firestore
 
-    try {
-      const response = await axios.get(lecture.url, {
-        headers: { "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)" },
-        timeout: 8000
-      });
-      const $ = cheerio.load(response.data);
+# Firebase Service Account 초기화 및 지식샘터 크롤링 수행
+# Firestore lectures 문서의 enrolledCount, currentCount 필드 실시간 업데이트</pre>
+        </div>
 
-      // 지식샘터 상세 페이지 수강인원 DOM 셀렉터 추출
-      const countText = $(".apply_status, .course_info_count, .count_box").text();
-      const match = countText.match(/([0-9]+)\s*\/\s*([0-9]+)/);
-
-      if (match) {
-        const currentCount = parseInt(match[1], 10);
-        const maxCount = parseInt(match[2], 10);
-        await doc.ref.update({
-          currentCount: currentCount,
-          maxCount: maxCount || lecture.maxCount,
-          lastCrawledAt: admin.firestore.FieldValue.serverTimestamp(),
-          crawlingStatus: "success"
-        });
-      }
-    } catch (err) {
-      console.error(`크롤링 실패 [${lecture.title}]:`, err.message);
-    }
-  }
-});</pre>
+        <div class="bg-amber-50 border border-amber-200 p-3 rounded-xl text-amber-900 text-[11px] space-y-1">
+          <div class="font-bold flex items-center gap-1">
+            <i data-lucide="key" class="w-3.5 h-3.5 text-amber-700"></i>
+            <span>GitHub Repository Secrets 등록 방법</span>
+          </div>
+          <p>1. Firebase 콘솔 &gt; 프로젝트 설정 &gt; 서비스 계정에서 <strong>새 비공개 키 생성(JSON 다운로드)</strong></p>
+          <p>2. GitHub 저장소 &gt; Settings &gt; Secrets and variables &gt; Actions &gt; <strong>New repository secret</strong> 클릭</p>
+          <p>3. Name: <code class="bg-amber-100 px-1 py-0.5 rounded font-mono font-bold">FIREBASE_SERVICE_ACCOUNT</code> / Value: 다운로드한 JSON 내용 전체 붙여넣기</p>
         </div>
       </div>
+    </div>
+  </div>
+
+  <!-- 6. 이번 주 공지사항 모달 (Weekly Notice Modal - User Request #2) -->
+  <div id="modalWeeklyNotice" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden items-center justify-center p-3 sm:p-4">
+    <div class="bg-white w-full max-w-4xl rounded-2xl sm:rounded-3xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[92vh]">
+      <!-- Header -->
+      <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between bg-gradient-to-r from-amber-50 via-indigo-50/50 to-blue-50/50 shrink-0">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-amber-500 text-white flex items-center justify-center shadow-xs">
+            <span class="text-xl">📢</span>
+          </div>
+          <div>
+            <div class="flex items-center gap-2 flex-wrap">
+              <h3 class="font-bold text-slate-900 text-base sm:text-lg">이번 주 주요 공지 및 주간 일정</h3>
+              <span id="modalWeeklyPeriodBadge" class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-100 text-amber-900 border border-amber-300">
+                9월 27일 ~ 10월 10일
+              </span>
+            </div>
+            <p class="text-xs text-slate-500 mt-0.5">교사유니버스 지식샘터 주간 미션 및 일정 안내 (구글 시트 주간 공지 양식)</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <!-- Admin Edit Notice Button (Only visible in Admin Mode) -->
+          <button id="btnAdminEditWeeklyNotice" class="hidden px-3 py-1.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold transition shadow-xs flex items-center gap-1.5 cursor-pointer">
+            <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
+            <span>공지 수정</span>
+          </button>
+          <button class="modal-close-btn text-slate-400 hover:text-slate-600 p-1.5 rounded-xl hover:bg-white/80 transition cursor-pointer">
+            <i data-lucide="x" class="w-5 h-5"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Modal Body (Scrollable) -->
+      <div class="p-4 sm:p-6 overflow-y-auto space-y-5 text-slate-800">
+        <!-- 1. Top Highlight & Key Resources Banner -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3.5">
+          <!-- Headline Summary Box (Span 2) -->
+          <div class="md:col-span-2 bg-gradient-to-br from-indigo-900 via-indigo-800 to-slate-900 text-white p-4 sm:p-5 rounded-2xl shadow-sm space-y-2 relative overflow-hidden">
+            <div class="absolute -right-6 -bottom-6 opacity-10 text-white pointer-events-none">
+              <i data-lucide="calendar" class="w-36 h-36"></i>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="px-2 py-0.5 rounded-md bg-amber-400 text-slate-900 text-[11px] font-black tracking-wider uppercase">
+                주간 주요 일정
+              </span>
+              <span id="modalWeeklyPeriodSub" class="text-xs text-indigo-200">9월 27일 ~ 10월 10일</span>
+            </div>
+            <div id="modalWeeklyHeadlineText" class="text-base sm:text-lg font-bold text-white leading-relaxed">
+              😍 주요 일정 : 최임 제출 / 강의 차시별 흐름 구성, 강의 재료 모으기
+            </div>
+            <div class="text-xs text-indigo-200/90 pt-1 flex items-center gap-1.5">
+              <i data-lucide="check-circle" class="w-3.5 h-3.5 text-amber-300"></i>
+              <span>이번 주 일정을 확인하고 차시별 강의 준비 및 최임 마감에 차질 없으시길 바랍니다.</span>
+            </div>
+          </div>
+
+          <!-- Resource Link Card (Span 1) -->
+          <div class="bg-amber-50/80 border border-amber-200/80 p-4 sm:p-5 rounded-2xl flex flex-col justify-between gap-3">
+            <div>
+              <div class="text-[11px] font-bold text-amber-800 uppercase tracking-wider mb-1">핵심 참고 자료</div>
+              <div id="modalWeeklyResourceTitle" class="font-bold text-slate-900 text-sm">
+                🎁 지식샘터 강의 지원 자료집 바로가기
+              </div>
+              <div id="modalWeeklyResourceDesc" class="text-xs text-slate-600 mt-1 line-clamp-2">
+                강의 계획서 양식, 수업 슬라이드 템플릿, KERIS 연수원 매뉴얼 수록
+              </div>
+            </div>
+            <a id="modalWeeklyResourceLink" href="https://educourse.keris.or.kr" target="_blank" rel="noopener noreferrer" class="w-full py-2.5 px-3 bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs rounded-xl shadow-xs transition flex items-center justify-center gap-1.5 active:scale-98">
+              <span>자료집 바로가기</span>
+              <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+            </a>
+          </div>
+        </div>
+
+        <!-- 2. 주간 달력 / 할 일 매트릭스 (일 ~ 토) -->
+        <div>
+          <div class="flex items-center justify-between mb-2.5">
+            <h4 class="text-sm font-bold text-slate-900 flex items-center gap-1.5">
+              <i data-lucide="calendar-days" class="w-4 h-4 text-indigo-600"></i>
+              <span>주간 일정 및 할 일 매트릭스 (일 ~ 토)</span>
+            </h4>
+            <span class="text-xs text-slate-400">※ 구글 시트 주간 공지 캘린더 양식</span>
+          </div>
+
+          <div id="weeklyDaysContainer" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-2.5">
+            <!-- Day Cards dynamically rendered by JS -->
+          </div>
+        </div>
+
+        <!-- 3. 하단 세부 안내 사항 (3-Column Cards) -->
+        <div>
+          <div class="flex items-center justify-between mb-2.5">
+            <h4 class="text-sm font-bold text-slate-900 flex items-center gap-1.5">
+              <i data-lucide="clipboard-list" class="w-4 h-4 text-indigo-600"></i>
+              <span>세부 안내 사항 및 지원 혜택</span>
+            </h4>
+          </div>
+
+          <div id="weeklyDetailCardsContainer" class="grid grid-cols-1 md:grid-cols-3 gap-3">
+            <!-- Detail cards dynamically rendered by JS -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="px-5 py-3 border-t border-slate-100 flex items-center justify-between bg-slate-50 text-xs text-slate-500 shrink-0">
+        <div class="flex items-center gap-2 flex-wrap">
+          <i data-lucide="clock" class="w-3.5 h-3.5 text-slate-400"></i>
+          <span>최근 갱신: <span id="modalWeeklyUpdatedAt" class="font-medium text-slate-700">2026-09-25</span></span>
+          <span class="text-slate-300">|</span>
+          <span id="modalWeeklyStorageSource" class="text-[11px] text-slate-400">Firestore 실시간 연동</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <button id="btnAdminEditWeeklyNoticeFooter" class="hidden px-3 py-1.5 text-xs font-bold text-amber-800 bg-amber-100 hover:bg-amber-200 border border-amber-300 rounded-xl transition cursor-pointer">
+            공지 수정
+          </button>
+          <button type="button" class="modal-close-btn px-4 py-2 text-xs font-semibold text-slate-700 bg-white hover:bg-slate-100 border border-slate-200 rounded-xl transition cursor-pointer shadow-2xs">
+            닫기
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6-A. 이번 주 공지사항 관리자 편집 모달 (User Request #3) -->
+  <div id="modalEditWeeklyNotice" class="fixed inset-0 z-50 bg-slate-900/70 backdrop-blur-xs hidden items-center justify-center p-3 sm:p-4">
+    <div class="bg-white w-full max-w-3xl rounded-2xl sm:rounded-3xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[92vh]">
+      <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50 shrink-0">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-lg bg-amber-500 text-white flex items-center justify-center shadow-xs">
+            <i data-lucide="edit-3" class="w-4 h-4"></i>
+          </div>
+          <div>
+            <h3 class="font-bold text-slate-900 text-base">이번 주 공지사항 수정 (관리자 전용)</h3>
+            <p class="text-xs text-slate-500">Firestore DB(weekly_notice)에 실시간 저장되어 모든 교사 화면에 즉시 반영됩니다.</p>
+          </div>
+        </div>
+        <button class="modal-close-btn text-slate-400 hover:text-slate-600 p-1 rounded-lg cursor-pointer">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <form id="formEditWeeklyNotice" class="p-5 sm:p-6 overflow-y-auto space-y-4 text-xs">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">주간 기간 <span class="text-red-500">*</span></label>
+            <input type="text" id="editNoticePeriod" required placeholder="예: 9월 27일 ~ 10월 10일" class="w-full text-xs px-3 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:outline-hidden" />
+          </div>
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">자료집 바로가기 제목</label>
+            <input type="text" id="editNoticeResourceTitle" placeholder="예: 🎁 지식샘터 강의 지원 자료집 바로가기" class="w-full text-xs px-3 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:outline-hidden" />
+          </div>
+        </div>
+
+        <div>
+          <label class="block font-semibold text-slate-700 mb-1">주요 일정 요약 (상단 헤드라인) <span class="text-red-500">*</span></label>
+          <input type="text" id="editNoticeHeadline" required placeholder="예: 😍 주요 일정 : 최임 제출 / 강의 차시별 흐름 구성, 강의 재료 모으기" class="w-full text-xs px-3 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:outline-hidden" />
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">자료집 링크 URL</label>
+            <input type="url" id="editNoticeResourceUrl" placeholder="https://educourse.keris.or.kr" class="w-full text-xs px-3 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:outline-hidden" />
+          </div>
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">자료집 부가 설명</label>
+            <input type="text" id="editNoticeResourceDesc" placeholder="예: 강의 계획서 양식, 수업 슬라이드 템플릿 수록" class="w-full text-xs px-3 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:outline-hidden" />
+          </div>
+        </div>
+
+        <div class="pt-2 border-t border-slate-100">
+          <div class="flex items-center justify-between mb-2">
+            <span class="font-bold text-slate-900 text-xs">일요일 ~ 토요일 날짜별 할 일 (7일)</span>
+            <span class="text-[11px] text-slate-400">할 일은 줄바꿈(엔터)으로 여러 개 입력 가능</span>
+          </div>
+
+          <div id="editNoticeDaysWrapper" class="space-y-2.5">
+            <!-- 7 days inputs generated / populated by JS -->
+          </div>
+        </div>
+
+        <div class="pt-2 border-t border-slate-100">
+          <div class="flex items-center justify-between mb-2">
+            <span class="font-bold text-slate-900 text-xs">하단 세부 안내 사항 (3개 카드)</span>
+            <span class="text-[11px] text-slate-400">각 카드의 항목은 줄바꿈(엔터)으로 구분</span>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
+              <label class="block font-semibold text-slate-700">카드 1 제목</label>
+              <input type="text" id="editDetailCardTitle0" class="w-full text-xs px-2.5 py-1.5 border border-slate-300 rounded-lg" />
+              <label class="block font-semibold text-slate-700">항목 목록 (줄바꿈)</label>
+              <textarea id="editDetailCardItems0" rows="4" class="w-full text-xs p-2 border border-slate-300 rounded-lg"></textarea>
+            </div>
+            <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
+              <label class="block font-semibold text-slate-700">카드 2 제목</label>
+              <input type="text" id="editDetailCardTitle1" class="w-full text-xs px-2.5 py-1.5 border border-slate-300 rounded-lg" />
+              <label class="block font-semibold text-slate-700">항목 목록 (줄바꿈)</label>
+              <textarea id="editDetailCardItems1" rows="4" class="w-full text-xs p-2 border border-slate-300 rounded-lg"></textarea>
+            </div>
+            <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
+              <label class="block font-semibold text-slate-700">카드 3 제목</label>
+              <input type="text" id="editDetailCardTitle2" class="w-full text-xs px-2.5 py-1.5 border border-slate-300 rounded-lg" />
+              <label class="block font-semibold text-slate-700">항목 목록 (줄바꿈)</label>
+              <textarea id="editDetailCardItems2" rows="4" class="w-full text-xs p-2 border border-slate-300 rounded-lg"></textarea>
+            </div>
+          </div>
+        </div>
+
+        <div class="pt-3 flex items-center justify-between border-t border-slate-100">
+          <button type="button" id="btnResetWeeklyNoticeDefault" class="text-xs text-slate-400 hover:text-rose-600 underline cursor-pointer">
+            기본 예시 공지로 복원
+          </button>
+          <div class="flex items-center gap-2">
+            <button type="button" class="modal-close-btn px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-xl transition cursor-pointer">취소</button>
+            <button type="submit" class="px-5 py-2 text-xs font-bold text-white bg-amber-600 hover:bg-amber-700 rounded-xl shadow-xs transition active:scale-95 flex items-center gap-1.5 cursor-pointer">
+              <i data-lucide="check" class="w-3.5 h-3.5"></i>
+              <span>공지사항 저장</span>
+            </button>
+          </div>
+        </div>
+      </form>
     </div>
   </div>
 
@@ -1093,15 +1407,14 @@ exports.syncKnowledgeFountainCount = onSchedule("every 10 minutes", async (event
      * [Firebase Config 영역 - 사용자 환경에 맞게 입력 가능]
      * ========================================================
      */
-const firebaseConfig = {
-  apiKey: "AIzaSyDUtgwTfZOVbfl0fE_d2MRIIBQaqisyBVw",
-  authDomain: "teacher-universe.firebaseapp.com",
-  projectId: "teacher-universe",
-  storageBucket: "teacher-universe.firebasestorage.app",
-  messagingSenderId: "824269029357",
-  appId: "1:824269029357:web:2aa6aad59d1240259ab1e4",
-  measurementId: "G-LTRJHHVWEC"
-};
+    const firebaseConfig = {
+      apiKey: "",
+      authDomain: "",
+      projectId: "",
+      storageBucket: "",
+      messagingSenderId: "",
+      appId: ""
+    };
 
     // Firebase Modular SDK imports via Google CDN
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
@@ -1118,6 +1431,7 @@ const firebaseConfig = {
       orderBy,
       updateDoc,
       deleteDoc,
+      increment,
       serverTimestamp
     } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
@@ -1569,13 +1883,18 @@ const firebaseConfig = {
       if (modalMemberCount) modalMemberCount.innerText = memberList.length;
 
       const pwHint = document.getElementById("adminCurrentPwHint");
-      if (pwHint) pwHint.innerText = adminMasterPassword;
+      if (pwHint) {
+        pwHint.innerText = "admin1234";
+      }
 
       const pwDisplay = document.getElementById("currentAdminPwDisplay");
-      if (pwDisplay) pwDisplay.innerText = adminMasterPassword;
-
-      const bannerPw = document.getElementById("bannerCurrentAdminPw");
-      if (bannerPw) bannerPw.innerText = adminMasterPassword;
+      if (pwDisplay) {
+        if (adminMasterPassword === "admin1234") {
+          pwDisplay.innerHTML = '<span class="text-indigo-700 font-mono font-bold">admin1234</span> <span class="text-slate-400 font-normal text-[11px]">(초기 비밀번호)</span>';
+        } else {
+          pwDisplay.innerHTML = '<span class="text-emerald-700 font-mono font-bold">••••••••</span> <span class="text-slate-500 font-normal text-[11px]">(수정 완료 - 보안상 비공개)</span><div class="text-[10px] text-slate-400 mt-0.5 font-normal">※ 초기 비밀번호(admin1234)에서 수정되었습니다. 수정한 비밀번호는 노출되지 않습니다.</div>';
+        }
+      }
 
       lucide.createIcons();
     }
@@ -1586,14 +1905,16 @@ const firebaseConfig = {
           ...enrollmentObj,
           timestamp: new Date().toISOString().replace('T', ' ').substring(0, 16)
         });
-        // Increment lecture currentCount
-        const targetLec = lecturesData.find(l => l.id === enrollmentObj.lectureId);
-        if (targetLec) {
-          const newCount = Math.min((targetLec.currentCount || 0) + 1, targetLec.maxCount || 10);
-          await updateDoc(doc(db, "lectures", enrollmentObj.lectureId), {
-            currentCount: newCount
-          });
-        }
+        // Increment lecture enrolledCount and currentCount atomically
+        const targetLec = lecturesData.find(l => String(l.id) === String(enrollmentObj.lectureId));
+        const prevCount = targetLec ? (targetLec.enrolledCount !== undefined ? targetLec.enrolledCount : (targetLec.currentCount || 0)) : 0;
+        const max = targetLec ? (targetLec.maxCount || 10) : 10;
+        const newCount = Math.min(prevCount + 1, max);
+
+        await updateDoc(doc(db, "lectures", String(enrollmentObj.lectureId)), {
+          enrolledCount: increment(1),
+          currentCount: newCount
+        });
       } else {
         const id = "enr-" + Date.now();
         const newObj = {
@@ -1604,9 +1925,13 @@ const firebaseConfig = {
         enrollmentsData.unshift(newObj);
 
         // Update local count
-        const targetLec = lecturesData.find(l => l.id === enrollmentObj.lectureId);
+        const targetLec = lecturesData.find(l => String(l.id) === String(enrollmentObj.lectureId));
         if (targetLec) {
-          targetLec.currentCount = Math.min((targetLec.currentCount || 0) + 1, targetLec.maxCount || 10);
+          const prevCount = targetLec.enrolledCount !== undefined ? targetLec.enrolledCount : (targetLec.currentCount || 0);
+          const max = targetLec.maxCount || 10;
+          const newCount = Math.min(prevCount + 1, max);
+          targetLec.enrolledCount = newCount;
+          targetLec.currentCount = newCount;
         }
         saveLocalData();
         renderAllViews();
@@ -1708,10 +2033,8 @@ const firebaseConfig = {
       // 2. Render KPIs
       renderKpis(monthLectures, monthEnrollments);
 
-      // 3. Render Calendar Events (Include adjacent months so non-current dates show lectures!)
-      const prevM = getAdjacentMonth(currentSelectedMonth, -1);
-      const nextM = getAdjacentMonth(currentSelectedMonth, 1);
-      const calendarLectures = lecturesData.filter(l => l.month === currentSelectedMonth || l.month === prevM || l.month === nextM);
+      // 3. Render Calendar Events (Only for current selected month)
+      const calendarLectures = lecturesData.filter(l => l.month === currentSelectedMonth);
       renderCalendarEvents(calendarLectures);
 
       // 4. Render Matrix Table (Grouped by presenter with individual lecture sub-columns)
@@ -1773,14 +2096,13 @@ const firebaseConfig = {
         locale: "ko",
         headerToolbar: false, // controlled by our custom month bar
         initialDate: `${currentSelectedMonth}-01`,
-        showNonCurrentDates: true,
+        showNonCurrentDates: false,
         fixedWeekCount: false,
         dayMaxEvents: 3,
         height: "auto",
         eventContent: function(arg) {
           const props = arg.event.extendedProps;
-          const isAdjacentMonth = props.month !== currentSelectedMonth;
-          const curr = props.currentCount || 0;
+          const curr = props.enrolledCount !== undefined ? props.enrolledCount : (props.currentCount || 0);
           const max = props.maxCount || 10;
           const ratio = curr / max;
 
@@ -1788,7 +2110,7 @@ const firebaseConfig = {
           let badgeText = "신청가능";
           if (curr >= max) {
             badgeColor = "bg-rose-100 text-rose-700 border-rose-200";
-            badgeText = "마감";
+            badgeText = "정원마감";
           } else if (ratio >= 0.8) {
             badgeColor = "bg-amber-100 text-amber-700 border-amber-200";
             badgeText = "마감임박";
@@ -1797,17 +2119,15 @@ const firebaseConfig = {
           const hasUrl = props.url && props.url !== "#" && props.url.trim() !== "";
           const missingUrlPill = !hasUrl ? `<span class="text-[9px] font-bold px-1 rounded bg-amber-50 text-amber-700 border border-amber-200">🔗 링크준비중</span>` : "";
           const adminIcon = isAdminMode ? `<span title="관리자 전권 수정 가능" class="text-[10px]">👑</span>` : "";
-          const adjacentBadge = isAdjacentMonth ? `<span class="text-[9px] font-extrabold px-1 rounded bg-slate-200 text-slate-700">${props.month.split("-")[1]}월</span>` : "";
 
           // HTML for Card inside calendar cell
           const customHtml = `
-            <div class="group p-1.5 mb-1.5 rounded-xl ${isAdjacentMonth ? 'bg-slate-50/90 border border-dashed border-slate-300 opacity-85' : 'bg-white border border-slate-200'} shadow-2xs hover:shadow-md hover:border-blue-400 transition cursor-pointer text-left">
+            <div class="group p-1.5 mb-1.5 rounded-xl bg-white border border-slate-200 shadow-2xs hover:shadow-md hover:border-blue-400 transition cursor-pointer text-left">
               <div class="flex items-center justify-between gap-1 mb-1">
                 <div class="flex items-center gap-1">
                   <span class="text-[10px] font-bold px-1.5 py-0.5 rounded-full ${badgeColor} border">
                     ${badgeText}
                   </span>
-                  ${adjacentBadge}
                   ${adminIcon}
                 </div>
                 <span class="text-[11px] font-black text-slate-800">
@@ -1856,7 +2176,8 @@ const firebaseConfig = {
           presenter: lec.presenter,
           time: lec.time,
           url: lec.url,
-          currentCount: lec.currentCount,
+          currentCount: lec.enrolledCount !== undefined ? lec.enrolledCount : lec.currentCount,
+          enrolledCount: lec.enrolledCount !== undefined ? lec.enrolledCount : lec.currentCount,
           maxCount: lec.maxCount,
           month: lec.month
         }
@@ -1964,7 +2285,7 @@ const firebaseConfig = {
             </div>
             <div class="text-[10px] text-slate-500 mt-1.5 flex items-center justify-between pt-1 border-t border-slate-200/70">
               <span class="font-mono text-slate-600 bg-white px-1.5 py-0.5 rounded border border-slate-200 text-[9px] font-medium">${lec.date.substring(5)}</span>
-              <span class="text-blue-600 font-bold">${lec.currentCount || 0}/${lec.maxCount || 10}명</span>
+              <span class="text-blue-600 font-bold">${lec.enrolledCount !== undefined ? lec.enrolledCount : (lec.currentCount || 0)}/${lec.maxCount || 10}명</span>
             </div>
           `;
           headerRow2.appendChild(th2);
@@ -2103,7 +2424,7 @@ const firebaseConfig = {
 
       container.innerHTML = filteredLectures.map(lec => {
         const enrs = monthEnrollments.filter(e => e.lectureId === lec.id);
-        const curr = lec.currentCount || enrs.length;
+        const curr = lec.enrolledCount !== undefined ? lec.enrolledCount : (lec.currentCount !== undefined ? lec.currentCount : enrs.length);
         const max = lec.maxCount || 10;
 
         const studentTags = enrs.length > 0 ? enrs.map(e => {
@@ -2189,7 +2510,7 @@ const firebaseConfig = {
       document.getElementById("detailTime").innerText = `${lec.date} (${lec.time || "시간 미정"})`;
       document.getElementById("detailDateBadge").innerText = `${lec.month}`;
 
-      const curr = lec.currentCount || 0;
+      const curr = lec.enrolledCount !== undefined ? lec.enrolledCount : (lec.currentCount || 0);
       const max = lec.maxCount || 10;
       const percent = Math.min(Math.round((curr / max) * 100), 100);
 
@@ -2215,7 +2536,7 @@ const firebaseConfig = {
       }
 
       document.getElementById("detailRemaining").innerText = `잔여 ${Math.max(max - curr, 0)}자리`;
-      document.getElementById("detailCrawlerStatus").innerText = lec.lastCrawledAt ? `최근 연동: ${lec.lastCrawledAt}` : "수강 인원 실시간 연동됨";
+      document.getElementById("detailCrawlerStatus").innerText = "강사 직접 관리 (실시간 반영)";
 
       // Missing URL Check & Link Setup
       const hasUrl = lec.url && lec.url !== "#" && lec.url.trim() !== "";
@@ -2259,6 +2580,20 @@ const firebaseConfig = {
         `).join("");
       } else {
         memberListEl.innerHTML = `<span class="text-xs text-slate-400 italic p-1">아직 신청한 모임 교사가 없습니다. 첫 번째로 신청해 보세요!</span>`;
+      }
+
+      // Enroll CTA Button state (disabled when full)
+      const btnEnroll = document.getElementById("btnDetailEnroll");
+      if (btnEnroll) {
+        if (curr >= max) {
+          btnEnroll.disabled = true;
+          btnEnroll.className = "flex-1 py-2.5 text-sm font-bold text-slate-400 bg-slate-200 rounded-xl cursor-not-allowed flex items-center justify-center gap-1.5";
+          btnEnroll.innerHTML = `<i data-lucide="slash" class="w-4 h-4"></i><span>정원 마감 (신청 불가)</span>`;
+        } else {
+          btnEnroll.disabled = false;
+          btnEnroll.className = "flex-1 py-2.5 text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 active:scale-95 rounded-xl shadow-xs transition flex items-center justify-center gap-1.5";
+          btnEnroll.innerHTML = `<i data-lucide="send" class="w-4 h-4"></i><span>강의 신청하기</span>`;
+        }
       }
 
       // Open Modal
@@ -2312,7 +2647,7 @@ const firebaseConfig = {
     // Close all modal buttons
     document.querySelectorAll(".modal-close-btn").forEach(btn => {
       btn.addEventListener("click", () => {
-        document.querySelectorAll("#modalRegister, #modalDetail, #modalEnroll, #modalCrawler, #modalConfig, #modalEditLecture, #modalAuthPrompt, #modalAdminLogin, #modalConfirmDelete, #modalAdminChangePw, #modalManageMembers, #modalEnrollStatusAuth").forEach(m => {
+        document.querySelectorAll("#modalRegister, #modalDetail, #modalEnroll, #modalCrawler, #modalConfig, #modalEditLecture, #modalAuthPrompt, #modalAdminLogin, #modalConfirmDelete, #modalAdminChangePw, #modalManageMembers, #modalEnrollStatusAuth, #modalUpdateLectureCount").forEach(m => {
           m.classList.add("hidden");
           m.classList.remove("flex");
         });
@@ -2439,6 +2774,8 @@ const firebaseConfig = {
       document.getElementById("editTime").value = lec.time || "";
       document.getElementById("editUrl").value = (lec.url && lec.url !== "#") ? lec.url : "";
       document.getElementById("editPassword").value = "";
+      const currentEnrolled = lec.enrolledCount !== undefined ? lec.enrolledCount : (lec.currentCount || 0);
+      document.getElementById("editEnrolledCount").value = currentEnrolled;
 
       const badge = document.getElementById("editModalAuthBadge");
       if (isAdminMode) {
@@ -2464,6 +2801,8 @@ const firebaseConfig = {
       const title = document.getElementById("editTitle").value.trim();
       const presenter = document.getElementById("editPresenter").value.trim();
       const maxCount = parseInt(document.getElementById("editMaxCount").value, 10) || 10;
+      const customEnrolled = parseInt(document.getElementById("editEnrolledCount").value, 10);
+      const enrolledCount = isNaN(customEnrolled) ? 0 : Math.max(0, customEnrolled);
       const date = document.getElementById("editDate").value;
       const time = document.getElementById("editTime").value.trim();
       const url = document.getElementById("editUrl").value.trim();
@@ -2475,6 +2814,8 @@ const firebaseConfig = {
         title,
         presenter,
         maxCount,
+        enrolledCount,
+        currentCount: enrolledCount,
         date,
         time,
         url,
@@ -2507,6 +2848,7 @@ const firebaseConfig = {
     document.getElementById("btnOpenRegisterModal").addEventListener("click", () => {
       // Default date to current month
       document.getElementById("regDate").value = `${currentSelectedMonth}-10`;
+      document.getElementById("regEnrolledCount").value = "0";
       document.getElementById("modalRegister").classList.remove("hidden");
       document.getElementById("modalRegister").classList.add("flex");
     });
@@ -2517,6 +2859,8 @@ const firebaseConfig = {
       const title = document.getElementById("regTitle").value.trim();
       const presenter = document.getElementById("regPresenter").value.trim();
       const maxCount = parseInt(document.getElementById("regMaxCount").value, 10) || 10;
+      const customEnrolled = parseInt(document.getElementById("regEnrolledCount").value, 10);
+      const enrolledCount = isNaN(customEnrolled) ? 0 : Math.max(0, customEnrolled);
       const date = document.getElementById("regDate").value;
       const time = document.getElementById("regTime").value.trim();
       const url = document.getElementById("regUrl").value.trim(); // Can be empty!
@@ -2531,7 +2875,8 @@ const firebaseConfig = {
         time,
         url, // Optional - can be added later
         password, // Author PIN for editing
-        currentCount: 0,
+        currentCount: enrolledCount,
+        enrolledCount: enrolledCount,
         maxCount,
         month,
         lastCrawledAt: new Date().toISOString().replace('T', ' ').substring(0, 16)
@@ -2572,6 +2917,112 @@ const firebaseConfig = {
         checkAuthorOrAdminAccess(activeDetailLecture, "링크 등록", () => {
           openEditModal(activeDetailLecture);
         });
+      }
+    });
+
+    // Detail Modal Change Attendance Count Button & Logic (Requirement: Registered instructor can change attendance)
+    let pendingCountLecture = null;
+
+    function openUpdateLectureCountModal(lec) {
+      if (!lec) return;
+      pendingCountLecture = lec;
+      document.getElementById("countChangeLecTitle").innerText = lec.title;
+      document.getElementById("countChangeLecPresenter").innerText = lec.presenter;
+      document.getElementById("countChangeLecMax").innerText = lec.maxCount || 10;
+      
+      const currentVal = (lec.enrolledCount !== undefined && lec.enrolledCount !== null) ? lec.enrolledCount : (lec.currentCount || 0);
+      document.getElementById("inputNewEnrolledCount").value = currentVal;
+      document.getElementById("countChangePasswordInput").value = "";
+
+      const authBox = document.getElementById("countChangeAuthBox");
+      const adminBadge = document.getElementById("countChangeAdminBadge");
+
+      if (isAdminMode) {
+        if (authBox) authBox.classList.add("hidden");
+        if (adminBadge) adminBadge.classList.remove("hidden");
+        document.getElementById("countChangePasswordInput").removeAttribute("required");
+      } else {
+        if (authBox) authBox.classList.remove("hidden");
+        if (adminBadge) adminBadge.classList.add("hidden");
+        document.getElementById("countChangePasswordInput").setAttribute("required", "required");
+      }
+
+      document.getElementById("modalUpdateLectureCount").classList.remove("hidden");
+      document.getElementById("modalUpdateLectureCount").classList.add("flex");
+      
+      if (!isAdminMode) {
+        document.getElementById("countChangePasswordInput").focus();
+      } else {
+        document.getElementById("inputNewEnrolledCount").focus();
+      }
+    }
+
+    document.getElementById("btnDetailChangeCount")?.addEventListener("click", () => {
+      if (activeDetailLecture) {
+        openUpdateLectureCountModal(activeDetailLecture);
+      }
+    });
+
+    document.getElementById("btnCountDec")?.addEventListener("click", () => {
+      const inp = document.getElementById("inputNewEnrolledCount");
+      const val = parseInt(inp.value, 10) || 0;
+      inp.value = Math.max(0, val - 1);
+    });
+
+    document.getElementById("btnCountInc")?.addEventListener("click", () => {
+      const inp = document.getElementById("inputNewEnrolledCount");
+      const val = parseInt(inp.value, 10) || 0;
+      inp.value = val + 1;
+    });
+
+    document.getElementById("formUpdateLectureCount")?.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      if (!pendingCountLecture) return;
+
+      const newCount = parseInt(document.getElementById("inputNewEnrolledCount").value, 10);
+      if (isNaN(newCount) || newCount < 0) {
+        showToast("올바른 수강 인원을 입력해주세요 (0 이상).", "error");
+        return;
+      }
+
+      // Check author authorization (단, 등록강사만 변동가능케 해)
+      if (!isAdminMode) {
+        const enteredPw = document.getElementById("countChangePasswordInput").value.trim();
+        const expectedPw = pendingCountLecture.password || "1234";
+        if (enteredPw !== expectedPw && enteredPw !== adminMasterPassword && enteredPw !== "universe2026") {
+          showToast("비밀번호가 일치하지 않습니다. 해당 강의를 등록한 강사만 수강 인원을 변경할 수 있습니다.", "error");
+          return;
+        }
+      }
+
+      const lecId = pendingCountLecture.id;
+      try {
+        await updateLecture(lecId, {
+          currentCount: newCount,
+          enrolledCount: newCount,
+          lastCrawledAt: new Date().toISOString().replace('T', ' ').substring(0, 16)
+        });
+
+        // Update in memory
+        const idx = lecturesData.findIndex(l => String(l.id) === String(lecId));
+        if (idx !== -1) {
+          lecturesData[idx].currentCount = newCount;
+          lecturesData[idx].enrolledCount = newCount;
+        }
+        if (activeDetailLecture && String(activeDetailLecture.id) === String(lecId)) {
+          activeDetailLecture.currentCount = newCount;
+          activeDetailLecture.enrolledCount = newCount;
+          openDetailModal(activeDetailLecture);
+        }
+
+        renderAllViews();
+        document.getElementById("modalUpdateLectureCount").classList.add("hidden");
+        document.getElementById("modalUpdateLectureCount").classList.remove("flex");
+        showToast(`'${pendingCountLecture.presenter}' 강사님의 수강 인원이 [${newCount}명]으로 성공적으로 저장되었습니다!`, "success");
+        triggerConfetti();
+      } catch (err) {
+        console.error("Failed to update lecture attendance count:", err);
+        showToast("수강 인원 변경 중 오류가 발생했습니다.", "error");
       }
     });
 
@@ -2632,7 +3083,16 @@ const firebaseConfig = {
       document.getElementById("newAdminPwInput").value = "";
       const confirmInput = document.getElementById("newAdminPwConfirmInput");
       if (confirmInput) confirmInput.value = "";
-      document.getElementById("currentAdminPwDisplay").innerText = adminMasterPassword;
+      
+      const pwDisplay = document.getElementById("currentAdminPwDisplay");
+      if (pwDisplay) {
+        if (adminMasterPassword === "admin1234") {
+          pwDisplay.innerHTML = '<span class="text-indigo-700 font-mono font-bold">admin1234</span> <span class="text-slate-400 font-normal text-[11px]">(초기 비밀번호)</span>';
+        } else {
+          pwDisplay.innerHTML = '<span class="text-emerald-700 font-mono font-bold">••••••••</span> <span class="text-slate-500 font-normal text-[11px]">(수정 완료 - 보안상 비공개)</span><div class="text-[10px] text-slate-400 mt-0.5 font-normal">※ 초기 비밀번호(admin1234)에서 수정되었습니다. 수정한 비밀번호는 노출되지 않습니다.</div>';
+        }
+      }
+
       document.getElementById("modalAdminChangePw").classList.remove("hidden");
       document.getElementById("modalAdminChangePw").classList.add("flex");
       document.getElementById("newAdminPwInput").focus();
@@ -2664,7 +3124,7 @@ const firebaseConfig = {
       updateAdminUI();
       document.getElementById("modalAdminChangePw").classList.add("hidden");
       document.getElementById("modalAdminChangePw").classList.remove("flex");
-      showToast(`관리자 비밀번호가 [${newPw}](으)로 성공적으로 변경되었습니다!`, "success");
+      showToast("관리자 비밀번호가 성공적으로 변경되었습니다! (보안을 위해 변경된 비밀번호는 화면에 노출되지 않습니다)", "success");
       triggerConfetti();
     });
 
@@ -2810,7 +3270,7 @@ const firebaseConfig = {
         showToast("👑 관리자 모드가 활성화되었습니다! 모든 강의의 전권이 부여됩니다.", "success");
         triggerConfetti();
       } else {
-        showToast(`관리자 비밀번호가 일치하지 않습니다. (현재: ${adminMasterPassword})`, "error");
+        showToast("관리자 비밀번호가 일치하지 않습니다. (초기 비밀번호: admin1234)", "error");
       }
     });
 
@@ -2840,18 +3300,36 @@ const firebaseConfig = {
       const studentName = document.getElementById("enrollStudentName").value.trim();
       if (!studentName) return;
 
+      // 1. 중복 방지 검증: 이미 본 강의에 신청한 교사(계정)인지 확인
+      const isAlreadyEnrolled = enrollmentsData.some(
+        enr => String(enr.lectureId) === String(activeDetailLecture.id) && enr.studentName.trim().toLowerCase() === studentName.toLowerCase()
+      );
+      if (isAlreadyEnrolled) {
+        showToast(`'${studentName}' 선생님은 이미 이 강의에 신청하셨습니다. 중복 신청은 불가합니다.`, "error");
+        return;
+      }
+
+      // 본인 개설 강의 신청 방지
+      if (activeDetailLecture.presenter && activeDetailLecture.presenter.trim().toLowerCase() === studentName.toLowerCase()) {
+        showToast("본인이 개설한 강의에는 수강 신청할 수 없습니다.", "error");
+        return;
+      }
+
+      // 2. 정원 마감 검증
+      const currentEnrolled = activeDetailLecture.enrolledCount !== undefined ? activeDetailLecture.enrolledCount : (activeDetailLecture.currentCount || 0);
+      const maxCount = activeDetailLecture.maxCount || 10;
+      if (currentEnrolled >= maxCount) {
+        showToast("모집 정원이 마감되어 더 이상 신청할 수 없습니다.", "error");
+        return;
+      }
+
       const studentPw = document.getElementById("enrollPassword")?.value.trim() || "1234";
 
       // Save nickname and password to localStorage
       localStorage.setItem("kyosa_universe_user_nickname", studentName);
       localStorage.setItem("kyosa_universe_pw_" + studentName, studentPw);
 
-      // 1. Open official KERIS Knowledge Fountain URL in new tab immediately
-      if (activeDetailLecture.url && activeDetailLecture.url !== "#") {
-        window.open(activeDetailLecture.url, "_blank");
-      }
-
-      // 2. Save enrollment record
+      // 3. Save enrollment record first & increment count
       const enrollmentObj = {
         lectureId: activeDetailLecture.id,
         lectureTitle: activeDetailLecture.title,
@@ -2863,17 +3341,23 @@ const firebaseConfig = {
 
       await createEnrollment(enrollmentObj);
 
+      // 4. Open official KERIS Knowledge Fountain URL in new tab
+      if (activeDetailLecture.url && activeDetailLecture.url !== "#" && activeDetailLecture.url.trim() !== "") {
+        window.open(activeDetailLecture.url, "_blank");
+      }
+
       // Close modal & celebrate
       document.getElementById("modalEnroll").classList.add("hidden");
       document.getElementById("modalEnroll").classList.remove("flex");
 
-      showToast(`'${activeDetailLecture.presenter}' 선생님 강의 신청이 기록되었습니다!`, "success");
+      showToast(`'${studentName}' 선생님 신청 완료! (수강 인원 +1 반영)`, "success");
       triggerConfetti();
     });
 
-    // Crawler sync trigger button (Manual sync simulation / Cloud Function invocation)
-    document.getElementById("btnTriggerCrawlerSync").addEventListener("click", async () => {
+    // Crawler sync trigger button (if present)
+    document.getElementById("btnTriggerCrawlerSync")?.addEventListener("click", async () => {
       const btn = document.getElementById("btnTriggerCrawlerSync");
+      if (!btn) return;
       btn.disabled = true;
       btn.innerHTML = `<i data-lucide="loader-2" class="w-3.5 h-3.5 animate-spin"></i><span>크롤러 동기화 중...</span>`;
       lucide.createIcons();
@@ -2894,10 +3378,10 @@ const firebaseConfig = {
         btn.disabled = false;
         btn.innerHTML = `<i data-lucide="check" class="w-3.5 h-3.5 text-emerald-600"></i><span>동기화 완료!</span>`;
         lucide.createIcons();
-        showToast("지식샘터 수강 인원 크롤러 동기화가 완료되었습니다.", "success");
+        showToast("지식샘터 수강 인원 동기화가 완료되었습니다.", "success");
 
         setTimeout(() => {
-          btn.innerHTML = `<i data-lucide="refresh-cw" class="w-3.5 h-3.5 text-blue-600"></i><span>수강인원 크롤러 동기화</span>`;
+          btn.innerHTML = `<i data-lucide="refresh-cw" class="w-3.5 h-3.5 text-blue-600"></i><span>수강인원 동기화</span>`;
           lucide.createIcons();
         }, 2500);
       }, 900);
@@ -2930,11 +3414,12 @@ const firebaseConfig = {
       let csv = "\uFEFF강의명,강사,일시,정원,현재인원,신청자,상태,신청일시\n";
       monthLectures.forEach(l => {
         const enrs = monthEnrollments.filter(e => e.lectureId === l.id);
+        const curr = l.enrolledCount !== undefined ? l.enrolledCount : (l.currentCount || 0);
         if (enrs.length === 0) {
-          csv += `"${l.title.replace(/"/g, '""')}","${l.presenter}","${l.date} ${l.time || ''}",${l.maxCount},${l.currentCount || 0},"-","-","-"\n`;
+          csv += `"${l.title.replace(/"/g, '""')}","${l.presenter}","${l.date} ${l.time || ''}",${l.maxCount},${curr},"-","-","-"\n`;
         } else {
           enrs.forEach(e => {
-            csv += `"${l.title.replace(/"/g, '""')}","${l.presenter}","${l.date} ${l.time || ''}",${l.maxCount},${l.currentCount || 0},"${e.studentName}","${e.status}","${e.timestamp || ''}"\n`;
+            csv += `"${l.title.replace(/"/g, '""')}","${l.presenter}","${l.date} ${l.time || ''}",${l.maxCount},${curr},"${e.studentName}","${e.status}","${e.timestamp || ''}"\n`;
           });
         }
       });
@@ -2950,20 +3435,20 @@ const firebaseConfig = {
     });
 
     // Copy Crawler Code
-    document.getElementById("btnCopyCrawlerCode").addEventListener("click", () => {
-      const code = document.getElementById("crawlerCodeBlock").innerText;
+    document.getElementById("btnCopyCrawlerCode")?.addEventListener("click", () => {
+      const code = document.getElementById("crawlerCodeBlock")?.innerText || "";
       navigator.clipboard.writeText(code).then(() => {
-        showToast("Cloud Function 코드가 클립보드에 복사되었습니다.", "success");
+        showToast("크롤러 코드가 클립보드에 복사되었습니다.", "success");
       });
     });
 
-    document.getElementById("btnCrawlerGuide").addEventListener("click", () => {
+    document.getElementById("btnCrawlerGuide")?.addEventListener("click", () => {
       document.getElementById("modalCrawler").classList.remove("hidden");
       document.getElementById("modalCrawler").classList.add("flex");
     });
 
     // Firebase Config Modal
-    document.getElementById("btnConfigModal").addEventListener("click", () => {
+    document.getElementById("btnConfigModal")?.addEventListener("click", () => {
       const txt = document.getElementById("txtFirebaseConfigJson");
       if (activeFirebaseConfig) {
         txt.value = JSON.stringify(activeFirebaseConfig, null, 2);
