@@ -136,6 +136,10 @@
           <i data-lucide="link-2-off" class="w-3.5 h-3.5 text-amber-300"></i>
           <span>링크 미등록 (<span id="adminMissingLinkCount">0</span>)</span>
         </button>
+        <button id="btnAdminEditNoticeBanner" class="px-2.5 py-1 rounded-lg bg-white/20 hover:bg-white/30 text-white text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer">
+          <i data-lucide="edit-3" class="w-3.5 h-3.5 text-amber-300"></i>
+          <span>공지 수정</span>
+        </button>
         <button id="btnAdminExit" class="px-2.5 py-1 rounded-lg bg-white text-slate-900 font-bold hover:bg-amber-100 text-xs transition shadow-xs flex items-center gap-1">
           <i data-lucide="log-out" class="w-3.5 h-3.5 text-slate-700"></i>
           <span>종료</span>
@@ -160,13 +164,22 @@
         </div>
       </div>
 
+      <!-- Navigation Tabs (Requirement #1: Switch between Calendar and Weekly Notice) -->
+      <nav class="flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200 text-xs font-bold">
+        <button id="btnTabCalendar" type="button" class="px-3 py-1.5 rounded-lg bg-blue-600 text-white shadow-2xs flex items-center gap-1.5 transition cursor-pointer">
+          <i data-lucide="calendar" class="w-3.5 h-3.5"></i>
+          <span class="hidden sm:inline">강의 캘린더</span>
+          <span class="sm:hidden">캘린더</span>
+        </button>
+        <button id="btnTabNotice" type="button" class="px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-white/60 flex items-center gap-1.5 transition cursor-pointer relative">
+          <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
+          <span class="hidden sm:inline">📢 이번 주 공지</span>
+          <span class="sm:hidden">공지</span>
+        </button>
+      </nav>
+
       <!-- Month Selector & Global Controls -->
       <div class="flex items-center gap-2 sm:gap-3">
-        <!-- Live Status Pill -->
-        <div id="liveStatusBadge" class="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
-          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-          <span id="liveStatusText">실시간 동기화 중</span>
-        </div>
 
         <!-- Month Navigation dropdown -->
         <div class="flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200">
@@ -210,79 +223,82 @@
   <!-- Main Container -->
   <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 w-full flex-1 flex flex-col gap-6">
 
-    <!-- Monthly Summary KPI Bar -->
-    <section class="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
-      <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs flex items-center gap-3.5">
-        <div class="w-11 h-11 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
-          <i data-lucide="book-open" class="w-6 h-6"></i>
-        </div>
-        <div>
-          <div class="text-xs font-medium text-slate-500">이달의 개설 강의</div>
-          <div class="text-xl sm:text-2xl font-bold text-slate-800"><span id="kpiLectureCount">0</span><span class="text-xs font-normal text-slate-500 ml-1">개</span></div>
+    <!-- Tab View 1: Lecture Calendar Main Screen -->
+    <div id="viewCalendarMain" class="space-y-6">
+
+      <!-- Weekly Notice Highlight Banner (User Request #1: Banner placed prominently at top below header) -->
+      <div id="bannerWeeklyNotice" class="group relative overflow-hidden bg-gradient-to-r from-amber-500 via-indigo-600 to-blue-600 rounded-2xl p-0.5 shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer active:scale-[0.995]">
+        <div class="bg-white/95 backdrop-blur-xs rounded-[14px] p-3.5 sm:p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 group-hover:bg-white transition">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-amber-500 text-white flex items-center justify-center shrink-0 shadow-xs group-hover:scale-105 transition-transform">
+              <span class="text-xl">📢</span>
+            </div>
+            <div>
+              <div class="flex items-center gap-2 flex-wrap">
+                <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-amber-100 text-amber-900 border border-amber-300">
+                  <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
+                  이번 주 주요 공지 및 할 일
+                </span>
+                <span id="bannerWeeklyPeriodText" class="text-xs font-semibold text-slate-500">
+                  9월 27일 ~ 10월 10일
+                </span>
+              </div>
+              <div class="text-sm sm:text-base font-bold text-slate-900 mt-1 flex items-center gap-2">
+                <span id="bannerWeeklyHeadline" class="line-clamp-1">😍 주요 일정 : 최임 제출 / 강의 차시별 흐름 구성, 강의 재료 모으기</span>
+              </div>
+            </div>
+          </div>
+          <div class="flex items-center gap-2 self-end sm:self-center shrink-0">
+            <span class="text-xs font-bold text-indigo-700 flex items-center gap-1.5 bg-indigo-50 px-3.5 py-2 rounded-xl border border-indigo-200 group-hover:bg-indigo-600 group-hover:text-white transition shadow-2xs">
+              <span>공지 &amp; 주간 일정 보기</span>
+              <i data-lucide="arrow-right" class="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform"></i>
+            </span>
+          </div>
         </div>
       </div>
 
-      <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs flex items-center gap-3.5">
-        <div class="w-11 h-11 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0">
-          <i data-lucide="users" class="w-6 h-6"></i>
-        </div>
-        <div>
-          <div class="text-xs font-medium text-slate-500">총 모집 정원</div>
-          <div class="text-xl sm:text-2xl font-bold text-slate-800"><span id="kpiCapacityCount">0</span><span class="text-xs font-normal text-slate-500 ml-1">명</span></div>
-        </div>
-      </div>
-
-      <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs flex items-center gap-3.5">
-        <div class="w-11 h-11 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
-          <i data-lucide="user-check" class="w-6 h-6"></i>
-        </div>
-        <div>
-          <div class="text-xs font-medium text-slate-500">모임 수강 신청 건수</div>
-          <div class="text-xl sm:text-2xl font-bold text-slate-800"><span id="kpiEnrollmentCount">0</span><span class="text-xs font-normal text-slate-500 ml-1">건</span></div>
-        </div>
-      </div>
-
-      <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs flex items-center gap-3.5">
-        <div class="w-11 h-11 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center shrink-0">
-          <i data-lucide="repeat" class="w-6 h-6"></i>
-        </div>
-        <div>
-          <div class="text-xs font-medium text-slate-500">상호 수강 품앗이</div>
-          <div class="text-xl sm:text-2xl font-bold text-slate-800"><span id="kpiMutualCount">0</span><span class="text-xs font-normal text-slate-500 ml-1">쌍</span></div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Weekly Notice Highlight Banner (User Request #1) -->
-    <div id="bannerWeeklyNotice" class="group relative overflow-hidden bg-gradient-to-r from-amber-500 via-indigo-600 to-blue-600 rounded-2xl p-0.5 shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer active:scale-[0.995]">
-      <div class="bg-white/95 backdrop-blur-xs rounded-[14px] p-3.5 sm:p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 group-hover:bg-white transition">
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-xl bg-amber-500 text-white flex items-center justify-center shrink-0 shadow-xs group-hover:scale-105 transition-transform">
-            <span class="text-xl">📢</span>
+      <!-- Monthly Summary KPI Bar -->
+      <section class="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
+        <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs flex items-center gap-3.5">
+          <div class="w-11 h-11 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
+            <i data-lucide="book-open" class="w-6 h-6"></i>
           </div>
           <div>
-            <div class="flex items-center gap-2 flex-wrap">
-              <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-amber-100 text-amber-900 border border-amber-300">
-                <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
-                이번 주 주요 공지 및 할 일
-              </span>
-              <span id="bannerWeeklyPeriodText" class="text-xs font-semibold text-slate-500">
-                9월 27일 ~ 10월 10일
-              </span>
-            </div>
-            <div class="text-sm sm:text-base font-bold text-slate-900 mt-1 flex items-center gap-2">
-              <span id="bannerWeeklyHeadline" class="line-clamp-1">😍 주요 일정 : 최임 제출 / 강의 차시별 흐름 구성, 강의 재료 모으기</span>
-            </div>
+            <div class="text-xs font-medium text-slate-500">이달의 개설 강의</div>
+            <div class="text-xl sm:text-2xl font-bold text-slate-800"><span id="kpiLectureCount">0</span><span class="text-xs font-normal text-slate-500 ml-1">개</span></div>
           </div>
         </div>
-        <div class="flex items-center gap-2 self-end sm:self-center shrink-0">
-          <span class="text-xs font-bold text-indigo-700 flex items-center gap-1.5 bg-indigo-50 px-3.5 py-2 rounded-xl border border-indigo-200 group-hover:bg-indigo-600 group-hover:text-white transition shadow-2xs">
-            <span>공지 &amp; 주간 일정 보기</span>
-            <i data-lucide="arrow-right" class="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform"></i>
-          </span>
+
+        <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs flex items-center gap-3.5">
+          <div class="w-11 h-11 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0">
+            <i data-lucide="users" class="w-6 h-6"></i>
+          </div>
+          <div>
+            <div class="text-xs font-medium text-slate-500">총 모집 정원</div>
+            <div class="text-xl sm:text-2xl font-bold text-slate-800"><span id="kpiCapacityCount">0</span><span class="text-xs font-normal text-slate-500 ml-1">명</span></div>
+          </div>
         </div>
-      </div>
-    </div>
+
+        <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs flex items-center gap-3.5">
+          <div class="w-11 h-11 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
+            <i data-lucide="user-check" class="w-6 h-6"></i>
+          </div>
+          <div>
+            <div class="text-xs font-medium text-slate-500">모임 수강 신청 건수</div>
+            <div class="text-xl sm:text-2xl font-bold text-slate-800"><span id="kpiEnrollmentCount">0</span><span class="text-xs font-normal text-slate-500 ml-1">건</span></div>
+          </div>
+        </div>
+
+        <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs flex items-center gap-3.5">
+          <div class="w-11 h-11 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center shrink-0">
+            <i data-lucide="repeat" class="w-6 h-6"></i>
+          </div>
+          <div>
+            <div class="text-xs font-medium text-slate-500">상호 수강 품앗이</div>
+            <div class="text-xl sm:text-2xl font-bold text-slate-800"><span id="kpiMutualCount">0</span><span class="text-xs font-normal text-slate-500 ml-1">쌍</span></div>
+          </div>
+        </div>
+      </section>
 
     <!-- Top Notice bar -->
     <div class="bg-gradient-to-r from-blue-500/10 via-indigo-500/10 to-purple-500/10 border border-blue-200/60 rounded-2xl p-3.5 px-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
@@ -442,6 +458,153 @@
       </div>
     </section>
 
+    </div> <!-- End Tab View 1: #viewCalendarMain -->
+
+    <!-- Tab View 2: Dedicated Weekly Notice Screen (User Request: Screen/Tab switch mode, NOT a popup modal) -->
+    <div id="viewWeeklyNotice" class="hidden space-y-6">
+
+      <!-- Top Action Bar (Back to Calendar & Admin Edit) -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-4 rounded-2xl border border-slate-200 shadow-xs">
+        <div class="flex items-center gap-2 flex-wrap">
+          <button id="btnBackToCalendar" type="button" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-xs transition active:scale-95 cursor-pointer">
+            <i data-lucide="arrow-left" class="w-4 h-4"></i>
+            <span>← 강의 캘린더로 돌아가기</span>
+          </button>
+          <div class="hidden sm:flex items-center gap-1.5 text-xs text-slate-400 pl-2">
+            <span>홈</span>
+            <span>&gt;</span>
+            <span class="font-semibold text-slate-700">이번 주 공지사항</span>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2.5 self-end sm:self-center">
+          <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span id="viewNoticeSyncStatus">Firestore 실시간 연동 중</span>
+          </div>
+          <!-- Admin Edit Notice Button (Only visible in Admin Mode) -->
+          <button id="btnViewNoticeEdit" type="button" class="hidden inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white font-bold text-xs shadow-xs transition active:scale-95 cursor-pointer">
+            <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
+            <span>공지 수정 (관리자)</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 1) 헤더 카드 (주간 요약) -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        <!-- Headline Summary Box (Span 2) -->
+        <div class="lg:col-span-2 bg-gradient-to-br from-indigo-900 via-indigo-800 to-slate-900 text-white p-5 sm:p-6 rounded-2xl sm:rounded-3xl shadow-md space-y-3 relative overflow-hidden">
+          <div class="absolute -right-8 -bottom-8 opacity-10 text-white pointer-events-none">
+            <i data-lucide="calendar" class="w-48 h-48"></i>
+          </div>
+          <div class="flex items-center gap-2 flex-wrap">
+            <span class="px-2.5 py-1 rounded-lg bg-amber-400 text-slate-900 text-xs font-black tracking-wider uppercase shadow-2xs">
+              이번 주 주요 일정
+            </span>
+            <span id="viewNoticePeriod" class="text-xs font-bold text-indigo-200 bg-white/10 px-2.5 py-1 rounded-lg border border-white/10">
+              9월 27일 ~ 10월 10일
+            </span>
+          </div>
+          <div id="viewNoticeHeadline" class="text-lg sm:text-xl font-extrabold text-white leading-relaxed">
+            😍 주요 일정 : 최임 제출 / 강의 차시별 흐름 구성, 강의 재료 모으기
+          </div>
+          <div class="text-xs sm:text-sm text-indigo-200/90 pt-1 flex items-center gap-2">
+            <i data-lucide="check-circle" class="w-4 h-4 text-amber-300 shrink-0"></i>
+            <span>이번 주 일정을 확인하고 차시별 강의 준비 및 최임 마감에 차질 없으시길 바랍니다.</span>
+          </div>
+        </div>
+
+        <!-- Resource Link Card (Span 1) -->
+        <div class="bg-gradient-to-br from-amber-50 to-orange-50/80 border border-amber-200 p-5 rounded-2xl sm:rounded-3xl flex flex-col justify-between gap-3 shadow-xs">
+          <div>
+            <div class="flex items-center justify-between mb-1.5">
+              <span class="text-[11px] font-extrabold text-amber-800 uppercase tracking-wider">핵심 연수 참고 자료</span>
+              <span class="text-xs">🎁</span>
+            </div>
+            <div id="viewNoticeResourceTitle" class="font-bold text-slate-900 text-sm sm:text-base leading-snug">
+              🎁 지식샘터 강의 지원 자료집 바로가기
+            </div>
+            <div id="viewNoticeResourceDesc" class="text-xs text-slate-600 mt-1.5 leading-relaxed">
+              강의 계획서 양식, 수업 슬라이드 템플릿, KERIS 연수원 매뉴얼 수록
+            </div>
+          </div>
+          <a id="viewNoticeResourceLink" href="https://b.tkbell.co.kr/tkboard/woi/185854" target="_blank" rel="noopener noreferrer" class="w-full py-3 px-4 bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs rounded-xl shadow-xs transition flex items-center justify-center gap-2 active:scale-98">
+            <span>자료집 바로가기 (새 창)</span>
+            <i data-lucide="external-link" class="w-4 h-4"></i>
+          </a>
+        </div>
+      </div>
+
+      <!-- 2) 주간 일정 & 할 일 매트릭스 카드 (달력 형태) -->
+      <div class="bg-white rounded-2xl sm:rounded-3xl border border-slate-200/90 p-5 sm:p-6 shadow-xs space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-slate-100 gap-2">
+          <div>
+            <h3 class="text-base sm:text-lg font-bold text-slate-900 flex items-center gap-2">
+              <i data-lucide="calendar-days" class="w-5 h-5 text-indigo-600"></i>
+              <span>주간 일정 &amp; 할 일 매트릭스 (달력 형태)</span>
+            </h3>
+            <p class="text-xs text-slate-500 mt-0.5">일요일부터 토요일까지의 주간 일자별 주요 일정 및 제출 마감 안내</p>
+          </div>
+          <span class="text-xs text-slate-500 bg-slate-50 px-2.5 py-1 rounded-lg border border-slate-200 self-start sm:self-auto font-medium">
+            📅 주간 핵심 일정 및 요일별 마감 / 준비 안내
+          </span>
+        </div>
+
+        <!-- 7 Days Grid (일 ~ 토) -->
+        <div id="viewWeeklyDaysContainer" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3">
+          <!-- Dynamically populated by renderWeeklyNoticeViews() -->
+        </div>
+      </div>
+
+      <!-- 3) 월간 공지 캘린더 (달력 형태의 월간 주요 마감 & 마일스톤) -->
+      <div class="bg-white rounded-2xl sm:rounded-3xl border border-slate-200/90 p-5 sm:p-6 shadow-xs space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-slate-100 gap-2">
+          <div>
+            <h3 class="text-base sm:text-lg font-bold text-slate-900 flex items-center gap-2">
+              <i data-lucide="calendar-check" class="w-5 h-5 text-blue-600"></i>
+              <span>월간 공지 캘린더 (주요 마감 &amp; 마일스톤 종합 뷰)</span>
+            </h3>
+            <p class="text-xs text-slate-500 mt-0.5">한 달간의 전체 공지 로드맵 및 지식샘터 필수 제출 기한 안내</p>
+          </div>
+          <span id="viewNoticeMonthBadge" class="text-xs font-bold px-2.5 py-1 rounded-lg bg-blue-50 text-blue-700 border border-blue-200 self-start sm:self-auto">
+            2026년 9월 ~ 10월 공지 로드맵
+          </span>
+        </div>
+
+        <div id="monthlyNoticeCalendarGrid" class="grid grid-cols-1 md:grid-cols-5 gap-3.5">
+          <!-- Milestone Cards for Weeks 1 through 5 rendered by JS -->
+        </div>
+      </div>
+
+      <!-- 4) 하단 세부 안내 사항 카드 (3-Column Grid) -->
+      <div class="space-y-3">
+        <div class="flex items-center justify-between px-1">
+          <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+            <i data-lucide="clipboard-list" class="w-5 h-5 text-indigo-600"></i>
+            <span>지식샘터 지원 혜택 및 유의사항</span>
+          </h3>
+        </div>
+
+        <div id="viewNoticeDetailCardsContainer" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <!-- Detail cards rendered by JS -->
+        </div>
+      </div>
+
+      <!-- Notice View Footer -->
+      <div class="bg-slate-100/80 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-slate-500 border border-slate-200">
+        <div class="flex items-center gap-2 flex-wrap">
+          <i data-lucide="info" class="w-4 h-4 text-slate-400"></i>
+          <span>최근 공지 수정 시각: <strong id="viewNoticeUpdatedAt" class="text-slate-700">2026-09-26 10:00</strong></span>
+          <span class="text-slate-300">|</span>
+          <span class="text-indigo-600 font-semibold">Firebase Firestore 'weekly_notice' 컬렉션 연동</span>
+        </div>
+        <button id="btnFooterBackToCalendar" type="button" class="text-xs font-bold text-indigo-600 hover:text-indigo-800 underline self-start sm:self-auto cursor-pointer">
+          ← 강의 캘린더 화면으로 이동
+        </button>
+      </div>
+
+    </div> <!-- End Tab View 2: #viewWeeklyNotice -->
+
   </main>
 
   <!-- Footer -->
@@ -525,7 +688,12 @@
 
         <div>
           <label class="block text-xs font-semibold text-slate-700 mb-1">수정/삭제용 비밀번호 <span class="text-xs font-normal text-slate-400">(선택, 기본: 1234)</span></label>
-          <input type="password" id="regPassword" placeholder="4자리 비밀번호 (본인 수정/삭제 시 확인용)" value="1234" class="w-full text-sm px-3.5 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-hidden" />
+          <div class="relative">
+            <input type="password" id="regPassword" placeholder="4자리 비밀번호 (본인 수정/삭제 시 확인용)" value="1234" class="w-full text-sm pl-3.5 pr-10 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-hidden" />
+            <button type="button" class="btn-toggle-pw absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 p-1 cursor-pointer transition focus:outline-hidden" title="비밀번호 보기/숨기기">
+              <i data-lucide="eye" class="w-4 h-4"></i>
+            </button>
+          </div>
           <p class="text-[11px] text-slate-400 mt-1">강의 등록자 본인만 수정할 수 있도록 비밀번호를 설정합니다 (관리자는 비밀번호 없이 수정 가능).</p>
         </div>
 
@@ -708,7 +876,12 @@
 
         <div id="editPasswordRow">
           <label class="block text-xs font-semibold text-slate-700 mb-1">수정/삭제용 비밀번호 변경 (선택)</label>
-          <input type="password" id="editPassword" placeholder="기존 비밀번호 유지 시 비워두세요" class="w-full text-sm px-3.5 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-hidden" />
+          <div class="relative">
+            <input type="password" id="editPassword" placeholder="기존 비밀번호 유지 시 비워두세요" class="w-full text-sm pl-3.5 pr-10 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-hidden" />
+            <button type="button" class="btn-toggle-pw absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 p-1 cursor-pointer transition focus:outline-hidden" title="비밀번호 보기/숨기기">
+              <i data-lucide="eye" class="w-4 h-4"></i>
+            </button>
+          </div>
         </div>
 
         <div class="pt-2 flex items-center justify-between gap-2 border-t border-slate-100">
@@ -739,7 +912,12 @@
         <p id="authPromptDesc" class="text-xs text-slate-500 mt-1 mb-4">강의 등록 시 설정한 비밀번호를 입력해주세요.</p>
 
         <form id="formAuthPrompt" class="space-y-4">
-          <input type="password" id="authPromptPassword" required placeholder="비밀번호 입력 (기본: 1234)" class="w-full text-center text-sm px-3.5 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:outline-hidden" />
+          <div class="relative">
+            <input type="password" id="authPromptPassword" required placeholder="비밀번호 입력 (기본: 1234)" class="w-full text-center text-sm pl-3.5 pr-10 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:outline-hidden" />
+            <button type="button" class="btn-toggle-pw absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 p-1 cursor-pointer transition focus:outline-hidden" title="비밀번호 보기/숨기기">
+              <i data-lucide="eye" class="w-4 h-4"></i>
+            </button>
+          </div>
           <div class="flex items-center gap-2">
             <button type="button" class="modal-close-btn flex-1 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-xl transition">취소</button>
             <button type="submit" class="flex-1 py-2 text-xs font-bold text-white bg-amber-600 hover:bg-amber-700 rounded-xl shadow-xs transition">확인</button>
@@ -760,7 +938,12 @@
         <p class="text-xs text-slate-500 mt-1 mb-4">관리자 비밀번호를 입력하시면 모든 강의 수정/삭제 전권이 부여됩니다.</p>
 
         <form id="formAdminLogin" class="space-y-4">
-          <input type="password" id="adminPasswordInput" required placeholder="관리자 비밀번호 입력" class="w-full text-center text-sm px-3.5 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-hidden" />
+          <div class="relative">
+            <input type="password" id="adminPasswordInput" required placeholder="관리자 비밀번호 입력" class="w-full text-center text-sm pl-3.5 pr-10 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-hidden" />
+            <button type="button" class="btn-toggle-pw absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 p-1 cursor-pointer transition focus:outline-hidden" title="비밀번호 보기/숨기기">
+              <i data-lucide="eye" class="w-4 h-4"></i>
+            </button>
+          </div>
           <div class="flex items-center justify-between text-[11px] text-slate-500 px-1">
             <span>초기 비밀번호: <code id="adminCurrentPwHint" class="font-bold text-indigo-600 bg-indigo-50 px-1.5 py-0.5 rounded">admin1234</code></span>
             <button type="button" id="btnAdminLoginChangePw" class="text-indigo-600 hover:text-indigo-800 font-bold underline">비밀번호 변경하기</button>
@@ -796,7 +979,12 @@
         <!-- Password check box for non-admin teachers -->
         <div id="deleteModalAuthorBox" class="mb-4 text-left space-y-1">
           <label class="block text-xs font-semibold text-slate-700">등록 시 설정한 비밀번호 확인 <span class="text-rose-500">*</span></label>
-          <input type="password" id="deleteAuthorPasswordInput" placeholder="비밀번호 입력 (기본: 1234)" class="w-full text-center text-sm px-3 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-rose-500 focus:outline-hidden" />
+          <div class="relative">
+            <input type="password" id="deleteAuthorPasswordInput" placeholder="비밀번호 입력 (기본: 1234)" class="w-full text-center text-sm pl-3.5 pr-10 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-rose-500 focus:outline-hidden" />
+            <button type="button" class="btn-toggle-pw absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 p-1 cursor-pointer transition focus:outline-hidden" title="비밀번호 보기/숨기기">
+              <i data-lucide="eye" class="w-4 h-4"></i>
+            </button>
+          </div>
           <p class="text-[11px] text-slate-400">※ 본인이 등록한 비밀번호 또는 관리자 권한이 필요합니다.</p>
         </div>
 
@@ -834,12 +1022,22 @@
 
         <div>
           <label class="block text-xs font-semibold text-slate-700 mb-1">새 관리자 비밀번호 <span class="text-red-500">*</span></label>
-          <input type="password" id="newAdminPwInput" required minlength="4" placeholder="새 관리자 비밀번호 (4자 이상)" class="w-full text-sm px-3.5 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:outline-hidden" />
+          <div class="relative">
+            <input type="password" id="newAdminPwInput" required minlength="4" placeholder="새 관리자 비밀번호 (4자 이상)" class="w-full text-sm pl-3.5 pr-10 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:outline-hidden" />
+            <button type="button" class="btn-toggle-pw absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 p-1 cursor-pointer transition focus:outline-hidden" title="비밀번호 보기/숨기기">
+              <i data-lucide="eye" class="w-4 h-4"></i>
+            </button>
+          </div>
         </div>
 
         <div>
           <label class="block text-xs font-semibold text-slate-700 mb-1">새 비밀번호 확인 <span class="text-red-500">*</span></label>
-          <input type="password" id="newAdminPwConfirmInput" required minlength="4" placeholder="새 비밀번호 다시 입력" class="w-full text-sm px-3.5 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:outline-hidden" />
+          <div class="relative">
+            <input type="password" id="newAdminPwConfirmInput" required minlength="4" placeholder="새 비밀번호 다시 입력" class="w-full text-sm pl-3.5 pr-10 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:outline-hidden" />
+            <button type="button" class="btn-toggle-pw absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 p-1 cursor-pointer transition focus:outline-hidden" title="비밀번호 보기/숨기기">
+              <i data-lucide="eye" class="w-4 h-4"></i>
+            </button>
+          </div>
         </div>
 
         <div class="pt-2 flex items-center justify-end gap-2 border-t border-slate-100">
@@ -952,7 +1150,12 @@
 
         <div id="countChangeAuthBox">
           <label class="block text-xs font-semibold text-slate-700 mb-1">등록 강사 비밀번호 확인 <span class="text-red-500">*</span></label>
-          <input type="password" id="countChangePasswordInput" placeholder="강의 등록 시 설정한 비밀번호 (기본: 1234)" class="w-full text-sm px-3.5 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-hidden" />
+          <div class="relative">
+            <input type="password" id="countChangePasswordInput" placeholder="강의 등록 시 설정한 비밀번호 (기본: 1234)" class="w-full text-sm pl-3.5 pr-10 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-hidden" />
+            <button type="button" class="btn-toggle-pw absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 p-1 cursor-pointer transition focus:outline-hidden" title="비밀번호 보기/숨기기">
+              <i data-lucide="eye" class="w-4 h-4"></i>
+            </button>
+          </div>
           <p class="text-[11px] text-slate-400 mt-1">※ 강의를 등록한 강사 본인만 변동 가능합니다.</p>
         </div>
 
@@ -995,7 +1198,12 @@
         <form id="formEnrollStatusAuth" class="space-y-4">
           <div id="statusAuthPasswordBox">
             <label class="block text-xs font-semibold text-slate-700 text-left mb-1">본인 확인 비밀번호</label>
-            <input type="password" id="statusAuthPassword" required placeholder="비밀번호 입력 (기본: 1234)" class="w-full text-center text-sm px-3.5 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-hidden" />
+            <div class="relative">
+              <input type="password" id="statusAuthPassword" required placeholder="비밀번호 입력 (기본: 1234)" class="w-full text-center text-sm pl-3.5 pr-10 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-hidden" />
+              <button type="button" class="btn-toggle-pw absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 p-1 cursor-pointer transition focus:outline-hidden" title="비밀번호 보기/숨기기">
+                <i data-lucide="eye" class="w-4 h-4"></i>
+              </button>
+            </div>
             <p class="text-[11px] text-slate-400 mt-1 text-left">※ 관리자 모드 중인 경우 비밀번호 없이 즉시 변경됩니다.</p>
           </div>
 
@@ -1035,7 +1243,12 @@
 
           <div>
             <label class="block text-xs font-semibold text-slate-700 mb-1">본인 확인 비밀번호 (이수 상태 변경용)</label>
-            <input type="password" id="enrollPassword" placeholder="비밀번호 입력 (미입력 시 기본 1234)" class="w-full text-sm px-3.5 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-hidden" />
+            <div class="relative">
+              <input type="password" id="enrollPassword" placeholder="비밀번호 입력 (미입력 시 기본 1234)" class="w-full text-sm pl-3.5 pr-10 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-hidden" />
+              <button type="button" class="btn-toggle-pw absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 p-1 cursor-pointer transition focus:outline-hidden" title="비밀번호 보기/숨기기">
+                <i data-lucide="eye" class="w-4 h-4"></i>
+              </button>
+            </div>
             <p class="text-[11px] text-slate-400 mt-1">향후 수강 매트릭스에서 본인 이수 완료 체크 시 사용됩니다.</p>
           </div>
 
@@ -1132,130 +1345,7 @@ from firebase_admin import credentials, firestore
     </div>
   </div>
 
-  <!-- 6. 이번 주 공지사항 모달 (Weekly Notice Modal - User Request #2) -->
-  <div id="modalWeeklyNotice" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden items-center justify-center p-3 sm:p-4">
-    <div class="bg-white w-full max-w-4xl rounded-2xl sm:rounded-3xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[92vh]">
-      <!-- Header -->
-      <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between bg-gradient-to-r from-amber-50 via-indigo-50/50 to-blue-50/50 shrink-0">
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-xl bg-amber-500 text-white flex items-center justify-center shadow-xs">
-            <span class="text-xl">📢</span>
-          </div>
-          <div>
-            <div class="flex items-center gap-2 flex-wrap">
-              <h3 class="font-bold text-slate-900 text-base sm:text-lg">이번 주 주요 공지 및 주간 일정</h3>
-              <span id="modalWeeklyPeriodBadge" class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-100 text-amber-900 border border-amber-300">
-                9월 27일 ~ 10월 10일
-              </span>
-            </div>
-            <p class="text-xs text-slate-500 mt-0.5">교사유니버스 지식샘터 주간 미션 및 일정 안내 (구글 시트 주간 공지 양식)</p>
-          </div>
-        </div>
-        <div class="flex items-center gap-2">
-          <!-- Admin Edit Notice Button (Only visible in Admin Mode) -->
-          <button id="btnAdminEditWeeklyNotice" class="hidden px-3 py-1.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold transition shadow-xs flex items-center gap-1.5 cursor-pointer">
-            <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
-            <span>공지 수정</span>
-          </button>
-          <button class="modal-close-btn text-slate-400 hover:text-slate-600 p-1.5 rounded-xl hover:bg-white/80 transition cursor-pointer">
-            <i data-lucide="x" class="w-5 h-5"></i>
-          </button>
-        </div>
-      </div>
-
-      <!-- Modal Body (Scrollable) -->
-      <div class="p-4 sm:p-6 overflow-y-auto space-y-5 text-slate-800">
-        <!-- 1. Top Highlight & Key Resources Banner -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-3.5">
-          <!-- Headline Summary Box (Span 2) -->
-          <div class="md:col-span-2 bg-gradient-to-br from-indigo-900 via-indigo-800 to-slate-900 text-white p-4 sm:p-5 rounded-2xl shadow-sm space-y-2 relative overflow-hidden">
-            <div class="absolute -right-6 -bottom-6 opacity-10 text-white pointer-events-none">
-              <i data-lucide="calendar" class="w-36 h-36"></i>
-            </div>
-            <div class="flex items-center gap-2">
-              <span class="px-2 py-0.5 rounded-md bg-amber-400 text-slate-900 text-[11px] font-black tracking-wider uppercase">
-                주간 주요 일정
-              </span>
-              <span id="modalWeeklyPeriodSub" class="text-xs text-indigo-200">9월 27일 ~ 10월 10일</span>
-            </div>
-            <div id="modalWeeklyHeadlineText" class="text-base sm:text-lg font-bold text-white leading-relaxed">
-              😍 주요 일정 : 최임 제출 / 강의 차시별 흐름 구성, 강의 재료 모으기
-            </div>
-            <div class="text-xs text-indigo-200/90 pt-1 flex items-center gap-1.5">
-              <i data-lucide="check-circle" class="w-3.5 h-3.5 text-amber-300"></i>
-              <span>이번 주 일정을 확인하고 차시별 강의 준비 및 최임 마감에 차질 없으시길 바랍니다.</span>
-            </div>
-          </div>
-
-          <!-- Resource Link Card (Span 1) -->
-          <div class="bg-amber-50/80 border border-amber-200/80 p-4 sm:p-5 rounded-2xl flex flex-col justify-between gap-3">
-            <div>
-              <div class="text-[11px] font-bold text-amber-800 uppercase tracking-wider mb-1">핵심 참고 자료</div>
-              <div id="modalWeeklyResourceTitle" class="font-bold text-slate-900 text-sm">
-                🎁 지식샘터 강의 지원 자료집 바로가기
-              </div>
-              <div id="modalWeeklyResourceDesc" class="text-xs text-slate-600 mt-1 line-clamp-2">
-                강의 계획서 양식, 수업 슬라이드 템플릿, KERIS 연수원 매뉴얼 수록
-              </div>
-            </div>
-            <a id="modalWeeklyResourceLink" href="https://educourse.keris.or.kr" target="_blank" rel="noopener noreferrer" class="w-full py-2.5 px-3 bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs rounded-xl shadow-xs transition flex items-center justify-center gap-1.5 active:scale-98">
-              <span>자료집 바로가기</span>
-              <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
-            </a>
-          </div>
-        </div>
-
-        <!-- 2. 주간 달력 / 할 일 매트릭스 (일 ~ 토) -->
-        <div>
-          <div class="flex items-center justify-between mb-2.5">
-            <h4 class="text-sm font-bold text-slate-900 flex items-center gap-1.5">
-              <i data-lucide="calendar-days" class="w-4 h-4 text-indigo-600"></i>
-              <span>주간 일정 및 할 일 매트릭스 (일 ~ 토)</span>
-            </h4>
-            <span class="text-xs text-slate-400">※ 구글 시트 주간 공지 캘린더 양식</span>
-          </div>
-
-          <div id="weeklyDaysContainer" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-2.5">
-            <!-- Day Cards dynamically rendered by JS -->
-          </div>
-        </div>
-
-        <!-- 3. 하단 세부 안내 사항 (3-Column Cards) -->
-        <div>
-          <div class="flex items-center justify-between mb-2.5">
-            <h4 class="text-sm font-bold text-slate-900 flex items-center gap-1.5">
-              <i data-lucide="clipboard-list" class="w-4 h-4 text-indigo-600"></i>
-              <span>세부 안내 사항 및 지원 혜택</span>
-            </h4>
-          </div>
-
-          <div id="weeklyDetailCardsContainer" class="grid grid-cols-1 md:grid-cols-3 gap-3">
-            <!-- Detail cards dynamically rendered by JS -->
-          </div>
-        </div>
-      </div>
-
-      <!-- Footer -->
-      <div class="px-5 py-3 border-t border-slate-100 flex items-center justify-between bg-slate-50 text-xs text-slate-500 shrink-0">
-        <div class="flex items-center gap-2 flex-wrap">
-          <i data-lucide="clock" class="w-3.5 h-3.5 text-slate-400"></i>
-          <span>최근 갱신: <span id="modalWeeklyUpdatedAt" class="font-medium text-slate-700">2026-09-25</span></span>
-          <span class="text-slate-300">|</span>
-          <span id="modalWeeklyStorageSource" class="text-[11px] text-slate-400">Firestore 실시간 연동</span>
-        </div>
-        <div class="flex items-center gap-2">
-          <button id="btnAdminEditWeeklyNoticeFooter" class="hidden px-3 py-1.5 text-xs font-bold text-amber-800 bg-amber-100 hover:bg-amber-200 border border-amber-300 rounded-xl transition cursor-pointer">
-            공지 수정
-          </button>
-          <button type="button" class="modal-close-btn px-4 py-2 text-xs font-semibold text-slate-700 bg-white hover:bg-slate-100 border border-slate-200 rounded-xl transition cursor-pointer shadow-2xs">
-            닫기
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- 6-A. 이번 주 공지사항 관리자 편집 모달 (User Request #3) -->
+  <!-- 6. 이번 주 공지사항 관리자 편집 모달 (Weekly Notice Edit Modal) -->
   <div id="modalEditWeeklyNotice" class="fixed inset-0 z-50 bg-slate-900/70 backdrop-blur-xs hidden items-center justify-center p-3 sm:p-4">
     <div class="bg-white w-full max-w-3xl rounded-2xl sm:rounded-3xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[92vh]">
       <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50 shrink-0">
@@ -1309,6 +1399,29 @@ from firebase_admin import credentials, firestore
 
           <div id="editNoticeDaysWrapper" class="space-y-2.5">
             <!-- 7 days inputs generated / populated by JS -->
+          </div>
+        </div>
+
+        <!-- Monthly Notice Calendar (Milestones) Edit Section (Requirement #1) -->
+        <div class="pt-2 border-t border-slate-100 space-y-2.5">
+          <div class="flex items-center justify-between">
+            <div>
+              <span class="font-bold text-slate-900 text-xs">월간 공지 캘린더 (주차별 마일스톤 로드맵 수정)</span>
+              <p class="text-[11px] text-slate-500">주차별 마일스톤 제목, 상태, 색상 및 설명 내용을 직접 관리합니다.</p>
+            </div>
+            <button type="button" id="btnAddMilestoneRow" class="px-2.5 py-1 text-xs font-bold text-indigo-700 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 rounded-lg transition cursor-pointer flex items-center gap-1">
+              <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+              <span>+ 주차 추가</span>
+            </button>
+          </div>
+
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">월간 로드맵 뱃지 문구</label>
+            <input type="text" id="editNoticeMonthBadge" placeholder="예: 2026년 9월 ~ 10월 공지 로드맵" class="w-full text-xs px-3 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:outline-hidden" />
+          </div>
+
+          <div id="editNoticeMilestonesWrapper" class="space-y-2.5">
+            <!-- Dynamically populated milestone cards -->
           </div>
         </div>
 
@@ -1446,6 +1559,7 @@ from firebase_admin import credentials, firestore
         date: "2026-09-08",
         time: "19:00 - 21:00",
         url: "https://educourse.keris.or.kr/course/detail?id=101",
+        password: "1234",
         currentCount: 8,
         maxCount: 10,
         month: "2026-09",
@@ -1458,6 +1572,7 @@ from firebase_admin import credentials, firestore
         date: "2026-09-15",
         time: "19:30 - 21:30",
         url: "https://educourse.keris.or.kr/course/detail?id=102",
+        password: "1234",
         currentCount: 10,
         maxCount: 10,
         month: "2026-09",
@@ -1470,6 +1585,7 @@ from firebase_admin import credentials, firestore
         date: "2026-09-22",
         time: "18:30 - 20:30",
         url: "https://educourse.keris.or.kr/course/detail?id=103",
+        password: "1234",
         currentCount: 6,
         maxCount: 12,
         month: "2026-09",
@@ -1482,6 +1598,7 @@ from firebase_admin import credentials, firestore
         date: "2026-09-29",
         time: "19:00 - 21:00",
         url: "https://educourse.keris.or.kr/course/detail?id=104",
+        password: "1234",
         currentCount: 7,
         maxCount: 10,
         month: "2026-09",
@@ -1494,6 +1611,7 @@ from firebase_admin import credentials, firestore
         date: "2026-09-24",
         time: "19:00 - 21:00",
         url: "https://educourse.keris.or.kr/course/detail?id=107",
+        password: "1234",
         currentCount: 4,
         maxCount: 10,
         month: "2026-09",
@@ -1506,6 +1624,7 @@ from firebase_admin import credentials, firestore
         date: "2026-10-13",
         time: "19:00 - 21:00",
         url: "https://educourse.keris.or.kr/course/detail?id=105",
+        password: "1234",
         currentCount: 4,
         maxCount: 10,
         month: "2026-10",
@@ -1518,6 +1637,7 @@ from firebase_admin import credentials, firestore
         date: "2026-10-20",
         time: "19:00 - 21:00",
         url: "https://educourse.keris.or.kr/course/detail?id=106",
+        password: "1234",
         currentCount: 5,
         maxCount: 10,
         month: "2026-10",
@@ -1635,6 +1755,147 @@ from firebase_admin import credentials, firestore
     let pendingDeleteLecture = null;
     let pendingStatusEnrollment = null;
 
+    // Weekly Notice Data Store (Requirements #1, #2, #5)
+    const DEFAULT_WEEKLY_NOTICE = {
+      period: "9월 27일 ~ 10월 10일",
+      headline: "😍 주요 일정 : 최임 제출 / 강의 차시별 흐름 구성, 강의 재료 모으기",
+      resourceTitle: "🎁 지식샘터 강의 지원 자료집 바로가기",
+      resourceUrl: "https://b.tkbell.co.kr/tkboard/woi/185854",
+      resourceDesc: "강의 계획서 양식, 수업 슬라이드 템플릿, KERIS 연수원 매뉴얼 수록",
+      days: [
+        {
+          dayName: "일",
+          date: "27일",
+          badge: "",
+          badgeColor: "",
+          tasks: ["강의 차시별 흐름 구성", "핵심 강의 재료 모으기"]
+        },
+        {
+          dayName: "월",
+          date: "28일",
+          badge: "",
+          badgeColor: "",
+          tasks: ["강의 계획서 초안 작성", "실습 예제 및 시연 준비"]
+        },
+        {
+          dayName: "화",
+          date: "29일",
+          badge: "",
+          badgeColor: "",
+          tasks: ["최종 제출 서류 동료 검토", "지식샘터 시스템 계정 점검"]
+        },
+        {
+          dayName: "수",
+          date: "30일",
+          badge: "최임 제출",
+          badgeColor: "rose",
+          tasks: ["⭐ [마감] 최임 최종 제출 (18:00까지)", "제출 완료 확인 및 승인 체크"]
+        },
+        {
+          dayName: "목",
+          date: "1일",
+          badge: "",
+          badgeColor: "",
+          tasks: ["동료 교사 피드백 공유", "수강 신청 링크 오픈 사전 점검"]
+        },
+        {
+          dayName: "금",
+          date: "2일",
+          badge: "최임 모임",
+          badgeColor: "indigo",
+          tasks: ["👥 [모임] 최임 정기 모임 (온라인 20:00)", "차시별 강의 운영 및 품앗이 협의"]
+        },
+        {
+          dayName: "토",
+          date: "3일",
+          badge: "",
+          badgeColor: "",
+          tasks: ["주간 피드백 정리 및 수강생 모집 홍보", "차주 강의 준비"]
+        }
+      ],
+      noticeCards: [
+        {
+          title: "🎁 지식샘터 수강 지원 혜택",
+          badge: "지원 혜택",
+          badgeColor: "amber",
+          items: [
+            "신청 10명 이상, 이수 7명 이상 시 강의 개설 확정 및 강사료 지원",
+            "교사유니버스 상호 품앗이 매트릭스로 최소 수강 인원 상호 보장",
+            "우수 참여 교사에게 차기 연수 프로그램 우선 개설권 부여"
+          ]
+        },
+        {
+          title: "⚠️ 노쇼 및 수강 제한 유의사항",
+          badge: "필독 유의",
+          badgeColor: "rose",
+          items: [
+            "무단 불참(노쇼) 발생 시 차후 연수 수강 신청이 제한될 수 있습니다.",
+            "부득이한 일정 변경 시 강의 시작 24시간 전까지 수강 취소 필수",
+            "실시간 출석 체크 및 설문 참여를 완료해야 정식 이수 처리됩니다."
+          ]
+        },
+        {
+          title: "📌 강의 자료 및 운영 가이드",
+          badge: "운영 가이드",
+          badgeColor: "blue",
+          items: [
+            "최임 제출 시 KERIS 표준 양식과 수업 차시별 목표를 명확히 기재",
+            "자료집 링크를 통해 슬라이드 템플릿과 연수원 매뉴얼을 다운로드 가능",
+            "기타 문의사항은 교사유니버스 운영진 단톡방을 통해 실시간 지원"
+          ]
+        }
+      ],
+      monthBadge: "2026년 9월 ~ 10월 공지 로드맵",
+      milestones: [
+        {
+          week: "1주차 (9월 21일 ~ 26일)",
+          title: "강의 계획 및 자료 수집",
+          status: "완료",
+          statusColor: "emerald",
+          desc: "지식샘터 강의 주제 선정 및 교육과정 연계성 검토, 기본 강의계획서 작성"
+        },
+        {
+          week: "2주차 (9월 27일 ~ 10월 3일)",
+          title: "최임 최종 제출 & 정기 모임",
+          status: "이번 주 진행 중",
+          statusColor: "amber",
+          desc: "⭐ 30일(수) 18:00 최임 제출 마감! / 2일(금) 20:00 온라인 정기 모임"
+        },
+        {
+          week: "3주차 (10월 4일 ~ 10일)",
+          title: "지식샘터 강의 승인 & 링크 등록",
+          status: "예정",
+          statusColor: "blue",
+          desc: "KERIS 시스템 승인 확인 후 교사유니버스에 공식 수강 신청 URL 등록"
+        },
+        {
+          week: "4주차 (10월 11일 ~ 17일)",
+          title: "수강생 모집 & 상호 품앗이",
+          status: "예정",
+          statusColor: "slate",
+          desc: "최소 개설 기준(10명) 달성을 위한 회원 간 상호 수강 지원 및 홍보"
+        },
+        {
+          week: "5주차 (10월 18일 ~ 24일)",
+          title: "강의 진행 & 이수 처리 확인",
+          status: "예정",
+          statusColor: "slate",
+          desc: "실시간 연수 실시, 출결 관리 및 최종 7명 이상 이수 확인증 발급"
+        }
+      ],
+      updatedAt: "2026-09-26 10:00"
+    };
+
+    let weeklyNoticeData = { ...DEFAULT_WEEKLY_NOTICE };
+    const storedNotice = localStorage.getItem("kyosa_weekly_notice");
+    if (storedNotice) {
+      try {
+        weeklyNoticeData = { ...DEFAULT_WEEKLY_NOTICE, ...JSON.parse(storedNotice) };
+      } catch (e) {
+        console.warn("Invalid stored weekly notice:", e);
+      }
+    }
+
     function saveMembers(newList) {
       memberList = Array.from(new Set(newList.map(m => m.trim()).filter(Boolean)));
       localStorage.setItem("kyosa_universe_members", JSON.stringify(memberList));
@@ -1675,7 +1936,7 @@ from firebase_admin import credentials, firestore
           return;
         } catch (err) {
           console.error("Firebase initialization failed, falling back to LocalStorage:", err);
-          showToast("Firebase 연결 실패, 로컬 데모 모드로 전환합니다.", "error");
+          showToast("Firebase 연결 실패, 로컬 스토리지 모드로 작동합니다.", "error");
         }
       }
 
@@ -1687,17 +1948,14 @@ from firebase_admin import credentials, firestore
     }
 
     function updateDbBadge(isLive) {
-      const badge = document.getElementById("liveStatusBadge");
-      const text = document.getElementById("liveStatusText");
       const footerStatus = document.getElementById("footerDbStatus");
+      const noticeSyncStatus = document.getElementById("viewNoticeSyncStatus");
       if (isLive) {
-        badge.className = "flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200";
-        text.innerText = "Firestore 실시간 연동 중";
         if (footerStatus) footerStatus.innerText = `Firestore 연결됨 (${activeFirebaseConfig.projectId})`;
+        if (noticeSyncStatus) noticeSyncStatus.innerText = "Firestore 실시간 연동 중";
       } else {
-        badge.className = "flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-blue-50 text-blue-700 border border-blue-200";
-        text.innerText = "로컬 데모 모드 (실시간 시뮬레이션)";
         if (footerStatus) footerStatus.innerText = "로컬 스토리지 & 데모 시뮬레이션 모드";
+        if (noticeSyncStatus) noticeSyncStatus.innerText = "로컬 스토리지 연동 중";
       }
     }
 
@@ -1718,11 +1976,21 @@ from firebase_admin import credentials, firestore
         enrollmentsData = [...INITIAL_ENROLLMENTS];
         saveLocalData();
       }
+
+      const storedN = localStorage.getItem("kyosa_weekly_notice");
+      if (storedN) {
+        try {
+          weeklyNoticeData = { ...DEFAULT_WEEKLY_NOTICE, ...JSON.parse(storedN) };
+        } catch (e) {
+          console.warn("Invalid stored notice");
+        }
+      }
     }
 
     function saveLocalData() {
       localStorage.setItem("kyosa_universe_lectures", JSON.stringify(lecturesData));
       localStorage.setItem("kyosa_universe_enrollments", JSON.stringify(enrollmentsData));
+      localStorage.setItem("kyosa_weekly_notice", JSON.stringify(weeklyNoticeData));
     }
 
     // ----------------------------------------------------
@@ -1739,7 +2007,6 @@ from firebase_admin import credentials, firestore
           list.push({ id: d.id, ...d.data() });
         });
         if (list.length === 0) {
-          // If firestore is empty, seed initial data for immediate delight
           seedInitialFirestoreData();
         } else {
           lecturesData = list;
@@ -1761,6 +2028,28 @@ from firebase_admin import credentials, firestore
       }, (error) => {
         console.error("Firestore enrollments listener error:", error);
       });
+
+      // 3. Listen to weekly_notice collection (doc: "current")
+      const noticeDocRef = doc(db, "weekly_notice", "current");
+      onSnapshot(noticeDocRef, (docSnap) => {
+        if (docSnap.exists()) {
+          weeklyNoticeData = { ...DEFAULT_WEEKLY_NOTICE, ...docSnap.data() };
+        } else {
+          seedInitialWeeklyNotice();
+        }
+        renderWeeklyNoticeViews();
+      }, (error) => {
+        console.error("Firestore weekly_notice listener error:", error);
+      });
+    }
+
+    async function seedInitialWeeklyNotice() {
+      if (!db) return;
+      try {
+        await setDoc(doc(db, "weekly_notice", "current"), DEFAULT_WEEKLY_NOTICE);
+      } catch (err) {
+        console.error("Seeding weekly_notice error:", err);
+      }
     }
 
     async function seedInitialFirestoreData() {
@@ -1896,6 +2185,16 @@ from firebase_admin import credentials, firestore
         }
       }
 
+      // Admin button in Weekly Notice screen
+      const btnViewNoticeEdit = document.getElementById("btnViewNoticeEdit");
+      if (btnViewNoticeEdit) {
+        if (isAdminMode) {
+          btnViewNoticeEdit.classList.remove("hidden");
+        } else {
+          btnViewNoticeEdit.classList.add("hidden");
+        }
+      }
+
       lucide.createIcons();
     }
 
@@ -1968,6 +2267,12 @@ from firebase_admin import credentials, firestore
 
     function setSelectedMonth(targetMonth) {
       currentSelectedMonth = targetMonth;
+      activeDetailLecture = null;
+      const modalDetailEl = document.getElementById("modalDetail");
+      if (modalDetailEl) {
+        modalDetailEl.classList.add("hidden");
+        modalDetailEl.classList.remove("flex");
+      }
       const select = document.getElementById("monthSelect");
       if (select) {
         let exists = false;
@@ -2043,13 +2348,17 @@ from firebase_admin import credentials, firestore
       // 5. Render All Applicants View
       renderAllApplicantsView(monthLectures, monthEnrollments);
 
-      // 6. Refresh active detail modal if open
-      if (activeDetailLecture) {
+      // 6. Refresh active detail modal ONLY if it is currently open on screen
+      const modalDetailEl = document.getElementById("modalDetail");
+      if (modalDetailEl && !modalDetailEl.classList.contains("hidden") && activeDetailLecture) {
         const refreshed = lecturesData.find(l => String(l.id) === String(activeDetailLecture.id));
         if (refreshed) {
-          openDetailModal(refreshed);
+          updateDetailModalContent(refreshed);
         }
       }
+
+      // 7. Render Weekly Notice Views (sync highlight banner & dedicated notice screen)
+      renderWeeklyNoticeViews();
 
       // Re-trigger Lucide icons
       lucide.createIcons();
@@ -2503,8 +2812,8 @@ from firebase_admin import credentials, firestore
     // ----------------------------------------------------
     // Modal Open & Close Functions
     // ----------------------------------------------------
-    function openDetailModal(lec) {
-      activeDetailLecture = lec;
+    function updateDetailModalContent(lec) {
+      if (!lec) return;
       document.getElementById("detailTitle").innerText = lec.title;
       document.getElementById("detailPresenter").innerText = lec.presenter;
       document.getElementById("detailTime").innerText = `${lec.date} (${lec.time || "시간 미정"})`;
@@ -2595,8 +2904,11 @@ from firebase_admin import credentials, firestore
           btnEnroll.innerHTML = `<i data-lucide="send" class="w-4 h-4"></i><span>강의 신청하기</span>`;
         }
       }
+    }
 
-      // Open Modal
+    function openDetailModal(lec) {
+      activeDetailLecture = lec;
+      updateDetailModalContent(lec);
       document.getElementById("modalDetail").classList.remove("hidden");
       document.getElementById("modalDetail").classList.add("flex");
       lucide.createIcons();
@@ -2618,36 +2930,67 @@ from firebase_admin import credentials, firestore
     // Event Listeners & Actions
     // ----------------------------------------------------
 
-    // Month Selector change
+    // Month Selector change (Bug fix: stopPropagation and prevent auto-opening modal)
     document.getElementById("monthSelect").addEventListener("change", (e) => {
+      e.stopPropagation();
+      activeDetailLecture = null;
+      document.getElementById("modalDetail")?.classList.add("hidden");
+      document.getElementById("modalDetail")?.classList.remove("flex");
       setSelectedMonth(e.target.value);
     });
 
-    document.getElementById("btnPrevMonth").addEventListener("click", () => {
+    document.getElementById("btnPrevMonth").addEventListener("click", (e) => {
+      e.stopPropagation();
+      e.preventDefault();
+      activeDetailLecture = null;
+      document.getElementById("modalDetail")?.classList.add("hidden");
+      document.getElementById("modalDetail")?.classList.remove("flex");
       setSelectedMonth(getAdjacentMonth(currentSelectedMonth, -1));
     });
 
-    document.getElementById("btnNextMonth").addEventListener("click", () => {
+    document.getElementById("btnNextMonth").addEventListener("click", (e) => {
+      e.stopPropagation();
+      e.preventDefault();
+      activeDetailLecture = null;
+      document.getElementById("modalDetail")?.classList.add("hidden");
+      document.getElementById("modalDetail")?.classList.remove("flex");
       setSelectedMonth(getAdjacentMonth(currentSelectedMonth, 1));
     });
 
-    document.getElementById("btnCalPrevMonth")?.addEventListener("click", () => {
+    document.getElementById("btnCalPrevMonth")?.addEventListener("click", (e) => {
+      e.stopPropagation();
+      e.preventDefault();
+      activeDetailLecture = null;
+      document.getElementById("modalDetail")?.classList.add("hidden");
+      document.getElementById("modalDetail")?.classList.remove("flex");
       setSelectedMonth(getAdjacentMonth(currentSelectedMonth, -1));
     });
 
-    document.getElementById("btnCalNextMonth")?.addEventListener("click", () => {
+    document.getElementById("btnCalNextMonth")?.addEventListener("click", (e) => {
+      e.stopPropagation();
+      e.preventDefault();
+      activeDetailLecture = null;
+      document.getElementById("modalDetail")?.classList.add("hidden");
+      document.getElementById("modalDetail")?.classList.remove("flex");
       setSelectedMonth(getAdjacentMonth(currentSelectedMonth, 1));
     });
 
-    document.getElementById("btnCalTodayMonth")?.addEventListener("click", () => {
+    document.getElementById("btnCalTodayMonth")?.addEventListener("click", (e) => {
+      e.stopPropagation();
+      e.preventDefault();
+      activeDetailLecture = null;
+      document.getElementById("modalDetail")?.classList.add("hidden");
+      document.getElementById("modalDetail")?.classList.remove("flex");
       setSelectedMonth("2026-09");
       showToast("2026년 9월(기준 월)로 이동했습니다.", "info");
     });
 
-    // Close all modal buttons
+    // Close all modal buttons (Ensures activeDetailLecture is set to null)
     document.querySelectorAll(".modal-close-btn").forEach(btn => {
-      btn.addEventListener("click", () => {
-        document.querySelectorAll("#modalRegister, #modalDetail, #modalEnroll, #modalCrawler, #modalConfig, #modalEditLecture, #modalAuthPrompt, #modalAdminLogin, #modalConfirmDelete, #modalAdminChangePw, #modalManageMembers, #modalEnrollStatusAuth, #modalUpdateLectureCount").forEach(m => {
+      btn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        activeDetailLecture = null;
+        document.querySelectorAll("#modalRegister, #modalDetail, #modalEnroll, #modalCrawler, #modalConfig, #modalEditLecture, #modalAuthPrompt, #modalAdminLogin, #modalConfirmDelete, #modalAdminChangePw, #modalManageMembers, #modalEnrollStatusAuth, #modalUpdateLectureCount, #modalEditWeeklyNotice").forEach(m => {
           m.classList.add("hidden");
           m.classList.remove("flex");
         });
@@ -2925,12 +3268,13 @@ from firebase_admin import credentials, firestore
 
     function openUpdateLectureCountModal(lec) {
       if (!lec) return;
-      pendingCountLecture = lec;
-      document.getElementById("countChangeLecTitle").innerText = lec.title;
-      document.getElementById("countChangeLecPresenter").innerText = lec.presenter;
-      document.getElementById("countChangeLecMax").innerText = lec.maxCount || 10;
+      const freshLec = lecturesData.find(l => String(l.id) === String(lec.id)) || lec;
+      pendingCountLecture = freshLec;
+      document.getElementById("countChangeLecTitle").innerText = freshLec.title;
+      document.getElementById("countChangeLecPresenter").innerText = freshLec.presenter;
+      document.getElementById("countChangeLecMax").innerText = freshLec.maxCount || 10;
       
-      const currentVal = (lec.enrolledCount !== undefined && lec.enrolledCount !== null) ? lec.enrolledCount : (lec.currentCount || 0);
+      const currentVal = (freshLec.enrolledCount !== undefined && freshLec.enrolledCount !== null) ? freshLec.enrolledCount : (freshLec.currentCount || 0);
       document.getElementById("inputNewEnrolledCount").value = currentVal;
       document.getElementById("countChangePasswordInput").value = "";
 
@@ -2985,12 +3329,20 @@ from firebase_admin import credentials, firestore
         return;
       }
 
-      // Check author authorization (단, 등록강사만 변동가능케 해)
+      // Check author authorization: 등록 시 설정한 비밀번호와 엄격히 일치할 때만 허용
+      const currentLec = lecturesData.find(l => String(l.id) === String(pendingCountLecture.id)) || pendingCountLecture;
       if (!isAdminMode) {
         const enteredPw = document.getElementById("countChangePasswordInput").value.trim();
-        const expectedPw = pendingCountLecture.password || "1234";
-        if (enteredPw !== expectedPw && enteredPw !== adminMasterPassword && enteredPw !== "universe2026") {
-          showToast("비밀번호가 일치하지 않습니다. 해당 강의를 등록한 강사만 수강 인원을 변경할 수 있습니다.", "error");
+        if (!enteredPw) {
+          showToast("강의 등록 시 설정한 비밀번호를 입력해주세요.", "error");
+          return;
+        }
+        const expectedPw = (currentLec.password && String(currentLec.password).trim() !== "") 
+          ? String(currentLec.password).trim() 
+          : "1234";
+
+        if (enteredPw !== expectedPw) {
+          showToast("비밀번호가 일치하지 않습니다. 해당 강의 등록 시 설정한 비밀번호를 정확히 입력해주세요.", "error");
           return;
         }
       }
@@ -3489,6 +3841,507 @@ from firebase_admin import credentials, firestore
         showToast("HTML 코드를 복사하지 못했습니다.", "error");
       });
     });
+
+    // ----------------------------------------------------
+    // Screen / Tab Switching: Calendar Main vs Weekly Notice Screen (Requirement #1)
+    // ----------------------------------------------------
+    function switchToNoticeView() {
+      const calView = document.getElementById("viewCalendarMain");
+      const noticeView = document.getElementById("viewWeeklyNotice");
+      if (calView) calView.classList.add("hidden");
+      if (noticeView) noticeView.classList.remove("hidden");
+
+      // Update Header Tab styling
+      const tabCal = document.getElementById("btnTabCalendar");
+      const tabNotice = document.getElementById("btnTabNotice");
+      if (tabCal) tabCal.className = "px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-white/60 flex items-center gap-1.5 transition cursor-pointer";
+      if (tabNotice) tabNotice.className = "px-3 py-1.5 rounded-lg bg-blue-600 text-white shadow-2xs flex items-center gap-1.5 transition cursor-pointer";
+
+      renderWeeklyNoticeViews();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      lucide.createIcons();
+    }
+
+    function switchToCalendarView() {
+      const calView = document.getElementById("viewCalendarMain");
+      const noticeView = document.getElementById("viewWeeklyNotice");
+      if (noticeView) noticeView.classList.add("hidden");
+      if (calView) calView.classList.remove("hidden");
+
+      // Update Header Tab styling
+      const tabCal = document.getElementById("btnTabCalendar");
+      const tabNotice = document.getElementById("btnTabNotice");
+      if (tabCal) tabCal.className = "px-3 py-1.5 rounded-lg bg-blue-600 text-white shadow-2xs flex items-center gap-1.5 transition cursor-pointer";
+      if (tabNotice) tabNotice.className = "px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-white/60 flex items-center gap-1.5 transition cursor-pointer";
+
+      if (calendarInstance) {
+        calendarInstance.updateSize();
+      }
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      lucide.createIcons();
+    }
+
+    // Tab & Navigation Click Listeners
+    document.getElementById("btnTabNotice")?.addEventListener("click", switchToNoticeView);
+    document.getElementById("btnTabCalendar")?.addEventListener("click", switchToCalendarView);
+    document.getElementById("bannerWeeklyNotice")?.addEventListener("click", switchToNoticeView);
+    document.getElementById("btnBackToCalendar")?.addEventListener("click", switchToCalendarView);
+    document.getElementById("btnFooterBackToCalendar")?.addEventListener("click", switchToCalendarView);
+
+    // ----------------------------------------------------
+    // Weekly Notice View Rendering (Firestore Sync & Google Sheet Layout)
+    // ----------------------------------------------------
+    function renderWeeklyNoticeViews() {
+      if (!weeklyNoticeData) return;
+
+      // 1. Sync Calendar Highlight Banner
+      const bannerPeriod = document.getElementById("bannerWeeklyPeriodText");
+      if (bannerPeriod) bannerPeriod.innerText = weeklyNoticeData.period || "9월 27일 ~ 10월 10일";
+      const bannerHeadline = document.getElementById("bannerWeeklyHeadline");
+      if (bannerHeadline) bannerHeadline.innerText = weeklyNoticeData.headline || "😍 주요 일정 : 최임 제출 / 강의 차시별 흐름 구성, 강의 재료 모으기";
+
+      // 2. Sync Dedicated Notice Screen Header
+      const viewPeriod = document.getElementById("viewNoticePeriod");
+      if (viewPeriod) viewPeriod.innerText = weeklyNoticeData.period || "9월 27일 ~ 10월 10일";
+      const viewHeadline = document.getElementById("viewNoticeHeadline");
+      if (viewHeadline) viewHeadline.innerText = weeklyNoticeData.headline || "😍 주요 일정 : 최임 제출 / 강의 차시별 흐름 구성, 강의 재료 모으기";
+
+      const resourceTitle = document.getElementById("viewNoticeResourceTitle");
+      if (resourceTitle) resourceTitle.innerText = weeklyNoticeData.resourceTitle || "🎁 지식샘터 강의 지원 자료집 바로가기";
+      const resourceDesc = document.getElementById("viewNoticeResourceDesc");
+      if (resourceDesc) resourceDesc.innerText = weeklyNoticeData.resourceDesc || "강의 계획서 양식, 수업 슬라이드 템플릿, KERIS 연수원 매뉴얼 수록";
+      const resourceLink = document.getElementById("viewNoticeResourceLink");
+      if (resourceLink) {
+        resourceLink.href = weeklyNoticeData.resourceUrl || "https://b.tkbell.co.kr/tkboard/woi/185854";
+      }
+
+      const updatedAt = document.getElementById("viewNoticeUpdatedAt");
+      if (updatedAt) updatedAt.innerText = weeklyNoticeData.updatedAt || new Date().toISOString().substring(0, 10);
+
+      // 3. Render 7 Days Schedule Matrix (Sun ~ Sat) - Display only without personal checkboxes
+      const daysContainer = document.getElementById("viewWeeklyDaysContainer");
+      if (daysContainer && Array.isArray(weeklyNoticeData.days)) {
+        daysContainer.innerHTML = weeklyNoticeData.days.map((day, dIdx) => {
+          const isSun = day.dayName === "일";
+          const isSat = day.dayName === "토";
+          const isWed = day.dayName === "수" || (day.badge && day.badge.includes("최임 제출"));
+          const isFri = day.dayName === "금" || (day.badge && day.badge.includes("모임"));
+
+          let headerBg = "bg-slate-50 text-slate-700 border-slate-200";
+          if (isSun) headerBg = "bg-rose-50 text-rose-700 border-rose-200";
+          if (isSat) headerBg = "bg-blue-50 text-blue-700 border-blue-200";
+          if (isWed) headerBg = "bg-gradient-to-r from-rose-500 to-amber-500 text-white border-transparent";
+          if (isFri) headerBg = "bg-gradient-to-r from-indigo-600 to-purple-600 text-white border-transparent";
+
+          let cardBorder = (isWed || isFri) ? "border-amber-300 ring-2 ring-amber-100 shadow-sm" : "border-slate-200";
+
+          const badgeHtml = day.badge ? `
+            <span class="inline-block mt-1 px-2 py-0.5 rounded-full text-[10px] font-extrabold shadow-2xs ${
+              isWed ? 'bg-amber-300 text-rose-950 font-black' : isFri ? 'bg-amber-300 text-indigo-950 font-black' : 'bg-amber-100 text-amber-900 border border-amber-300'
+            }">
+              ${escapeHtml(day.badge)}
+            </span>
+          ` : "";
+
+          const taskListHtml = (day.tasks && day.tasks.length > 0) ? day.tasks.map((task) => {
+            return `
+              <div class="flex items-start gap-1.5 p-1.5 rounded-lg bg-slate-50 border border-slate-100/90 text-xs">
+                <span class="w-1.5 h-1.5 rounded-full bg-indigo-500 mt-1.5 shrink-0"></span>
+                <span class="text-slate-800 font-medium leading-snug break-keep">${escapeHtml(task)}</span>
+              </div>
+            `;
+          }).join("") : `<div class="text-[11px] text-slate-400 italic p-1">일정 없음</div>`;
+
+          return `
+            <div class="bg-white rounded-2xl border ${cardBorder} overflow-hidden flex flex-col justify-between hover:shadow-md transition">
+              <div class="p-3 border-b border-slate-100 ${headerBg}">
+                <div class="flex items-center justify-between">
+                  <span class="font-extrabold text-sm">${escapeHtml(day.dayName)}요일</span>
+                  <span class="text-xs font-bold opacity-90">${escapeHtml(day.date)}</span>
+                </div>
+                ${badgeHtml}
+              </div>
+              <div class="p-2.5 space-y-1.5 flex-1 bg-white">
+                ${taskListHtml}
+              </div>
+              <div class="p-2 border-t border-slate-50 bg-slate-50/50 text-[10px] text-slate-400 flex items-center justify-between">
+                <span>주간 일정</span>
+                <span class="font-mono text-indigo-600 font-bold">D-${7 - dIdx}</span>
+              </div>
+            </div>
+          `;
+        }).join("");
+      }
+
+      // 4. Render Monthly Notice Calendar (Roadmap Milestones - Dynamic from Firestore DB)
+      const monthlyGrid = document.getElementById("monthlyNoticeCalendarGrid");
+      const monthBadgeEl = document.getElementById("viewNoticeMonthBadge");
+      if (monthBadgeEl) {
+        monthBadgeEl.innerText = weeklyNoticeData.monthBadge || DEFAULT_WEEKLY_NOTICE.monthBadge;
+      }
+      if (monthlyGrid) {
+        const milestones = (Array.isArray(weeklyNoticeData.milestones) && weeklyNoticeData.milestones.length > 0)
+          ? weeklyNoticeData.milestones
+          : DEFAULT_WEEKLY_NOTICE.milestones;
+
+        monthlyGrid.className = `grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-${Math.min(Math.max(milestones.length, 1), 5)} gap-3.5`;
+        monthlyGrid.innerHTML = milestones.map(m => {
+          let badgeClass = "bg-slate-100 text-slate-700 border-slate-200";
+          if (m.statusColor === "emerald") badgeClass = "bg-emerald-100 text-emerald-800 border-emerald-300 font-bold";
+          if (m.statusColor === "amber") badgeClass = "bg-amber-100 text-amber-900 border-amber-300 font-extrabold animate-pulse";
+          if (m.statusColor === "blue") badgeClass = "bg-blue-100 text-blue-800 border-blue-300 font-bold";
+          if (m.statusColor === "slate") badgeClass = "bg-slate-100 text-slate-600 border-slate-200";
+
+          return `
+            <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80 hover:bg-white hover:shadow-md transition space-y-2 flex flex-col justify-between">
+              <div>
+                <div class="flex items-center justify-between text-[11px] mb-1">
+                  <span class="font-bold text-slate-500">${escapeHtml(m.week)}</span>
+                  <span class="px-2 py-0.5 rounded-full text-[10px] border ${badgeClass}">${escapeHtml(m.status)}</span>
+                </div>
+                <h4 class="font-bold text-slate-900 text-xs sm:text-sm mt-1 leading-snug">${escapeHtml(m.title)}</h4>
+                <p class="text-[11px] text-slate-600 mt-1 leading-relaxed">${escapeHtml(m.desc)}</p>
+              </div>
+              <div class="pt-2 border-t border-slate-200/60 flex items-center justify-between text-[10px] text-slate-400">
+                <span>지식샘터 로드맵</span>
+                <i data-lucide="check-circle-2" class="w-3.5 h-3.5 ${m.statusColor === 'emerald' ? 'text-emerald-500' : 'text-slate-300'}"></i>
+              </div>
+            </div>
+          `;
+        }).join("");
+      }
+
+      // 5. Render 3 Detail Notice Cards
+      const detailContainer = document.getElementById("viewNoticeDetailCardsContainer");
+      if (detailContainer && Array.isArray(weeklyNoticeData.noticeCards)) {
+        detailContainer.innerHTML = weeklyNoticeData.noticeCards.map(c => {
+          let icon = "gift";
+          let bgClass = "bg-amber-50/60 border-amber-200/80";
+          let badgeClass = "bg-amber-100 text-amber-800";
+          if (c.title.includes("노쇼") || c.badgeColor === "rose") {
+            icon = "alert-triangle";
+            bgClass = "bg-rose-50/60 border-rose-200/80";
+            badgeClass = "bg-rose-100 text-rose-800";
+          } else if (c.title.includes("운영") || c.title.includes("자료") || c.badgeColor === "blue") {
+            icon = "book-marked";
+            bgClass = "bg-blue-50/60 border-blue-200/80";
+            badgeClass = "bg-blue-100 text-blue-800";
+          }
+
+          const itemsHtml = (c.items || []).map(item => `
+            <li class="flex items-start gap-2 text-xs text-slate-700 leading-relaxed">
+              <span class="w-1.5 h-1.5 rounded-full bg-slate-400 mt-1.5 shrink-0"></span>
+              <span>${escapeHtml(item)}</span>
+            </li>
+          `).join("");
+
+          return `
+            <div class="rounded-2xl p-4 sm:p-5 border ${bgClass} space-y-3 flex flex-col justify-between shadow-2xs">
+              <div>
+                <div class="flex items-center justify-between">
+                  <span class="text-xs font-bold px-2 py-0.5 rounded-md ${badgeClass}">${escapeHtml(c.badge || '안내')}</span>
+                  <i data-lucide="${icon}" class="w-4 h-4 text-slate-500"></i>
+                </div>
+                <h4 class="font-extrabold text-slate-900 text-sm mt-2">${escapeHtml(c.title)}</h4>
+                <ul class="mt-3 space-y-2">
+                  ${itemsHtml}
+                </ul>
+              </div>
+            </div>
+          `;
+        }).join("");
+      }
+
+      // Admin button visibility
+      const btnEdit = document.getElementById("btnViewNoticeEdit");
+      if (btnEdit) {
+        if (isAdminMode) {
+          btnEdit.classList.remove("hidden");
+        } else {
+          btnEdit.classList.add("hidden");
+        }
+      }
+
+      lucide.createIcons();
+    }
+
+    // ----------------------------------------------------
+    // Password Show / Hide Eye Button Universal Handler (Requirement #3)
+    // ----------------------------------------------------
+    document.addEventListener("click", (e) => {
+      const btn = e.target.closest(".btn-toggle-pw");
+      if (!btn) return;
+      e.preventDefault();
+      e.stopPropagation();
+
+      const wrapper = btn.closest(".relative");
+      const input = wrapper ? wrapper.querySelector("input") : null;
+      if (!input) return;
+
+      const isPassword = input.type === "password";
+      input.type = isPassword ? "text" : "password";
+      btn.innerHTML = `<i data-lucide="${isPassword ? 'eye-off' : 'eye'}" class="w-4 h-4"></i>`;
+      btn.title = isPassword ? "비밀번호 숨기기" : "비밀번호 보기";
+      lucide.createIcons();
+    });
+
+    // ----------------------------------------------------
+    // Admin Edit Weekly & Monthly Notice Modal & Handlers (Requirement #1)
+    // ----------------------------------------------------
+    function renderEditMilestones(milestones) {
+      const wrapper = document.getElementById("editNoticeMilestonesWrapper");
+      if (!wrapper) return;
+      wrapper.innerHTML = milestones.map((m, idx) => `
+        <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-2 edit-milestone-row" data-idx="${idx}">
+          <div class="flex items-center justify-between">
+            <span class="font-bold text-slate-800 text-[11px]">마일스톤 ${idx + 1}</span>
+            <button type="button" class="btn-remove-milestone text-rose-500 hover:text-rose-700 text-xs font-bold p-1 cursor-pointer flex items-center gap-1" title="마일스톤 삭제">
+              <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+              <span>삭제</span>
+            </button>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+            <div>
+              <label class="block text-[11px] font-semibold text-slate-600 mb-0.5">주차 / 기간</label>
+              <input type="text" class="edit-milestone-week w-full text-xs px-2.5 py-1.5 border border-slate-300 rounded-lg" value="${escapeHtml(m.week || '')}" placeholder="예: 1주차 (9월 21일 ~ 26일)" />
+            </div>
+            <div>
+              <label class="block text-[11px] font-semibold text-slate-600 mb-0.5">공지 제목</label>
+              <input type="text" class="edit-milestone-title w-full text-xs px-2.5 py-1.5 border border-slate-300 rounded-lg" value="${escapeHtml(m.title || '')}" placeholder="예: 강의 계획 및 자료 수집" />
+            </div>
+            <div class="grid grid-cols-2 gap-1.5">
+              <div>
+                <label class="block text-[11px] font-semibold text-slate-600 mb-0.5">진행 상태</label>
+                <input type="text" class="edit-milestone-status w-full text-xs px-2 py-1.5 border border-slate-300 rounded-lg" value="${escapeHtml(m.status || '')}" placeholder="예: 이번 주 진행 중" />
+              </div>
+              <div>
+                <label class="block text-[11px] font-semibold text-slate-600 mb-0.5">색상</label>
+                <select class="edit-milestone-color w-full text-xs px-2 py-1.5 border border-slate-300 rounded-lg bg-white cursor-pointer">
+                  <option value="emerald" ${m.statusColor === 'emerald' ? 'selected' : ''}>초록 (완료)</option>
+                  <option value="amber" ${m.statusColor === 'amber' ? 'selected' : ''}>주황 (진행중)</option>
+                  <option value="blue" ${m.statusColor === 'blue' ? 'selected' : ''}>파랑 (예정)</option>
+                  <option value="slate" ${m.statusColor === 'slate' ? 'selected' : ''}>회색 (대기)</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div>
+            <label class="block text-[11px] font-semibold text-slate-600 mb-0.5">상세 설명 / 안내 문구</label>
+            <input type="text" class="edit-milestone-desc w-full text-xs px-2.5 py-1.5 border border-slate-300 rounded-lg" value="${escapeHtml(m.desc || '')}" placeholder="주요 마감 일정 및 필수 안내 사항" />
+          </div>
+        </div>
+      `).join("");
+      lucide.createIcons();
+    }
+
+    // Add milestone row button
+    document.getElementById("btnAddMilestoneRow")?.addEventListener("click", () => {
+      const wrapper = document.getElementById("editNoticeMilestonesWrapper");
+      if (!wrapper) return;
+      const count = wrapper.querySelectorAll(".edit-milestone-row").length + 1;
+      const newDiv = document.createElement("div");
+      newDiv.className = "p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-2 edit-milestone-row";
+      newDiv.innerHTML = `
+        <div class="flex items-center justify-between">
+          <span class="font-bold text-slate-800 text-[11px]">마일스톤 ${count}</span>
+          <button type="button" class="btn-remove-milestone text-rose-500 hover:text-rose-700 text-xs font-bold p-1 cursor-pointer flex items-center gap-1" title="마일스톤 삭제">
+            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+            <span>삭제</span>
+          </button>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+          <div>
+            <label class="block text-[11px] font-semibold text-slate-600 mb-0.5">주차 / 기간</label>
+            <input type="text" class="edit-milestone-week w-full text-xs px-2.5 py-1.5 border border-slate-300 rounded-lg" value="${count}주차" placeholder="예: ${count}주차 (일정)" />
+          </div>
+          <div>
+            <label class="block text-[11px] font-semibold text-slate-600 mb-0.5">공지 제목</label>
+            <input type="text" class="edit-milestone-title w-full text-xs px-2.5 py-1.5 border border-slate-300 rounded-lg" placeholder="공지 및 마일스톤 제목" />
+          </div>
+          <div class="grid grid-cols-2 gap-1.5">
+            <div>
+              <label class="block text-[11px] font-semibold text-slate-600 mb-0.5">진행 상태</label>
+              <input type="text" class="edit-milestone-status w-full text-xs px-2 py-1.5 border border-slate-300 rounded-lg" value="예정" placeholder="예: 예정" />
+            </div>
+            <div>
+              <label class="block text-[11px] font-semibold text-slate-600 mb-0.5">색상</label>
+              <select class="edit-milestone-color w-full text-xs px-2 py-1.5 border border-slate-300 rounded-lg bg-white cursor-pointer">
+                <option value="emerald">초록 (완료)</option>
+                <option value="amber">주황 (진행중)</option>
+                <option value="blue" selected>파랑 (예정)</option>
+                <option value="slate">회색 (대기)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div>
+          <label class="block text-[11px] font-semibold text-slate-600 mb-0.5">상세 설명 / 안내 문구</label>
+          <input type="text" class="edit-milestone-desc w-full text-xs px-2.5 py-1.5 border border-slate-300 rounded-lg" placeholder="주요 마감 일정 및 필수 안내 사항" />
+        </div>
+      `;
+      wrapper.appendChild(newDiv);
+      lucide.createIcons();
+    });
+
+    // Delegate milestone remove click
+    document.getElementById("editNoticeMilestonesWrapper")?.addEventListener("click", (e) => {
+      const removeBtn = e.target.closest(".btn-remove-milestone");
+      if (removeBtn) {
+        const row = removeBtn.closest(".edit-milestone-row");
+        if (row) {
+          row.remove();
+        }
+      }
+    });
+
+    function openEditWeeklyNoticeModal() {
+      if (!weeklyNoticeData) return;
+      document.getElementById("editNoticePeriod").value = weeklyNoticeData.period || "";
+      document.getElementById("editNoticeHeadline").value = weeklyNoticeData.headline || "";
+      document.getElementById("editNoticeResourceTitle").value = weeklyNoticeData.resourceTitle || "";
+      document.getElementById("editNoticeResourceUrl").value = weeklyNoticeData.resourceUrl || "";
+      document.getElementById("editNoticeResourceDesc").value = weeklyNoticeData.resourceDesc || "";
+
+      // Populate 7 days
+      const daysWrapper = document.getElementById("editNoticeDaysWrapper");
+      if (daysWrapper && Array.isArray(weeklyNoticeData.days)) {
+        daysWrapper.innerHTML = weeklyNoticeData.days.map((day, idx) => `
+          <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-2" data-day-idx="${idx}">
+            <div class="grid grid-cols-3 gap-2">
+              <div>
+                <label class="block text-[11px] font-semibold text-slate-600 mb-0.5">요일</label>
+                <input type="text" class="edit-day-name w-full text-xs px-2.5 py-1.5 border border-slate-300 rounded-lg" value="${escapeHtml(day.dayName)}" />
+              </div>
+              <div>
+                <label class="block text-[11px] font-semibold text-slate-600 mb-0.5">날짜</label>
+                <input type="text" class="edit-day-date w-full text-xs px-2.5 py-1.5 border border-slate-300 rounded-lg" value="${escapeHtml(day.date)}" />
+              </div>
+              <div>
+                <label class="block text-[11px] font-semibold text-slate-600 mb-0.5">강조 뱃지 (선택)</label>
+                <input type="text" class="edit-day-badge w-full text-xs px-2.5 py-1.5 border border-slate-300 rounded-lg" value="${escapeHtml(day.badge || '')}" placeholder="예: 최임 제출" />
+              </div>
+            </div>
+            <div>
+              <label class="block text-[11px] font-semibold text-slate-600 mb-0.5">할 일 항목들 (엔터로 구분)</label>
+              <textarea rows="2" class="edit-day-tasks w-full text-xs p-2 border border-slate-300 rounded-lg" placeholder="할 일 입력">${(day.tasks || []).join("\n")}</textarea>
+            </div>
+          </div>
+        `).join("");
+      }
+
+      // Populate Monthly Notice Milestones (Requirement #1)
+      const monthBadgeInput = document.getElementById("editNoticeMonthBadge");
+      if (monthBadgeInput) {
+        monthBadgeInput.value = weeklyNoticeData.monthBadge || DEFAULT_WEEKLY_NOTICE.monthBadge;
+      }
+      const milestones = (Array.isArray(weeklyNoticeData.milestones) && weeklyNoticeData.milestones.length > 0)
+        ? weeklyNoticeData.milestones
+        : DEFAULT_WEEKLY_NOTICE.milestones;
+      renderEditMilestones(milestones);
+
+      // Populate 3 detail cards
+      if (Array.isArray(weeklyNoticeData.noticeCards)) {
+        weeklyNoticeData.noticeCards.forEach((card, idx) => {
+          const titleInput = document.getElementById(`editDetailCardTitle${idx}`);
+          const itemsInput = document.getElementById(`editDetailCardItems${idx}`);
+          if (titleInput) titleInput.value = card.title || "";
+          if (itemsInput) itemsInput.value = (card.items || []).join("\n");
+        });
+      }
+
+      document.getElementById("modalEditWeeklyNotice").classList.remove("hidden");
+      document.getElementById("modalEditWeeklyNotice").classList.add("flex");
+    }
+
+    document.getElementById("btnViewNoticeEdit")?.addEventListener("click", () => {
+      openEditWeeklyNoticeModal();
+    });
+
+    document.getElementById("btnAdminEditNoticeBanner")?.addEventListener("click", () => {
+      openEditWeeklyNoticeModal();
+    });
+
+    document.getElementById("btnResetWeeklyNoticeDefault")?.addEventListener("click", () => {
+      if (confirm("공지사항 내용을 구글 시트 초기 기본 공지 양식으로 복원하시겠습니까?")) {
+        weeklyNoticeData = { ...DEFAULT_WEEKLY_NOTICE };
+        openEditWeeklyNoticeModal();
+        showToast("초기 기본 공지 양식으로 복원되었습니다. 저장을 눌러 확정해주세요.", "info");
+      }
+    });
+
+    document.getElementById("formEditWeeklyNotice")?.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const updatedNotice = {
+        period: document.getElementById("editNoticePeriod").value.trim(),
+        headline: document.getElementById("editNoticeHeadline").value.trim(),
+        resourceTitle: document.getElementById("editNoticeResourceTitle").value.trim(),
+        resourceUrl: document.getElementById("editNoticeResourceUrl").value.trim(),
+        resourceDesc: document.getElementById("editNoticeResourceDesc").value.trim(),
+        monthBadge: document.getElementById("editNoticeMonthBadge")?.value.trim() || DEFAULT_WEEKLY_NOTICE.monthBadge,
+        days: [],
+        milestones: [],
+        noticeCards: [],
+        updatedAt: new Date().toISOString().substring(0, 16).replace("T", " ")
+      };
+
+      const dayEls = document.querySelectorAll("#editNoticeDaysWrapper > div");
+      dayEls.forEach(el => {
+        const dayName = el.querySelector(".edit-day-name")?.value.trim() || "";
+        const date = el.querySelector(".edit-day-date")?.value.trim() || "";
+        const badge = el.querySelector(".edit-day-badge")?.value.trim() || "";
+        const tasksStr = el.querySelector(".edit-day-tasks")?.value || "";
+        const tasks = tasksStr.split("\n").map(t => t.trim()).filter(Boolean);
+        updatedNotice.days.push({ dayName, date, badge, tasks });
+      });
+
+      // Collect milestones (Requirement #1)
+      const milestoneEls = document.querySelectorAll("#editNoticeMilestonesWrapper > .edit-milestone-row");
+      milestoneEls.forEach(el => {
+        const week = el.querySelector(".edit-milestone-week")?.value.trim() || "";
+        const title = el.querySelector(".edit-milestone-title")?.value.trim() || "";
+        const status = el.querySelector(".edit-milestone-status")?.value.trim() || "";
+        const statusColor = el.querySelector(".edit-milestone-color")?.value || "slate";
+        const desc = el.querySelector(".edit-milestone-desc")?.value.trim() || "";
+        if (week || title) {
+          updatedNotice.milestones.push({ week, title, status, statusColor, desc });
+        }
+      });
+
+      for (let i = 0; i < 3; i++) {
+        const title = document.getElementById(`editDetailCardTitle${i}`)?.value.trim() || "";
+        const itemsStr = document.getElementById(`editDetailCardItems${i}`)?.value || "";
+        const items = itemsStr.split("\n").map(t => t.trim()).filter(Boolean);
+        updatedNotice.noticeCards.push({
+          title,
+          badge: i === 0 ? "지원 혜택" : i === 1 ? "필독 유의" : "운영 가이드",
+          badgeColor: i === 0 ? "amber" : i === 1 ? "rose" : "blue",
+          items
+        });
+      }
+
+      await saveWeeklyNotice(updatedNotice);
+      document.getElementById("modalEditWeeklyNotice").classList.add("hidden");
+      document.getElementById("modalEditWeeklyNotice").classList.remove("flex");
+    });
+
+    async function saveWeeklyNotice(newData) {
+      weeklyNoticeData = { ...weeklyNoticeData, ...newData };
+      localStorage.setItem("kyosa_weekly_notice", JSON.stringify(weeklyNoticeData));
+
+      if (isFirebaseActive && db) {
+        try {
+          await setDoc(doc(db, "weekly_notice", "current"), weeklyNoticeData);
+          showToast("Firestore DB에 이번 주 공지사항이 실시간 저장되었습니다.", "success");
+        } catch (err) {
+          console.error("Failed to save notice to Firestore:", err);
+          showToast("로컬에 저장되었습니다. (Firestore 연동 실패)", "info");
+        }
+      } else {
+        showToast("이번 주 공지사항이 성공적으로 저장되었습니다.", "success");
+      }
+
+      renderWeeklyNoticeViews();
+    }
 
     // Window helpers for dynamically rendered buttons
     window.openDetailById = function(id) {
