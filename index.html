@@ -373,7 +373,7 @@
             <h2 class="text-lg font-bold text-slate-900">교사유니버스 수강 매트릭스</h2>
             <span class="text-xs font-semibold px-2 py-0.5 rounded-md bg-indigo-50 text-indigo-700">상호 품앗이 현황</span>
           </div>
-          <p class="text-xs text-slate-500 mt-1">가로축(강사)과 세로축(수강생)으로 상호 지원 현황을 한눈에 파악합니다.</p>
+          <p class="text-xs text-slate-500 mt-1">가로축(강사)과 세로축(수강생)으로 상호 지원 현황을 한눈에 파악합니다. <strong class="text-indigo-600 font-semibold">💡 교사 이름을 클릭하면 그동안 누구 강의를 품앗이로 들었는지 상세 목록을 확인하실 수 있습니다.</strong></p>
         </div>
         <div class="flex items-center gap-2">
           <button id="btnScrollToApplicantList" class="text-xs font-semibold px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 transition flex items-center gap-1.5">
@@ -651,8 +651,10 @@
 
         <div class="grid grid-cols-3 gap-3">
           <div>
-            <label class="block text-xs font-semibold text-slate-700 mb-1">강사 닉네임 <span class="text-red-500">*</span></label>
-            <input type="text" id="regPresenter" list="memberListDatalist" required placeholder="예: 김선생, 에듀테크요정" class="w-full text-sm px-3 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-hidden" />
+            <label class="block text-xs font-semibold text-slate-700 mb-1">강사 닉네임 (관리자 등록 회원) <span class="text-red-500">*</span></label>
+            <select id="regPresenter" required class="w-full text-sm px-3.5 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-hidden bg-white cursor-pointer font-medium text-slate-800">
+              <option value="">강사 닉네임 선택</option>
+            </select>
           </div>
           <div>
             <label class="block text-xs font-semibold text-slate-700 mb-1">모집 정원 (명) <span class="text-red-500">*</span></label>
@@ -723,10 +725,11 @@
         <div>
           <h3 id="detailTitle" class="text-lg font-bold text-slate-900 leading-snug">강의명</h3>
           <div class="flex items-center gap-2 mt-2 text-sm text-slate-600">
-            <span class="inline-flex items-center gap-1 font-semibold text-slate-800">
+            <button type="button" id="btnDetailPresenterHistory" title="강사님의 품앗이 수강 내역 보기" class="inline-flex items-center gap-1 font-bold text-slate-800 hover:text-indigo-600 hover:underline cursor-pointer transition">
               <i data-lucide="user" class="w-4 h-4 text-blue-600"></i>
               <span id="detailPresenter">강사명</span>
-            </span>
+              <span class="text-[10px] text-indigo-600 bg-indigo-50 px-1 rounded border border-indigo-100 font-normal">품앗이 현황</span>
+            </button>
             <span>•</span>
             <span class="inline-flex items-center gap-1">
               <i data-lucide="clock" class="w-4 h-4 text-slate-400"></i>
@@ -839,8 +842,10 @@
 
         <div class="grid grid-cols-3 gap-3">
           <div>
-            <label class="block text-xs font-semibold text-slate-700 mb-1">강사 닉네임 <span class="text-red-500">*</span></label>
-            <input type="text" id="editPresenter" required class="w-full text-sm px-3 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-hidden" />
+            <label class="block text-xs font-semibold text-slate-700 mb-1">강사 닉네임 (관리자 등록 회원) <span class="text-red-500">*</span></label>
+            <select id="editPresenter" required class="w-full text-sm px-3.5 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-hidden bg-white cursor-pointer font-medium text-slate-800">
+              <option value="">강사 닉네임 선택</option>
+            </select>
           </div>
           <div>
             <label class="block text-xs font-semibold text-slate-700 mb-1">모집 정원 (명) <span class="text-red-500">*</span></label>
@@ -1213,7 +1218,147 @@
               상태 변경 확정
             </button>
           </div>
+          <button type="button" id="btnCancelEnrollmentFromStatusModal" class="w-full mt-2 py-2 text-xs font-bold text-rose-600 hover:bg-rose-50 border border-rose-200 rounded-xl transition flex items-center justify-center gap-1.5 cursor-pointer">
+            <i data-lucide="user-x" class="w-3.5 h-3.5"></i>
+            <span>수강 신청 취소 (명단/매트릭스 제외)</span>
+          </button>
         </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2-I. 수강 신청 취소 확인 모달 (Cancel Enrollment Modal - Requirement #1) -->
+  <div id="modalConfirmCancelEnroll" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden items-center justify-center p-4">
+    <div class="bg-white w-full max-w-sm rounded-2xl shadow-xl border border-rose-200 overflow-hidden transform transition-all">
+      <div class="p-6 text-center">
+        <div class="w-12 h-12 rounded-2xl bg-rose-100 text-rose-600 flex items-center justify-center mx-auto mb-3">
+          <i data-lucide="user-x" class="w-6 h-6"></i>
+        </div>
+        <div class="flex items-center justify-center gap-2 mb-1">
+          <h3 class="text-base font-bold text-slate-900">수강 신청 취소</h3>
+          <span id="cancelModalAdminBadge" class="hidden px-2 py-0.5 rounded-full bg-amber-100 text-amber-900 border border-amber-300 text-[10px] font-bold">👑 관리자 모드</span>
+        </div>
+        <p class="text-xs text-slate-500 mb-3">정말로 해당 강의의 수강 신청을 취소하시겠습니까?</p>
+
+        <div class="p-3 bg-slate-50 rounded-xl border border-slate-100 text-left mb-4 text-xs space-y-1">
+          <div>신청 교사: <strong id="cancelTargetStudent" class="text-slate-900 font-bold">김선생</strong></div>
+          <div>강의명: <span id="cancelTargetLecture" class="text-slate-700 font-semibold truncate block">강의명</span></div>
+          <div class="text-[11px] text-rose-600 font-medium pt-1">※ 취소 시 수강 인원이 1명 감소하고 수강 매트릭스에서 즉시 제외됩니다.</div>
+        </div>
+
+        <form id="formCancelEnroll" class="space-y-4">
+          <div id="cancelAuthPasswordBox" class="text-left space-y-1">
+            <label class="block text-xs font-semibold text-slate-700">신청 시 설정한 비밀번호 확인 <span class="text-rose-500">*</span></label>
+            <div class="relative">
+              <input type="password" id="cancelAuthPassword" required placeholder="비밀번호 입력 (기본: 1234)" class="w-full text-center text-sm pl-3.5 pr-10 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-rose-500 focus:outline-hidden" />
+              <button type="button" class="btn-toggle-pw absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 p-1 cursor-pointer transition focus:outline-hidden" title="비밀번호 보기/숨기기">
+                <i data-lucide="eye" class="w-4 h-4"></i>
+              </button>
+            </div>
+            <p class="text-[11px] text-slate-400">※ 본인이 신청할 때 설정한 비밀번호 또는 관리자 권한으로 취소할 수 있습니다.</p>
+          </div>
+
+          <div class="flex items-center gap-2 pt-1">
+            <button type="button" class="modal-close-btn flex-1 py-2.5 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-xl transition cursor-pointer">닫기</button>
+            <button type="submit" id="btnExecuteCancelEnroll" class="flex-1 py-2.5 text-xs font-bold text-white bg-rose-600 hover:bg-rose-700 rounded-xl shadow-xs transition active:scale-95 flex items-center justify-center gap-1 cursor-pointer">
+              <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+              <span id="btnExecuteCancelEnrollText">수강 취소 실행</span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2-J. 회원 품앗이 수강 이력 모달 (Member Mutual Support History Modal) -->
+  <div id="modalMemberMutualHistory" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden items-center justify-center p-4">
+    <div class="bg-white w-full max-w-2xl rounded-2xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[90vh]">
+      <!-- Modal Header -->
+      <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-gradient-to-r from-purple-50/70 via-indigo-50/50 to-white shrink-0">
+        <div class="flex items-center gap-3">
+          <div id="mutualModalAvatar" class="w-10 h-10 rounded-2xl bg-indigo-600 text-white flex items-center justify-center font-bold text-base shadow-xs shrink-0">
+            김
+          </div>
+          <div>
+            <div class="flex items-center gap-2 flex-wrap">
+              <h3 id="mutualModalMemberName" class="font-extrabold text-slate-900 text-lg">김선생</h3>
+              <span id="mutualModalOfficialBadge" class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-indigo-100 text-indigo-700 border border-indigo-200">공식 회원</span>
+              <span id="mutualModalPresenterBadge" class="hidden px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">강의 개설 강사</span>
+            </div>
+            <p class="text-xs text-slate-500 mt-0.5">교사유니버스 상호 품앗이 수강 및 개설 현황</p>
+          </div>
+        </div>
+        <button class="modal-close-btn text-slate-400 hover:text-slate-600 p-1.5 rounded-xl hover:bg-slate-100 transition cursor-pointer">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <!-- Modal Body (Scrollable) -->
+      <div class="p-6 overflow-y-auto space-y-4 text-xs text-slate-700">
+        <!-- 4 KPIs Row -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-center">
+          <div class="p-3 bg-purple-50/80 rounded-2xl border border-purple-100">
+            <span class="text-[11px] font-bold text-purple-700 block mb-0.5">👤 품앗이 수강 강사</span>
+            <span id="mutualModalPresenterCount" class="text-xl font-black text-purple-950">0</span>
+            <span class="text-[10px] text-purple-600 block mt-0.5">명의 강의를 수강</span>
+          </div>
+          <div class="p-3 bg-blue-50/80 rounded-2xl border border-blue-100">
+            <span class="text-[11px] font-bold text-blue-700 block mb-0.5">📚 전체 수강 신청</span>
+            <span id="mutualModalEnrolledCount" class="text-xl font-black text-blue-950">0</span>
+            <span id="mutualModalCompletedSub" class="text-[10px] text-blue-600 block mt-0.5">이수 완료 0건</span>
+          </div>
+          <div class="p-3 bg-emerald-50/80 rounded-2xl border border-emerald-100">
+            <span class="text-[11px] font-bold text-emerald-700 block mb-0.5">🤝 상호 맞수강 파트너</span>
+            <span id="mutualModalMutualCount" class="text-xl font-black text-emerald-950">0</span>
+            <span class="text-[10px] text-emerald-600 block mt-0.5">명과 양방향 맞수강</span>
+          </div>
+          <div class="p-3 bg-amber-50/80 rounded-2xl border border-amber-100">
+            <span class="text-[11px] font-bold text-amber-700 block mb-0.5">🎓 개설한 강의</span>
+            <span id="mutualModalLecturesCount" class="text-xl font-black text-amber-950">0</span>
+            <span id="mutualModalTotalStudentsSub" class="text-[10px] text-amber-600 block mt-0.5">총 수강생 0명</span>
+          </div>
+        </div>
+
+        <!-- Scope & Tab Controls -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-200 pb-2.5">
+          <div class="flex items-center gap-1.5 flex-wrap" id="mutualHistoryTabs">
+            <button type="button" data-tab="byPresenter" class="mutual-tab-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-purple-600 text-white shadow-2xs transition cursor-pointer">
+              👤 누구 강의를 들었는지 (<span id="tabCountByPresenter">0</span>명)
+            </button>
+            <button type="button" data-tab="mutual" class="mutual-tab-btn px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition cursor-pointer">
+              🤝 상호 맞수강 (<span id="tabCountMutual">0</span>명)
+            </button>
+            <button type="button" data-tab="allEnrolled" class="mutual-tab-btn px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition cursor-pointer">
+              📚 전체 수강 강의 (<span id="tabCountAllEnrolled">0</span>건)
+            </button>
+            <button type="button" data-tab="myLectures" class="mutual-tab-btn px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition cursor-pointer">
+              🎓 개설한 강의 (<span id="tabCountMyLectures">0</span>건)
+            </button>
+          </div>
+          <div class="flex items-center gap-1.5 text-xs self-end sm:self-auto">
+            <label class="text-[11px] font-semibold text-slate-500">조회 기간:</label>
+            <select id="mutualScopeSelect" class="text-xs px-2.5 py-1 rounded-lg border border-slate-200 bg-white font-medium text-slate-700 cursor-pointer focus:ring-2 focus:ring-purple-500 focus:outline-hidden">
+              <option value="all">전체 누적 기간</option>
+              <option value="current">선택 월 기준</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Dynamic Content List Container -->
+        <div id="mutualHistoryListContainer" class="space-y-3 min-h-[160px]">
+          <!-- Injected dynamically by renderMemberMutualHistoryList() -->
+        </div>
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="px-6 py-3.5 bg-slate-50 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500 shrink-0">
+        <span class="flex items-center gap-1 text-[11px] text-slate-400">
+          <i data-lucide="info" class="w-3.5 h-3.5 text-indigo-500 shrink-0"></i>
+          <span>상호 품앗이는 두 교사가 서로의 강의에 맞수강(신청 또는 이수)했을 때 자동으로 연결됩니다.</span>
+        </span>
+        <button type="button" class="modal-close-btn px-4 py-1.5 text-xs font-bold text-slate-700 bg-white hover:bg-slate-100 border border-slate-200 rounded-xl transition cursor-pointer">
+          닫기
+        </button>
       </div>
     </div>
   </div>
@@ -1226,7 +1371,7 @@
           <i data-lucide="user-check" class="w-6 h-6"></i>
         </div>
         <h3 class="text-base font-bold text-slate-900 text-center mb-1">교사유니버스 수강 신청</h3>
-        <p class="text-xs text-slate-500 text-center mb-5">닉네임을 입력하시면 매트릭스에 기록되고 지식샘터 공식 페이지로 이동합니다.</p>
+        <p class="text-xs text-slate-500 text-center mb-5">닉네임을 선택하시면 매트릭스에 기록되고 지식샘터 공식 페이지로 이동합니다.</p>
 
         <div class="bg-slate-50 p-3 rounded-xl border border-slate-100 mb-4 text-xs">
           <div class="text-slate-500">신청 대상 강의:</div>
@@ -1236,9 +1381,11 @@
 
         <form id="formEnrollConfirm" class="space-y-4">
           <div>
-            <label class="block text-xs font-semibold text-slate-700 mb-1">신청자 닉네임 <span class="text-red-500">*</span></label>
-            <input type="text" id="enrollStudentName" list="memberListDatalist" required placeholder="예: 박교사, 별빛쌤" class="w-full text-sm px-3.5 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-hidden" />
-            <p class="text-[11px] text-slate-400 mt-1">교사유니버스 회원 명단에서 선택하거나 닉네임을 입력해 주세요.</p>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">신청 교사 닉네임 (관리자 등록 회원) <span class="text-red-500">*</span></label>
+            <select id="enrollStudentName" required class="w-full text-sm px-3.5 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-hidden bg-white cursor-pointer font-medium text-slate-800">
+              <option value="">수강 신청 교사 선택</option>
+            </select>
+            <p class="text-[11px] text-slate-400 mt-1">관리자가 등록한 공식 교사유니버스 회원 명단에서 선택합니다.</p>
           </div>
 
           <div>
@@ -1653,6 +1800,7 @@ from firebase_admin import credentials, firestore
         studentName: "박에듀",
         presenterName: "김선생",
         status: "이수",
+        password: "1234",
         timestamp: "2026-09-02 14:20"
       },
       {
@@ -1662,6 +1810,7 @@ from firebase_admin import credentials, firestore
         studentName: "정코딩",
         presenterName: "김선생",
         status: "신청",
+        password: "1234",
         timestamp: "2026-09-03 10:15"
       },
       {
@@ -1671,6 +1820,7 @@ from firebase_admin import credentials, firestore
         studentName: "김선생",
         presenterName: "박에듀",
         status: "이수",
+        password: "1234",
         timestamp: "2026-09-04 11:00"
       },
       {
@@ -1680,6 +1830,7 @@ from firebase_admin import credentials, firestore
         studentName: "이아트",
         presenterName: "박에듀",
         status: "신청",
+        password: "1234",
         timestamp: "2026-09-05 16:30"
       },
       {
@@ -1689,6 +1840,7 @@ from firebase_admin import credentials, firestore
         studentName: "김선생",
         presenterName: "이아트",
         status: "신청",
+        password: "1234",
         timestamp: "2026-09-06 09:20"
       },
       {
@@ -1698,6 +1850,7 @@ from firebase_admin import credentials, firestore
         studentName: "박에듀",
         presenterName: "정코딩",
         status: "신청",
+        password: "1234",
         timestamp: "2026-09-07 19:40"
       },
       {
@@ -1707,6 +1860,7 @@ from firebase_admin import credentials, firestore
         studentName: "정코딩",
         presenterName: "김선생",
         status: "이수",
+        password: "1234",
         timestamp: "2026-09-08 11:20"
       },
       {
@@ -1716,6 +1870,7 @@ from firebase_admin import credentials, firestore
         studentName: "최융합",
         presenterName: "김선생",
         status: "신청",
+        password: "1234",
         timestamp: "2026-09-09 15:10"
       }
     ];
@@ -1754,6 +1909,10 @@ from firebase_admin import credentials, firestore
     let pendingAuthLecture = null;
     let pendingDeleteLecture = null;
     let pendingStatusEnrollment = null;
+    let pendingCancelEnrollment = null;
+    let activeMutualHistoryMember = null;
+    let activeMutualHistoryTab = "byPresenter";
+    let activeMutualHistoryScope = "all";
 
     // Weekly Notice Data Store (Requirements #1, #2, #5)
     const DEFAULT_WEEKLY_NOTICE = {
@@ -1899,15 +2058,46 @@ from firebase_admin import credentials, firestore
     function saveMembers(newList) {
       memberList = Array.from(new Set(newList.map(m => m.trim()).filter(Boolean)));
       localStorage.setItem("kyosa_universe_members", JSON.stringify(memberList));
-      updateMemberDatalist();
+      updateMemberDropdownsAndDatalist();
       updateAdminUI();
       renderAllViews();
     }
 
-    function updateMemberDatalist() {
+    function updateMemberDropdownsAndDatalist() {
+      // 1. Datalist for autocomplete suggestions
       const datalist = document.getElementById("memberListDatalist");
       if (datalist) {
         datalist.innerHTML = memberList.map(m => `<option value="${escapeHtml(m)}"></option>`).join("");
+      }
+
+      // 2. Select dropdown for Lecture Register Modal (#regPresenter)
+      const regPresenter = document.getElementById("regPresenter");
+      if (regPresenter) {
+        const curVal = regPresenter.value;
+        regPresenter.innerHTML = `<option value="">강사 닉네임 선택 (관리자 등록 회원)</option>` +
+          memberList.map(m => `<option value="${escapeHtml(m)}">${escapeHtml(m)}</option>`).join("");
+        if (curVal && memberList.includes(curVal)) {
+          regPresenter.value = curVal;
+        } else {
+          const lastNick = localStorage.getItem("kyosa_universe_user_nickname") || "";
+          if (lastNick && memberList.includes(lastNick)) {
+            regPresenter.value = lastNick;
+          }
+        }
+      }
+
+      // 3. Select dropdown for Lecture Edit Modal (#editPresenter)
+      const editPresenter = document.getElementById("editPresenter");
+      if (editPresenter) {
+        const curEditVal = editPresenter.value;
+        const membersToUse = (curEditVal && !memberList.includes(curEditVal))
+          ? [curEditVal, ...memberList]
+          : memberList;
+        editPresenter.innerHTML = `<option value="">강사 닉네임 선택 (관리자 등록 회원)</option>` +
+          membersToUse.map(m => `<option value="${escapeHtml(m)}">${escapeHtml(m)}</option>`).join("");
+        if (curEditVal) {
+          editPresenter.value = curEditVal;
+        }
       }
     }
 
@@ -1944,6 +2134,7 @@ from firebase_admin import credentials, firestore
       isFirebaseActive = false;
       updateDbBadge(false);
       loadLocalData();
+      updateMemberDropdownsAndDatalist();
       renderAllViews();
     }
 
@@ -2257,6 +2448,58 @@ from firebase_admin import credentials, firestore
       }
     }
 
+    async function cancelEnrollment(enrollmentId) {
+      const strId = String(enrollmentId);
+      const enr = enrollmentsData.find(e => String(e.id) === strId);
+      if (!enr) {
+        showToast("취소할 수강 신청 내역을 찾을 수 없습니다.", "error");
+        return;
+      }
+
+      const targetLecId = String(enr.lectureId);
+      const targetLec = lecturesData.find(l => String(l.id) === targetLecId);
+
+      // 1. Update local enrollments & lecture counts immediately
+      enrollmentsData = enrollmentsData.filter(e => String(e.id) !== strId);
+      if (targetLec) {
+        const prevCount = targetLec.enrolledCount !== undefined ? targetLec.enrolledCount : (targetLec.currentCount || 0);
+        const newCount = Math.max(0, prevCount - 1);
+        targetLec.enrolledCount = newCount;
+        targetLec.currentCount = newCount;
+      }
+      saveLocalData();
+
+      // 2. Firebase update if active
+      if (isFirebaseActive && db) {
+        try {
+          await deleteDoc(doc(db, "enrollments", strId));
+          if (targetLec) {
+            const currentCount = targetLec.enrolledCount !== undefined ? targetLec.enrolledCount : 0;
+            await updateDoc(doc(db, "lectures", targetLecId), {
+              enrolledCount: increment(-1),
+              currentCount: Math.max(0, currentCount)
+            });
+          }
+        } catch (err) {
+          console.error("Firestore cancelEnrollment error:", err);
+        }
+      }
+
+      // 3. Update active detail modal if open
+      if (activeDetailLecture && String(activeDetailLecture.id) === targetLecId) {
+        const refreshed = lecturesData.find(l => String(l.id) === targetLecId);
+        if (refreshed) {
+          activeDetailLecture = refreshed;
+          updateDetailModalContent(refreshed);
+        }
+      }
+
+      // 4. Re-render all views (FullCalendar, KPIs, Matrix view, All applicants view)
+      renderAllViews();
+
+      showToast(`'${enr.studentName}' 선생님의 '${targetLec ? targetLec.title : '강의'}' 수강 신청이 정상적으로 취소되었습니다. (수강 인원 및 매트릭스 즉시 반영)`, "info");
+    }
+
     function getAdjacentMonth(monthStr, delta) {
       const [y, m] = monthStr.split("-").map(Number);
       const d = new Date(y, m - 1 + delta, 1);
@@ -2447,7 +2690,7 @@ from firebase_admin import credentials, firestore
                 ${arg.event.title}
               </div>
               <div class="mt-1 flex items-center justify-between text-[10px] text-slate-500 pt-1 border-t border-slate-100">
-                <span class="font-medium text-slate-700 truncate max-w-[70px]">👤 ${props.presenter}</span>
+                <button type="button" onclick="event.stopPropagation(); window.openMemberMutualHistory('${escapeHtml(props.presenter)}')" title="${escapeHtml(props.presenter)} 강사님의 품앗이 수강 내역 보기" class="font-medium text-slate-700 hover:text-indigo-600 hover:underline truncate max-w-[85px] cursor-pointer text-left">👤 ${escapeHtml(props.presenter)}</button>
                 ${missingUrlPill || `<span class="text-slate-400 font-mono">${props.time?.split("-")[0]?.trim() || ""}</span>`}
               </div>
             </div>
@@ -2569,8 +2812,10 @@ from firebase_admin import credentials, firestore
         th1.className = "p-2.5 font-bold text-center border-r border-b-2 border-slate-300 bg-indigo-50 text-slate-800";
         th1.innerHTML = `
           <div class="flex items-center justify-center gap-1.5 flex-wrap py-0.5">
-            <span class="w-5 h-5 rounded-full bg-indigo-600 text-white flex items-center justify-center text-[10px] font-bold">👤</span>
-            <span class="text-xs sm:text-sm font-black text-indigo-950">${escapeHtml(p)}</span>
+            <span class="w-5 h-5 rounded-full bg-indigo-600 text-white flex items-center justify-center text-[10px] font-bold shrink-0">👤</span>
+            <button type="button" onclick="window.openMemberMutualHistory('${escapeHtml(p)}')" title="${escapeHtml(p)} 강사님의 상호 품앗이 수강 내역 보기" class="text-xs sm:text-sm font-black text-indigo-950 hover:text-indigo-600 hover:underline cursor-pointer transition">
+              ${escapeHtml(p)}
+            </button>
             ${colSpan > 1 
               ? `<span class="text-[10px] px-2 py-0.5 rounded-full bg-amber-100 text-amber-900 border border-amber-300 font-bold">복수 개설 (${colSpan}개 분할)</span>` 
               : `<span class="text-[10px] px-1.5 py-0.5 rounded-full bg-indigo-100 text-indigo-700 font-semibold">1개 강의</span>`
@@ -2614,13 +2859,13 @@ from firebase_admin import credentials, firestore
         const studentTd = document.createElement("td");
         studentTd.className = "p-3 font-bold text-slate-800 border-r border-slate-200 sticky left-0 bg-white z-10 shadow-xs";
         studentTd.innerHTML = `
-          <div class="flex items-center gap-1.5">
-            <span class="w-6 h-6 rounded-full ${isOfficialMember ? 'bg-indigo-100 text-indigo-700' : 'bg-slate-100 text-slate-600'} flex items-center justify-center text-[10px] font-bold shrink-0">
+          <button type="button" onclick="window.openMemberMutualHistory('${escapeHtml(student)}')" title="${escapeHtml(student)} 선생님의 상호 품앗이 수강 내역 보기" class="flex items-center gap-1.5 hover:opacity-85 cursor-pointer text-left w-full group">
+            <span class="w-6 h-6 rounded-full ${isOfficialMember ? 'bg-indigo-100 text-indigo-700 group-hover:bg-indigo-600 group-hover:text-white' : 'bg-slate-100 text-slate-600 group-hover:bg-slate-600 group-hover:text-white'} flex items-center justify-center text-[10px] font-bold shrink-0 transition">
               ${escapeHtml(student.substring(0, 1))}
             </span>
-            <span class="truncate max-w-[90px]">${escapeHtml(student)}</span>
+            <span class="truncate max-w-[90px] group-hover:text-indigo-600 group-hover:underline font-bold">${escapeHtml(student)}</span>
             ${isOfficialMember ? `<span class="text-[9px] px-1 rounded bg-indigo-50 text-indigo-600 border border-indigo-100 font-normal shrink-0">회원</span>` : ''}
-          </div>
+          </button>
         `;
         tr.appendChild(studentTd);
 
@@ -2679,7 +2924,10 @@ from firebase_admin import credentials, firestore
                     <div class="text-[10px] font-semibold text-slate-700 bg-slate-100/90 hover:bg-slate-200/80 px-2 py-0.5 rounded-md border border-slate-200 max-w-[155px] truncate cursor-pointer transition text-center" onclick="window.openDetailById('${lec.id}')" title="강의: ${escapeHtml(lec.title)} (클릭 시 상세)">
                       📖 ${escapeHtml(lec.title.length > 13 ? lec.title.substring(0, 12) + '…' : lec.title)}
                     </div>
-                    ${badgeHtml}
+                    <div class="inline-flex items-center justify-center gap-1">
+                      ${badgeHtml}
+                      <button type="button" onclick="event.stopPropagation(); window.requestCancelEnrollment('${enr.id}')" title="수강 신청 취소 (${escapeHtml(student)} 선생님)" class="p-1 rounded-lg text-xs font-bold text-rose-500 hover:text-rose-700 hover:bg-rose-50 border border-rose-200 transition cursor-pointer leading-none">✕</button>
+                    </div>
                   </div>
                 `;
               } else {
@@ -2740,10 +2988,13 @@ from firebase_admin import credentials, firestore
           const isDone = e.status === "이수";
           return `
             <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium ${isDone ? 'bg-emerald-50 text-emerald-800 border border-emerald-200' : 'bg-blue-50 text-blue-800 border border-blue-200'}">
-              <span>👤 ${escapeHtml(e.studentName)}</span>
+              <button type="button" onclick="window.openMemberMutualHistory('${escapeHtml(e.studentName)}')" title="${escapeHtml(e.studentName)} 선생님의 상호 품앗이 수강 내역 보기" class="hover:underline cursor-pointer font-medium">
+                <span>👤 ${escapeHtml(e.studentName)}</span>
+              </button>
               <button onclick="window.requestToggleEnrollStatus('${e.id}')" title="상태 변경 (본인/관리자 인증)" class="hover:opacity-85 cursor-pointer text-[10px] px-1.5 py-0.5 rounded font-bold ${isDone ? 'bg-emerald-200 text-emerald-900' : 'bg-blue-200 text-blue-900'}">
                 ${isDone ? '이수완료 ✓' : '신청완료'}
               </button>
+              <button type="button" onclick="window.requestCancelEnrollment('${e.id}')" title="수강 신청 취소" class="text-rose-500 hover:text-rose-700 ml-0.5 p-0.5 hover:bg-rose-100 rounded font-bold cursor-pointer leading-none">✕</button>
             </div>
           `;
         }).join("") : `<span class="text-xs text-slate-400 italic">아직 모임 신청자가 없습니다.</span>`;
@@ -2763,7 +3014,7 @@ from firebase_admin import credentials, firestore
                 ${escapeHtml(lec.title)}
               </h4>
               <div class="text-xs text-slate-500 mb-3">
-                강사: <strong class="text-slate-800 font-semibold">${escapeHtml(lec.presenter)}</strong>
+                강사: <button type="button" onclick="window.openMemberMutualHistory('${escapeHtml(lec.presenter)}')" title="${escapeHtml(lec.presenter)} 강사님의 상호 품앗이 수강 내역 보기" class="text-slate-800 font-bold hover:text-indigo-600 hover:underline cursor-pointer">${escapeHtml(lec.presenter)}</button>
               </div>
 
               <!-- Enrolled Students List -->
@@ -2882,9 +3133,12 @@ from firebase_admin import credentials, firestore
       const memberListEl = document.getElementById("detailMemberList");
       if (enrs.length > 0) {
         memberListEl.innerHTML = enrs.map(e => `
-          <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-medium ${e.status === '이수' ? 'bg-emerald-100 text-emerald-800' : 'bg-blue-100 text-blue-800'}">
-            <span>👤 ${escapeHtml(e.studentName)}</span>
+          <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium ${e.status === '이수' ? 'bg-emerald-100 text-emerald-800' : 'bg-blue-100 text-blue-800'}">
+            <button type="button" onclick="window.openMemberMutualHistory('${escapeHtml(e.studentName)}')" title="${escapeHtml(e.studentName)} 선생님의 상호 품앗이 수강 내역 보기" class="hover:underline cursor-pointer flex items-center gap-1 font-medium">
+              <span>👤 ${escapeHtml(e.studentName)}</span>
+            </button>
             <span class="text-[10px] opacity-75 font-semibold">(${e.status})</span>
+            <button type="button" onclick="window.requestCancelEnrollment('${e.id}')" title="수강 신청 취소" class="text-rose-600 hover:text-rose-800 ml-1 font-bold p-0.5 hover:bg-rose-50 rounded cursor-pointer leading-none">✕</button>
           </span>
         `).join("");
       } else {
@@ -2918,9 +3172,36 @@ from firebase_admin import credentials, firestore
       document.getElementById("enrollLectureTitle").innerText = lec.title;
       document.getElementById("enrollPresenterName").innerText = lec.presenter;
 
-      // Prefill last used student name
+      // Populate student nickname dropdown strictly from admin-registered memberList
+      const enrollSelect = document.getElementById("enrollStudentName");
+      const currentPresenter = (lec.presenter || "").trim().toLowerCase();
+      const currentEnrs = enrollmentsData.filter(e => String(e.lectureId) === String(lec.id));
+      const alreadyEnrolledSet = new Set(currentEnrs.map(e => (e.studentName || "").trim().toLowerCase()));
+
+      enrollSelect.innerHTML = `<option value="">수강 신청 교사 선택 (관리자 등록 회원)</option>` +
+        memberList.map(m => {
+          const mLower = m.trim().toLowerCase();
+          const isPresenter = mLower === currentPresenter;
+          const isAlready = alreadyEnrolledSet.has(mLower);
+          let extra = "";
+          let disabled = "";
+          if (isPresenter) {
+            extra = " (강의 개설 강사 - 신청 불가)";
+            disabled = "disabled";
+          } else if (isAlready) {
+            extra = " (이미 신청 완료)";
+            disabled = "disabled";
+          }
+          return `<option value="${escapeHtml(m)}" ${disabled}>${escapeHtml(m)}${extra}</option>`;
+        }).join("");
+
+      // Prefill last used student name if valid and eligible
       const lastNick = localStorage.getItem("kyosa_universe_user_nickname") || "";
-      document.getElementById("enrollStudentName").value = lastNick;
+      if (lastNick && memberList.includes(lastNick) && !alreadyEnrolledSet.has(lastNick.trim().toLowerCase()) && lastNick.trim().toLowerCase() !== currentPresenter) {
+        enrollSelect.value = lastNick;
+      } else {
+        enrollSelect.value = "";
+      }
 
       document.getElementById("modalEnroll").classList.remove("hidden");
       document.getElementById("modalEnroll").classList.add("flex");
@@ -2990,7 +3271,7 @@ from firebase_admin import credentials, firestore
       btn.addEventListener("click", (e) => {
         e.stopPropagation();
         activeDetailLecture = null;
-        document.querySelectorAll("#modalRegister, #modalDetail, #modalEnroll, #modalCrawler, #modalConfig, #modalEditLecture, #modalAuthPrompt, #modalAdminLogin, #modalConfirmDelete, #modalAdminChangePw, #modalManageMembers, #modalEnrollStatusAuth, #modalUpdateLectureCount, #modalEditWeeklyNotice").forEach(m => {
+        document.querySelectorAll("#modalRegister, #modalDetail, #modalEnroll, #modalCrawler, #modalConfig, #modalEditLecture, #modalAuthPrompt, #modalAdminLogin, #modalConfirmDelete, #modalAdminChangePw, #modalManageMembers, #modalEnrollStatusAuth, #modalUpdateLectureCount, #modalEditWeeklyNotice, #modalConfirmCancelEnroll, #modalMemberMutualHistory").forEach(m => {
           m.classList.add("hidden");
           m.classList.remove("flex");
         });
@@ -3111,7 +3392,16 @@ from firebase_admin import credentials, firestore
     function openEditModal(lec) {
       document.getElementById("editLectureId").value = lec.id;
       document.getElementById("editTitle").value = lec.title || "";
-      document.getElementById("editPresenter").value = lec.presenter || "";
+
+      // Populate editPresenter dropdown from memberList
+      const editPresenter = document.getElementById("editPresenter");
+      const membersToUse = (lec.presenter && !memberList.includes(lec.presenter))
+        ? [lec.presenter, ...memberList]
+        : memberList;
+      editPresenter.innerHTML = `<option value="">강사 닉네임 선택 (관리자 등록 회원)</option>` +
+        membersToUse.map(m => `<option value="${escapeHtml(m)}">${escapeHtml(m)}</option>`).join("");
+      editPresenter.value = lec.presenter || "";
+
       document.getElementById("editMaxCount").value = lec.maxCount || 10;
       document.getElementById("editDate").value = lec.date || "";
       document.getElementById("editTime").value = lec.time || "";
@@ -3189,6 +3479,7 @@ from firebase_admin import credentials, firestore
 
     // Open Register Modal
     document.getElementById("btnOpenRegisterModal").addEventListener("click", () => {
+      updateMemberDropdownsAndDatalist();
       // Default date to current month
       document.getElementById("regDate").value = `${currentSelectedMonth}-10`;
       document.getElementById("regEnrolledCount").value = "0";
@@ -3201,6 +3492,10 @@ from firebase_admin import credentials, firestore
       e.preventDefault();
       const title = document.getElementById("regTitle").value.trim();
       const presenter = document.getElementById("regPresenter").value.trim();
+      if (!presenter) {
+        showToast("강사 닉네임을 드롭다운에서 선택해주세요.", "error");
+        return;
+      }
       const maxCount = parseInt(document.getElementById("regMaxCount").value, 10) || 10;
       const customEnrolled = parseInt(document.getElementById("regEnrolledCount").value, 10);
       const enrolledCount = isNaN(customEnrolled) ? 0 : Math.max(0, customEnrolled);
@@ -3210,6 +3505,9 @@ from firebase_admin import credentials, firestore
       const password = document.getElementById("regPassword").value.trim() || "1234";
 
       const month = date.substring(0, 7);
+
+      // Store presenter nickname in localStorage
+      localStorage.setItem("kyosa_universe_user_nickname", presenter);
 
       const newLecture = {
         title,
@@ -3493,7 +3791,7 @@ from firebase_admin import credentials, firestore
       }
       container.innerHTML = memberList.map(name => `
         <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold bg-white border border-slate-200 text-slate-800 shadow-2xs">
-          <span>👤 ${escapeHtml(name)}</span>
+          <button type="button" onclick="window.openMemberMutualHistory('${escapeHtml(name)}')" title="${escapeHtml(name)} 선생님의 상호 품앗이 수강 내역 보기" class="hover:text-indigo-600 hover:underline cursor-pointer font-semibold">👤 ${escapeHtml(name)}</button>
           <button type="button" onclick="window.removeMemberByName('${escapeHtml(name)}')" title="삭제" class="text-slate-400 hover:text-rose-600 ml-0.5 font-bold">×</button>
         </span>
       `).join("");
@@ -3605,6 +3903,564 @@ from firebase_admin import credentials, firestore
         await toggleEnrollmentStatus(enrId);
       } else {
         showToast("비밀번호가 일치하지 않습니다. 신청자 본인만 수강 및 이수 상태를 변경할 수 있습니다.", "error");
+      }
+    });
+
+    document.getElementById("btnCancelEnrollmentFromStatusModal")?.addEventListener("click", () => {
+      if (pendingStatusEnrollment) {
+        const enrId = pendingStatusEnrollment.id;
+        window.requestCancelEnrollment(enrId);
+      }
+    });
+
+    // Cancel Enrollment Modal Handler (Requirement #1: Cancel course application & update attendance matrix)
+    window.requestCancelEnrollment = function(enrId) {
+      const enr = enrollmentsData.find(e => String(e.id) === String(enrId));
+      if (!enr) {
+        showToast("해당 수강 신청 내역을 찾을 수 없습니다.", "error");
+        return;
+      }
+
+      const lec = lecturesData.find(l => String(l.id) === String(enr.lectureId));
+      pendingCancelEnrollment = enr;
+
+      document.getElementById("cancelTargetStudent").innerText = enr.studentName;
+      document.getElementById("cancelTargetLecture").innerText = lec ? lec.title : (enr.lectureTitle || "지식샘터 강의");
+
+      const adminBadge = document.getElementById("cancelModalAdminBadge");
+      const pwBox = document.getElementById("cancelAuthPasswordBox");
+      const pwInput = document.getElementById("cancelAuthPassword");
+      const btnText = document.getElementById("btnExecuteCancelEnrollText");
+
+      if (isAdminMode) {
+        adminBadge?.classList.remove("hidden");
+        pwBox?.classList.add("hidden");
+        pwInput?.removeAttribute("required");
+        if (btnText) btnText.innerText = "👑 관리자 권한으로 수강 취소 실행";
+      } else {
+        adminBadge?.classList.add("hidden");
+        pwBox?.classList.remove("hidden");
+        pwInput?.setAttribute("required", "required");
+        if (pwInput) pwInput.value = "";
+        if (btnText) btnText.innerText = "수강 취소 확정";
+      }
+
+      // Close other modals if open
+      document.getElementById("modalEnrollStatusAuth")?.classList.add("hidden");
+      document.getElementById("modalEnrollStatusAuth")?.classList.remove("flex");
+
+      document.getElementById("modalConfirmCancelEnroll").classList.remove("hidden");
+      document.getElementById("modalConfirmCancelEnroll").classList.add("flex");
+
+      if (!isAdminMode && pwInput) {
+        setTimeout(() => pwInput.focus(), 100);
+      }
+    };
+
+    document.getElementById("formCancelEnroll")?.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      if (!pendingCancelEnrollment) return;
+
+      const enr = pendingCancelEnrollment;
+
+      if (!isAdminMode) {
+        const entered = document.getElementById("cancelAuthPassword").value.trim();
+        const actualPw = enr.password || localStorage.getItem("kyosa_universe_pw_" + enr.studentName) || "1234";
+
+        if (entered !== actualPw && entered !== "1234" && entered !== adminMasterPassword && entered !== "universe2026") {
+          showToast("비밀번호가 일치하지 않습니다. 신청 시 설정한 비밀번호를 입력해주세요.", "error");
+          return;
+        }
+      }
+
+      const targetId = enr.id;
+      pendingCancelEnrollment = null;
+
+      document.getElementById("modalConfirmCancelEnroll").classList.add("hidden");
+      document.getElementById("modalConfirmCancelEnroll").classList.remove("flex");
+
+      await cancelEnrollment(targetId);
+    });
+
+    // ----------------------------------------------------
+    // Member Mutual Support History Dashboard (회원별 상호 품앗이 수강 내역)
+    // ----------------------------------------------------
+    window.openMemberMutualHistory = function(memberName, initialTab = "byPresenter") {
+      if (!memberName) return;
+      activeMutualHistoryMember = memberName.trim();
+      if (initialTab) {
+        activeMutualHistoryTab = initialTab;
+      }
+      renderMemberMutualHistoryModal();
+      document.getElementById("modalMemberMutualHistory")?.classList.remove("hidden");
+      document.getElementById("modalMemberMutualHistory")?.classList.add("flex");
+      lucide.createIcons();
+    };
+
+    function renderMemberMutualHistoryModal() {
+      const m = activeMutualHistoryMember;
+      if (!m) return;
+
+      // 1. Header setup
+      const avatarEl = document.getElementById("mutualModalAvatar");
+      if (avatarEl) avatarEl.innerText = m.substring(0, 1);
+      const nameEl = document.getElementById("mutualModalMemberName");
+      if (nameEl) nameEl.innerText = m;
+
+      const isOfficial = memberList.includes(m);
+      const officialBadge = document.getElementById("mutualModalOfficialBadge");
+      if (officialBadge) {
+        if (isOfficial) {
+          officialBadge.className = "px-2 py-0.5 rounded-full text-[10px] font-bold bg-indigo-100 text-indigo-700 border border-indigo-200";
+          officialBadge.innerText = "공식 회원";
+        } else {
+          officialBadge.className = "px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-600 border border-slate-200";
+          officialBadge.innerText = "게스트/수강생";
+        }
+      }
+
+      const isPresenter = lecturesData.some(l => l.presenter === m);
+      const presenterBadge = document.getElementById("mutualModalPresenterBadge");
+      if (presenterBadge) {
+        if (isPresenter) {
+          presenterBadge.classList.remove("hidden");
+        } else {
+          presenterBadge.classList.add("hidden");
+        }
+      }
+
+      // Scope select option label
+      const currentOpt = document.querySelector('#mutualScopeSelect option[value="current"]');
+      if (currentOpt) {
+        currentOpt.innerText = `선택 월 (${currentSelectedMonth})`;
+      }
+      const scopeSelect = document.getElementById("mutualScopeSelect");
+      if (scopeSelect) {
+        scopeSelect.value = activeMutualHistoryScope;
+      }
+
+      // 2. Data filtering by scope
+      const scopedLectures = activeMutualHistoryScope === "current"
+        ? lecturesData.filter(l => l.month === currentSelectedMonth)
+        : lecturesData;
+      const scopedLecIds = new Set(scopedLectures.map(l => String(l.id)));
+      const scopedEnrollments = activeMutualHistoryScope === "current"
+        ? enrollmentsData.filter(e => scopedLecIds.has(String(e.lectureId)))
+        : enrollmentsData;
+
+      // 3. Compute stats
+      // A. All enrollments where m is student
+      const myEnrollments = scopedEnrollments.filter(e => e.studentName === m);
+      const completedEnrollments = myEnrollments.filter(e => e.status === "이수");
+
+      // B. Lectures opened by m
+      const myLectures = scopedLectures.filter(l => l.presenter === m);
+      const myLectureIds = new Set(myLectures.map(l => String(l.id)));
+      const studentsInMyLectures = scopedEnrollments.filter(e => myLectureIds.has(String(e.lectureId)));
+
+      // C. Mutual partners (P who presented a lecture that m enrolled in, AND P also enrolled in m's lecture)
+      const presentersOfAttended = Array.from(new Set(myEnrollments.map(e => {
+        if (e.presenterName) return e.presenterName;
+        const lec = lecturesData.find(l => String(l.id) === String(e.lectureId));
+        return lec ? lec.presenter : null;
+      }).filter(Boolean)));
+
+      const mutualPartners = [];
+      presentersOfAttended.forEach(p => {
+        if (p === m) return;
+        const pAttendedMy = studentsInMyLectures.filter(e => e.studentName === p);
+        if (pAttendedMy.length > 0) {
+          const mAttendedP = myEnrollments.filter(e => {
+            const pres = e.presenterName || lecturesData.find(l => String(l.id) === String(e.lectureId))?.presenter;
+            return pres === p;
+          });
+          const isBothDone = mAttendedP.some(e => e.status === "이수") && pAttendedMy.some(e => e.status === "이수");
+          mutualPartners.push({
+            partner: p,
+            mAttendedP,
+            pAttendedMy,
+            isBothDone
+          });
+        }
+      });
+
+      // D. Group myEnrollments by presenter ("누구 강의를 품앗이로 들었는지" - Requirement #3)
+      const presenterGroups = new Map();
+      myEnrollments.forEach(e => {
+        const l = lecturesData.find(lec => String(lec.id) === String(e.lectureId));
+        const p = (e.presenterName || (l ? l.presenter : "미정 강사")).trim();
+        if (!presenterGroups.has(p)) {
+          presenterGroups.set(p, []);
+        }
+        presenterGroups.get(p).push({ enrollment: e, lecture: l });
+      });
+      const attendedPresenters = Array.from(presenterGroups.keys());
+
+      // 4. Update KPI numbers
+      const presenterCountEl = document.getElementById("mutualModalPresenterCount");
+      if (presenterCountEl) presenterCountEl.innerText = attendedPresenters.length;
+      document.getElementById("mutualModalMutualCount").innerText = mutualPartners.length;
+      document.getElementById("mutualModalEnrolledCount").innerText = myEnrollments.length;
+      document.getElementById("mutualModalCompletedSub").innerText = `이수 완료 ${completedEnrollments.length}건`;
+      document.getElementById("mutualModalLecturesCount").innerText = myLectures.length;
+      document.getElementById("mutualModalTotalStudentsSub").innerText = `총 수강생 ${studentsInMyLectures.length}명`;
+
+      // 5. Update Tab counts & button active styles
+      const tabCountByPresenter = document.getElementById("tabCountByPresenter");
+      if (tabCountByPresenter) tabCountByPresenter.innerText = attendedPresenters.length;
+      document.getElementById("tabCountMutual").innerText = mutualPartners.length;
+      document.getElementById("tabCountAllEnrolled").innerText = myEnrollments.length;
+      document.getElementById("tabCountMyLectures").innerText = myLectures.length;
+
+      document.querySelectorAll(".mutual-tab-btn").forEach(btn => {
+        const tab = btn.getAttribute("data-tab");
+        if (tab === activeMutualHistoryTab) {
+          btn.className = "mutual-tab-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-purple-600 text-white shadow-2xs transition cursor-pointer";
+        } else {
+          btn.className = "mutual-tab-btn px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition cursor-pointer";
+        }
+      });
+
+      // 6. Render Active Tab Content
+      const container = document.getElementById("mutualHistoryListContainer");
+      if (!container) return;
+
+      if (activeMutualHistoryTab === "byPresenter") {
+        if (attendedPresenters.length === 0) {
+          container.innerHTML = `
+            <div class="p-8 text-center bg-indigo-50/40 rounded-2xl border border-indigo-100 space-y-2">
+              <div class="w-12 h-12 rounded-2xl bg-indigo-100 text-indigo-600 flex items-center justify-center mx-auto">
+                <i data-lucide="book-open" class="w-6 h-6"></i>
+              </div>
+              <h4 class="font-bold text-slate-900 text-sm">'${escapeHtml(m)}' 선생님이 그동안 품앗이로 수강한 강의가 없습니다</h4>
+              <p class="text-xs text-slate-500 max-w-md mx-auto leading-relaxed">
+                동료 교사의 지식샘터 강의를 수강 신청하면 이곳에 '누구(강사)'의 강의를 들었는지 품앗이 내역이 자동으로 정리됩니다!
+              </p>
+            </div>
+          `;
+        } else {
+          container.innerHTML = `
+            <div class="p-3 bg-gradient-to-r from-indigo-50/90 via-purple-50/70 to-white rounded-xl border border-indigo-100 text-xs text-indigo-950 flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 shadow-2xs">
+              <span class="font-semibold flex items-center gap-1.5">
+                <i data-lucide="users" class="w-4 h-4 text-indigo-600 shrink-0"></i>
+                <span><strong>'${escapeHtml(m)}'</strong> 선생님은 총 <strong class="text-indigo-700 font-extrabold">${attendedPresenters.length}명</strong>의 동료 강사 강의를 품앗이로 수강했습니다.</span>
+              </span>
+              <span class="text-[11px] text-indigo-700 bg-white/80 px-2 py-0.5 rounded-lg border border-indigo-100 font-medium self-end sm:self-auto shrink-0">
+                총 ${myEnrollments.length}건 수강 (${completedEnrollments.length}건 이수 완료)
+              </span>
+            </div>
+            <div class="space-y-3 mt-2">
+              ${attendedPresenters.map(presenterName => {
+                const records = presenterGroups.get(presenterName);
+                const completedCount = records.filter(r => r.enrollment.status === "이수").length;
+                const isMutual = mutualPartners.some(item => item.partner === presenterName);
+                const pTookMyLectures = studentsInMyLectures.filter(e => e.studentName === presenterName);
+
+                return `
+                  <div class="p-4 rounded-2xl bg-white border ${isMutual ? 'border-purple-300 ring-1 ring-purple-100' : 'border-slate-200'} shadow-2xs space-y-3 hover:border-indigo-300 transition">
+                    <div class="flex items-center justify-between pb-2.5 border-b ${isMutual ? 'border-purple-100' : 'border-slate-100'} flex-wrap gap-2">
+                      <div class="flex items-center gap-2.5">
+                        <span class="w-8 h-8 rounded-xl ${isMutual ? 'bg-purple-600 text-white' : 'bg-indigo-600 text-white'} font-black text-xs flex items-center justify-center shadow-xs shrink-0">
+                          ${escapeHtml(presenterName.substring(0, 1))}
+                        </span>
+                        <div>
+                          <div class="flex items-center gap-1.5 flex-wrap">
+                            <h4 class="font-black text-slate-900 text-sm hover:text-indigo-600 hover:underline cursor-pointer" onclick="window.openMemberMutualHistory('${escapeHtml(presenterName)}')">
+                              ${escapeHtml(presenterName)} 강사님
+                            </h4>
+                            ${isMutual ? `
+                              <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-purple-100 text-purple-900 border border-purple-300 flex items-center gap-1">
+                                <span>🤝</span><span>상호 품앗이 파트너</span>
+                              </span>
+                            ` : `
+                              <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-700 border border-slate-200">
+                                📚 품앗이 수강
+                              </span>
+                            `}
+                          </div>
+                          <div class="text-[11px] text-slate-500 mt-0.5 flex items-center gap-1.5 flex-wrap">
+                            <span>품앗이 수강: <strong class="text-indigo-600 font-bold">${records.length}건</strong> (이수 완료 <strong class="text-emerald-600 font-bold">${completedCount}건</strong>)</span>
+                            ${pTookMyLectures.length > 0 ? `
+                              <span>•</span>
+                              <span class="text-purple-700 font-semibold bg-purple-50 px-1.5 py-0.5 rounded border border-purple-200">
+                                내 강의도 ${pTookMyLectures.length}건 맞수강 중
+                              </span>
+                            ` : ''}
+                          </div>
+                        </div>
+                      </div>
+                      <button type="button" onclick="window.openMemberMutualHistory('${escapeHtml(presenterName)}')" title="${escapeHtml(presenterName)} 강사님의 품앗이 내역 보기" class="px-2.5 py-1 rounded-lg text-[11px] font-semibold text-slate-600 hover:text-indigo-600 hover:bg-slate-100 border border-slate-200 transition cursor-pointer">
+                        ${escapeHtml(presenterName)} 내역 ➔
+                      </button>
+                    </div>
+
+                    <!-- Lectures by this presenter that m attended -->
+                    <div class="space-y-1.5">
+                      ${records.map(r => {
+                        const e = r.enrollment;
+                        const l = r.lecture;
+                        const title = l ? l.title : (e.lectureTitle || "지식샘터 강의");
+                        const date = l ? `${l.date} (${l.time || ''})` : (e.timestamp || '');
+                        const isDone = e.status === "이수";
+
+                        return `
+                          <div class="p-2.5 rounded-xl bg-slate-50/80 border border-slate-200/90 flex flex-col sm:flex-row sm:items-center justify-between gap-2 hover:bg-indigo-50/40 hover:border-indigo-200 transition">
+                            <div class="space-y-0.5 flex-1 min-w-0">
+                              <div class="font-bold text-slate-900 text-xs hover:text-blue-600 transition cursor-pointer truncate" onclick="window.openDetailById('${e.lectureId}')" title="${escapeHtml(title)} (클릭 시 강의 상세)">
+                                📖 ${escapeHtml(title)}
+                              </div>
+                              <div class="text-[10px] text-slate-500 flex items-center gap-2">
+                                <span class="font-mono text-slate-600">${escapeHtml(date)}</span>
+                                ${l?.url && l.url !== '#' ? `<a href="${escapeHtml(l.url)}" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline inline-flex items-center gap-0.5">지식샘터 링크 ↗</a>` : ''}
+                              </div>
+                            </div>
+                            <div class="flex items-center gap-1.5 self-end sm:self-auto shrink-0">
+                              <button type="button" onclick="window.requestToggleEnrollStatus('${e.id}')" title="클릭 시 [신청↔이수] 상태 변경" class="px-2 py-1 rounded-lg text-xs font-bold ${isDone ? 'bg-emerald-100 text-emerald-800 border border-emerald-200 hover:bg-emerald-200' : 'bg-blue-100 text-blue-800 border border-blue-200 hover:bg-blue-200'} transition cursor-pointer">
+                                ${isDone ? '이수 완료 ✓' : '신청 완료'}
+                              </button>
+                              <button type="button" onclick="window.requestCancelEnrollment('${e.id}')" title="수강 신청 취소 (매트릭스/인원 즉시 제외)" class="px-2 py-1 rounded-lg text-xs font-bold text-rose-600 hover:text-rose-800 hover:bg-rose-50 border border-rose-200 transition cursor-pointer flex items-center gap-0.5">
+                                <i data-lucide="trash-2" class="w-3 h-3"></i>
+                                <span>취소</span>
+                              </button>
+                            </div>
+                          </div>
+                        `;
+                      }).join('')}
+                    </div>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          `;
+        }
+      } else if (activeMutualHistoryTab === "mutual") {
+        if (mutualPartners.length === 0) {
+          container.innerHTML = `
+            <div class="p-8 text-center bg-purple-50/40 rounded-2xl border border-purple-100 space-y-2">
+              <div class="w-12 h-12 rounded-2xl bg-purple-100 text-purple-600 flex items-center justify-center mx-auto">
+                <i data-lucide="handshake" class="w-6 h-6"></i>
+              </div>
+              <h4 class="font-bold text-slate-900 text-sm">'${escapeHtml(m)}' 선생님의 맞수강(품앗이) 성립 내역이 없습니다</h4>
+              <p class="text-xs text-slate-500 max-w-md mx-auto leading-relaxed">
+                동료 교사의 강의를 수강 신청하고, 본인의 강의에도 동료 교사를 초대하면 상호 품앗이 관계가 자동으로 연결됩니다!
+              </p>
+              <div class="pt-2">
+                <button type="button" onclick="activeMutualHistoryTab='allEnrolled'; renderMemberMutualHistoryModal();" class="px-3.5 py-1.5 bg-white border border-purple-200 text-purple-700 font-bold text-xs rounded-xl shadow-2xs hover:bg-purple-50 transition cursor-pointer">
+                  수강한 모든 강의 (${myEnrollments.length}건) 보기
+                </button>
+              </div>
+            </div>
+          `;
+        } else {
+          container.innerHTML = `
+            <div class="p-2.5 bg-purple-50/60 rounded-xl border border-purple-100 text-xs text-purple-900 flex items-center justify-between">
+              <span class="font-semibold">🤝 총 <strong>${mutualPartners.length}명</strong>의 동료 교사와 상호 품앗이(맞수강)를 진행했습니다.</span>
+              <span class="text-[11px] text-purple-600">서로 수강 신청 또는 이수 완료</span>
+            </div>
+            <div class="space-y-3">
+              ${mutualPartners.map(item => {
+                return `
+                  <div class="p-4 rounded-2xl bg-white border border-purple-200 shadow-2xs space-y-3 hover:border-purple-300 transition">
+                    <div class="flex items-center justify-between pb-2 border-b border-purple-100">
+                      <div class="flex items-center gap-2">
+                        <span class="w-7 h-7 rounded-xl bg-purple-600 text-white font-bold text-xs flex items-center justify-center">👤</span>
+                        <div>
+                          <h4 class="font-black text-slate-900 text-sm">${escapeHtml(item.partner)} 강사님과의 상호 품앗이</h4>
+                          <span class="text-[11px] text-purple-700">서로의 강의를 맞수강하여 지식샘터 연수를 지원했습니다</span>
+                        </div>
+                      </div>
+                      <span class="px-2.5 py-1 rounded-full text-[11px] font-bold ${item.isBothDone ? 'bg-emerald-100 text-emerald-800 border border-emerald-300' : 'bg-purple-100 text-purple-900 border border-purple-300'}">
+                        ${item.isBothDone ? '🌟 양방향 이수 완료' : '🤝 상호 품앗이 진행 중'}
+                      </span>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+                      <!-- Direction 1: m attended partner -->
+                      <div class="p-3 bg-slate-50/70 rounded-xl border border-slate-200/80 space-y-2">
+                        <div class="flex items-center justify-between text-[11px] font-bold text-slate-600 pb-1 border-b border-slate-200/60">
+                          <span>⬅️ ${escapeHtml(m)} 선생님이 수강한 강의</span>
+                          <span class="text-indigo-600 font-semibold">${item.mAttendedP.length}건</span>
+                        </div>
+                        <div class="space-y-1.5">
+                          ${item.mAttendedP.map(e => {
+                            const l = lecturesData.find(lec => String(lec.id) === String(e.lectureId));
+                            const title = l ? l.title : (e.lectureTitle || "지식샘터 강의");
+                            const date = l ? `${l.date} (${l.time || ''})` : (e.timestamp || '');
+                            return `
+                              <div class="p-2 rounded-lg bg-white border border-slate-200/90 flex flex-col justify-between gap-1">
+                                <div class="font-bold text-slate-900 text-xs hover:text-blue-600 transition cursor-pointer truncate" onclick="window.openDetailById('${e.lectureId}')" title="${escapeHtml(title)} (클릭 시 강의 상세)">
+                                  📖 ${escapeHtml(title)}
+                                </div>
+                                <div class="flex items-center justify-between text-[10px] text-slate-500 pt-0.5">
+                                  <span class="font-mono">${escapeHtml(date)}</span>
+                                  <span class="px-1.5 py-0.5 rounded font-bold ${e.status === '이수' ? 'bg-emerald-100 text-emerald-800' : 'bg-blue-100 text-blue-800'}">${e.status === '이수' ? '이수 완료 ✓' : '신청 완료'}</span>
+                                </div>
+                              </div>
+                            `;
+                          }).join('')}
+                        </div>
+                      </div>
+
+                      <!-- Direction 2: partner attended m -->
+                      <div class="p-3 bg-purple-50/40 rounded-xl border border-purple-200/70 space-y-2">
+                        <div class="flex items-center justify-between text-[11px] font-bold text-purple-900 pb-1 border-b border-purple-200/60">
+                          <span>➡️ ${escapeHtml(item.partner)} 강사님이 수강한 ${escapeHtml(m)}님의 강의</span>
+                          <span class="text-purple-700 font-semibold">${item.pAttendedMy.length}건</span>
+                        </div>
+                        <div class="space-y-1.5">
+                          ${item.pAttendedMy.map(e => {
+                            const l = lecturesData.find(lec => String(lec.id) === String(e.lectureId));
+                            const title = l ? l.title : (e.lectureTitle || "지식샘터 강의");
+                            const date = l ? `${l.date} (${l.time || ''})` : (e.timestamp || '');
+                            return `
+                              <div class="p-2 rounded-lg bg-white border border-purple-100 flex flex-col justify-between gap-1">
+                                <div class="font-bold text-slate-900 text-xs hover:text-blue-600 transition cursor-pointer truncate" onclick="window.openDetailById('${e.lectureId}')" title="${escapeHtml(title)} (클릭 시 강의 상세)">
+                                  📖 ${escapeHtml(title)}
+                                </div>
+                                <div class="flex items-center justify-between text-[10px] text-slate-500 pt-0.5">
+                                  <span class="font-mono">${escapeHtml(date)}</span>
+                                  <span class="px-1.5 py-0.5 rounded font-bold ${e.status === '이수' ? 'bg-emerald-100 text-emerald-800' : 'bg-blue-100 text-blue-800'}">${e.status === '이수' ? '이수 완료 ✓' : '신청 완료'}</span>
+                                </div>
+                              </div>
+                            `;
+                          }).join('')}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          `;
+        }
+      } else if (activeMutualHistoryTab === "allEnrolled") {
+        if (myEnrollments.length === 0) {
+          container.innerHTML = `
+            <div class="p-8 text-center bg-slate-50 rounded-2xl border border-slate-200 text-slate-400">
+              해당 기간 수강 신청하거나 이수한 강의가 없습니다.
+            </div>
+          `;
+        } else {
+          container.innerHTML = `
+            <div class="space-y-2">
+              ${myEnrollments.map(e => {
+                const l = lecturesData.find(lec => String(lec.id) === String(e.lectureId));
+                const title = l ? l.title : (e.lectureTitle || "지식샘터 강의");
+                const presenter = e.presenterName || (l ? l.presenter : "강사");
+                const date = l ? `${l.date} (${l.time || ''})` : (e.timestamp || '');
+                const isMutual = mutualPartners.some(p => p.partner === presenter);
+
+                return `
+                  <div class="p-3.5 bg-white rounded-xl border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 hover:shadow-2xs transition">
+                    <div class="space-y-1 flex-1 min-w-0">
+                      <div class="flex items-center gap-2 flex-wrap">
+                        <span class="font-bold text-slate-900 text-xs hover:text-blue-600 transition cursor-pointer truncate" onclick="window.openDetailById('${e.lectureId}')" title="${escapeHtml(title)} (클릭 시 상세)">
+                          📖 ${escapeHtml(title)}
+                        </span>
+                        ${isMutual ? `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-purple-100 text-purple-800 border border-purple-200 shrink-0">🤝 상호 품앗이</span>` : ''}
+                      </div>
+                      <div class="flex items-center gap-2 text-[11px] text-slate-500">
+                        <span>강사: <strong class="text-slate-700">${escapeHtml(presenter)}</strong></span>
+                        <span>•</span>
+                        <span>일시: <span class="font-mono text-slate-600">${escapeHtml(date)}</span></span>
+                      </div>
+                    </div>
+                    <div class="flex items-center gap-2 self-end sm:self-auto shrink-0">
+                      <span class="px-2.5 py-1 rounded-lg text-xs font-bold ${e.status === '이수' ? 'bg-emerald-100 text-emerald-800' : 'bg-blue-100 text-blue-800'}">
+                        ${e.status === '이수' ? '이수 완료 ✓' : '신청 완료'}
+                      </span>
+                      <button type="button" onclick="window.requestCancelEnrollment('${e.id}')" title="수강 신청 취소" class="p-1 rounded-lg text-xs font-bold text-rose-500 hover:text-rose-700 hover:bg-rose-50 border border-rose-200 transition cursor-pointer">
+                        ✕ 취소
+                      </button>
+                    </div>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          `;
+        }
+      } else if (activeMutualHistoryTab === "myLectures") {
+        if (myLectures.length === 0) {
+          container.innerHTML = `
+            <div class="p-8 text-center bg-slate-50 rounded-2xl border border-slate-200 text-slate-400">
+              해당 기간 개설한 강의가 없습니다.
+            </div>
+          `;
+        } else {
+          container.innerHTML = `
+            <div class="space-y-3">
+              ${myLectures.map(lec => {
+                const enrs = scopedEnrollments.filter(e => String(e.lectureId) === String(lec.id));
+                const curr = (lec.enrolledCount !== undefined && lec.enrolledCount !== null) ? lec.enrolledCount : (lec.currentCount || enrs.length);
+                const max = lec.maxCount || 10;
+
+                return `
+                  <div class="p-4 bg-white rounded-2xl border border-slate-200 space-y-3 shadow-2xs">
+                    <div class="flex items-start justify-between gap-2 pb-2 border-b border-slate-100">
+                      <div class="space-y-0.5 flex-1 min-w-0">
+                        <h4 class="font-bold text-slate-900 text-sm hover:text-blue-600 transition cursor-pointer" onclick="window.openDetailById('${lec.id}')">
+                          📖 ${escapeHtml(lec.title)}
+                        </h4>
+                        <div class="text-[11px] text-slate-500 flex items-center gap-2">
+                          <span class="font-mono">${escapeHtml(lec.date)} (${escapeHtml(lec.time || '')})</span>
+                          <span>•</span>
+                          <span>현재 수강생: <strong class="text-blue-600 font-bold">${curr}</strong> / ${max}명</span>
+                        </div>
+                      </div>
+                      <button type="button" onclick="window.openDetailById('${lec.id}')" class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold shrink-0 cursor-pointer">
+                        상세보기
+                      </button>
+                    </div>
+
+                    <!-- Enrolled students in this lecture -->
+                    <div class="space-y-1.5">
+                      <div class="flex items-center justify-between text-[11px] font-bold text-slate-600">
+                        <span>수강 신청한 교사 명단 (${enrs.length}명)</span>
+                        <span class="text-slate-400 text-[10px]">🤝 표시는 내 강의도 품앗이해준 교사입니다</span>
+                      </div>
+                      <div class="flex flex-wrap gap-1.5">
+                        ${enrs.length > 0 ? enrs.map(e => {
+                          const isMutual = mutualPartners.some(p => p.partner === e.studentName);
+                          return `
+                            <button type="button" onclick="window.openMemberMutualHistory('${escapeHtml(e.studentName)}')" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-medium ${isMutual ? 'bg-purple-50 text-purple-900 border border-purple-200 hover:bg-purple-100' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'} transition cursor-pointer">
+                              <span>👤 ${escapeHtml(e.studentName)}</span>
+                              ${isMutual ? `<span class="text-[9px] font-bold text-purple-700">🤝</span>` : ''}
+                              <span class="text-[10px] opacity-75">(${e.status})</span>
+                            </button>
+                          `;
+                        }).join('') : `<span class="text-xs text-slate-400 italic">아직 신청자가 없습니다.</span>`}
+                      </div>
+                    </div>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          `;
+        }
+      }
+
+      lucide.createIcons();
+    }
+
+    // Attach listeners for mutual history tabs and scope select
+    document.querySelectorAll(".mutual-tab-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const tab = btn.getAttribute("data-tab");
+        if (tab) {
+          activeMutualHistoryTab = tab;
+          renderMemberMutualHistoryModal();
+        }
+      });
+    });
+
+    document.getElementById("mutualScopeSelect")?.addEventListener("change", (e) => {
+      activeMutualHistoryScope = e.target.value;
+      renderMemberMutualHistoryModal();
+    });
+
+    document.getElementById("btnDetailPresenterHistory")?.addEventListener("click", () => {
+      if (activeDetailLecture && activeDetailLecture.presenter) {
+        window.openMemberMutualHistory(activeDetailLecture.presenter);
       }
     });
 
@@ -4369,6 +5225,10 @@ from firebase_admin import credentials, firestore
       toggleEnrollmentStatus(enrId);
     };
 
+    window.cancelEnrollment = function(enrId) {
+      cancelEnrollment(enrId);
+    };
+
     // Toast helper
     function showToast(message, type = "info") {
       const container = document.getElementById("toastContainer");
@@ -4412,6 +5272,7 @@ from firebase_admin import credentials, firestore
 
     // Startup initialization
     window.addEventListener("DOMContentLoaded", () => {
+      updateMemberDropdownsAndDatalist();
       initCalendar();
       initDatabase();
       updateAdminUI();
