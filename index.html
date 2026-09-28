@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>교사유니버스 - 지식샘터 강의 공유 및 수강 매트릭스</title>
   <meta name="description" content="교사유니버스 구성원들의 지식샘터 강의 등록, 실시간 수강 신청 및 상호 이수 현황 매트릭스 대시보드" />
   <meta property="og:title" content="교사유니버스 - 지식샘터 강의 공유 및 수강 매트릭스" />
@@ -47,10 +47,10 @@
       font-family: inherit;
     }
     .fc .fc-toolbar.fc-header-toolbar {
-      margin-bottom: 1rem;
+      margin-bottom: 0.75rem;
     }
     .fc .fc-toolbar-title {
-      font-size: 1.25rem;
+      font-size: 1.15rem;
       font-weight: 700;
       color: #1e293b;
     }
@@ -91,7 +91,7 @@
     .fc-day-sun .fc-col-header-cell-cushion { color: #ef4444; }
     .fc-day-sat .fc-col-header-cell-cushion { color: #3b82f6; }
     .fc-daygrid-day {
-      min-height: 110px;
+      min-height: 100px;
       transition: background-color 0.15s ease;
     }
     .fc-daygrid-day:hover {
@@ -108,148 +108,263 @@
       border: none !important;
       background: transparent !important;
     }
+
+    /* Mobile calendar adjustments */
+    @media (max-width: 640px) {
+      .fc-daygrid-day {
+        min-height: 80px;
+      }
+      .fc-col-header-cell {
+        padding: 0.35rem 0;
+        font-size: 0.75rem;
+      }
+      .fc-daygrid-day-number {
+        font-size: 0.75rem;
+        padding: 2px 4px;
+      }
+    }
+
+    /* Safe touch scrollbar */
+    .touch-scroll {
+      -webkit-overflow-scrolling: touch;
+    }
   </style>
 </head>
 <body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col font-sans">
 
   <!-- 👑 Dedicated Admin Banner (Core Requirement #3 & #5) -->
   <div id="adminBanner" class="bg-gradient-to-r from-amber-600 via-indigo-700 to-purple-800 text-white shadow-md transition-all duration-200 hidden sticky top-0 z-40">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 flex flex-wrap items-center justify-between gap-2.5 text-xs sm:text-sm">
-      <div class="flex items-center gap-2">
-        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-400 text-slate-900 font-extrabold text-xs uppercase shadow-xs">
-          <i data-lucide="shield-check" class="w-4 h-4 text-slate-900"></i> 관리자 모드
+    <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-2 flex flex-wrap items-center justify-between gap-2 text-xs">
+      <div class="flex items-center gap-1.5 sm:gap-2">
+        <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-amber-400 text-slate-900 font-extrabold text-[11px] sm:text-xs uppercase shadow-xs">
+          <i data-lucide="shield-check" class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-900"></i> 관리자 모드
         </span>
-        <span class="font-medium text-amber-100 hidden md:inline">
+        <span class="font-medium text-amber-100 hidden md:inline text-xs">
           모든 강의 수정/삭제 전권 및 회원 명단 관리 활성화됨
         </span>
       </div>
       <div class="flex items-center gap-1.5 flex-wrap">
-        <button id="btnAdminManageMembers" class="px-2.5 py-1 rounded-lg bg-white/20 hover:bg-white/30 text-white text-xs font-semibold flex items-center gap-1.5 transition">
-          <i data-lucide="users" class="w-3.5 h-3.5 text-amber-300"></i>
-          <span>회원 명단 관리 (<span id="adminMemberBadgeCount">8</span>명)</span>
+        <button id="btnAdminManageMembers" class="px-2 sm:px-2.5 py-1 rounded-lg bg-white/20 hover:bg-white/30 text-white text-[11px] sm:text-xs font-semibold flex items-center gap-1 transition">
+          <i data-lucide="users" class="w-3 h-3 sm:w-3.5 sm:h-3.5 text-amber-300"></i>
+          <span>회원 관리 (<span id="adminMemberBadgeCount">8</span>)</span>
         </button>
-        <button id="btnAdminChangePw" class="px-2.5 py-1 rounded-lg bg-white/20 hover:bg-white/30 text-white text-xs font-semibold flex items-center gap-1.5 transition">
-          <i data-lucide="key" class="w-3.5 h-3.5 text-amber-300"></i>
-          <span>비밀번호 변경</span>
+        <button id="btnAdminChangePw" class="px-2 sm:px-2.5 py-1 rounded-lg bg-white/20 hover:bg-white/30 text-white text-[11px] sm:text-xs font-semibold flex items-center gap-1 transition">
+          <i data-lucide="key" class="w-3 h-3 sm:w-3.5 sm:h-3.5 text-amber-300"></i>
+          <span>비번 변경</span>
         </button>
-        <button id="btnAdminShowMissingLinks" class="px-2.5 py-1 rounded-lg bg-white/20 hover:bg-white/30 text-white text-xs font-semibold flex items-center gap-1.5 transition">
-          <i data-lucide="link-2-off" class="w-3.5 h-3.5 text-amber-300"></i>
+        <button id="btnAdminShowMissingLinks" class="px-2 sm:px-2.5 py-1 rounded-lg bg-white/20 hover:bg-white/30 text-white text-[11px] sm:text-xs font-semibold flex items-center gap-1 transition">
+          <i data-lucide="link-2-off" class="w-3 h-3 sm:w-3.5 sm:h-3.5 text-amber-300"></i>
           <span>링크 미등록 (<span id="adminMissingLinkCount">0</span>)</span>
         </button>
-        <button id="btnAdminEditNoticeBanner" class="px-2.5 py-1 rounded-lg bg-white/20 hover:bg-white/30 text-white text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer">
-          <i data-lucide="edit-3" class="w-3.5 h-3.5 text-amber-300"></i>
+        <button id="btnAdminEditNoticeBanner" class="px-2 sm:px-2.5 py-1 rounded-lg bg-white/20 hover:bg-white/30 text-white text-[11px] sm:text-xs font-semibold flex items-center gap-1 transition cursor-pointer">
+          <i data-lucide="edit-3" class="w-3 h-3 sm:w-3.5 sm:h-3.5 text-amber-300"></i>
           <span>공지 수정</span>
         </button>
-        <button id="btnAdminExit" class="px-2.5 py-1 rounded-lg bg-white text-slate-900 font-bold hover:bg-amber-100 text-xs transition shadow-xs flex items-center gap-1">
-          <i data-lucide="log-out" class="w-3.5 h-3.5 text-slate-700"></i>
+        <button id="btnAdminExit" class="px-2.5 py-1 rounded-lg bg-white text-slate-900 font-bold hover:bg-amber-100 text-[11px] sm:text-xs transition shadow-xs flex items-center gap-1">
+          <i data-lucide="log-out" class="w-3 h-3 sm:w-3.5 sm:h-3.5 text-slate-700"></i>
           <span>종료</span>
         </button>
       </div>
     </div>
   </div>
 
-  <!-- Top Navigation Header -->
+  <!-- Top Navigation Header (Fully Responsive Mobile + Desktop) -->
   <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-xs">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-      <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-purple-600 flex items-center justify-center text-white shadow-md">
-          <i data-lucide="graduation-cap" class="w-6 h-6"></i>
-        </div>
-        <div>
-          <div class="flex items-center gap-2">
-            <h1 class="text-lg font-bold text-slate-900 tracking-tight">교사유니버스</h1>
-            <span class="px-2 py-0.5 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">지식샘터 허브</span>
+    <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+      <!-- Main Row -->
+      <div class="h-14 sm:h-16 flex items-center justify-between gap-2">
+        <!-- Logo & Title -->
+        <div class="flex items-center gap-2 sm:gap-3 shrink-0">
+          <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-purple-600 flex items-center justify-center text-white shadow-md shrink-0">
+            <i data-lucide="graduation-cap" class="w-4 h-4 sm:w-6 sm:h-6"></i>
           </div>
-          <p class="text-xs text-slate-500">실시간 강의 공유 · 상호 수강 지원 매트릭스</p>
+          <div>
+            <div class="flex items-center gap-1.5 sm:gap-2">
+              <h1 class="text-base sm:text-lg font-bold text-slate-900 tracking-tight">교사유니버스</h1>
+              <span class="px-1.5 sm:px-2 py-0.5 text-[10px] sm:text-xs font-semibold rounded-full bg-blue-100 text-blue-800">지식샘터</span>
+            </div>
+            <p class="text-[10px] sm:text-xs text-slate-500 hidden sm:block">실시간 강의 공유 · 상호 수강 지원 매트릭스</p>
+          </div>
+        </div>
+
+        <!-- Desktop Navigation Tabs (Hidden on mobile) -->
+        <nav class="hidden md:flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200 text-xs font-bold">
+          <button id="btnTabCalendar" type="button" class="px-3 py-1.5 rounded-lg bg-blue-600 text-white shadow-2xs flex items-center gap-1.5 transition cursor-pointer">
+            <i data-lucide="calendar" class="w-3.5 h-3.5"></i>
+            <span>강의 캘린더</span>
+          </button>
+          <button id="btnTabNotice" type="button" class="px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-white/60 flex items-center gap-1.5 transition cursor-pointer relative">
+            <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
+            <span>📢 이번 주 공지</span>
+          </button>
+        </nav>
+
+        <!-- Desktop Month Selector & CTAs (Hidden on mobile) -->
+        <div class="hidden md:flex items-center gap-2 lg:gap-3">
+          <!-- Month Navigation dropdown -->
+          <div class="flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200">
+            <button id="btnPrevMonth" title="이전 달" class="p-1.5 rounded-lg hover:bg-white text-slate-600 hover:text-slate-900 transition">
+              <i data-lucide="chevron-left" class="w-4 h-4"></i>
+            </button>
+            <select id="monthSelect" class="bg-transparent font-bold text-xs sm:text-sm text-slate-800 px-2 py-1 focus:outline-hidden cursor-pointer">
+              <option value="2026-05">2026년 5월</option>
+              <option value="2026-06">2026년 6월</option>
+              <option value="2026-07">2026년 7월</option>
+              <option value="2026-08">2026년 8월</option>
+              <option value="2026-09" selected>2026년 9월</option>
+              <option value="2026-10">2026년 10월</option>
+              <option value="2026-11">2026년 11월</option>
+              <option value="2026-12">2026년 12월</option>
+              <option value="2027-01">2027년 1월</option>
+              <option value="2027-02">2027년 2월</option>
+              <option value="2027-03">2027년 3월</option>
+            </select>
+            <button id="btnNextMonth" title="다음 달" class="p-1.5 rounded-lg hover:bg-white text-slate-600 hover:text-slate-900 transition">
+              <i data-lucide="chevron-right" class="w-4 h-4"></i>
+            </button>
+          </div>
+
+          <!-- Register Lecture CTA -->
+          <button id="btnOpenRegisterModal" class="inline-flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 active:scale-95 text-white font-semibold text-xs sm:text-sm px-3.5 py-2 rounded-xl shadow-xs transition duration-150 cursor-pointer">
+            <i data-lucide="plus-circle" class="w-4 h-4"></i>
+            <span>강의 등록</span>
+          </button>
+
+          <!-- Admin Mode Toggle Button -->
+          <button id="btnAdminToggle" title="운영진 관리자 모드" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold border transition duration-150 bg-amber-50 text-amber-800 border-amber-200 hover:bg-amber-100 cursor-pointer">
+            <i data-lucide="crown" class="w-4 h-4 text-amber-600"></i>
+            <span id="btnAdminToggleText">관리자 로그인</span>
+          </button>
+        </div>
+
+        <!-- Mobile Controls (Visible on mobile screens) -->
+        <div class="flex md:hidden items-center gap-1.5">
+          <button id="btnMobileRegister" class="inline-flex items-center gap-1 bg-blue-600 hover:bg-blue-700 active:scale-95 text-white font-bold text-xs px-2.5 py-1.5 rounded-xl shadow-xs transition cursor-pointer">
+            <i data-lucide="plus-circle" class="w-3.5 h-3.5"></i>
+            <span>등록</span>
+          </button>
+          <button id="btnMobileAdminToggle" class="inline-flex items-center gap-1 bg-amber-50 hover:bg-amber-100 active:scale-95 text-amber-800 border border-amber-200 font-bold text-xs px-2.5 py-1.5 rounded-xl transition cursor-pointer">
+            <i data-lucide="crown" class="w-3.5 h-3.5 text-amber-600"></i>
+            <span id="btnMobileAdminToggleText">관리자</span>
+          </button>
+          <button id="btnMobileMenuToggle" type="button" aria-label="메뉴 토글" class="p-1.5 rounded-xl text-slate-700 hover:text-slate-900 hover:bg-slate-100 border border-slate-200 transition cursor-pointer">
+            <i data-lucide="menu" id="mobileMenuIcon" class="w-5 h-5"></i>
+          </button>
         </div>
       </div>
 
-      <!-- Navigation Tabs (Requirement #1: Switch between Calendar and Weekly Notice) -->
-      <nav class="flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200 text-xs font-bold">
-        <button id="btnTabCalendar" type="button" class="px-3 py-1.5 rounded-lg bg-blue-600 text-white shadow-2xs flex items-center gap-1.5 transition cursor-pointer">
-          <i data-lucide="calendar" class="w-3.5 h-3.5"></i>
-          <span class="hidden sm:inline">강의 캘린더</span>
-          <span class="sm:hidden">캘린더</span>
-        </button>
-        <button id="btnTabNotice" type="button" class="px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-white/60 flex items-center gap-1.5 transition cursor-pointer relative">
-          <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
-          <span class="hidden sm:inline">📢 이번 주 공지</span>
-          <span class="sm:hidden">공지</span>
-        </button>
-      </nav>
-
-      <!-- Month Selector & Global Controls -->
-      <div class="flex items-center gap-2 sm:gap-3">
-
-        <!-- Month Navigation dropdown -->
-        <div class="flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200">
-          <button id="btnPrevMonth" title="이전 달" class="p-1.5 rounded-lg hover:bg-white text-slate-600 hover:text-slate-900 transition">
-            <i data-lucide="chevron-left" class="w-4 h-4"></i>
+      <!-- Mobile Sub-Bar: Clean Navigation Tabs & Month Selector (Always accessible on mobile) -->
+      <div class="md:hidden pb-2.5 pt-1 flex items-center justify-between gap-1.5 border-t border-slate-100">
+        <!-- Mobile Tabs -->
+        <nav class="flex items-center bg-slate-100 p-0.5 rounded-xl border border-slate-200 text-xs font-bold shrink-0">
+          <button id="btnMobileTabCalendar" type="button" class="px-2.5 py-1 rounded-lg bg-blue-600 text-white shadow-2xs flex items-center gap-1 transition cursor-pointer">
+            <i data-lucide="calendar" class="w-3 h-3"></i>
+            <span>캘린더</span>
           </button>
-          <select id="monthSelect" class="bg-transparent font-bold text-sm text-slate-800 px-2 py-1 focus:outline-hidden cursor-pointer">
-            <option value="2026-05">2026년 5월</option>
-            <option value="2026-06">2026년 6월</option>
-            <option value="2026-07">2026년 7월</option>
-            <option value="2026-08">2026년 8월</option>
-            <option value="2026-09" selected>2026년 9월</option>
-            <option value="2026-10">2026년 10월</option>
-            <option value="2026-11">2026년 11월</option>
-            <option value="2026-12">2026년 12월</option>
-            <option value="2027-01">2027년 1월</option>
-            <option value="2027-02">2027년 2월</option>
-            <option value="2027-03">2027년 3월</option>
+          <button id="btnMobileTabNotice" type="button" class="px-2.5 py-1 rounded-lg text-slate-600 hover:text-slate-900 flex items-center gap-1 transition cursor-pointer relative">
+            <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
+            <span>공지</span>
+          </button>
+        </nav>
+
+        <!-- Mobile Month Selector -->
+        <div class="flex items-center bg-slate-100 p-0.5 rounded-xl border border-slate-200 text-xs font-semibold">
+          <button id="btnMobilePrevMonth" title="이전 달" class="p-1 rounded-lg hover:bg-white text-slate-600 transition">
+            <i data-lucide="chevron-left" class="w-3.5 h-3.5"></i>
+          </button>
+          <select id="mobileMonthSelect" class="bg-transparent font-bold text-xs text-slate-800 px-1 py-0.5 focus:outline-hidden cursor-pointer">
+            <option value="2026-05">2026. 05</option>
+            <option value="2026-06">2026. 06</option>
+            <option value="2026-07">2026. 07</option>
+            <option value="2026-08">2026. 08</option>
+            <option value="2026-09" selected>2026. 09</option>
+            <option value="2026-10">2026. 10</option>
+            <option value="2026-11">2026. 11</option>
+            <option value="2026-12">2026. 12</option>
+            <option value="2027-01">2027. 01</option>
+            <option value="2027-02">2027. 02</option>
+            <option value="2027-03">2027. 03</option>
           </select>
-          <button id="btnNextMonth" title="다음 달" class="p-1.5 rounded-lg hover:bg-white text-slate-600 hover:text-slate-900 transition">
-            <i data-lucide="chevron-right" class="w-4 h-4"></i>
+          <button id="btnMobileNextMonth" title="다음 달" class="p-1 rounded-lg hover:bg-white text-slate-600 transition">
+            <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
           </button>
         </div>
+      </div>
 
-        <!-- Register Lecture CTA -->
-        <button id="btnOpenRegisterModal" class="inline-flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 active:scale-95 text-white font-semibold text-sm px-3.5 py-2 rounded-xl shadow-xs transition duration-150">
-          <i data-lucide="plus-circle" class="w-4 h-4"></i>
-          <span class="hidden sm:inline">강의 등록</span>
-          <span class="sm:hidden">등록</span>
-        </button>
+      <!-- Mobile Dropdown Menu (Collapsible Drawer) -->
+      <div id="mobileDrawerMenu" class="hidden md:hidden pb-3 pt-1 border-t border-slate-100 space-y-2 text-xs">
+        <div class="p-3 bg-slate-50 rounded-xl border border-slate-200/80 space-y-2">
+          <div class="font-bold text-slate-700 flex items-center justify-between text-[11px]">
+            <span>빠른 이동 및 기능 바로가기</span>
+            <span class="text-indigo-600 font-semibold">교사유니버스</span>
+          </div>
+          <div class="grid grid-cols-2 gap-2">
+            <button id="btnMobileGoMatrix" type="button" class="p-2 rounded-lg bg-white border border-slate-200 text-slate-700 hover:text-indigo-600 text-left font-medium flex items-center gap-1.5 transition">
+              <i data-lucide="grid" class="w-3.5 h-3.5 text-indigo-600"></i>
+              <span>수강 매트릭스</span>
+            </button>
+            <button id="btnMobileGoApplicants" type="button" class="p-2 rounded-lg bg-white border border-slate-200 text-slate-700 hover:text-emerald-600 text-left font-medium flex items-center gap-1.5 transition">
+              <i data-lucide="list-checks" class="w-3.5 h-3.5 text-emerald-600"></i>
+              <span>신청자 명단 뷰</span>
+            </button>
+          </div>
+        </div>
 
-        <!-- Admin Mode Toggle Button (Requirement #3) -->
-        <button id="btnAdminToggle" title="운영진 관리자 모드" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold border transition duration-150 bg-amber-50 text-amber-800 border-amber-200 hover:bg-amber-100">
-          <i data-lucide="crown" class="w-4 h-4 text-amber-600"></i>
-          <span id="btnAdminToggleText" class="hidden sm:inline">관리자 로그인</span>
-        </button>
+        <!-- Mobile Admin Menu Actions (Visible when admin mode is on) -->
+        <div id="mobileAdminDrawerSection" class="hidden p-3 bg-amber-50/80 rounded-xl border border-amber-200 space-y-2">
+          <div class="font-bold text-amber-900 flex items-center gap-1 text-[11px]">
+            <i data-lucide="shield-check" class="w-3.5 h-3.5 text-amber-600"></i>
+            <span>관리자 전용 기능</span>
+          </div>
+          <div class="grid grid-cols-2 gap-1.5">
+            <button id="btnMobileAdminMembers" type="button" class="p-2 rounded-lg bg-white text-slate-800 border border-amber-200 font-semibold text-[11px] text-left">
+              👥 회원 명단 관리
+            </button>
+            <button id="btnMobileAdminChangePw" type="button" class="p-2 rounded-lg bg-white text-slate-800 border border-amber-200 font-semibold text-[11px] text-left">
+              🔑 비밀번호 변경
+            </button>
+            <button id="btnMobileAdminMissingLinks" type="button" class="p-2 rounded-lg bg-white text-slate-800 border border-amber-200 font-semibold text-[11px] text-left">
+              🔗 링크 미등록 확인
+            </button>
+            <button id="btnMobileAdminEditNotice" type="button" class="p-2 rounded-lg bg-white text-slate-800 border border-amber-200 font-semibold text-[11px] text-left">
+              📢 공지 수정하기
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   </header>
 
   <!-- Main Container -->
-  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 w-full flex-1 flex flex-col gap-6">
+  <main class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 w-full flex-1 flex flex-col gap-4 sm:gap-6">
 
     <!-- Tab View 1: Lecture Calendar Main Screen -->
-    <div id="viewCalendarMain" class="space-y-6">
+    <div id="viewCalendarMain" class="space-y-4 sm:space-y-6">
 
-      <!-- Weekly Notice Highlight Banner (User Request #1: Banner placed prominently at top below header) -->
-      <div id="bannerWeeklyNotice" class="group relative overflow-hidden bg-gradient-to-r from-amber-500 via-indigo-600 to-blue-600 rounded-2xl p-0.5 shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer active:scale-[0.995]">
-        <div class="bg-white/95 backdrop-blur-xs rounded-[14px] p-3.5 sm:p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 group-hover:bg-white transition">
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-xl bg-amber-500 text-white flex items-center justify-center shrink-0 shadow-xs group-hover:scale-105 transition-transform">
-              <span class="text-xl">📢</span>
+      <!-- Weekly Notice Highlight Banner -->
+      <div id="bannerWeeklyNotice" class="group relative overflow-hidden bg-gradient-to-r from-amber-500 via-indigo-600 to-blue-600 rounded-2xl p-0.5 shadow-xs hover:shadow-md transition-all duration-200 cursor-pointer active:scale-[0.995]">
+        <div class="bg-white/95 backdrop-blur-xs rounded-[14px] p-3 sm:p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-3 group-hover:bg-white transition">
+          <div class="flex items-center gap-2.5 sm:gap-3">
+            <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-amber-500 text-white flex items-center justify-center shrink-0 shadow-xs group-hover:scale-105 transition-transform">
+              <span class="text-lg sm:text-xl">📢</span>
             </div>
-            <div>
-              <div class="flex items-center gap-2 flex-wrap">
-                <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-amber-100 text-amber-900 border border-amber-300">
+            <div class="min-w-0">
+              <div class="flex items-center gap-1.5 sm:gap-2 flex-wrap">
+                <span class="inline-flex items-center gap-1 px-2 sm:px-2.5 py-0.5 rounded-full text-[10px] sm:text-[11px] font-bold bg-amber-100 text-amber-900 border border-amber-300">
                   <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
                   이번 주 주요 공지 및 할 일
                 </span>
-                <span id="bannerWeeklyPeriodText" class="text-xs font-semibold text-slate-500">
+                <span id="bannerWeeklyPeriodText" class="text-[11px] sm:text-xs font-semibold text-slate-500">
                   9월 27일 ~ 10월 10일
                 </span>
               </div>
-              <div class="text-sm sm:text-base font-bold text-slate-900 mt-1 flex items-center gap-2">
+              <div class="text-xs sm:text-base font-bold text-slate-900 mt-1 flex items-center gap-2">
                 <span id="bannerWeeklyHeadline" class="line-clamp-1">😍 주요 일정 : 최임 제출 / 강의 차시별 흐름 구성, 강의 재료 모으기</span>
               </div>
             </div>
           </div>
           <div class="flex items-center gap-2 self-end sm:self-center shrink-0">
-            <span class="text-xs font-bold text-indigo-700 flex items-center gap-1.5 bg-indigo-50 px-3.5 py-2 rounded-xl border border-indigo-200 group-hover:bg-indigo-600 group-hover:text-white transition shadow-2xs">
+            <span class="text-xs font-bold text-indigo-700 flex items-center gap-1.5 bg-indigo-50 px-3 sm:px-3.5 py-1.5 sm:py-2 rounded-xl border border-indigo-200 group-hover:bg-indigo-600 group-hover:text-white transition shadow-2xs">
               <span>공지 &amp; 주간 일정 보기</span>
               <i data-lucide="arrow-right" class="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform"></i>
             </span>
@@ -257,131 +372,158 @@
         </div>
       </div>
 
-      <!-- Monthly Summary KPI Bar -->
-      <section class="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
-        <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs flex items-center gap-3.5">
-          <div class="w-11 h-11 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
-            <i data-lucide="book-open" class="w-6 h-6"></i>
+      <!-- Monthly Summary KPI Bar (2 Columns on mobile, 4 Columns on desktop) -->
+      <section class="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-4">
+        <div class="bg-white p-3 sm:p-4 rounded-xl sm:rounded-2xl border border-slate-200/80 shadow-xs flex items-center gap-2.5 sm:gap-3.5">
+          <div class="w-9 h-9 sm:w-11 sm:h-11 rounded-lg sm:rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
+            <i data-lucide="book-open" class="w-4 h-4 sm:w-6 sm:h-6"></i>
           </div>
-          <div>
-            <div class="text-xs font-medium text-slate-500">이달의 개설 강의</div>
-            <div class="text-xl sm:text-2xl font-bold text-slate-800"><span id="kpiLectureCount">0</span><span class="text-xs font-normal text-slate-500 ml-1">개</span></div>
-          </div>
-        </div>
-
-        <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs flex items-center gap-3.5">
-          <div class="w-11 h-11 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0">
-            <i data-lucide="users" class="w-6 h-6"></i>
-          </div>
-          <div>
-            <div class="text-xs font-medium text-slate-500">총 모집 정원</div>
-            <div class="text-xl sm:text-2xl font-bold text-slate-800"><span id="kpiCapacityCount">0</span><span class="text-xs font-normal text-slate-500 ml-1">명</span></div>
+          <div class="min-w-0">
+            <div class="text-[11px] sm:text-xs font-medium text-slate-500 truncate">이달의 개설 강의</div>
+            <div class="text-base sm:text-2xl font-bold text-slate-800"><span id="kpiLectureCount">0</span><span class="text-xs font-normal text-slate-500 ml-1">개</span></div>
           </div>
         </div>
 
-        <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs flex items-center gap-3.5">
-          <div class="w-11 h-11 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
-            <i data-lucide="user-check" class="w-6 h-6"></i>
+        <div class="bg-white p-3 sm:p-4 rounded-xl sm:rounded-2xl border border-slate-200/80 shadow-xs flex items-center gap-2.5 sm:gap-3.5">
+          <div class="w-9 h-9 sm:w-11 sm:h-11 rounded-lg sm:rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0">
+            <i data-lucide="users" class="w-4 h-4 sm:w-6 sm:h-6"></i>
           </div>
-          <div>
-            <div class="text-xs font-medium text-slate-500">모임 수강 신청 건수</div>
-            <div class="text-xl sm:text-2xl font-bold text-slate-800"><span id="kpiEnrollmentCount">0</span><span class="text-xs font-normal text-slate-500 ml-1">건</span></div>
+          <div class="min-w-0">
+            <div class="text-[11px] sm:text-xs font-medium text-slate-500 truncate">총 모집 정원</div>
+            <div class="text-base sm:text-2xl font-bold text-slate-800"><span id="kpiCapacityCount">0</span><span class="text-xs font-normal text-slate-500 ml-1">명</span></div>
           </div>
         </div>
 
-        <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs flex items-center gap-3.5">
-          <div class="w-11 h-11 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center shrink-0">
-            <i data-lucide="repeat" class="w-6 h-6"></i>
+        <div class="bg-white p-3 sm:p-4 rounded-xl sm:rounded-2xl border border-slate-200/80 shadow-xs flex items-center gap-2.5 sm:gap-3.5">
+          <div class="w-9 h-9 sm:w-11 sm:h-11 rounded-lg sm:rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
+            <i data-lucide="user-check" class="w-4 h-4 sm:w-6 sm:h-6"></i>
           </div>
-          <div>
-            <div class="text-xs font-medium text-slate-500">상호 수강 품앗이</div>
-            <div class="text-xl sm:text-2xl font-bold text-slate-800"><span id="kpiMutualCount">0</span><span class="text-xs font-normal text-slate-500 ml-1">쌍</span></div>
+          <div class="min-w-0">
+            <div class="text-[11px] sm:text-xs font-medium text-slate-500 truncate">모임 수강 신청</div>
+            <div class="text-base sm:text-2xl font-bold text-slate-800"><span id="kpiEnrollmentCount">0</span><span class="text-xs font-normal text-slate-500 ml-1">건</span></div>
+          </div>
+        </div>
+
+        <div class="bg-white p-3 sm:p-4 rounded-xl sm:rounded-2xl border border-slate-200/80 shadow-xs flex items-center gap-2.5 sm:gap-3.5">
+          <div class="w-9 h-9 sm:w-11 sm:h-11 rounded-lg sm:rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center shrink-0">
+            <i data-lucide="repeat" class="w-4 h-4 sm:w-6 sm:h-6"></i>
+          </div>
+          <div class="min-w-0">
+            <div class="text-[11px] sm:text-xs font-medium text-slate-500 truncate">상호 수강 품앗이</div>
+            <div class="text-base sm:text-2xl font-bold text-slate-800"><span id="kpiMutualCount">0</span><span class="text-xs font-normal text-slate-500 ml-1">쌍</span></div>
           </div>
         </div>
       </section>
 
-    <!-- Top Notice bar -->
-    <div class="bg-gradient-to-r from-blue-500/10 via-indigo-500/10 to-purple-500/10 border border-blue-200/60 rounded-2xl p-3.5 px-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-      <div class="flex items-center gap-2.5">
-        <div class="w-8 h-8 rounded-lg bg-blue-600 text-white flex items-center justify-center shrink-0">
-          <i data-lucide="info" class="w-4 h-4"></i>
-        </div>
-        <div class="text-xs sm:text-sm text-slate-700">
-          <strong class="font-semibold text-slate-900">안내:</strong>
-          캘린더 카드에서 <span class="text-blue-600 font-semibold">[신청하기]</span>를 누르면 신청자 등록(수강 인원 +1) 후 지식샘터 공식 신청 페이지가 새 탭으로 열립니다.
-        </div>
-      </div>
-      <div class="flex items-center gap-2 shrink-0">
-        <button id="btnScrollToMatrix" class="text-xs font-medium px-3.5 py-2 rounded-xl bg-indigo-600 text-white hover:bg-indigo-700 active:scale-95 transition flex items-center gap-1 shadow-xs">
-          <span>수강 매트릭스 보기</span>
-          <i data-lucide="arrow-down" class="w-3.5 h-3.5"></i>
-        </button>
-      </div>
-    </div>
-
-    <!-- Calendar Section (Core Requirement #1) -->
-    <section class="bg-white rounded-2xl border border-slate-200/80 shadow-xs p-4 sm:p-6">
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-4 mb-4 border-b border-slate-100 gap-3">
-        <div class="flex items-center gap-2 flex-wrap">
-          <div class="w-3 h-6 bg-blue-600 rounded-full"></div>
-          <h2 class="text-lg font-bold text-slate-900">월별 지식샘터 강의 캘린더</h2>
-          <span id="calendarMonthBadge" class="text-xs font-semibold px-2.5 py-1 rounded-lg bg-blue-50 text-blue-700 border border-blue-200 font-bold">2026. 09</span>
-          
-          <!-- Direct Previous / Next Month Navigation (Requirement #1) -->
-          <div class="flex items-center gap-1 bg-slate-100 p-1 rounded-xl border border-slate-200 text-xs font-semibold ml-1 sm:ml-2">
-            <button id="btnCalPrevMonth" title="이전 달 이동" class="px-2.5 py-1 rounded-lg hover:bg-white text-slate-700 hover:text-blue-600 transition flex items-center gap-1">
-              <i data-lucide="chevron-left" class="w-3.5 h-3.5"></i>
-              <span id="btnCalPrevMonthText">이전 달</span>
-            </button>
-            <button id="btnCalTodayMonth" title="선택 월 리셋" class="px-2.5 py-1 rounded-lg hover:bg-white text-slate-700 hover:text-blue-600 transition">
-              이번 달
-            </button>
-            <button id="btnCalNextMonth" title="다음 달 이동" class="px-2.5 py-1 rounded-lg hover:bg-white text-slate-700 hover:text-blue-600 transition flex items-center gap-1">
-              <span id="btnCalNextMonthText">다음 달</span>
-              <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
-            </button>
+      <!-- Top Notice bar -->
+      <div class="bg-gradient-to-r from-blue-500/10 via-indigo-500/10 to-purple-500/10 border border-blue-200/60 rounded-xl sm:rounded-2xl p-3 sm:p-3.5 px-3.5 sm:px-4 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-3">
+        <div class="flex items-center gap-2 sm:gap-2.5">
+          <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-blue-600 text-white flex items-center justify-center shrink-0">
+            <i data-lucide="info" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
+          </div>
+          <div class="text-xs sm:text-sm text-slate-700 leading-snug">
+            <strong class="font-semibold text-slate-900">안내:</strong>
+            캘린더 카드에서 <span class="text-blue-600 font-semibold">[신청하기]</span>를 누르면 신청자 등록(수강 인원 +1) 후 지식샘터 공식 신청 페이지가 새 탭으로 열립니다.
           </div>
         </div>
-
-        <div class="flex flex-wrap items-center gap-3 text-xs text-slate-500">
-          <div class="flex items-center gap-1.5">
-            <span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span>
-            <span>신청 가능</span>
-          </div>
-          <div class="flex items-center gap-1.5">
-            <span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
-            <span>마감 임박</span>
-          </div>
-          <div class="flex items-center gap-1.5">
-            <span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span>
-            <span>정원 마감</span>
-          </div>
-          <span class="text-[11px] text-slate-400 hidden lg:inline">※ 전후 월 날짜의 강의도 캘린더에 연계 표시됩니다</span>
-        </div>
-      </div>
-
-      <!-- FullCalendar Mount Node -->
-      <div id="calendar" class="min-h-[640px]"></div>
-    </section>
-
-    <!-- Mutual Support Matrix Section (Core Requirement #4 - Matrix) -->
-    <section id="matrixSection" class="bg-white rounded-2xl border border-slate-200/80 shadow-xs p-4 sm:p-6">
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-4 mb-4 border-b border-slate-100 gap-3">
-        <div>
-          <div class="flex items-center gap-2">
-            <div class="w-3 h-6 bg-indigo-600 rounded-full"></div>
-            <h2 class="text-lg font-bold text-slate-900">교사유니버스 수강 매트릭스</h2>
-            <span class="text-xs font-semibold px-2 py-0.5 rounded-md bg-indigo-50 text-indigo-700">상호 품앗이 현황</span>
-          </div>
-          <p class="text-xs text-slate-500 mt-1">가로축(강사)과 세로축(수강생)으로 상호 지원 현황을 한눈에 파악합니다. <strong class="text-indigo-600 font-semibold">💡 교사 이름을 클릭하면 그동안 누구 강의를 품앗이로 들었는지 상세 목록을 확인하실 수 있습니다.</strong></p>
-        </div>
-        <div class="flex items-center gap-2">
-          <button id="btnScrollToApplicantList" class="text-xs font-semibold px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 transition flex items-center gap-1.5">
-            <i data-lucide="list-checks" class="w-4 h-4 text-blue-600"></i>
-            <span>전체 신청자 명단 종합 뷰</span>
+        <div class="flex items-center gap-2 shrink-0 self-end sm:self-center">
+          <button id="btnScrollToMatrix" class="text-xs font-medium px-3 py-1.5 sm:py-2 rounded-xl bg-indigo-600 text-white hover:bg-indigo-700 active:scale-95 transition flex items-center gap-1 shadow-xs cursor-pointer">
+            <span>수강 매트릭스 보기</span>
+            <i data-lucide="arrow-down" class="w-3.5 h-3.5"></i>
           </button>
         </div>
       </div>
+
+      <!-- Calendar Section (Core Requirement #1 & Responsive Requirements #4) -->
+      <section class="bg-white rounded-xl sm:rounded-2xl border border-slate-200/80 shadow-xs p-3.5 sm:p-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-3 sm:pb-4 mb-3 sm:mb-4 border-b border-slate-100 gap-2.5 sm:gap-3">
+          <div class="flex items-center gap-2 flex-wrap">
+            <div class="w-2.5 sm:w-3 h-5 sm:h-6 bg-blue-600 rounded-full"></div>
+            <h2 class="text-base sm:text-lg font-bold text-slate-900">월별 지식샘터 강의 캘린더</h2>
+            <span id="calendarMonthBadge" class="text-xs font-semibold px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-lg bg-blue-50 text-blue-700 border border-blue-200 font-bold">2026. 09</span>
+            
+            <!-- Direct Previous / Next Month Navigation -->
+            <div class="flex items-center gap-1 bg-slate-100 p-0.5 sm:p-1 rounded-xl border border-slate-200 text-xs font-semibold ml-1">
+              <button id="btnCalPrevMonth" title="이전 달 이동" class="px-2 py-1 rounded-lg hover:bg-white text-slate-700 hover:text-blue-600 transition flex items-center gap-0.5">
+                <i data-lucide="chevron-left" class="w-3.5 h-3.5"></i>
+                <span id="btnCalPrevMonthText" class="hidden sm:inline">이전 달</span>
+              </button>
+              <button id="btnCalTodayMonth" title="선택 월 리셋" class="px-2 py-1 rounded-lg hover:bg-white text-slate-700 hover:text-blue-600 transition">
+                이번 달
+              </button>
+              <button id="btnCalNextMonth" title="다음 달 이동" class="px-2 py-1 rounded-lg hover:bg-white text-slate-700 hover:text-blue-600 transition flex items-center gap-0.5">
+                <span id="btnCalNextMonthText" class="hidden sm:inline">다음 달</span>
+                <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Status Legend & View Switcher Toggle -->
+          <div class="flex flex-wrap items-center justify-between sm:justify-end gap-2.5 text-xs text-slate-500">
+            <!-- View Mode Switcher: 달력 표 뷰 vs 모바일 세로 리스트 카드 뷰 (Requirement #4) -->
+            <div class="flex items-center bg-slate-100 p-0.5 rounded-xl border border-slate-200 font-bold text-xs">
+              <button id="btnViewModeGrid" type="button" class="px-2.5 py-1 rounded-lg bg-blue-600 text-white shadow-2xs flex items-center gap-1 transition cursor-pointer">
+                <i data-lucide="calendar" class="w-3.5 h-3.5"></i>
+                <span>달력 표</span>
+              </button>
+              <button id="btnViewModeList" type="button" class="px-2.5 py-1 rounded-lg text-slate-600 hover:text-slate-900 flex items-center gap-1 transition cursor-pointer">
+                <i data-lucide="list" class="w-3.5 h-3.5"></i>
+                <span>리스트</span>
+              </button>
+            </div>
+
+            <!-- Legend pills -->
+            <div class="flex items-center gap-2 sm:gap-3 text-[11px] sm:text-xs">
+              <div class="flex items-center gap-1">
+                <span class="w-2 h-2 rounded-full bg-blue-500"></span>
+                <span>신청가능</span>
+              </div>
+              <div class="flex items-center gap-1">
+                <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+                <span>마감임박</span>
+              </div>
+              <div class="flex items-center gap-1">
+                <span class="w-2 h-2 rounded-full bg-rose-500"></span>
+                <span>정원마감</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 1) FullCalendar Mount Node with Horizontal Scroll Wrapper (Requirement #4: overflow-x-auto) -->
+        <div id="calendarGridWrapper" class="overflow-x-auto touch-scroll -mx-2 sm:mx-0 pb-2">
+          <div id="calendar" class="min-w-[620px] sm:min-w-full min-h-[520px]"></div>
+        </div>
+
+        <!-- 2) Mobile/Vertical Date-by-Date List Card View (Requirement #4: 세로 리스트 카드 형태) -->
+        <div id="calendarListViewWrapper" class="hidden space-y-3 pt-1">
+          <!-- Dynamically rendered by renderCalendarListView() -->
+        </div>
+      </section>
+
+      <!-- Mutual Support Matrix Section (Core Requirement #4 - Matrix) -->
+      <section id="matrixSection" class="bg-white rounded-xl sm:rounded-2xl border border-slate-200/80 shadow-xs p-3.5 sm:p-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-3 sm:pb-4 mb-3 sm:mb-4 border-b border-slate-100 gap-2.5 sm:gap-3">
+          <div>
+            <div class="flex items-center gap-2">
+              <div class="w-2.5 sm:w-3 h-5 sm:h-6 bg-indigo-600 rounded-full"></div>
+              <h2 class="text-base sm:text-lg font-bold text-slate-900">교사유니버스 수강 매트릭스</h2>
+              <span class="text-[11px] sm:text-xs font-semibold px-2 py-0.5 rounded-md bg-indigo-50 text-indigo-700">상호 품앗이 현황</span>
+            </div>
+            <p class="text-[11px] sm:text-xs text-slate-500 mt-1">가로축(강사)과 세로축(수강생)으로 상호 지원 현황을 한눈에 파악합니다. <strong class="text-indigo-600 font-semibold">💡 교사 이름을 클릭하면 그동안 누구 강의를 품앗이로 들었는지 상세 목록을 확인하실 수 있습니다.</strong></p>
+          </div>
+          <div class="flex items-center gap-2 self-start sm:self-auto">
+            <button id="btnScrollToApplicantList" class="text-xs font-semibold px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 transition flex items-center gap-1.5 cursor-pointer">
+              <i data-lucide="list-checks" class="w-4 h-4 text-blue-600"></i>
+              <span>전체 신청자 명단 종합 뷰</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Mobile Scroll Hint -->
+        <div class="md:hidden pb-1 text-[11px] text-indigo-600 font-medium flex items-center gap-1">
+          <span>👉</span><span>표를 좌우로 스크롤하여 모든 강사의 강의 및 품앗이 상태를 확인하세요.</span>
+        </div>
 
       <!-- Matrix Table Scrollable Wrapper -->
       <div class="overflow-x-auto border border-slate-200 rounded-xl shadow-2xs">
@@ -491,31 +633,31 @@
       </div>
 
       <!-- 1) 헤더 카드 (주간 요약) -->
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-3 sm:gap-4">
         <!-- Headline Summary Box (Span 2) -->
-        <div class="lg:col-span-2 bg-gradient-to-br from-indigo-900 via-indigo-800 to-slate-900 text-white p-5 sm:p-6 rounded-2xl sm:rounded-3xl shadow-md space-y-3 relative overflow-hidden">
+        <div class="lg:col-span-2 bg-gradient-to-br from-indigo-900 via-indigo-800 to-slate-900 text-white p-4 sm:p-6 rounded-2xl sm:rounded-3xl shadow-md space-y-2.5 sm:space-y-3 relative overflow-hidden">
           <div class="absolute -right-8 -bottom-8 opacity-10 text-white pointer-events-none">
             <i data-lucide="calendar" class="w-48 h-48"></i>
           </div>
-          <div class="flex items-center gap-2 flex-wrap">
-            <span class="px-2.5 py-1 rounded-lg bg-amber-400 text-slate-900 text-xs font-black tracking-wider uppercase shadow-2xs">
+          <div class="flex items-center gap-1.5 sm:gap-2 flex-wrap">
+            <span class="px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-lg bg-amber-400 text-slate-900 text-[11px] sm:text-xs font-black tracking-wider uppercase shadow-2xs">
               이번 주 주요 일정
             </span>
-            <span id="viewNoticePeriod" class="text-xs font-bold text-indigo-200 bg-white/10 px-2.5 py-1 rounded-lg border border-white/10">
+            <span id="viewNoticePeriod" class="text-[11px] sm:text-xs font-bold text-indigo-200 bg-white/10 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-lg border border-white/10">
               9월 27일 ~ 10월 10일
             </span>
           </div>
-          <div id="viewNoticeHeadline" class="text-lg sm:text-xl font-extrabold text-white leading-relaxed">
+          <div id="viewNoticeHeadline" class="text-base sm:text-xl font-extrabold text-white leading-relaxed">
             😍 주요 일정 : 최임 제출 / 강의 차시별 흐름 구성, 강의 재료 모으기
           </div>
-          <div class="text-xs sm:text-sm text-indigo-200/90 pt-1 flex items-center gap-2">
-            <i data-lucide="check-circle" class="w-4 h-4 text-amber-300 shrink-0"></i>
+          <div class="text-xs sm:text-sm text-indigo-200/90 pt-1 flex items-center gap-1.5 sm:gap-2">
+            <i data-lucide="check-circle" class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-300 shrink-0"></i>
             <span>이번 주 일정을 확인하고 차시별 강의 준비 및 최임 마감에 차질 없으시길 바랍니다.</span>
           </div>
         </div>
 
         <!-- Resource Link Card (Span 1) -->
-        <div class="bg-gradient-to-br from-amber-50 to-orange-50/80 border border-amber-200 p-5 rounded-2xl sm:rounded-3xl flex flex-col justify-between gap-3 shadow-xs">
+        <div class="bg-gradient-to-br from-amber-50 to-orange-50/80 border border-amber-200 p-4 sm:p-5 rounded-2xl sm:rounded-3xl flex flex-col justify-between gap-3 shadow-xs">
           <div>
             <div class="flex items-center justify-between mb-1.5">
               <span class="text-[11px] font-extrabold text-amber-800 uppercase tracking-wider">핵심 연수 참고 자료</span>
@@ -528,7 +670,7 @@
               강의 계획서 양식, 수업 슬라이드 템플릿, KERIS 연수원 매뉴얼 수록
             </div>
           </div>
-          <a id="viewNoticeResourceLink" href="https://b.tkbell.co.kr/tkboard/woi/185854" target="_blank" rel="noopener noreferrer" class="w-full py-3 px-4 bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs rounded-xl shadow-xs transition flex items-center justify-center gap-2 active:scale-98">
+          <a id="viewNoticeResourceLink" href="https://b.tkbell.co.kr/tkboard/woi/185854" target="_blank" rel="noopener noreferrer" class="w-full py-2.5 sm:py-3 px-4 bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs rounded-xl shadow-xs transition flex items-center justify-center gap-2 active:scale-98">
             <span>자료집 바로가기 (새 창)</span>
             <i data-lucide="external-link" class="w-4 h-4"></i>
           </a>
@@ -536,67 +678,68 @@
       </div>
 
       <!-- 2) 주간 일정 & 할 일 매트릭스 카드 (달력 형태) -->
-      <div class="bg-white rounded-2xl sm:rounded-3xl border border-slate-200/90 p-5 sm:p-6 shadow-xs space-y-4">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-slate-100 gap-2">
+      <div class="bg-white rounded-xl sm:rounded-3xl border border-slate-200/90 p-3.5 sm:p-6 shadow-xs space-y-3.5 sm:space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-slate-100 gap-1.5 sm:gap-2">
           <div>
-            <h3 class="text-base sm:text-lg font-bold text-slate-900 flex items-center gap-2">
-              <i data-lucide="calendar-days" class="w-5 h-5 text-indigo-600"></i>
+            <h3 class="text-sm sm:text-lg font-bold text-slate-900 flex items-center gap-1.5 sm:gap-2">
+              <i data-lucide="calendar-days" class="w-4 h-4 sm:w-5 sm:h-5 text-indigo-600"></i>
               <span>주간 일정 &amp; 할 일 매트릭스 (달력 형태)</span>
             </h3>
-            <p class="text-xs text-slate-500 mt-0.5">일요일부터 토요일까지의 주간 일자별 주요 일정 및 제출 마감 안내</p>
+            <p class="text-[11px] sm:text-xs text-slate-500 mt-0.5">일요일부터 토요일까지의 주간 일자별 주요 일정 및 제출 마감 안내</p>
           </div>
-          <span class="text-xs text-slate-500 bg-slate-50 px-2.5 py-1 rounded-lg border border-slate-200 self-start sm:self-auto font-medium">
+          <span class="text-[11px] sm:text-xs text-slate-500 bg-slate-50 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-lg border border-slate-200 self-start sm:self-auto font-medium">
             📅 주간 핵심 일정 및 요일별 마감 / 준비 안내
           </span>
         </div>
 
-        <!-- 7 Days Grid (일 ~ 토) -->
-        <div id="viewWeeklyDaysContainer" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3">
+        <!-- 7 Days Grid (일 ~ 토) (Requirement #5: 1 column on mobile for smooth vertical scrolling) -->
+        <div id="viewWeeklyDaysContainer" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-2.5 sm:gap-3">
           <!-- Dynamically populated by renderWeeklyNoticeViews() -->
         </div>
       </div>
 
       <!-- 3) 월간 공지 캘린더 (달력 형태의 월간 주요 마감 & 마일스톤) -->
-      <div class="bg-white rounded-2xl sm:rounded-3xl border border-slate-200/90 p-5 sm:p-6 shadow-xs space-y-4">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-slate-100 gap-2">
+      <div class="bg-white rounded-xl sm:rounded-3xl border border-slate-200/90 p-3.5 sm:p-6 shadow-xs space-y-3.5 sm:space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-slate-100 gap-1.5 sm:gap-2">
           <div>
-            <h3 class="text-base sm:text-lg font-bold text-slate-900 flex items-center gap-2">
-              <i data-lucide="calendar-check" class="w-5 h-5 text-blue-600"></i>
+            <h3 class="text-sm sm:text-lg font-bold text-slate-900 flex items-center gap-1.5 sm:gap-2">
+              <i data-lucide="calendar-check" class="w-4 h-4 sm:w-5 sm:h-5 text-blue-600"></i>
               <span>월간 공지 캘린더 (주요 마감 &amp; 마일스톤 종합 뷰)</span>
             </h3>
-            <p class="text-xs text-slate-500 mt-0.5">한 달간의 전체 공지 로드맵 및 지식샘터 필수 제출 기한 안내</p>
+            <p class="text-[11px] sm:text-xs text-slate-500 mt-0.5">한 달간의 전체 공지 로드맵 및 지식샘터 필수 제출 기한 안내</p>
           </div>
-          <span id="viewNoticeMonthBadge" class="text-xs font-bold px-2.5 py-1 rounded-lg bg-blue-50 text-blue-700 border border-blue-200 self-start sm:self-auto">
+          <span id="viewNoticeMonthBadge" class="text-[11px] sm:text-xs font-bold px-2.5 py-1 rounded-lg bg-blue-50 text-blue-700 border border-blue-200 self-start sm:self-auto">
             2026년 9월 ~ 10월 공지 로드맵
           </span>
         </div>
 
-        <div id="monthlyNoticeCalendarGrid" class="grid grid-cols-1 md:grid-cols-5 gap-3.5">
+        <!-- Milestone Cards for Weeks 1 through 5 rendered by JS (Requirement #5: 1 column on mobile) -->
+        <div id="monthlyNoticeCalendarGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-3.5">
           <!-- Milestone Cards for Weeks 1 through 5 rendered by JS -->
         </div>
       </div>
 
       <!-- 4) 하단 세부 안내 사항 카드 (3-Column Grid) -->
-      <div class="space-y-3">
+      <div class="space-y-2.5 sm:space-y-3">
         <div class="flex items-center justify-between px-1">
-          <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
-            <i data-lucide="clipboard-list" class="w-5 h-5 text-indigo-600"></i>
+          <h3 class="text-sm sm:text-base font-bold text-slate-900 flex items-center gap-1.5 sm:gap-2">
+            <i data-lucide="clipboard-list" class="w-4 h-4 sm:w-5 sm:h-5 text-indigo-600"></i>
             <span>지식샘터 지원 혜택 및 유의사항</span>
           </h3>
         </div>
 
-        <div id="viewNoticeDetailCardsContainer" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div id="viewNoticeDetailCardsContainer" class="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4">
           <!-- Detail cards rendered by JS -->
         </div>
       </div>
 
       <!-- Notice View Footer -->
-      <div class="bg-slate-100/80 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-slate-500 border border-slate-200">
-        <div class="flex items-center gap-2 flex-wrap">
-          <i data-lucide="info" class="w-4 h-4 text-slate-400"></i>
-          <span>최근 공지 수정 시각: <strong id="viewNoticeUpdatedAt" class="text-slate-700">2026-09-26 10:00</strong></span>
+      <div class="bg-slate-100/80 rounded-xl sm:rounded-2xl p-3.5 sm:p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-3 text-xs text-slate-500 border border-slate-200">
+        <div class="flex items-center gap-1.5 sm:gap-2 flex-wrap text-[11px] sm:text-xs">
+          <i data-lucide="info" class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-400"></i>
+          <span>최근 공지 수정: <strong id="viewNoticeUpdatedAt" class="text-slate-700">2026-09-26 10:00</strong></span>
           <span class="text-slate-300">|</span>
-          <span class="text-indigo-600 font-semibold">Firebase Firestore 'weekly_notice' 컬렉션 연동</span>
+          <span class="text-indigo-600 font-semibold">Firestore 'weekly_notice' 컬렉션 실시간 연동</span>
         </div>
         <button id="btnFooterBackToCalendar" type="button" class="text-xs font-bold text-indigo-600 hover:text-indigo-800 underline self-start sm:self-auto cursor-pointer">
           ← 강의 캘린더 화면으로 이동
@@ -632,142 +775,142 @@
   <!-- ==================== MODALS ==================== -->
 
   <!-- 1. 강의 등록 모달 (Lecture Register Modal) -->
-  <div id="modalRegister" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden items-center justify-center p-4">
-    <div class="bg-white w-full max-w-lg rounded-2xl shadow-xl border border-slate-200 overflow-hidden transform transition-all">
-      <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+  <div id="modalRegister" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden items-center justify-center p-2 sm:p-4 touch-scroll">
+    <div class="bg-white w-[96%] sm:w-full max-w-lg max-h-[92vh] flex flex-col rounded-2xl shadow-xl border border-slate-200 overflow-hidden transform transition-all my-auto">
+      <div class="px-4 sm:px-6 py-3.5 sm:py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50 shrink-0">
         <div class="flex items-center gap-2">
           <div class="w-8 h-8 rounded-lg bg-blue-600 text-white flex items-center justify-center">
             <i data-lucide="calendar-plus" class="w-4 h-4"></i>
           </div>
-          <h3 class="font-bold text-slate-900 text-base">지식샘터 강의 등록</h3>
+          <h3 class="font-bold text-slate-900 text-sm sm:text-base">지식샘터 강의 등록</h3>
         </div>
-        <button class="modal-close-btn text-slate-400 hover:text-slate-600 p-1 rounded-lg">
+        <button class="modal-close-btn text-slate-400 hover:text-slate-600 p-1 rounded-lg cursor-pointer">
           <i data-lucide="x" class="w-5 h-5"></i>
         </button>
       </div>
 
-      <form id="formRegisterLecture" class="p-6 space-y-4">
+      <form id="formRegisterLecture" class="p-4 sm:p-6 overflow-y-auto space-y-3.5 sm:space-y-4">
         <div>
           <label class="block text-xs font-semibold text-slate-700 mb-1">강의명 <span class="text-red-500">*</span></label>
-          <input type="text" id="regTitle" required placeholder="예: [초/중등] 생성형 AI를 활용한 학급경영 레시피" class="w-full text-sm px-3.5 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-hidden" />
+          <input type="text" id="regTitle" required placeholder="예: [초/중등] 생성형 AI를 활용한 학급경영 레시피" class="w-full text-xs sm:text-sm px-3.5 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-hidden" />
         </div>
 
-        <div class="grid grid-cols-3 gap-3">
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3">
           <div>
-            <label class="block text-xs font-semibold text-slate-700 mb-1">강사 닉네임 (관리자 등록 회원) <span class="text-red-500">*</span></label>
-            <select id="regPresenter" required class="w-full text-sm px-3.5 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-hidden bg-white cursor-pointer font-medium text-slate-800">
-              <option value="">강사 닉네임 선택</option>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">강사 닉네임 <span class="text-red-500">*</span></label>
+            <select id="regPresenter" required class="w-full text-xs sm:text-sm px-3 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-hidden bg-white cursor-pointer font-medium text-slate-800">
+              <option value="">강사 선택</option>
             </select>
           </div>
           <div>
-            <label class="block text-xs font-semibold text-slate-700 mb-1">모집 정원 (명) <span class="text-red-500">*</span></label>
-            <input type="number" id="regMaxCount" required min="1" max="200" value="10" class="w-full text-sm px-3 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-hidden" />
+            <label class="block text-xs font-semibold text-slate-700 mb-1">모집 정원 <span class="text-red-500">*</span></label>
+            <input type="number" id="regMaxCount" required min="1" max="200" value="10" class="w-full text-xs sm:text-sm px-3 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-hidden" />
           </div>
           <div>
             <label class="block text-xs font-semibold text-slate-700 mb-1">현재 수강 인원</label>
-            <input type="number" id="regEnrolledCount" min="0" max="200" value="0" placeholder="0" class="w-full text-sm px-3 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-hidden" />
+            <input type="number" id="regEnrolledCount" min="0" max="200" value="0" placeholder="0" class="w-full text-xs sm:text-sm px-3 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-hidden" />
           </div>
         </div>
 
-        <div class="grid grid-cols-2 gap-3">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3">
           <div>
             <label class="block text-xs font-semibold text-slate-700 mb-1">강의 일자 <span class="text-red-500">*</span></label>
-            <input type="date" id="regDate" required class="w-full text-sm px-3.5 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-hidden" />
+            <input type="date" id="regDate" required class="w-full text-xs sm:text-sm px-3.5 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-hidden" />
           </div>
           <div>
             <label class="block text-xs font-semibold text-slate-700 mb-1">강의 시간 <span class="text-red-500">*</span></label>
-            <input type="text" id="regTime" required placeholder="19:00 - 21:00" value="19:00 - 21:00" class="w-full text-sm px-3.5 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-hidden" />
+            <input type="text" id="regTime" required placeholder="19:00 - 21:00" value="19:00 - 21:00" class="w-full text-xs sm:text-sm px-3.5 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-hidden" />
           </div>
         </div>
 
         <div>
           <div class="flex items-center justify-between mb-1">
-            <label class="text-xs font-semibold text-slate-700">지식샘터 강의 URL <span class="text-xs font-normal text-blue-600">(선택 - 나중에 추가 가능)</span></label>
-            <span class="text-[11px] text-slate-400">링크 미등록 시 추후 본인/관리자가 추가</span>
+            <label class="text-xs font-semibold text-slate-700">지식샘터 강의 URL <span class="text-xs font-normal text-blue-600">(선택)</span></label>
+            <span class="text-[11px] text-slate-400">링크 미등록 시 추후 추가 가능</span>
           </div>
           <div class="relative">
             <i data-lucide="link" class="w-4 h-4 text-slate-400 absolute left-3 top-2.5"></i>
-            <input type="url" id="regUrl" placeholder="https://educourse.keris.or.kr/... (지금 없으면 비워두셔도 됩니다)" class="w-full text-sm pl-9 pr-3.5 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-hidden" />
+            <input type="url" id="regUrl" placeholder="https://educourse.keris.or.kr/... (지금 없으면 비워두세요)" class="w-full text-xs sm:text-sm pl-9 pr-3.5 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-hidden" />
           </div>
         </div>
 
         <div>
-          <label class="block text-xs font-semibold text-slate-700 mb-1">수정/삭제용 비밀번호 <span class="text-xs font-normal text-slate-400">(선택, 기본: 1234)</span></label>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">수정/삭제용 비밀번호 <span class="text-xs font-normal text-slate-400">(기본: 1234)</span></label>
           <div class="relative">
-            <input type="password" id="regPassword" placeholder="4자리 비밀번호 (본인 수정/삭제 시 확인용)" value="1234" class="w-full text-sm pl-3.5 pr-10 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-hidden" />
+            <input type="password" id="regPassword" placeholder="4자리 비밀번호 (수정/삭제 시 확인용)" value="1234" class="w-full text-xs sm:text-sm pl-3.5 pr-10 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-hidden" />
             <button type="button" class="btn-toggle-pw absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 p-1 cursor-pointer transition focus:outline-hidden" title="비밀번호 보기/숨기기">
               <i data-lucide="eye" class="w-4 h-4"></i>
             </button>
           </div>
-          <p class="text-[11px] text-slate-400 mt-1">강의 등록자 본인만 수정할 수 있도록 비밀번호를 설정합니다 (관리자는 비밀번호 없이 수정 가능).</p>
+          <p class="text-[11px] text-slate-400 mt-1">강의 등록자 본인 확인용 (관리자는 비밀번호 없이 수정 가능).</p>
         </div>
 
-        <div class="pt-2 flex items-center justify-end gap-2 border-t border-slate-100">
-          <button type="button" class="modal-close-btn px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100 rounded-xl transition">취소</button>
-          <button type="submit" class="px-5 py-2 text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl shadow-xs transition active:scale-95">강의 등록하기</button>
+        <div class="pt-2 flex items-center justify-end gap-2 border-t border-slate-100 shrink-0">
+          <button type="button" class="modal-close-btn px-4 py-2 text-xs sm:text-sm font-medium text-slate-600 hover:bg-slate-100 rounded-xl transition cursor-pointer">취소</button>
+          <button type="submit" class="px-5 py-2 text-xs sm:text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl shadow-xs transition active:scale-95 cursor-pointer">강의 등록하기</button>
         </div>
       </form>
     </div>
   </div>
 
   <!-- 2. 강의 상세 정보 모달 (Lecture Detail Modal) -->
-  <div id="modalDetail" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden items-center justify-center p-4">
-    <div class="bg-white w-full max-w-lg rounded-2xl shadow-xl border border-slate-200 overflow-hidden transform transition-all">
-      <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+  <div id="modalDetail" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden items-center justify-center p-2 sm:p-4 touch-scroll">
+    <div class="bg-white w-[96%] sm:w-full max-w-lg max-h-[92vh] flex flex-col rounded-2xl shadow-xl border border-slate-200 overflow-hidden transform transition-all my-auto">
+      <div class="px-4 sm:px-6 py-3 sm:py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50 shrink-0">
         <div class="flex items-center gap-2">
           <span id="detailStatusBadge" class="px-2.5 py-0.5 text-xs font-bold rounded-full bg-blue-100 text-blue-800">모집 중</span>
           <span id="detailDateBadge" class="text-xs text-slate-500"></span>
           <span id="detailAdminIndicator" class="hidden px-2 py-0.5 text-[10px] font-bold rounded-full bg-amber-100 text-amber-900 border border-amber-300">👑 관리자 모드</span>
         </div>
-        <button class="modal-close-btn text-slate-400 hover:text-slate-600 p-1 rounded-lg">
+        <button class="modal-close-btn text-slate-400 hover:text-slate-600 p-1 rounded-lg cursor-pointer">
           <i data-lucide="x" class="w-5 h-5"></i>
         </button>
       </div>
 
-      <div class="p-6 space-y-5">
+      <div class="p-4 sm:p-6 overflow-y-auto space-y-4 sm:space-y-5">
         <div>
-          <h3 id="detailTitle" class="text-lg font-bold text-slate-900 leading-snug">강의명</h3>
-          <div class="flex items-center gap-2 mt-2 text-sm text-slate-600">
+          <h3 id="detailTitle" class="text-base sm:text-lg font-bold text-slate-900 leading-snug">강의명</h3>
+          <div class="flex items-center gap-2 mt-1.5 text-xs sm:text-sm text-slate-600 flex-wrap">
             <button type="button" id="btnDetailPresenterHistory" title="강사님의 품앗이 수강 내역 보기" class="inline-flex items-center gap-1 font-bold text-slate-800 hover:text-indigo-600 hover:underline cursor-pointer transition">
-              <i data-lucide="user" class="w-4 h-4 text-blue-600"></i>
+              <i data-lucide="user" class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-blue-600"></i>
               <span id="detailPresenter">강사명</span>
               <span class="text-[10px] text-indigo-600 bg-indigo-50 px-1 rounded border border-indigo-100 font-normal">품앗이 현황</span>
             </button>
             <span>•</span>
             <span class="inline-flex items-center gap-1">
-              <i data-lucide="clock" class="w-4 h-4 text-slate-400"></i>
+              <i data-lucide="clock" class="w-3.5 h-3.5 text-slate-400"></i>
               <span id="detailTime">시간</span>
             </span>
           </div>
         </div>
 
         <!-- Missing URL Warning Notice -->
-        <div id="detailMissingUrlAlert" class="hidden bg-amber-50 border border-amber-200 p-3.5 rounded-xl text-xs text-amber-900 flex items-center justify-between gap-2">
+        <div id="detailMissingUrlAlert" class="hidden bg-amber-50 border border-amber-200 p-3 sm:p-3.5 rounded-xl text-xs text-amber-900 flex items-center justify-between gap-2">
           <div class="flex items-center gap-2">
             <i data-lucide="alert-triangle" class="w-4 h-4 text-amber-600 shrink-0"></i>
             <div>
-              <span class="font-bold">지식샘터 링크 준비 중:</span> 아직 공식 강의 링크가 등록되지 않았습니다.
+              <span class="font-bold">지식샘터 링크 준비 중:</span> 공식 강의 링크가 미등록되었습니다.
             </div>
           </div>
-          <button id="btnDetailAddUrlNow" class="shrink-0 font-bold text-blue-700 bg-white px-2.5 py-1 rounded-lg border border-amber-300 hover:bg-amber-100 transition shadow-2xs">
+          <button id="btnDetailAddUrlNow" class="shrink-0 font-bold text-blue-700 bg-white px-2.5 py-1 rounded-lg border border-amber-300 hover:bg-amber-100 transition shadow-2xs cursor-pointer text-xs">
             링크 추가하기
           </button>
         </div>
 
         <!-- Capacity Progress Bar -->
-        <div class="bg-slate-50 p-4 rounded-xl border border-slate-100 space-y-2">
+        <div class="bg-slate-50 p-3.5 sm:p-4 rounded-xl border border-slate-100 space-y-2">
           <div class="flex items-center justify-between text-xs">
             <span class="font-medium text-slate-600">현재 수강 인원 현황</span>
             <div class="flex items-center gap-2">
-              <span class="font-bold text-slate-900"><span id="detailCount" class="text-blue-600 text-base">0</span> / <span id="detailMax">10</span>명</span>
-              <button id="btnDetailChangeCount" type="button" class="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-bold text-indigo-700 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 rounded-lg transition active:scale-95 shadow-2xs cursor-pointer" title="등록 강사 수강 인원 직접 변경">
+              <span class="font-bold text-slate-900"><span id="detailCount" class="text-blue-600 text-sm sm:text-base">0</span> / <span id="detailMax">10</span>명</span>
+              <button id="btnDetailChangeCount" type="button" class="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-bold text-indigo-700 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 rounded-lg transition active:scale-95 shadow-2xs cursor-pointer" title="수강 인원 직접 변경">
                 <i data-lucide="edit-3" class="w-3 h-3 text-indigo-600"></i>
                 <span>인원 변경</span>
               </button>
             </div>
           </div>
-          <div class="w-full bg-slate-200 rounded-full h-2.5 overflow-hidden">
-            <div id="detailProgressBar" class="bg-blue-600 h-2.5 rounded-full transition-all duration-300" style="width: 0%"></div>
+          <div class="w-full bg-slate-200 rounded-full h-2 sm:h-2.5 overflow-hidden">
+            <div id="detailProgressBar" class="bg-blue-600 h-2 sm:h-2.5 rounded-full transition-all duration-300" style="width: 0%"></div>
           </div>
           <div class="flex items-center justify-between text-[11px] text-slate-400">
             <span id="detailCrawlerStatus">강사 직접 관리 (실시간 반영)</span>
@@ -777,40 +920,40 @@
 
         <!-- Enrolled Members in Group -->
         <div>
-          <div class="flex items-center justify-between mb-2">
+          <div class="flex items-center justify-between mb-1.5">
             <h4 class="text-xs font-bold text-slate-700 uppercase tracking-wider">교사유니버스 신청자 명단 (<span id="detailMemberCount">0</span>명)</h4>
           </div>
-          <div id="detailMemberList" class="flex flex-wrap gap-1.5 min-h-[40px] p-2.5 bg-slate-50 border border-slate-100 rounded-xl">
+          <div id="detailMemberList" class="flex flex-wrap gap-1.5 min-h-[40px] p-2 sm:p-2.5 bg-slate-50 border border-slate-100 rounded-xl">
             <!-- Member tags -->
           </div>
         </div>
 
         <!-- Action CTA Buttons -->
-        <div class="pt-3 border-t border-slate-100 flex flex-col gap-2.5">
+        <div class="pt-3 border-t border-slate-100 flex flex-col gap-2 shrink-0">
           <div class="flex items-center gap-2">
-            <button id="btnDetailEnroll" class="flex-1 py-2.5 text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 active:scale-95 rounded-xl shadow-xs transition flex items-center justify-center gap-1.5">
+            <button id="btnDetailEnroll" class="flex-1 py-2 sm:py-2.5 text-xs sm:text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 active:scale-95 rounded-xl shadow-xs transition flex items-center justify-center gap-1.5 cursor-pointer">
               <i data-lucide="send" class="w-4 h-4"></i>
               <span>강의 신청하기</span>
             </button>
-            <a id="btnDetailDirectUrl" href="#" target="_blank" rel="noopener noreferrer" class="px-4 py-2.5 text-sm font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-xl transition flex items-center justify-center gap-1">
-              <i data-lucide="external-link" class="w-4 h-4"></i>
+            <a id="btnDetailDirectUrl" href="#" target="_blank" rel="noopener noreferrer" class="px-3.5 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-sm font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-xl transition flex items-center justify-center gap-1">
+              <i data-lucide="external-link" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
               <span id="btnDetailDirectUrlText">지식샘터 이동</span>
             </a>
           </div>
 
           <!-- Edit & Delete Controls (Author & Admin Protection) -->
-          <div class="flex items-center justify-between pt-1 text-xs text-slate-500">
+          <div class="flex items-center justify-between pt-1 text-xs text-slate-500 flex-wrap gap-1.5">
             <div class="flex items-center gap-2">
-              <button id="btnDetailEdit" class="text-slate-700 hover:text-blue-600 font-semibold px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-blue-50 border border-slate-200 flex items-center gap-1 transition">
+              <button id="btnDetailEdit" class="text-slate-700 hover:text-blue-600 font-semibold px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-blue-50 border border-slate-200 flex items-center gap-1 transition cursor-pointer">
                 <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
-                <span id="btnDetailEditText">강의 수정 (본인/관리자)</span>
+                <span id="btnDetailEditText">강의 수정</span>
               </button>
-              <button id="btnDetailDelete" class="text-rose-600 hover:text-rose-800 font-semibold px-2.5 py-1 rounded-lg bg-rose-50 hover:bg-rose-100 border border-rose-200 flex items-center gap-1 transition">
+              <button id="btnDetailDelete" class="text-rose-600 hover:text-rose-800 font-semibold px-2.5 py-1 rounded-lg bg-rose-50 hover:bg-rose-100 border border-rose-200 flex items-center gap-1 transition cursor-pointer">
                 <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
                 <span>삭제</span>
               </button>
             </div>
-            <span class="text-[11px] text-slate-400">등록 본인 비밀번호 또는 관리자 권한 필요</span>
+            <span class="text-[10px] sm:text-[11px] text-slate-400">등록 본인 비밀번호 또는 관리자 권한 필요</span>
           </div>
         </div>
       </div>
@@ -818,88 +961,88 @@
   </div>
 
   <!-- 2-A. 강의 수정 모달 (Lecture Edit Modal) -->
-  <div id="modalEditLecture" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden items-center justify-center p-4">
-    <div class="bg-white w-full max-w-lg rounded-2xl shadow-xl border border-slate-200 overflow-hidden transform transition-all">
-      <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+  <div id="modalEditLecture" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden items-center justify-center p-2 sm:p-4 touch-scroll">
+    <div class="bg-white w-[96%] sm:w-full max-w-lg max-h-[92vh] flex flex-col rounded-2xl shadow-xl border border-slate-200 overflow-hidden transform transition-all my-auto">
+      <div class="px-4 sm:px-6 py-3.5 sm:py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50 shrink-0">
         <div class="flex items-center gap-2">
           <div class="w-8 h-8 rounded-lg bg-indigo-600 text-white flex items-center justify-center">
             <i data-lucide="edit-2" class="w-4 h-4"></i>
           </div>
           <div>
-            <h3 class="font-bold text-slate-900 text-base">지식샘터 강의 수정</h3>
+            <h3 class="font-bold text-slate-900 text-sm sm:text-base">지식샘터 강의 수정</h3>
             <p id="editModalAuthBadge" class="text-[11px] text-emerald-600 font-semibold">등록 본인 인증 완료</p>
           </div>
         </div>
-        <button class="modal-close-btn text-slate-400 hover:text-slate-600 p-1 rounded-lg">
+        <button class="modal-close-btn text-slate-400 hover:text-slate-600 p-1 rounded-lg cursor-pointer">
           <i data-lucide="x" class="w-5 h-5"></i>
         </button>
       </div>
 
-      <form id="formEditLecture" class="p-6 space-y-4">
+      <form id="formEditLecture" class="p-4 sm:p-6 overflow-y-auto space-y-3.5 sm:space-y-4">
         <input type="hidden" id="editLectureId" />
 
         <div>
           <label class="block text-xs font-semibold text-slate-700 mb-1">강의명 <span class="text-red-500">*</span></label>
-          <input type="text" id="editTitle" required class="w-full text-sm px-3.5 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-hidden" />
+          <input type="text" id="editTitle" required class="w-full text-xs sm:text-sm px-3.5 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-hidden" />
         </div>
 
-        <div class="grid grid-cols-3 gap-3">
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3">
           <div>
-            <label class="block text-xs font-semibold text-slate-700 mb-1">강사 닉네임 (관리자 등록 회원) <span class="text-red-500">*</span></label>
-            <select id="editPresenter" required class="w-full text-sm px-3.5 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-hidden bg-white cursor-pointer font-medium text-slate-800">
-              <option value="">강사 닉네임 선택</option>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">강사 닉네임 <span class="text-red-500">*</span></label>
+            <select id="editPresenter" required class="w-full text-xs sm:text-sm px-3 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-hidden bg-white cursor-pointer font-medium text-slate-800">
+              <option value="">강사 선택</option>
             </select>
           </div>
           <div>
-            <label class="block text-xs font-semibold text-slate-700 mb-1">모집 정원 (명) <span class="text-red-500">*</span></label>
-            <input type="number" id="editMaxCount" required min="1" max="200" class="w-full text-sm px-3 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-hidden" />
+            <label class="block text-xs font-semibold text-slate-700 mb-1">모집 정원 <span class="text-red-500">*</span></label>
+            <input type="number" id="editMaxCount" required min="1" max="200" class="w-full text-xs sm:text-sm px-3 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-hidden" />
           </div>
           <div>
             <label class="block text-xs font-semibold text-slate-700 mb-1">현재 수강 인원</label>
-            <input type="number" id="editEnrolledCount" min="0" max="200" placeholder="0" class="w-full text-sm px-3 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-hidden" />
+            <input type="number" id="editEnrolledCount" min="0" max="200" placeholder="0" class="w-full text-xs sm:text-sm px-3 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-hidden" />
           </div>
         </div>
 
-        <div class="grid grid-cols-2 gap-3">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3">
           <div>
             <label class="block text-xs font-semibold text-slate-700 mb-1">강의 일자 <span class="text-red-500">*</span></label>
-            <input type="date" id="editDate" required class="w-full text-sm px-3.5 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-hidden" />
+            <input type="date" id="editDate" required class="w-full text-xs sm:text-sm px-3.5 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-hidden" />
           </div>
           <div>
             <label class="block text-xs font-semibold text-slate-700 mb-1">강의 시간 <span class="text-red-500">*</span></label>
-            <input type="text" id="editTime" required class="w-full text-sm px-3.5 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-hidden" />
+            <input type="text" id="editTime" required class="w-full text-xs sm:text-sm px-3.5 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-hidden" />
           </div>
         </div>
 
         <div>
           <div class="flex items-center justify-between mb-1">
             <label class="text-xs font-semibold text-slate-700">지식샘터 강의 URL</label>
-            <span class="text-[11px] text-blue-600 font-medium">링크가 생성되었으면 여기에 입력하세요!</span>
+            <span class="text-[11px] text-blue-600 font-medium">링크가 생성되면 입력하세요</span>
           </div>
           <div class="relative">
             <i data-lucide="link" class="w-4 h-4 text-slate-400 absolute left-3 top-2.5"></i>
-            <input type="url" id="editUrl" placeholder="https://educourse.keris.or.kr/..." class="w-full text-sm pl-9 pr-3.5 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-hidden" />
+            <input type="url" id="editUrl" placeholder="https://educourse.keris.or.kr/..." class="w-full text-xs sm:text-sm pl-9 pr-3.5 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-hidden" />
           </div>
         </div>
 
         <div id="editPasswordRow">
           <label class="block text-xs font-semibold text-slate-700 mb-1">수정/삭제용 비밀번호 변경 (선택)</label>
           <div class="relative">
-            <input type="password" id="editPassword" placeholder="기존 비밀번호 유지 시 비워두세요" class="w-full text-sm pl-3.5 pr-10 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-hidden" />
+            <input type="password" id="editPassword" placeholder="기존 비밀번호 유지 시 비워두세요" class="w-full text-xs sm:text-sm pl-3.5 pr-10 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-hidden" />
             <button type="button" class="btn-toggle-pw absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 p-1 cursor-pointer transition focus:outline-hidden" title="비밀번호 보기/숨기기">
               <i data-lucide="eye" class="w-4 h-4"></i>
             </button>
           </div>
         </div>
 
-        <div class="pt-2 flex items-center justify-between gap-2 border-t border-slate-100">
-          <button type="button" id="btnEditModalDelete" class="px-3 py-2 text-xs font-bold text-rose-600 hover:bg-rose-50 rounded-xl transition flex items-center gap-1">
+        <div class="pt-2 flex items-center justify-between gap-2 border-t border-slate-100 shrink-0">
+          <button type="button" id="btnEditModalDelete" class="px-3 py-2 text-xs font-bold text-rose-600 hover:bg-rose-50 rounded-xl transition flex items-center gap-1 cursor-pointer">
             <i data-lucide="trash-2" class="w-4 h-4"></i>
             <span>강의 삭제</span>
           </button>
           <div class="flex items-center gap-2">
-            <button type="button" class="modal-close-btn px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100 rounded-xl transition">취소</button>
-            <button type="submit" class="px-5 py-2 text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl shadow-xs transition active:scale-95">수정 완료</button>
+            <button type="button" class="modal-close-btn px-4 py-2 text-xs sm:text-sm font-medium text-slate-600 hover:bg-slate-100 rounded-xl transition cursor-pointer">취소</button>
+            <button type="submit" class="px-5 py-2 text-xs sm:text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl shadow-xs transition active:scale-95 cursor-pointer">수정 완료</button>
           </div>
         </div>
       </form>
@@ -1008,21 +1151,21 @@
   </div>
 
   <!-- 2-E. 관리자 비밀번호 변경 모달 (Requirement #3) -->
-  <div id="modalAdminChangePw" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden items-center justify-center p-4">
-    <div class="bg-white w-full max-w-sm rounded-2xl shadow-xl border border-slate-200 overflow-hidden transform transition-all">
-      <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+  <div id="modalAdminChangePw" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden items-center justify-center p-2 sm:p-4 touch-scroll">
+    <div class="bg-white w-[95%] sm:w-full max-w-sm rounded-2xl shadow-xl border border-slate-200 overflow-hidden transform transition-all max-h-[92vh] flex flex-col">
+      <div class="px-5 py-3.5 sm:px-6 sm:py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50 shrink-0">
         <div class="flex items-center gap-2">
-          <div class="w-8 h-8 rounded-lg bg-amber-500 text-white flex items-center justify-center">
+          <div class="w-8 h-8 rounded-lg bg-amber-500 text-white flex items-center justify-center shrink-0">
             <i data-lucide="key" class="w-4 h-4"></i>
           </div>
-          <h3 class="font-bold text-slate-900 text-base">관리자 비밀번호 변경</h3>
+          <h3 class="font-bold text-slate-900 text-sm sm:text-base">관리자 비밀번호 변경</h3>
         </div>
-        <button class="modal-close-btn text-slate-400 hover:text-slate-600 p-1 rounded-lg">
+        <button class="modal-close-btn text-slate-400 hover:text-slate-600 p-1.5 rounded-lg cursor-pointer">
           <i data-lucide="x" class="w-5 h-5"></i>
         </button>
       </div>
 
-      <form id="formAdminChangePw" class="p-6 space-y-4">
+      <form id="formAdminChangePw" class="p-4 sm:p-6 space-y-3.5 sm:space-y-4 overflow-y-auto">
         <div>
           <label class="block text-xs font-semibold text-slate-700 mb-1">관리자 초기 비밀번호 안내</label>
           <div id="currentAdminPwDisplay" class="text-xs font-mono font-bold text-indigo-700 p-2.5 bg-indigo-50 border border-indigo-100 rounded-xl">admin1234 (초기 비밀번호)</div>
@@ -1031,7 +1174,7 @@
         <div>
           <label class="block text-xs font-semibold text-slate-700 mb-1">새 관리자 비밀번호 <span class="text-red-500">*</span></label>
           <div class="relative">
-            <input type="password" id="newAdminPwInput" required minlength="4" placeholder="새 관리자 비밀번호 (4자 이상)" class="w-full text-sm pl-3.5 pr-10 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:outline-hidden" />
+            <input type="password" id="newAdminPwInput" required minlength="4" placeholder="새 관리자 비밀번호 (4자 이상)" class="w-full text-xs sm:text-sm pl-3.5 pr-10 py-2 sm:py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:outline-hidden" />
             <button type="button" class="btn-toggle-pw absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 p-1 cursor-pointer transition focus:outline-hidden" title="비밀번호 보기/숨기기">
               <i data-lucide="eye" class="w-4 h-4"></i>
             </button>
@@ -1041,7 +1184,7 @@
         <div>
           <label class="block text-xs font-semibold text-slate-700 mb-1">새 비밀번호 확인 <span class="text-red-500">*</span></label>
           <div class="relative">
-            <input type="password" id="newAdminPwConfirmInput" required minlength="4" placeholder="새 비밀번호 다시 입력" class="w-full text-sm pl-3.5 pr-10 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:outline-hidden" />
+            <input type="password" id="newAdminPwConfirmInput" required minlength="4" placeholder="새 비밀번호 다시 입력" class="w-full text-xs sm:text-sm pl-3.5 pr-10 py-2 sm:py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:outline-hidden" />
             <button type="button" class="btn-toggle-pw absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 p-1 cursor-pointer transition focus:outline-hidden" title="비밀번호 보기/숨기기">
               <i data-lucide="eye" class="w-4 h-4"></i>
             </button>
@@ -1049,72 +1192,72 @@
         </div>
 
         <div class="pt-2 flex items-center justify-end gap-2 border-t border-slate-100">
-          <button type="button" class="modal-close-btn px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-xl transition">취소</button>
-          <button type="submit" class="px-4 py-2 text-xs font-bold text-white bg-amber-600 hover:bg-amber-700 rounded-xl shadow-xs transition">비밀번호 변경 저장</button>
+          <button type="button" class="modal-close-btn px-3 sm:px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-xl transition cursor-pointer">취소</button>
+          <button type="submit" class="px-3 sm:px-4 py-2 text-xs font-bold text-white bg-amber-600 hover:bg-amber-700 rounded-xl shadow-xs transition cursor-pointer">비밀번호 변경 저장</button>
         </div>
       </form>
     </div>
   </div>
 
   <!-- 2-F. 교사 회원 명단 관리 모달 (Requirement #5) -->
-  <div id="modalManageMembers" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden items-center justify-center p-4">
-    <div class="bg-white w-full max-w-xl rounded-2xl shadow-xl border border-slate-200 overflow-hidden flex flex-col max-h-[90vh]">
-      <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50 shrink-0">
+  <div id="modalManageMembers" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden items-center justify-center p-2 sm:p-4 touch-scroll">
+    <div class="bg-white w-[95%] sm:w-full max-w-xl rounded-2xl shadow-xl border border-slate-200 overflow-hidden flex flex-col max-h-[92vh]">
+      <div class="px-4 py-3 sm:px-6 sm:py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50 shrink-0">
         <div class="flex items-center gap-2">
-          <div class="w-8 h-8 rounded-lg bg-indigo-600 text-white flex items-center justify-center">
+          <div class="w-8 h-8 rounded-lg bg-indigo-600 text-white flex items-center justify-center shrink-0">
             <i data-lucide="users" class="w-4 h-4"></i>
           </div>
           <div>
-            <h3 class="font-bold text-slate-900 text-base">교사유니버스 회원 명단 관리</h3>
-            <p class="text-xs text-slate-500">수강 매트릭스의 세로축(수강생 행)에 상시 노출될 회원 목록입니다.</p>
+            <h3 class="font-bold text-slate-900 text-sm sm:text-base">교사유니버스 회원 명단 관리</h3>
+            <p class="text-[11px] sm:text-xs text-slate-500">수강 매트릭스의 세로축에 노출될 회원 목록입니다.</p>
           </div>
         </div>
-        <button class="modal-close-btn text-slate-400 hover:text-slate-600 p-1 rounded-lg">
+        <button class="modal-close-btn text-slate-400 hover:text-slate-600 p-1.5 rounded-lg cursor-pointer">
           <i data-lucide="x" class="w-5 h-5"></i>
         </button>
       </div>
 
-      <div class="p-6 overflow-y-auto space-y-4 text-xs text-slate-700">
+      <div class="p-4 sm:p-6 overflow-y-auto space-y-3.5 sm:space-y-4 text-xs text-slate-700">
         <!-- Current Members Tag Cloud -->
         <div>
-          <div class="flex items-center justify-between mb-2">
+          <div class="flex items-center justify-between mb-1.5 sm:mb-2">
             <span class="font-bold text-slate-900 text-xs">현재 등록된 회원 (<span id="modalMemberListCount" class="text-indigo-600">8</span>명)</span>
-            <span class="text-[11px] text-slate-400">클릭 시 삭제</span>
+            <span class="text-[10px] sm:text-[11px] text-slate-400">클릭 시 삭제</span>
           </div>
-          <div id="modalMemberTagContainer" class="p-3 bg-slate-50 rounded-xl border border-slate-200 flex flex-wrap gap-1.5 min-h-[60px] max-h-[140px] overflow-y-auto">
+          <div id="modalMemberTagContainer" class="p-2.5 sm:p-3 bg-slate-50 rounded-xl border border-slate-200 flex flex-wrap gap-1.5 min-h-[50px] max-h-[130px] overflow-y-auto">
             <!-- Member tags injected dynamically -->
           </div>
         </div>
 
         <!-- Bulk Upload Section -->
-        <div class="bg-indigo-50/60 p-4 rounded-xl border border-indigo-100 space-y-3">
-          <div class="font-bold text-indigo-950 flex items-center justify-between">
-            <span>회원 명단 일괄 추가 / 갱신</span>
-            <label class="cursor-pointer text-xs font-semibold text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
+        <div class="bg-indigo-50/60 p-3 sm:p-4 rounded-xl border border-indigo-100 space-y-2.5 sm:space-y-3">
+          <div class="font-bold text-indigo-950 flex items-center justify-between flex-wrap gap-1">
+            <span class="text-xs">회원 명단 일괄 추가 / 갱신</span>
+            <label class="cursor-pointer text-[11px] sm:text-xs font-semibold text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
               <i data-lucide="upload" class="w-3.5 h-3.5"></i>
               <span>CSV/텍스트 파일 불러오기</span>
               <input type="file" id="memberFileInput" accept=".csv, .txt" class="hidden" />
             </label>
           </div>
-          <p class="text-[11px] text-indigo-800">
+          <p class="text-[10px] sm:text-[11px] text-indigo-800">
             교사 닉네임을 쉼표(,) 또는 줄바꿈(엔터)으로 구분하여 입력해주세요.
           </p>
-          <textarea id="txtBulkMemberInput" rows="4" placeholder="예: 김선생, 박에듀, 이아트, 정코딩, 최융합, 강인공, 윤과학, 송미래, 조에듀" class="w-full text-xs p-3 bg-white border border-indigo-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-hidden leading-relaxed"></textarea>
-          <div class="flex items-center justify-between">
-            <button type="button" id="btnAppendMembers" class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-lg text-xs transition">
-              + 입력한 명단 추가하기
+          <textarea id="txtBulkMemberInput" rows="3" sm:rows="4" placeholder="예: 김선생, 박에듀, 이아트, 정코딩, 최융합, 강인공, 윤과학, 송미래, 조에듀" class="w-full text-xs p-2.5 sm:p-3 bg-white border border-indigo-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-hidden leading-relaxed"></textarea>
+          <div class="flex items-center justify-between gap-2 flex-wrap">
+            <button type="button" id="btnAppendMembers" class="px-2.5 sm:px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-lg text-xs transition cursor-pointer">
+              + 명단 추가하기
             </button>
-            <button type="button" id="btnReplaceMembers" class="px-3 py-1.5 bg-white border border-indigo-300 hover:bg-indigo-50 text-indigo-900 font-bold rounded-lg text-xs transition">
+            <button type="button" id="btnReplaceMembers" class="px-2.5 sm:px-3 py-1.5 bg-white border border-indigo-300 hover:bg-indigo-50 text-indigo-900 font-bold rounded-lg text-xs transition cursor-pointer">
               명단 전체 덮어쓰기
             </button>
           </div>
         </div>
 
         <div class="flex items-center justify-between pt-2 border-t border-slate-100">
-          <button type="button" id="btnResetMembersToDefault" class="text-slate-400 hover:text-slate-700 text-xs underline">
+          <button type="button" id="btnResetMembersToDefault" class="text-slate-400 hover:text-slate-700 text-[11px] sm:text-xs underline cursor-pointer">
             기본 명단으로 복원
           </button>
-          <button type="button" class="modal-close-btn px-4 py-2 text-xs font-bold text-white bg-slate-900 hover:bg-slate-800 rounded-xl transition">
+          <button type="button" class="modal-close-btn px-4 py-2 text-xs font-bold text-white bg-slate-900 hover:bg-slate-800 rounded-xl transition cursor-pointer">
             완료
           </button>
         </div>
@@ -1123,28 +1266,28 @@
   </div>
 
   <!-- 2-G. 등록 강사 전용 수강 인원 변경 모달 -->
-  <div id="modalUpdateLectureCount" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden items-center justify-center p-4">
-    <div class="bg-white w-full max-w-sm rounded-2xl shadow-xl border border-slate-200 overflow-hidden transform transition-all">
-      <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+  <div id="modalUpdateLectureCount" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden items-center justify-center p-2 sm:p-4 touch-scroll">
+    <div class="bg-white w-[95%] sm:w-full max-w-sm rounded-2xl shadow-xl border border-slate-200 overflow-hidden transform transition-all max-h-[92vh] flex flex-col">
+      <div class="px-5 py-3.5 sm:px-6 sm:py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50 shrink-0">
         <div class="flex items-center gap-2">
-          <div class="w-8 h-8 rounded-lg bg-indigo-600 text-white flex items-center justify-center">
+          <div class="w-8 h-8 rounded-lg bg-indigo-600 text-white flex items-center justify-center shrink-0">
             <i data-lucide="users" class="w-4 h-4"></i>
           </div>
           <div>
-            <h3 class="font-bold text-slate-900 text-base">수강 인원 변경</h3>
-            <span class="text-[11px] text-slate-500">등록 강사 전용 관리</span>
+            <h3 class="font-bold text-slate-900 text-sm sm:text-base">수강 인원 변경</h3>
+            <span class="text-[10px] sm:text-[11px] text-slate-500">등록 강사 전용 관리</span>
           </div>
         </div>
-        <button class="modal-close-btn text-slate-400 hover:text-slate-600 p-1 rounded-lg">
+        <button class="modal-close-btn text-slate-400 hover:text-slate-600 p-1.5 rounded-lg cursor-pointer">
           <i data-lucide="x" class="w-5 h-5"></i>
         </button>
       </div>
 
-      <form id="formUpdateLectureCount" class="p-6 space-y-4">
+      <form id="formUpdateLectureCount" class="p-4 sm:p-6 space-y-3.5 sm:space-y-4 overflow-y-auto">
         <div class="p-3 bg-indigo-50/60 rounded-xl border border-indigo-100 text-xs space-y-1">
           <div class="font-bold text-indigo-900 truncate" id="countChangeLecTitle">강의명</div>
           <div class="text-indigo-700">등록 강사: <span id="countChangeLecPresenter" class="font-semibold">강사명</span> (모집 정원: <span id="countChangeLecMax">10</span>명)</div>
-          <div class="text-[11px] text-slate-500">※ 지식샘터 실제 신청 현황에 맞춰 현재 수강 인원을 직접 변경합니다.</div>
+          <div class="text-[10px] sm:text-[11px] text-slate-500">※ 지식샘터 실제 신청 현황에 맞춰 현재 수강 인원을 직접 변경합니다.</div>
         </div>
 
         <div>
@@ -1159,22 +1302,22 @@
         <div id="countChangeAuthBox">
           <label class="block text-xs font-semibold text-slate-700 mb-1">등록 강사 비밀번호 확인 <span class="text-red-500">*</span></label>
           <div class="relative">
-            <input type="password" id="countChangePasswordInput" placeholder="강의 등록 시 설정한 비밀번호 (기본: 1234)" class="w-full text-sm pl-3.5 pr-10 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-hidden" />
+            <input type="password" id="countChangePasswordInput" placeholder="강의 등록 시 설정한 비밀번호 (기본: 1234)" class="w-full text-xs sm:text-sm pl-3.5 pr-10 py-2 sm:py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-hidden" />
             <button type="button" class="btn-toggle-pw absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 p-1 cursor-pointer transition focus:outline-hidden" title="비밀번호 보기/숨기기">
               <i data-lucide="eye" class="w-4 h-4"></i>
             </button>
           </div>
-          <p class="text-[11px] text-slate-400 mt-1">※ 강의를 등록한 강사 본인만 변동 가능합니다.</p>
+          <p class="text-[10px] sm:text-[11px] text-slate-400 mt-1">※ 강의를 등록한 강사 본인만 변동 가능합니다.</p>
         </div>
 
         <div id="countChangeAdminBadge" class="hidden p-2.5 rounded-xl bg-amber-50 border border-amber-200 text-xs text-amber-900 font-semibold flex items-center gap-1.5">
-          <i data-lucide="shield-check" class="w-4 h-4 text-amber-600"></i>
+          <i data-lucide="shield-check" class="w-4 h-4 text-amber-600 shrink-0"></i>
           <span>👑 관리자 권한으로 인증이 면제됩니다.</span>
         </div>
 
         <div class="pt-2 flex items-center justify-end gap-2 border-t border-slate-100">
-          <button type="button" class="modal-close-btn px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-xl transition">취소</button>
-          <button type="submit" class="px-5 py-2 text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl shadow-xs transition active:scale-95 flex items-center gap-1.5 cursor-pointer">
+          <button type="button" class="modal-close-btn px-3.5 sm:px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-xl transition cursor-pointer">취소</button>
+          <button type="submit" class="px-4 sm:px-5 py-2 text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl shadow-xs transition active:scale-95 flex items-center gap-1.5 cursor-pointer">
             <i data-lucide="check" class="w-3.5 h-3.5"></i>
             <span>인원 변경 저장</span>
           </button>
@@ -1184,16 +1327,16 @@
   </div>
 
   <!-- 2-H. 수강 상태(신청/이수) 본인/관리자 인증 변경 모달 (Requirement #4) -->
-  <div id="modalEnrollStatusAuth" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden items-center justify-center p-4">
-    <div class="bg-white w-full max-w-sm rounded-2xl shadow-xl border border-slate-200 overflow-hidden transform transition-all">
-      <div class="p-6 text-center">
-        <div class="w-12 h-12 rounded-2xl bg-indigo-100 text-indigo-600 flex items-center justify-center mx-auto mb-3">
-          <i data-lucide="check-square" class="w-6 h-6"></i>
+  <div id="modalEnrollStatusAuth" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden items-center justify-center p-2 sm:p-4 touch-scroll">
+    <div class="bg-white w-[95%] sm:w-full max-w-sm rounded-2xl shadow-xl border border-slate-200 overflow-hidden transform transition-all max-h-[92vh] flex flex-col">
+      <div class="p-4 sm:p-6 text-center overflow-y-auto">
+        <div class="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-indigo-100 text-indigo-600 flex items-center justify-center mx-auto mb-2 sm:mb-3">
+          <i data-lucide="check-square" class="w-5 h-5 sm:w-6 sm:h-6"></i>
         </div>
-        <h3 class="text-base font-bold text-slate-900">수강 상태 변경</h3>
-        <p class="text-xs text-slate-500 mt-1 mb-3">신청자 본인 또는 관리자만 변경할 수 있습니다.</p>
+        <h3 class="text-sm sm:text-base font-bold text-slate-900">수강 상태 변경</h3>
+        <p class="text-[11px] sm:text-xs text-slate-500 mt-0.5 sm:mt-1 mb-2.5 sm:mb-3">신청자 본인 또는 관리자만 변경할 수 있습니다.</p>
 
-        <div class="bg-slate-50 p-3 rounded-xl border border-slate-100 text-left text-xs mb-4 space-y-1">
+        <div class="bg-slate-50 p-3 rounded-xl border border-slate-100 text-left text-xs mb-3 sm:mb-4 space-y-1">
           <div>신청 교사: <strong id="statusAuthStudentName" class="text-slate-900 font-bold">김선생</strong></div>
           <div>강의: <span id="statusAuthLectureTitle" class="text-slate-600 truncate block">강의명</span></div>
           <div class="pt-1 flex items-center justify-between text-[11px]">
@@ -1203,21 +1346,21 @@
           </div>
         </div>
 
-        <form id="formEnrollStatusAuth" class="space-y-4">
+        <form id="formEnrollStatusAuth" class="space-y-3 sm:space-y-4">
           <div id="statusAuthPasswordBox">
             <label class="block text-xs font-semibold text-slate-700 text-left mb-1">본인 확인 비밀번호</label>
             <div class="relative">
-              <input type="password" id="statusAuthPassword" required placeholder="비밀번호 입력 (기본: 1234)" class="w-full text-center text-sm pl-3.5 pr-10 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-hidden" />
+              <input type="password" id="statusAuthPassword" required placeholder="비밀번호 입력 (기본: 1234)" class="w-full text-center text-xs sm:text-sm pl-3.5 pr-10 py-2 sm:py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-hidden" />
               <button type="button" class="btn-toggle-pw absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 p-1 cursor-pointer transition focus:outline-hidden" title="비밀번호 보기/숨기기">
                 <i data-lucide="eye" class="w-4 h-4"></i>
               </button>
             </div>
-            <p class="text-[11px] text-slate-400 mt-1 text-left">※ 관리자 모드 중인 경우 비밀번호 없이 즉시 변경됩니다.</p>
+            <p class="text-[10px] sm:text-[11px] text-slate-400 mt-1 text-left">※ 관리자 모드 중인 경우 비밀번호 없이 즉시 변경됩니다.</p>
           </div>
 
           <div class="flex items-center gap-2 pt-1">
-            <button type="button" class="modal-close-btn flex-1 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-xl transition">취소</button>
-            <button type="submit" id="btnConfirmStatusChange" class="flex-1 py-2 text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl shadow-xs transition">
+            <button type="button" class="modal-close-btn flex-1 py-2 sm:py-2.5 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-xl transition cursor-pointer">취소</button>
+            <button type="submit" id="btnConfirmStatusChange" class="flex-1 py-2 sm:py-2.5 text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl shadow-xs transition cursor-pointer">
               상태 변경 확정
             </button>
           </div>
@@ -1231,39 +1374,39 @@
   </div>
 
   <!-- 2-I. 수강 신청 취소 확인 모달 (Cancel Enrollment Modal - Requirement #1) -->
-  <div id="modalConfirmCancelEnroll" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden items-center justify-center p-4">
-    <div class="bg-white w-full max-w-sm rounded-2xl shadow-xl border border-rose-200 overflow-hidden transform transition-all">
-      <div class="p-6 text-center">
-        <div class="w-12 h-12 rounded-2xl bg-rose-100 text-rose-600 flex items-center justify-center mx-auto mb-3">
-          <i data-lucide="user-x" class="w-6 h-6"></i>
+  <div id="modalConfirmCancelEnroll" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden items-center justify-center p-2 sm:p-4 touch-scroll">
+    <div class="bg-white w-[95%] sm:w-full max-w-sm rounded-2xl shadow-xl border border-rose-200 overflow-hidden transform transition-all max-h-[92vh] flex flex-col">
+      <div class="p-4 sm:p-6 text-center overflow-y-auto">
+        <div class="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-rose-100 text-rose-600 flex items-center justify-center mx-auto mb-2 sm:mb-3">
+          <i data-lucide="user-x" class="w-5 h-5 sm:w-6 sm:h-6"></i>
         </div>
         <div class="flex items-center justify-center gap-2 mb-1">
-          <h3 class="text-base font-bold text-slate-900">수강 신청 취소</h3>
+          <h3 class="text-sm sm:text-base font-bold text-slate-900">수강 신청 취소</h3>
           <span id="cancelModalAdminBadge" class="hidden px-2 py-0.5 rounded-full bg-amber-100 text-amber-900 border border-amber-300 text-[10px] font-bold">👑 관리자 모드</span>
         </div>
-        <p class="text-xs text-slate-500 mb-3">정말로 해당 강의의 수강 신청을 취소하시겠습니까?</p>
+        <p class="text-[11px] sm:text-xs text-slate-500 mb-2.5 sm:mb-3">정말로 해당 강의의 수강 신청을 취소하시겠습니까?</p>
 
-        <div class="p-3 bg-slate-50 rounded-xl border border-slate-100 text-left mb-4 text-xs space-y-1">
+        <div class="p-3 bg-slate-50 rounded-xl border border-slate-100 text-left mb-3 sm:mb-4 text-xs space-y-1">
           <div>신청 교사: <strong id="cancelTargetStudent" class="text-slate-900 font-bold">김선생</strong></div>
           <div>강의명: <span id="cancelTargetLecture" class="text-slate-700 font-semibold truncate block">강의명</span></div>
-          <div class="text-[11px] text-rose-600 font-medium pt-1">※ 취소 시 수강 인원이 1명 감소하고 수강 매트릭스에서 즉시 제외됩니다.</div>
+          <div class="text-[10px] sm:text-[11px] text-rose-600 font-medium pt-1">※ 취소 시 수강 인원이 1명 감소하고 수강 매트릭스에서 즉시 제외됩니다.</div>
         </div>
 
-        <form id="formCancelEnroll" class="space-y-4">
+        <form id="formCancelEnroll" class="space-y-3 sm:space-y-4">
           <div id="cancelAuthPasswordBox" class="text-left space-y-1">
             <label class="block text-xs font-semibold text-slate-700">신청 시 설정한 비밀번호 확인 <span class="text-rose-500">*</span></label>
             <div class="relative">
-              <input type="password" id="cancelAuthPassword" required placeholder="비밀번호 입력 (기본: 1234)" class="w-full text-center text-sm pl-3.5 pr-10 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-rose-500 focus:outline-hidden" />
+              <input type="password" id="cancelAuthPassword" required placeholder="비밀번호 입력 (기본: 1234)" class="w-full text-center text-xs sm:text-sm pl-3.5 pr-10 py-2 sm:py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-rose-500 focus:outline-hidden" />
               <button type="button" class="btn-toggle-pw absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 p-1 cursor-pointer transition focus:outline-hidden" title="비밀번호 보기/숨기기">
                 <i data-lucide="eye" class="w-4 h-4"></i>
               </button>
             </div>
-            <p class="text-[11px] text-slate-400">※ 본인이 신청할 때 설정한 비밀번호 또는 관리자 권한으로 취소할 수 있습니다.</p>
+            <p class="text-[10px] sm:text-[11px] text-slate-400">※ 본인이 신청할 때 설정한 비밀번호 또는 관리자 권한으로 취소할 수 있습니다.</p>
           </div>
 
           <div class="flex items-center gap-2 pt-1">
-            <button type="button" class="modal-close-btn flex-1 py-2.5 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-xl transition cursor-pointer">닫기</button>
-            <button type="submit" id="btnExecuteCancelEnroll" class="flex-1 py-2.5 text-xs font-bold text-white bg-rose-600 hover:bg-rose-700 rounded-xl shadow-xs transition active:scale-95 flex items-center justify-center gap-1 cursor-pointer">
+            <button type="button" class="modal-close-btn flex-1 py-2 sm:py-2.5 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-xl transition cursor-pointer">닫기</button>
+            <button type="submit" id="btnExecuteCancelEnroll" class="flex-1 py-2 sm:py-2.5 text-xs font-bold text-white bg-rose-600 hover:bg-rose-700 rounded-xl shadow-xs transition active:scale-95 flex items-center justify-center gap-1 cursor-pointer">
               <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
               <span id="btnExecuteCancelEnrollText">수강 취소 실행</span>
             </button>
@@ -1274,21 +1417,21 @@
   </div>
 
   <!-- 2-J. 회원 품앗이 수강 이력 모달 (Member Mutual Support History Modal) -->
-  <div id="modalMemberMutualHistory" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden items-center justify-center p-4">
-    <div class="bg-white w-full max-w-2xl rounded-2xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[90vh]">
+  <div id="modalMemberMutualHistory" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden items-center justify-center p-2 sm:p-4 touch-scroll">
+    <div class="bg-white w-[96%] sm:w-full max-w-2xl rounded-2xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[92vh]">
       <!-- Modal Header -->
-      <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-gradient-to-r from-purple-50/70 via-indigo-50/50 to-white shrink-0">
-        <div class="flex items-center gap-3">
-          <div id="mutualModalAvatar" class="w-10 h-10 rounded-2xl bg-indigo-600 text-white flex items-center justify-center font-bold text-base shadow-xs shrink-0">
+      <div class="px-4 py-3 sm:px-6 sm:py-4 border-b border-slate-100 flex items-center justify-between bg-gradient-to-r from-purple-50/70 via-indigo-50/50 to-white shrink-0">
+        <div class="flex items-center gap-2.5 sm:gap-3">
+          <div id="mutualModalAvatar" class="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl bg-indigo-600 text-white flex items-center justify-center font-bold text-sm sm:text-base shadow-xs shrink-0">
             김
           </div>
           <div>
-            <div class="flex items-center gap-2 flex-wrap">
-              <h3 id="mutualModalMemberName" class="font-extrabold text-slate-900 text-lg">김선생</h3>
+            <div class="flex items-center gap-1.5 sm:gap-2 flex-wrap">
+              <h3 id="mutualModalMemberName" class="font-extrabold text-slate-900 text-base sm:text-lg">김선생</h3>
               <span id="mutualModalOfficialBadge" class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-indigo-100 text-indigo-700 border border-indigo-200">공식 회원</span>
               <span id="mutualModalPresenterBadge" class="hidden px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">강의 개설 강사</span>
             </div>
-            <p class="text-xs text-slate-500 mt-0.5">교사유니버스 상호 품앗이 수강 및 개설 현황</p>
+            <p class="text-[11px] sm:text-xs text-slate-500 mt-0.5">교사유니버스 상호 품앗이 수강 및 개설 현황</p>
           </div>
         </div>
         <button class="modal-close-btn text-slate-400 hover:text-slate-600 p-1.5 rounded-xl hover:bg-slate-100 transition cursor-pointer">
@@ -1297,44 +1440,44 @@
       </div>
 
       <!-- Modal Body (Scrollable) -->
-      <div class="p-6 overflow-y-auto space-y-4 text-xs text-slate-700">
+      <div class="p-3.5 sm:p-6 overflow-y-auto space-y-3 sm:space-y-4 text-xs text-slate-700">
         <!-- 4 KPIs Row -->
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-center">
-          <div class="p-3 bg-purple-50/80 rounded-2xl border border-purple-100">
-            <span class="text-[11px] font-bold text-purple-700 block mb-0.5">👤 품앗이 수강 강사</span>
-            <span id="mutualModalPresenterCount" class="text-xl font-black text-purple-950">0</span>
-            <span class="text-[10px] text-purple-600 block mt-0.5">명의 강의를 수강</span>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center">
+          <div class="p-2.5 sm:p-3 bg-purple-50/80 rounded-xl sm:rounded-2xl border border-purple-100">
+            <span class="text-[10px] sm:text-[11px] font-bold text-purple-700 block mb-0.5">👤 품앗이 수강 강사</span>
+            <span id="mutualModalPresenterCount" class="text-lg sm:text-xl font-black text-purple-950">0</span>
+            <span class="text-[9px] sm:text-[10px] text-purple-600 block mt-0.5">명의 강의를 수강</span>
           </div>
-          <div class="p-3 bg-blue-50/80 rounded-2xl border border-blue-100">
-            <span class="text-[11px] font-bold text-blue-700 block mb-0.5">📚 전체 수강 신청</span>
-            <span id="mutualModalEnrolledCount" class="text-xl font-black text-blue-950">0</span>
-            <span id="mutualModalCompletedSub" class="text-[10px] text-blue-600 block mt-0.5">이수 완료 0건</span>
+          <div class="p-2.5 sm:p-3 bg-blue-50/80 rounded-xl sm:rounded-2xl border border-blue-100">
+            <span class="text-[10px] sm:text-[11px] font-bold text-blue-700 block mb-0.5">📚 전체 수강 신청</span>
+            <span id="mutualModalEnrolledCount" class="text-lg sm:text-xl font-black text-blue-950">0</span>
+            <span id="mutualModalCompletedSub" class="text-[9px] sm:text-[10px] text-blue-600 block mt-0.5">이수 완료 0건</span>
           </div>
-          <div class="p-3 bg-emerald-50/80 rounded-2xl border border-emerald-100">
-            <span class="text-[11px] font-bold text-emerald-700 block mb-0.5">🤝 상호 맞수강 파트너</span>
-            <span id="mutualModalMutualCount" class="text-xl font-black text-emerald-950">0</span>
-            <span class="text-[10px] text-emerald-600 block mt-0.5">명과 양방향 맞수강</span>
+          <div class="p-2.5 sm:p-3 bg-emerald-50/80 rounded-xl sm:rounded-2xl border border-emerald-100">
+            <span class="text-[10px] sm:text-[11px] font-bold text-emerald-700 block mb-0.5">🤝 상호 맞수강 파트너</span>
+            <span id="mutualModalMutualCount" class="text-lg sm:text-xl font-black text-emerald-950">0</span>
+            <span class="text-[9px] sm:text-[10px] text-emerald-600 block mt-0.5">명과 양방향 맞수강</span>
           </div>
-          <div class="p-3 bg-amber-50/80 rounded-2xl border border-amber-100">
-            <span class="text-[11px] font-bold text-amber-700 block mb-0.5">🎓 개설한 강의</span>
-            <span id="mutualModalLecturesCount" class="text-xl font-black text-amber-950">0</span>
-            <span id="mutualModalTotalStudentsSub" class="text-[10px] text-amber-600 block mt-0.5">총 수강생 0명</span>
+          <div class="p-2.5 sm:p-3 bg-amber-50/80 rounded-xl sm:rounded-2xl border border-amber-100">
+            <span class="text-[10px] sm:text-[11px] font-bold text-amber-700 block mb-0.5">🎓 개설한 강의</span>
+            <span id="mutualModalLecturesCount" class="text-lg sm:text-xl font-black text-amber-950">0</span>
+            <span id="mutualModalTotalStudentsSub" class="text-[9px] sm:text-[10px] text-amber-600 block mt-0.5">총 수강생 0명</span>
           </div>
         </div>
 
         <!-- Scope & Tab Controls -->
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-200 pb-2.5">
           <div class="flex items-center gap-1.5 flex-wrap" id="mutualHistoryTabs">
-            <button type="button" data-tab="byPresenter" class="mutual-tab-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-purple-600 text-white shadow-2xs transition cursor-pointer">
+            <button type="button" data-tab="byPresenter" class="mutual-tab-btn px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-bold bg-purple-600 text-white shadow-2xs transition cursor-pointer">
               👤 누구 강의를 들었는지 (<span id="tabCountByPresenter">0</span>명)
             </button>
-            <button type="button" data-tab="mutual" class="mutual-tab-btn px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition cursor-pointer">
+            <button type="button" data-tab="mutual" class="mutual-tab-btn px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition cursor-pointer">
               🤝 상호 맞수강 (<span id="tabCountMutual">0</span>명)
             </button>
-            <button type="button" data-tab="allEnrolled" class="mutual-tab-btn px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition cursor-pointer">
+            <button type="button" data-tab="allEnrolled" class="mutual-tab-btn px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition cursor-pointer">
               📚 전체 수강 강의 (<span id="tabCountAllEnrolled">0</span>건)
             </button>
-            <button type="button" data-tab="myLectures" class="mutual-tab-btn px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition cursor-pointer">
+            <button type="button" data-tab="myLectures" class="mutual-tab-btn px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition cursor-pointer">
               🎓 개설한 강의 (<span id="tabCountMyLectures">0</span>건)
             </button>
           </div>
@@ -1348,18 +1491,19 @@
         </div>
 
         <!-- Dynamic Content List Container -->
-        <div id="mutualHistoryListContainer" class="space-y-3 min-h-[160px]">
+        <div id="mutualHistoryListContainer" class="space-y-2.5 sm:space-y-3 min-h-[160px]">
           <!-- Injected dynamically by renderMemberMutualHistoryList() -->
         </div>
       </div>
 
       <!-- Modal Footer -->
-      <div class="px-6 py-3.5 bg-slate-50 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500 shrink-0">
-        <span class="flex items-center gap-1 text-[11px] text-slate-400">
+      <div class="px-4 py-3 sm:px-6 sm:py-3.5 bg-slate-50 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500 shrink-0">
+        <span class="flex items-center gap-1 text-[10px] sm:text-[11px] text-slate-400">
           <i data-lucide="info" class="w-3.5 h-3.5 text-indigo-500 shrink-0"></i>
-          <span>상호 품앗이는 두 교사가 서로의 강의에 맞수강(신청 또는 이수)했을 때 자동으로 연결됩니다.</span>
+          <span class="hidden sm:inline">상호 품앗이는 두 교사가 서로의 강의에 맞수강(신청 또는 이수)했을 때 자동으로 연결됩니다.</span>
+          <span class="sm:hidden">서로의 강의에 맞수강 시 자동 연결</span>
         </span>
-        <button type="button" class="modal-close-btn px-4 py-1.5 text-xs font-bold text-slate-700 bg-white hover:bg-slate-100 border border-slate-200 rounded-xl transition cursor-pointer">
+        <button type="button" class="modal-close-btn px-3.5 sm:px-4 py-1.5 text-xs font-bold text-slate-700 bg-white hover:bg-slate-100 border border-slate-200 rounded-xl transition cursor-pointer">
           닫기
         </button>
       </div>
@@ -1367,44 +1511,44 @@
   </div>
 
   <!-- 3. 수강 신청 팝업 (Enrollment Confirmation Popup - Core Requirement #4) -->
-  <div id="modalEnroll" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden items-center justify-center p-4">
-    <div class="bg-white w-full max-w-md rounded-2xl shadow-xl border border-slate-200 overflow-hidden transform transition-all">
-      <div class="p-6">
-        <div class="w-12 h-12 rounded-2xl bg-blue-100 text-blue-600 flex items-center justify-center mb-4 mx-auto">
-          <i data-lucide="user-check" class="w-6 h-6"></i>
+  <div id="modalEnroll" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden items-center justify-center p-2 sm:p-4 touch-scroll">
+    <div class="bg-white w-[95%] sm:w-full max-w-md rounded-2xl shadow-xl border border-slate-200 overflow-hidden transform transition-all max-h-[92vh] flex flex-col">
+      <div class="p-4 sm:p-6 overflow-y-auto">
+        <div class="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-blue-100 text-blue-600 flex items-center justify-center mb-3 sm:mb-4 mx-auto">
+          <i data-lucide="user-check" class="w-5 h-5 sm:w-6 sm:h-6"></i>
         </div>
-        <h3 class="text-base font-bold text-slate-900 text-center mb-1">교사유니버스 수강 신청</h3>
-        <p class="text-xs text-slate-500 text-center mb-5">닉네임을 선택하시면 매트릭스에 기록되고 지식샘터 공식 페이지로 이동합니다.</p>
+        <h3 class="text-sm sm:text-base font-bold text-slate-900 text-center mb-1">교사유니버스 수강 신청</h3>
+        <p class="text-[11px] sm:text-xs text-slate-500 text-center mb-4 sm:mb-5">닉네임을 선택하시면 매트릭스에 기록되고 지식샘터 공식 페이지로 이동합니다.</p>
 
-        <div class="bg-slate-50 p-3 rounded-xl border border-slate-100 mb-4 text-xs">
+        <div class="bg-slate-50 p-3 rounded-xl border border-slate-100 mb-3 sm:mb-4 text-xs">
           <div class="text-slate-500">신청 대상 강의:</div>
           <div id="enrollLectureTitle" class="font-bold text-slate-800 text-sm mt-0.5 truncate">강의명</div>
           <div class="text-slate-500 mt-1">강사: <span id="enrollPresenterName" class="font-semibold text-slate-700">강사</span></div>
         </div>
 
-        <form id="formEnrollConfirm" class="space-y-4">
+        <form id="formEnrollConfirm" class="space-y-3 sm:space-y-4">
           <div>
             <label class="block text-xs font-semibold text-slate-700 mb-1">신청 교사 닉네임 (관리자 등록 회원) <span class="text-red-500">*</span></label>
-            <select id="enrollStudentName" required class="w-full text-sm px-3.5 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-hidden bg-white cursor-pointer font-medium text-slate-800">
+            <select id="enrollStudentName" required class="w-full text-xs sm:text-sm px-3 sm:px-3.5 py-2 sm:py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-hidden bg-white cursor-pointer font-medium text-slate-800">
               <option value="">수강 신청 교사 선택</option>
             </select>
-            <p class="text-[11px] text-slate-400 mt-1">관리자가 등록한 공식 교사유니버스 회원 명단에서 선택합니다.</p>
+            <p class="text-[10px] sm:text-[11px] text-slate-400 mt-1">관리자가 등록한 공식 교사유니버스 회원 명단에서 선택합니다.</p>
           </div>
 
           <div>
             <label class="block text-xs font-semibold text-slate-700 mb-1">본인 확인 비밀번호 (이수 상태 변경용)</label>
             <div class="relative">
-              <input type="password" id="enrollPassword" placeholder="비밀번호 입력 (미입력 시 기본 1234)" class="w-full text-sm pl-3.5 pr-10 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-hidden" />
+              <input type="password" id="enrollPassword" placeholder="비밀번호 입력 (미입력 시 기본 1234)" class="w-full text-xs sm:text-sm pl-3.5 pr-10 py-2 sm:py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-hidden" />
               <button type="button" class="btn-toggle-pw absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 p-1 cursor-pointer transition focus:outline-hidden" title="비밀번호 보기/숨기기">
                 <i data-lucide="eye" class="w-4 h-4"></i>
               </button>
             </div>
-            <p class="text-[11px] text-slate-400 mt-1">향후 수강 매트릭스에서 본인 이수 완료 체크 시 사용됩니다.</p>
+            <p class="text-[10px] sm:text-[11px] text-slate-400 mt-1">향후 수강 매트릭스에서 본인 이수 완료 체크 시 사용됩니다.</p>
           </div>
 
           <div class="pt-2 flex items-center justify-end gap-2">
-            <button type="button" class="modal-close-btn px-4 py-2.5 text-xs font-medium text-slate-600 hover:bg-slate-100 rounded-xl transition">취소</button>
-            <button type="submit" class="flex-1 px-4 py-2.5 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl shadow-xs transition active:scale-95 flex items-center justify-center gap-1.5">
+            <button type="button" class="modal-close-btn px-3 sm:px-4 py-2 sm:py-2.5 text-xs font-medium text-slate-600 hover:bg-slate-100 rounded-xl transition cursor-pointer">취소</button>
+            <button type="submit" class="flex-1 px-3 sm:px-4 py-2 sm:py-2.5 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl shadow-xs transition active:scale-95 flex items-center justify-center gap-1.5 cursor-pointer">
               <span>확인 및 지식샘터 이동</span>
               <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
             </button>
@@ -1415,26 +1559,26 @@
   </div>
 
   <!-- 4. 크롤러 연동 안내 & Cloud Function 코드 모달 -->
-  <div id="modalCrawler" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden items-center justify-center p-4">
-    <div class="bg-white w-full max-w-2xl rounded-2xl shadow-xl border border-slate-200 overflow-hidden flex flex-col max-h-[90vh]">
-      <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50 shrink-0">
+  <div id="modalCrawler" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden items-center justify-center p-2 sm:p-4 touch-scroll">
+    <div class="bg-white w-[96%] sm:w-full max-w-2xl rounded-2xl shadow-xl border border-slate-200 overflow-hidden flex flex-col max-h-[92vh]">
+      <div class="px-4 py-3 sm:px-6 sm:py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50 shrink-0">
         <div class="flex items-center gap-2">
-          <div class="w-8 h-8 rounded-lg bg-indigo-600 text-white flex items-center justify-center">
+          <div class="w-8 h-8 rounded-lg bg-indigo-600 text-white flex items-center justify-center shrink-0">
             <i data-lucide="bot" class="w-4 h-4"></i>
           </div>
           <div>
-            <h3 class="font-bold text-slate-900 text-base">수강 인원 자동 크롤링 아키텍처</h3>
-            <p class="text-xs text-slate-500">Firebase Cloud Functions (대안 B) 연동 가이드</p>
+            <h3 class="font-bold text-slate-900 text-sm sm:text-base">수강 인원 자동 크롤링 아키텍처</h3>
+            <p class="text-[11px] sm:text-xs text-slate-500">Firebase Cloud Functions (대안 B) 연동 가이드</p>
           </div>
         </div>
-        <button class="modal-close-btn text-slate-400 hover:text-slate-600 p-1 rounded-lg">
+        <button class="modal-close-btn text-slate-400 hover:text-slate-600 p-1.5 rounded-lg cursor-pointer">
           <i data-lucide="x" class="w-5 h-5"></i>
         </button>
       </div>
 
-      <div class="p-6 overflow-y-auto space-y-4 text-xs text-slate-700">
-        <div class="bg-indigo-50 border border-indigo-100 p-4 rounded-xl text-indigo-900 space-y-1">
-          <div class="font-bold text-sm">작동 원리 (대안 B)</div>
+      <div class="p-4 sm:p-6 overflow-y-auto space-y-3.5 sm:space-y-4 text-xs text-slate-700">
+        <div class="bg-indigo-50 border border-indigo-100 p-3 sm:p-4 rounded-xl text-indigo-900 space-y-1">
+          <div class="font-bold text-xs sm:text-sm">작동 원리 (대안 B)</div>
           <p>1. 지식샘터 강의 URL이 등록되면, Cloud Function(스케줄러 10분 주기 또는 온디맨드)이 해당 강좌 페이지 HTML을 파싱합니다.</p>
           <p>2. 지식샘터의 현재 수강 신청 인원(예: "현재 신청 7명 / 정원 10명")을 추출하여 Firestore `lectures/{lectureId}`의 `currentCount` 필드를 업데이트합니다.</p>
           <p>3. Firestore의 `onSnapshot` 리스너를 통해 모든 교사의 캘린더 화면에 실시간으로 잔여석/신청현황이 즉각 갱신됩니다.</p>
@@ -1442,10 +1586,10 @@
 
         <div>
           <div class="flex items-center justify-between mb-1">
-            <span class="font-bold text-slate-900">1. GitHub Actions 자동 크롤러 워크플로우 (.github/workflows/crawler.yml):</span>
-            <span class="text-slate-400 text-[10px]">매 6시간 주기 자동 실행</span>
+            <span class="font-bold text-slate-900 text-xs">1. GitHub Actions 자동 크롤러 워크플로우 (.github/workflows/crawler.yml):</span>
+            <span class="text-slate-400 text-[9px] sm:text-[10px]">매 6시간 주기 자동 실행</span>
           </div>
-          <pre class="bg-slate-900 text-slate-100 p-3 rounded-xl overflow-x-auto text-[10px] font-mono leading-relaxed">
+          <pre class="bg-slate-900 text-slate-100 p-2.5 sm:p-3 rounded-xl overflow-x-auto text-[9px] sm:text-[10px] font-mono leading-relaxed">
 # .github/workflows/crawler.yml
 name: Knowledge Fountain Enrolled Count Crawler
 on:
@@ -1469,9 +1613,9 @@ jobs:
 
         <div>
           <div class="flex items-center justify-between mb-1">
-            <span class="font-bold text-slate-900">2. Python 크롤러 스크립트 (crawler.py):</span>
+            <span class="font-bold text-slate-900 text-xs">2. Python 크롤러 스크립트 (crawler.py):</span>
           </div>
-          <pre class="bg-slate-900 text-slate-100 p-3 rounded-xl overflow-x-auto text-[10px] font-mono leading-relaxed">
+          <pre class="bg-slate-900 text-slate-100 p-2.5 sm:p-3 rounded-xl overflow-x-auto text-[9px] sm:text-[10px] font-mono leading-relaxed">
 # crawler.py
 import os, re, json, requests
 from bs4 import BeautifulSoup
@@ -1482,9 +1626,9 @@ from firebase_admin import credentials, firestore
 # Firestore lectures 문서의 enrolledCount, currentCount 필드 실시간 업데이트</pre>
         </div>
 
-        <div class="bg-amber-50 border border-amber-200 p-3 rounded-xl text-amber-900 text-[11px] space-y-1">
+        <div class="bg-amber-50 border border-amber-200 p-2.5 sm:p-3 rounded-xl text-amber-900 text-[10px] sm:text-[11px] space-y-1">
           <div class="font-bold flex items-center gap-1">
-            <i data-lucide="key" class="w-3.5 h-3.5 text-amber-700"></i>
+            <i data-lucide="key" class="w-3.5 h-3.5 text-amber-700 shrink-0"></i>
             <span>GitHub Repository Secrets 등록 방법</span>
           </div>
           <p>1. Firebase 콘솔 &gt; 프로젝트 설정 &gt; 서비스 계정에서 <strong>새 비공개 키 생성(JSON 다운로드)</strong></p>
@@ -1496,25 +1640,25 @@ from firebase_admin import credentials, firestore
   </div>
 
   <!-- 6. 이번 주 공지사항 관리자 편집 모달 (Weekly Notice Edit Modal) -->
-  <div id="modalEditWeeklyNotice" class="fixed inset-0 z-50 bg-slate-900/70 backdrop-blur-xs hidden items-center justify-center p-3 sm:p-4">
-    <div class="bg-white w-full max-w-3xl rounded-2xl sm:rounded-3xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[92vh]">
-      <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50 shrink-0">
+  <div id="modalEditWeeklyNotice" class="fixed inset-0 z-50 bg-slate-900/70 backdrop-blur-xs hidden items-center justify-center p-2 sm:p-4 touch-scroll">
+    <div class="bg-white w-[96%] sm:w-full max-w-3xl rounded-2xl sm:rounded-3xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[92vh]">
+      <div class="px-4 py-3 sm:px-5 sm:py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50 shrink-0">
         <div class="flex items-center gap-2">
-          <div class="w-8 h-8 rounded-lg bg-amber-500 text-white flex items-center justify-center shadow-xs">
+          <div class="w-8 h-8 rounded-lg bg-amber-500 text-white flex items-center justify-center shadow-xs shrink-0">
             <i data-lucide="edit-3" class="w-4 h-4"></i>
           </div>
           <div>
-            <h3 class="font-bold text-slate-900 text-base">이번 주 공지사항 수정 (관리자 전용)</h3>
-            <p class="text-xs text-slate-500">Firestore DB(weekly_notice)에 실시간 저장되어 모든 교사 화면에 즉시 반영됩니다.</p>
+            <h3 class="font-bold text-slate-900 text-sm sm:text-base">이번 주 공지사항 수정 (관리자 전용)</h3>
+            <p class="text-[11px] sm:text-xs text-slate-500">Firestore DB(weekly_notice)에 실시간 저장되어 모든 교사 화면에 즉시 반영됩니다.</p>
           </div>
         </div>
-        <button class="modal-close-btn text-slate-400 hover:text-slate-600 p-1 rounded-lg cursor-pointer">
+        <button class="modal-close-btn text-slate-400 hover:text-slate-600 p-1.5 rounded-lg cursor-pointer">
           <i data-lucide="x" class="w-5 h-5"></i>
         </button>
       </div>
 
-      <form id="formEditWeeklyNotice" class="p-5 sm:p-6 overflow-y-auto space-y-4 text-xs">
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+      <form id="formEditWeeklyNotice" class="p-4 sm:p-6 overflow-y-auto space-y-3.5 sm:space-y-4 text-xs">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3">
           <div>
             <label class="block font-semibold text-slate-700 mb-1">주간 기간 <span class="text-red-500">*</span></label>
             <input type="text" id="editNoticePeriod" required placeholder="예: 9월 27일 ~ 10월 10일" class="w-full text-xs px-3 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:outline-hidden" />
@@ -1530,7 +1674,7 @@ from firebase_admin import credentials, firestore
           <input type="text" id="editNoticeHeadline" required placeholder="예: 😍 주요 일정 : 최임 제출 / 강의 차시별 흐름 구성, 강의 재료 모으기" class="w-full text-xs px-3 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:outline-hidden" />
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3">
           <div>
             <label class="block font-semibold text-slate-700 mb-1">자료집 링크 URL</label>
             <input type="url" id="editNoticeResourceUrl" placeholder="https://educourse.keris.or.kr" class="w-full text-xs px-3 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:outline-hidden" />
@@ -1544,7 +1688,7 @@ from firebase_admin import credentials, firestore
         <div class="pt-2 border-t border-slate-100">
           <div class="flex items-center justify-between mb-2">
             <span class="font-bold text-slate-900 text-xs">일요일 ~ 토요일 날짜별 할 일 (7일)</span>
-            <span class="text-[11px] text-slate-400">할 일은 줄바꿈(엔터)으로 여러 개 입력 가능</span>
+            <span class="text-[10px] sm:text-[11px] text-slate-400">할 일은 줄바꿈(엔터)으로 여러 개 입력 가능</span>
           </div>
 
           <div id="editNoticeDaysWrapper" class="space-y-2.5">
@@ -1557,9 +1701,9 @@ from firebase_admin import credentials, firestore
           <div class="flex items-center justify-between">
             <div>
               <span class="font-bold text-slate-900 text-xs">월간 공지 캘린더 (주차별 마일스톤 로드맵 수정)</span>
-              <p class="text-[11px] text-slate-500">주차별 마일스톤 제목, 상태, 색상 및 설명 내용을 직접 관리합니다.</p>
+              <p class="text-[10px] sm:text-[11px] text-slate-500">주차별 마일스톤 제목, 상태, 색상 및 설명 내용을 직접 관리합니다.</p>
             </div>
-            <button type="button" id="btnAddMilestoneRow" class="px-2.5 py-1 text-xs font-bold text-indigo-700 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 rounded-lg transition cursor-pointer flex items-center gap-1">
+            <button type="button" id="btnAddMilestoneRow" class="px-2 sm:px-2.5 py-1 text-xs font-bold text-indigo-700 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 rounded-lg transition cursor-pointer flex items-center gap-1">
               <i data-lucide="plus" class="w-3.5 h-3.5"></i>
               <span>+ 주차 추가</span>
             </button>
@@ -1578,7 +1722,7 @@ from firebase_admin import credentials, firestore
         <div class="pt-2 border-t border-slate-100">
           <div class="flex items-center justify-between mb-2">
             <span class="font-bold text-slate-900 text-xs">하단 세부 안내 사항 (3개 카드)</span>
-            <span class="text-[11px] text-slate-400">각 카드의 항목은 줄바꿈(엔터)으로 구분</span>
+            <span class="text-[10px] sm:text-[11px] text-slate-400">각 카드의 항목은 줄바꿈(엔터)으로 구분</span>
           </div>
 
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -1586,30 +1730,30 @@ from firebase_admin import credentials, firestore
               <label class="block font-semibold text-slate-700">카드 1 제목</label>
               <input type="text" id="editDetailCardTitle0" class="w-full text-xs px-2.5 py-1.5 border border-slate-300 rounded-lg" />
               <label class="block font-semibold text-slate-700">항목 목록 (줄바꿈)</label>
-              <textarea id="editDetailCardItems0" rows="4" class="w-full text-xs p-2 border border-slate-300 rounded-lg"></textarea>
+              <textarea id="editDetailCardItems0" rows="3" sm:rows="4" class="w-full text-xs p-2 border border-slate-300 rounded-lg"></textarea>
             </div>
             <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
               <label class="block font-semibold text-slate-700">카드 2 제목</label>
               <input type="text" id="editDetailCardTitle1" class="w-full text-xs px-2.5 py-1.5 border border-slate-300 rounded-lg" />
               <label class="block font-semibold text-slate-700">항목 목록 (줄바꿈)</label>
-              <textarea id="editDetailCardItems1" rows="4" class="w-full text-xs p-2 border border-slate-300 rounded-lg"></textarea>
+              <textarea id="editDetailCardItems1" rows="3" sm:rows="4" class="w-full text-xs p-2 border border-slate-300 rounded-lg"></textarea>
             </div>
             <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
               <label class="block font-semibold text-slate-700">카드 3 제목</label>
               <input type="text" id="editDetailCardTitle2" class="w-full text-xs px-2.5 py-1.5 border border-slate-300 rounded-lg" />
               <label class="block font-semibold text-slate-700">항목 목록 (줄바꿈)</label>
-              <textarea id="editDetailCardItems2" rows="4" class="w-full text-xs p-2 border border-slate-300 rounded-lg"></textarea>
+              <textarea id="editDetailCardItems2" rows="3" sm:rows="4" class="w-full text-xs p-2 border border-slate-300 rounded-lg"></textarea>
             </div>
           </div>
         </div>
 
         <div class="pt-3 flex items-center justify-between border-t border-slate-100">
-          <button type="button" id="btnResetWeeklyNoticeDefault" class="text-xs text-slate-400 hover:text-rose-600 underline cursor-pointer">
+          <button type="button" id="btnResetWeeklyNoticeDefault" class="text-[11px] sm:text-xs text-slate-400 hover:text-rose-600 underline cursor-pointer">
             기본 예시 공지로 복원
           </button>
           <div class="flex items-center gap-2">
-            <button type="button" class="modal-close-btn px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-xl transition cursor-pointer">취소</button>
-            <button type="submit" class="px-5 py-2 text-xs font-bold text-white bg-amber-600 hover:bg-amber-700 rounded-xl shadow-xs transition active:scale-95 flex items-center gap-1.5 cursor-pointer">
+            <button type="button" class="modal-close-btn px-3.5 sm:px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-xl transition cursor-pointer">취소</button>
+            <button type="submit" class="px-4 sm:px-5 py-2 text-xs font-bold text-white bg-amber-600 hover:bg-amber-700 rounded-xl shadow-xs transition active:scale-95 flex items-center gap-1.5 cursor-pointer">
               <i data-lucide="check" class="w-3.5 h-3.5"></i>
               <span>공지사항 저장</span>
             </button>
@@ -2592,8 +2736,15 @@ from firebase_admin import credentials, firestore
         modalDetailEl.classList.add("hidden");
         modalDetailEl.classList.remove("flex");
       }
-      const select = document.getElementById("monthSelect");
-      if (select) {
+
+      // Sync both desktop and mobile month select elements
+      const selects = [
+        document.getElementById("monthSelect"),
+        document.getElementById("mobileMonthSelect")
+      ];
+
+      selects.forEach(select => {
+        if (!select) return;
         let exists = false;
         for (let opt of select.options) {
           if (opt.value === targetMonth) {
@@ -2620,7 +2771,7 @@ from firebase_admin import credentials, firestore
           }
         }
         select.value = targetMonth;
-      }
+      });
 
       updateMonthNavigationLabels();
       renderAllViews();
@@ -2638,10 +2789,14 @@ from firebase_admin import credentials, firestore
       const btnNextText = document.getElementById("btnCalNextMonthText");
       if (btnNextText) btnNextText.innerText = `${nextNum}월`;
 
+      const [y, m] = currentSelectedMonth.split("-");
       const badge = document.getElementById("calendarMonthBadge");
       if (badge) {
-        const [y, m] = currentSelectedMonth.split("-");
         badge.innerText = `${y}. ${m}`;
+      }
+      const badgeMobile = document.getElementById("calendarMonthBadgeMobile");
+      if (badgeMobile) {
+        badgeMobile.innerText = `${y}년 ${parseInt(m, 10)}월`;
       }
     }
 
@@ -2819,6 +2974,147 @@ from firebase_admin import credentials, firestore
 
       calendarInstance.addEventSource(events);
       calendarInstance.gotoDate(`${currentSelectedMonth}-01`);
+
+      // Render Mobile Card List View (Requirement #4)
+      renderMobileLectureListView(monthLectures);
+    }
+
+    // ----------------------------------------------------
+    // Mobile Card List View Renderer (Requirement #4)
+    // ----------------------------------------------------
+    function renderMobileLectureListView(monthLectures) {
+      const container = document.getElementById("calendarMobileListView");
+      if (!container) return;
+
+      if (!monthLectures || monthLectures.length === 0) {
+        container.innerHTML = `
+          <div class="p-8 text-center bg-white rounded-2xl border border-slate-200 shadow-xs">
+            <div class="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-500 flex items-center justify-center mx-auto mb-3">
+              <i data-lucide="calendar-off" class="w-6 h-6"></i>
+            </div>
+            <h4 class="font-bold text-slate-800 text-sm mb-1">등록된 강의가 없습니다</h4>
+            <p class="text-xs text-slate-500 mb-3">상단의 [강의 등록] 버튼으로 강의를 추가해 보세요!</p>
+            <button type="button" onclick="document.getElementById('btnOpenRegisterModal')?.click()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl text-xs transition inline-flex items-center gap-1.5 shadow-xs">
+              <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+              <span>새 강의 등록하기</span>
+            </button>
+          </div>
+        `;
+        lucide.createIcons();
+        return;
+      }
+
+      // Sort by date ascending
+      const sorted = [...monthLectures].sort((a, b) => (a.date || "").localeCompare(b.date || ""));
+
+      // Group by date
+      const grouped = {};
+      sorted.forEach(l => {
+        const d = l.date || "날짜 미정";
+        if (!grouped[d]) grouped[d] = [];
+        grouped[d].push(l);
+      });
+
+      const dayNames = ["일", "월", "화", "수", "목", "금", "토"];
+
+      let html = '<div class="space-y-3.5">';
+      for (const [dateStr, lecs] of Object.entries(grouped)) {
+        let dateBadgeText = dateStr;
+        let dayBadgeClass = "bg-slate-100 text-slate-700";
+        try {
+          const dObj = new Date(dateStr);
+          if (!isNaN(dObj.getTime())) {
+            const dayOfWeek = dayNames[dObj.getDay()];
+            const [y, m, d] = dateStr.split("-");
+            dateBadgeText = `${parseInt(m, 10)}월 ${parseInt(d, 10)}일 (${dayOfWeek})`;
+            if (dayOfWeek === "토") dayBadgeClass = "bg-blue-50 text-blue-700 border-blue-200";
+            else if (dayOfWeek === "일") dayBadgeClass = "bg-rose-50 text-rose-700 border-rose-200";
+            else dayBadgeClass = "bg-indigo-50 text-indigo-700 border-indigo-200";
+          }
+        } catch (e) {}
+
+        html += `
+          <div class="bg-white rounded-2xl border border-slate-200/90 shadow-2xs overflow-hidden">
+            <div class="px-3.5 py-2 bg-slate-50/80 border-b border-slate-100 flex items-center justify-between">
+              <span class="text-xs font-black text-slate-800 flex items-center gap-1.5">
+                <span class="px-2 py-0.5 rounded-lg text-[11px] font-bold border ${dayBadgeClass}">${dateBadgeText}</span>
+              </span>
+              <span class="text-[11px] font-bold text-slate-500">${lecs.length}개 강의</span>
+            </div>
+            <div class="divide-y divide-slate-100">
+        `;
+
+        lecs.forEach(lec => {
+          const curr = lec.enrolledCount !== undefined ? Number(lec.enrolledCount) : (lec.currentCount !== undefined ? Number(lec.currentCount) : 0);
+          const max = Number(lec.maxCount) || 10;
+          const ratio = curr / max;
+
+          let badgeColor = "bg-blue-50 text-blue-700 border-blue-200";
+          let badgeText = "신청가능";
+          if (curr >= max) {
+            badgeColor = "bg-rose-50 text-rose-700 border-rose-200";
+            badgeText = "정원마감";
+          } else if (ratio >= 0.8) {
+            badgeColor = "bg-amber-50 text-amber-700 border-amber-200";
+            badgeText = "마감임박";
+          }
+
+          const hasUrl = lec.url && lec.url !== "#" && lec.url.trim() !== "";
+          const adminCrown = isAdminMode ? `<span class="text-xs" title="관리자 전권 수정">👑</span>` : "";
+
+          html += `
+            <div class="p-3.5 hover:bg-slate-50/60 transition cursor-pointer" onclick="window.openDetailById('${escapeHtml(String(lec.id))}')">
+              <div class="flex items-center justify-between gap-2 mb-1.5">
+                <div class="flex items-center gap-1.5 flex-wrap">
+                  <span class="text-[10px] font-extrabold px-2 py-0.5 rounded-full border ${badgeColor}">
+                    ${badgeText}
+                  </span>
+                  ${adminCrown}
+                  <button type="button" onclick="event.stopPropagation(); window.openMemberMutualHistory('${escapeHtml(lec.presenter)}')" class="text-xs font-bold text-indigo-700 hover:underline bg-indigo-50/70 px-2 py-0.5 rounded-md border border-indigo-100 cursor-pointer">
+                    👤 ${escapeHtml(lec.presenter)}
+                  </button>
+                </div>
+                <div class="text-xs font-black text-slate-800 shrink-0">
+                  <span class="${curr >= max ? 'text-rose-600' : 'text-blue-600'}">${curr}</span> / ${max}명
+                </div>
+              </div>
+
+              <h4 class="text-xs sm:text-sm font-bold text-slate-900 leading-snug mb-2 line-clamp-2 hover:text-indigo-600 transition">
+                ${escapeHtml(lec.title)}
+              </h4>
+
+              <div class="flex items-center justify-between text-[11px] text-slate-500 pt-1.5 border-t border-slate-100/80">
+                <span class="flex items-center gap-1 text-slate-600 font-medium">
+                  <i data-lucide="clock" class="w-3 h-3 text-slate-400"></i>
+                  <span>${escapeHtml(lec.time || "시간 미정")}</span>
+                </span>
+                <div class="flex items-center gap-1.5">
+                  ${hasUrl ? `
+                    <a href="${escapeHtml(lec.url)}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()" class="px-2 py-1 rounded-lg text-[10px] font-bold text-blue-700 bg-blue-50 hover:bg-blue-100 border border-blue-200 transition flex items-center gap-0.5">
+                      <span>지식샘터</span>
+                      <i data-lucide="external-link" class="w-2.5 h-2.5"></i>
+                    </a>
+                  ` : `
+                    <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-amber-50 text-amber-700 border border-amber-200">링크준비중</span>
+                  `}
+                  <button type="button" onclick="event.stopPropagation(); window.openDetailById('${escapeHtml(String(lec.id))}')" class="px-2 py-1 rounded-lg text-[10px] font-bold text-slate-700 bg-slate-100 hover:bg-slate-200 transition">
+                    상세보기
+                  </button>
+                </div>
+              </div>
+            </div>
+          `;
+        });
+
+        html += `
+            </div>
+          </div>
+        `;
+      }
+      html += '</div>';
+
+      container.innerHTML = html;
+      lucide.createIcons();
     }
 
     // ----------------------------------------------------
@@ -5331,10 +5627,108 @@ from firebase_admin import credentials, firestore
         .replace(/'/g, "&#039;");
     }
 
+    // ----------------------------------------------------
+    // Mobile Responsive UI Event Bindings
+    // ----------------------------------------------------
+    function setupMobileUIEvents() {
+      // 1. Mobile Menu Drawer Toggle
+      const btnOpenMobileMenu = document.getElementById("btnOpenMobileMenu");
+      const btnCloseMobileDrawer = document.getElementById("btnCloseMobileDrawer");
+      const mobileDrawer = document.getElementById("mobileDrawer");
+
+      if (btnOpenMobileMenu && mobileDrawer) {
+        btnOpenMobileMenu.addEventListener("click", () => {
+          mobileDrawer.classList.toggle("hidden");
+          lucide.createIcons();
+        });
+      }
+      if (btnCloseMobileDrawer && mobileDrawer) {
+        btnCloseMobileDrawer.addEventListener("click", () => {
+          mobileDrawer.classList.add("hidden");
+        });
+      }
+
+      // 2. Mobile View Switcher (Calendar Grid vs Card List)
+      const btnViewGrid = document.getElementById("btnViewGrid");
+      const btnViewList = document.getElementById("btnViewList");
+      const calendarWrapper = document.getElementById("calendarWrapper");
+      const calendarMobileListView = document.getElementById("calendarMobileListView");
+
+      if (btnViewGrid && btnViewList && calendarWrapper && calendarMobileListView) {
+        btnViewGrid.addEventListener("click", () => {
+          calendarWrapper.classList.remove("hidden");
+          calendarMobileListView.classList.add("hidden");
+
+          btnViewGrid.classList.add("bg-white", "text-slate-900", "shadow-xs");
+          btnViewGrid.classList.remove("text-slate-500");
+
+          btnViewList.classList.remove("bg-white", "text-slate-900", "shadow-xs");
+          btnViewList.classList.add("text-slate-500");
+
+          if (calendarInstance) {
+            setTimeout(() => {
+              calendarInstance.updateSize();
+            }, 50);
+          }
+        });
+
+        btnViewList.addEventListener("click", () => {
+          calendarWrapper.classList.add("hidden");
+          calendarMobileListView.classList.remove("hidden");
+
+          btnViewList.classList.add("bg-white", "text-slate-900", "shadow-xs");
+          btnViewList.classList.remove("text-slate-500");
+
+          btnViewGrid.classList.remove("bg-white", "text-slate-900", "shadow-xs");
+          btnViewGrid.classList.add("text-slate-500");
+        });
+      }
+
+      // 3. Mobile Sub-bar Tabs (Calendar / Notice)
+      const mobileTabCalendar = document.getElementById("mobileTabCalendar");
+      const mobileTabNotice = document.getElementById("mobileTabNotice");
+
+      if (mobileTabCalendar && mobileTabNotice) {
+        mobileTabCalendar.addEventListener("click", () => {
+          document.getElementById("btnNavCalendar")?.click();
+          mobileTabCalendar.className = "flex-1 py-1.5 px-3 rounded-xl text-xs font-bold text-indigo-700 bg-white shadow-xs text-center flex items-center justify-center gap-1";
+          mobileTabNotice.className = "flex-1 py-1.5 px-3 rounded-xl text-xs font-semibold text-slate-500 hover:text-slate-800 text-center flex items-center justify-center gap-1";
+        });
+        mobileTabNotice.addEventListener("click", () => {
+          document.getElementById("btnNavWeeklyNotice")?.click();
+          mobileTabNotice.className = "flex-1 py-1.5 px-3 rounded-xl text-xs font-bold text-indigo-700 bg-white shadow-xs text-center flex items-center justify-center gap-1";
+          mobileTabCalendar.className = "flex-1 py-1.5 px-3 rounded-xl text-xs font-semibold text-slate-500 hover:text-slate-800 text-center flex items-center justify-center gap-1";
+        });
+      }
+
+      // 4. Mobile Month Select
+      const mobileMonthSelect = document.getElementById("mobileMonthSelect");
+      if (mobileMonthSelect) {
+        mobileMonthSelect.addEventListener("change", (e) => {
+          setSelectedMonth(e.target.value);
+        });
+      }
+
+      // 5. Mobile Drawer Actions
+      document.getElementById("btnMobileDrawerRegister")?.addEventListener("click", () => {
+        mobileDrawer?.classList.add("hidden");
+        document.getElementById("btnOpenRegisterModal")?.click();
+      });
+      document.getElementById("btnMobileDrawerAdmin")?.addEventListener("click", () => {
+        mobileDrawer?.classList.add("hidden");
+        document.getElementById("btnToggleAdmin")?.click();
+      });
+      document.getElementById("btnMobileDrawerNotice")?.addEventListener("click", () => {
+        mobileDrawer?.classList.add("hidden");
+        document.getElementById("btnNavWeeklyNotice")?.click();
+      });
+    }
+
     // Startup initialization
     window.addEventListener("DOMContentLoaded", () => {
       updateMemberDropdownsAndDatalist();
       initCalendar();
+      setupMobileUIEvents();
       initDatabase();
       updateAdminUI();
       lucide.createIcons();
