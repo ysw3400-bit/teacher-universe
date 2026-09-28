@@ -478,8 +478,8 @@
         </div>
 
         <div class="flex items-center gap-2.5 self-end sm:self-center">
-          <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
-            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+          <div id="viewNoticeSyncBadge" class="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+            <span id="viewNoticeSyncDot" class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
             <span id="viewNoticeSyncStatus">Firestore 실시간 연동 중</span>
           </div>
           <!-- Admin Edit Notice Button (Only visible in Admin Mode) -->
@@ -616,12 +616,15 @@
         <span>지식샘터 수강 공유 네트워크</span>
       </div>
       <div class="flex items-center gap-4">
-        <button id="btnCopySingleHtml" class="hover:text-blue-600 transition flex items-center gap-1">
+        <button id="btnCopySingleHtml" class="hover:text-blue-600 transition flex items-center gap-1 cursor-pointer">
           <i data-lucide="file-code" class="w-3.5 h-3.5"></i>
           <span>GitHub Pages 단일 HTML 복사</span>
         </button>
         <span>•</span>
-        <span id="footerDbStatus">로컬 &amp; 실시간 Firestore 지원</span>
+        <div class="flex items-center gap-1.5 text-slate-500">
+          <i data-lucide="database" class="w-3.5 h-3.5"></i>
+          <span id="footerDbStatus">Firestore 실시간 연동 대기</span>
+        </div>
       </div>
     </div>
   </footer>
@@ -1616,47 +1619,6 @@ from firebase_admin import credentials, firestore
     </div>
   </div>
 
-  <!-- 5. Firebase 설정 모달 -->
-  <div id="modalConfig" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden items-center justify-center p-4">
-    <div class="bg-white w-full max-w-md rounded-2xl shadow-xl border border-slate-200 overflow-hidden transform transition-all">
-      <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
-        <div class="flex items-center gap-2">
-          <div class="w-8 h-8 rounded-lg bg-slate-800 text-white flex items-center justify-center">
-            <i data-lucide="database" class="w-4 h-4"></i>
-          </div>
-          <h3 class="font-bold text-slate-900 text-base">Firebase Firestore 연동</h3>
-        </div>
-        <button class="modal-close-btn text-slate-400 hover:text-slate-600 p-1 rounded-lg">
-          <i data-lucide="x" class="w-5 h-5"></i>
-        </button>
-      </div>
-
-      <div class="p-6 space-y-4">
-        <div class="text-xs text-slate-600 leading-relaxed">
-          Firebase 프로젝트의 웹 SDK 구성 객체를 입력하면 실시간 Firestore 연동 모드로 전환됩니다.
-          입력하지 않은 경우 브라우저 <strong>로컬 스토리지 &amp; 풍부한 시뮬레이션 데모 모드</strong>로 원활히 동작합니다.
-        </div>
-
-        <div>
-          <label class="block text-xs font-semibold text-slate-700 mb-1">firebaseConfig (JSON 형태)</label>
-          <textarea id="txtFirebaseConfigJson" rows="6" placeholder='{
-  "apiKey": "AIza...",
-  "authDomain": "your-app.firebaseapp.com",
-  "projectId": "your-app",
-  "storageBucket": "your-app.appspot.com",
-  "messagingSenderId": "...",
-  "appId": "..."
-}' class="w-full text-xs font-mono p-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-hidden"></textarea>
-        </div>
-
-        <div class="pt-2 flex items-center justify-end gap-2 border-t border-slate-100">
-          <button type="button" id="btnResetToDemo" class="text-xs text-slate-500 hover:text-slate-800 px-3 py-2">데모 데이터로 리셋</button>
-          <button type="button" id="btnSaveFirebaseConfig" class="px-4 py-2 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl shadow-xs transition">설정 저장 및 연결</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
   <!-- Toast Notification Container -->
   <div id="toastContainer" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
 
@@ -1664,17 +1626,21 @@ from firebase_admin import credentials, firestore
   <script type="module">
     /**
      * ========================================================
-     * [Firebase Config 영역 - 사용자 환경에 맞게 입력 가능]
+     * [Firebase Config 영역 - 고정 하드코딩 (전역 실시간 연동)]
+     * 별도의 DB 설정 모달이나 공유 링크 없이, 아래 firebaseConfig를 통해
+     * 사이트에 접속하는 모든 사용자가 동일한 Firestore DB에 실시간 자동 연결됩니다.
+     * 아래 키 값을 본인의 Firebase 프로젝트 키로 직접 대체해 사용하실 수 있습니다.
      * ========================================================
      */
     const firebaseConfig = {
-      apiKey: "",
-      authDomain: "",
-      projectId: "",
-      storageBucket: "",
-      messagingSenderId: "",
-      appId: ""
-    };
+  apiKey: "AIzaSyDUtgwTfZOVbfl0fE_d2MRIIBQaqisyBVw",
+  authDomain: "teacher-universe.firebaseapp.com",
+  projectId: "teacher-universe",
+  storageBucket: "teacher-universe.firebasestorage.app",
+  messagingSenderId: "824269029357",
+  appId: "1:824269029357:web:2aa6aad59d1240259ab1e4",
+  measurementId: "G-LTRJHHVWEC"
+};
 
     // Firebase Modular SDK imports via Google CDN
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
@@ -2102,26 +2068,37 @@ from firebase_admin import credentials, firestore
     }
 
     // Load stored preferences & config
-    const savedConfigStr = localStorage.getItem("kyosa_universe_fb_config");
     let activeFirebaseConfig = null;
-    if (savedConfigStr) {
-      try {
-        activeFirebaseConfig = JSON.parse(savedConfigStr);
-      } catch (e) {
-        console.warn("Invalid stored firebase config");
-      }
-    } else if (firebaseConfig.projectId) {
-      activeFirebaseConfig = firebaseConfig;
+    let hasRemoteNoticeLoaded = false;
+    let activeNoticeDocId = "current";
+
+    // Helper: Check if firebaseConfig has been customized with real credentials
+    function isFirebaseConfigured(cfg) {
+      return Boolean(
+        cfg &&
+        cfg.projectId &&
+        cfg.projectId !== "YOUR_PROJECT_ID" &&
+        cfg.projectId.trim() !== ""
+      );
     }
 
-    // Initialize Database
+    // Initialize Database directly using the hardcoded firebaseConfig
     async function initDatabase() {
+      // 1. Direct hardcoded firebaseConfig has top priority
+      if (isFirebaseConfigured(firebaseConfig)) {
+        activeFirebaseConfig = firebaseConfig;
+      } else if (typeof window !== "undefined" && window.__FIREBASE_CONFIG__ && isFirebaseConfigured(window.__FIREBASE_CONFIG__)) {
+        activeFirebaseConfig = window.__FIREBASE_CONFIG__;
+      } else {
+        activeFirebaseConfig = null;
+      }
+
       if (activeFirebaseConfig && activeFirebaseConfig.projectId) {
         try {
           const app = initializeApp(activeFirebaseConfig);
           db = getFirestore(app);
           isFirebaseActive = true;
-          updateDbBadge(true);
+          updateDbBadge(true, activeFirebaseConfig.projectId);
           setupFirestoreRealtimeListeners();
           return;
         } catch (err) {
@@ -2138,15 +2115,28 @@ from firebase_admin import credentials, firestore
       renderAllViews();
     }
 
-    function updateDbBadge(isLive) {
+    function updateDbBadge(isLive, projectId = "") {
       const footerStatus = document.getElementById("footerDbStatus");
       const noticeSyncStatus = document.getElementById("viewNoticeSyncStatus");
+      const noticeSyncBadge = document.getElementById("viewNoticeSyncBadge");
+      const noticeSyncDot = document.getElementById("viewNoticeSyncDot");
+
+      const pId = projectId || (activeFirebaseConfig && activeFirebaseConfig.projectId) || "";
+
       if (isLive) {
-        if (footerStatus) footerStatus.innerText = `Firestore 연결됨 (${activeFirebaseConfig.projectId})`;
-        if (noticeSyncStatus) noticeSyncStatus.innerText = "Firestore 실시간 연동 중";
+        if (footerStatus) footerStatus.innerText = `Firestore 연결됨 (${pId})`;
+        if (noticeSyncStatus) noticeSyncStatus.innerText = "Firestore 실시간 연동 중 (모든 사용자 동기화)";
+        if (noticeSyncBadge) {
+          noticeSyncBadge.className = "flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200";
+        }
+        if (noticeSyncDot) noticeSyncDot.className = "w-2 h-2 rounded-full bg-emerald-500 animate-pulse";
       } else {
-        if (footerStatus) footerStatus.innerText = "로컬 스토리지 & 데모 시뮬레이션 모드";
-        if (noticeSyncStatus) noticeSyncStatus.innerText = "로컬 스토리지 연동 중";
+        if (footerStatus) footerStatus.innerText = "로컬 모드 (상단 firebaseConfig에 키 입력 시 실시간 연동)";
+        if (noticeSyncStatus) noticeSyncStatus.innerText = "로컬 모드 (상단 firebaseConfig 입력 대기)";
+        if (noticeSyncBadge) {
+          noticeSyncBadge.className = "flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-amber-50 text-amber-800 border border-amber-300";
+        }
+        if (noticeSyncDot) noticeSyncDot.className = "w-2 h-2 rounded-full bg-amber-500";
       }
     }
 
@@ -2184,30 +2174,101 @@ from firebase_admin import credentials, firestore
       localStorage.setItem("kyosa_weekly_notice", JSON.stringify(weeklyNoticeData));
     }
 
+    // Active collection name for lectures (supports both 'lectures' and 'courses')
+    let activeLecturesCollectionName = "lectures";
+
     // ----------------------------------------------------
     // Firestore Realtime Listeners (onSnapshot)
+    // CRITICAL: NO DESTRUCTIVE AUTO-SEEDING / OVERWRITING!
     // ----------------------------------------------------
     function setupFirestoreRealtimeListeners() {
       if (!db) return;
 
-      // 1. Listen to lectures collection
-      const lecturesRef = collection(db, "lectures");
-      onSnapshot(lecturesRef, (snapshot) => {
+      // Helper to process lectures or courses snapshot
+      function processLecturesSnapshot(snapshot, colName) {
+        if (snapshot.empty) return false;
         const list = [];
         snapshot.forEach((d) => {
-          list.push({ id: d.id, ...d.data() });
+          const data = d.data();
+          list.push({
+            id: d.id,
+            ...data,
+            _collection: colName,
+            // Guarantee enrolledCount and currentCount are preserved exactly as stored in DB
+            enrolledCount: data.enrolledCount !== undefined ? Number(data.enrolledCount) : (data.currentCount !== undefined ? Number(data.currentCount) : 0),
+            currentCount: data.currentCount !== undefined ? Number(data.currentCount) : (data.enrolledCount !== undefined ? Number(data.enrolledCount) : 0)
+          });
         });
-        if (list.length === 0) {
-          seedInitialFirestoreData();
-        } else {
+        if (list.length > 0) {
           lecturesData = list;
+          activeLecturesCollectionName = colName;
+          localStorage.setItem("kyosa_universe_lectures", JSON.stringify(lecturesData));
           renderAllViews();
+          return true;
+        }
+        return false;
+      }
+
+      // Listen to lectures & courses collections in real time
+      const lecturesRef = collection(db, "lectures");
+      const coursesRef = collection(db, "courses");
+
+      let isInitialLecturesChecked = false;
+      async function checkInitialEmptyLectures() {
+        if (isInitialLecturesChecked) return;
+        isInitialLecturesChecked = true;
+        try {
+          const lSnap = await getDocs(lecturesRef);
+          if (!lSnap.empty) return;
+          const cSnap = await getDocs(coursesRef);
+          if (!cSnap.empty) return;
+
+          // Only if BOTH 'lectures' and 'courses' collections are 100% empty in Firestore
+          // Create initial basic structure once
+          console.log("Firestore DB collections 'lectures' & 'courses' are completely empty. Creating initial structure...");
+          for (const lec of INITIAL_LECTURES) {
+            await setDoc(doc(db, "lectures", lec.id), {
+              ...lec,
+              enrolledCount: lec.currentCount || 0,
+              createdAt: serverTimestamp()
+            });
+          }
+          for (const enr of INITIAL_ENROLLMENTS) {
+            await setDoc(doc(db, "enrollments", enr.id), {
+              ...enr,
+              createdAt: serverTimestamp()
+            });
+          }
+        } catch (e) {
+          console.warn("Check initial empty lectures error:", e);
+        }
+      }
+
+      onSnapshot(lecturesRef, (snapshot) => {
+        const hasData = processLecturesSnapshot(snapshot, "lectures");
+        if (!hasData) {
+          // If lectures collection is empty, check if courses collection has data
+          getDocs(coursesRef).then(cSnap => {
+            const hasCourseData = processLecturesSnapshot(cSnap, "courses");
+            if (!hasCourseData) {
+              checkInitialEmptyLectures();
+            }
+          }).catch(() => {});
         }
       }, (error) => {
         console.error("Firestore lectures listener error:", error);
       });
 
-      // 2. Listen to enrollments collection
+      // Also listen to courses collection in case the user's DB uses 'courses'
+      onSnapshot(coursesRef, (snapshot) => {
+        if (!snapshot.empty) {
+          processLecturesSnapshot(snapshot, "courses");
+        }
+      }, (error) => {
+        // Silently ignore if courses collection doesn't exist
+      });
+
+      // 2. Listen to enrollments collection in real time
       const enrollmentsRef = collection(db, "enrollments");
       onSnapshot(enrollmentsRef, (snapshot) => {
         const list = [];
@@ -2215,49 +2276,58 @@ from firebase_admin import credentials, firestore
           list.push({ id: d.id, ...d.data() });
         });
         enrollmentsData = list;
+        localStorage.setItem("kyosa_universe_enrollments", JSON.stringify(enrollmentsData));
         renderAllViews();
       }, (error) => {
         console.error("Firestore enrollments listener error:", error);
       });
 
-      // 3. Listen to weekly_notice collection (doc: "current")
-      const noticeDocRef = doc(db, "weekly_notice", "current");
-      onSnapshot(noticeDocRef, (docSnap) => {
-        if (docSnap.exists()) {
-          weeklyNoticeData = { ...DEFAULT_WEEKLY_NOTICE, ...docSnap.data() };
+      // 3. Listen to weekly_notice collection in real time (covers 'current' and any document)
+      // Real-time synchronization for ALL users (logged in & guest / non-logged in)
+      const weeklyNoticeColRef = collection(db, "weekly_notice");
+      let isInitialNoticeCreated = false;
+
+      onSnapshot(weeklyNoticeColRef, (snapshot) => {
+        if (!snapshot.empty) {
+          // DB has existing documents! NEVER overwrite with sample/default data!
+          let targetDoc = snapshot.docs.find(d => d.id === "current");
+          if (!targetDoc) {
+            // Pick latest or first document
+            targetDoc = snapshot.docs[0];
+          }
+          activeNoticeDocId = targetDoc.id;
+          const data = targetDoc.data();
+          hasRemoteNoticeLoaded = true;
+
+          // Directly load from DB - DB values ALWAYS have priority!
+          weeklyNoticeData = {
+            period: data.period !== undefined ? data.period : "",
+            headline: data.headline !== undefined ? data.headline : "",
+            resourceTitle: data.resourceTitle !== undefined ? data.resourceTitle : "",
+            resourceUrl: data.resourceUrl !== undefined ? data.resourceUrl : "",
+            resourceDesc: data.resourceDesc !== undefined ? data.resourceDesc : "",
+            monthBadge: data.monthBadge !== undefined ? data.monthBadge : "",
+            days: Array.isArray(data.days) ? data.days : [],
+            milestones: Array.isArray(data.milestones) ? data.milestones : [],
+            noticeCards: Array.isArray(data.noticeCards) ? data.noticeCards : [],
+            updatedAt: data.updatedAt || ""
+          };
+          localStorage.setItem("kyosa_weekly_notice", JSON.stringify(weeklyNoticeData));
+          renderWeeklyNoticeViews();
         } else {
-          seedInitialWeeklyNotice();
+          // DB is COMPLETELY EMPTY: Only create initial structure once if completely empty
+          if (!isInitialNoticeCreated) {
+            isInitialNoticeCreated = true;
+            setDoc(doc(db, "weekly_notice", "current"), {
+              ...DEFAULT_WEEKLY_NOTICE,
+              createdAt: serverTimestamp(),
+              updatedAt: new Date().toISOString().substring(0, 16).replace("T", " ")
+            }).catch(err => console.warn("Initial empty notice structure create:", err));
+          }
         }
-        renderWeeklyNoticeViews();
       }, (error) => {
-        console.error("Firestore weekly_notice listener error:", error);
+        console.error("Firestore weekly_notice realtime listener error:", error);
       });
-    }
-
-    async function seedInitialWeeklyNotice() {
-      if (!db) return;
-      try {
-        await setDoc(doc(db, "weekly_notice", "current"), DEFAULT_WEEKLY_NOTICE);
-      } catch (err) {
-        console.error("Seeding weekly_notice error:", err);
-      }
-    }
-
-    async function seedInitialFirestoreData() {
-      if (!db) return;
-      try {
-        for (const item of INITIAL_LECTURES) {
-          const { id, ...data } = item;
-          await setDoc(doc(db, "lectures", id), data);
-        }
-        for (const item of INITIAL_ENROLLMENTS) {
-          const { id, ...data } = item;
-          await setDoc(doc(db, "enrollments", id), data);
-        }
-        showToast("초기 지식샘터 강의 데이터가 Firestore에 동기화되었습니다.", "success");
-      } catch (err) {
-        console.error("Seeding error:", err);
-      }
     }
 
     // ----------------------------------------------------
@@ -2291,7 +2361,9 @@ from firebase_admin import credentials, firestore
         }
       }
 
-      // Collect related enrollments before filtering
+      // Collect target lecture and related enrollments before filtering
+      const targetLec = lecturesData.find(l => String(l.id) === strId);
+      const colName = (targetLec && targetLec._collection) || activeLecturesCollectionName || "lectures";
       const related = enrollmentsData.filter(e => String(e.lectureId) === strId);
 
       // 1. Immediately update local state so UI and Calendar reflect deletion instantly
@@ -2305,7 +2377,7 @@ from firebase_admin import credentials, firestore
       // 2. If Firebase Firestore active, delete remote documents
       if (isFirebaseActive && db) {
         try {
-          await deleteDoc(doc(db, "lectures", strId));
+          await deleteDoc(doc(db, colName, strId));
           for (const r of related) {
             await deleteDoc(doc(db, "enrollments", r.id));
           }
@@ -2317,8 +2389,10 @@ from firebase_admin import credentials, firestore
 
     async function updateLecture(lectureId, updatedFields) {
       const strId = String(lectureId);
+      const targetLec = lecturesData.find(l => String(l.id) === strId);
+      const colName = (targetLec && targetLec._collection) || activeLecturesCollectionName || "lectures";
       if (isFirebaseActive && db) {
-        await updateDoc(doc(db, "lectures", strId), {
+        await updateDoc(doc(db, colName, strId), {
           ...updatedFields,
           updatedAt: serverTimestamp()
         });
@@ -2401,7 +2475,8 @@ from firebase_admin import credentials, firestore
         const max = targetLec ? (targetLec.maxCount || 10) : 10;
         const newCount = Math.min(prevCount + 1, max);
 
-        await updateDoc(doc(db, "lectures", String(enrollmentObj.lectureId)), {
+        const targetCol = (targetLec && targetLec._collection) || activeLecturesCollectionName || "lectures";
+        await updateDoc(doc(db, targetCol, String(enrollmentObj.lectureId)), {
           enrolledCount: increment(1),
           currentCount: newCount
         });
@@ -2475,7 +2550,8 @@ from firebase_admin import credentials, firestore
           await deleteDoc(doc(db, "enrollments", strId));
           if (targetLec) {
             const currentCount = targetLec.enrolledCount !== undefined ? targetLec.enrolledCount : 0;
-            await updateDoc(doc(db, "lectures", targetLecId), {
+            const targetCol = (targetLec && targetLec._collection) || activeLecturesCollectionName || "lectures";
+            await updateDoc(doc(db, targetCol, targetLecId), {
               enrolledCount: increment(-1),
               currentCount: Math.max(0, currentCount)
             });
@@ -3271,7 +3347,7 @@ from firebase_admin import credentials, firestore
       btn.addEventListener("click", (e) => {
         e.stopPropagation();
         activeDetailLecture = null;
-        document.querySelectorAll("#modalRegister, #modalDetail, #modalEnroll, #modalCrawler, #modalConfig, #modalEditLecture, #modalAuthPrompt, #modalAdminLogin, #modalConfirmDelete, #modalAdminChangePw, #modalManageMembers, #modalEnrollStatusAuth, #modalUpdateLectureCount, #modalEditWeeklyNotice, #modalConfirmCancelEnroll, #modalMemberMutualHistory").forEach(m => {
+        document.querySelectorAll("#modalRegister, #modalDetail, #modalEnroll, #modalCrawler, #modalEditLecture, #modalAuthPrompt, #modalAdminLogin, #modalConfirmDelete, #modalAdminChangePw, #modalManageMembers, #modalEnrollStatusAuth, #modalUpdateLectureCount, #modalEditWeeklyNotice, #modalConfirmCancelEnroll, #modalMemberMutualHistory").forEach(m => {
           m.classList.add("hidden");
           m.classList.remove("flex");
         });
@@ -4655,41 +4731,8 @@ from firebase_admin import credentials, firestore
       document.getElementById("modalCrawler").classList.add("flex");
     });
 
-    // Firebase Config Modal
-    document.getElementById("btnConfigModal")?.addEventListener("click", () => {
-      const txt = document.getElementById("txtFirebaseConfigJson");
-      if (activeFirebaseConfig) {
-        txt.value = JSON.stringify(activeFirebaseConfig, null, 2);
-      }
-      document.getElementById("modalConfig").classList.remove("hidden");
-      document.getElementById("modalConfig").classList.add("flex");
-    });
-
-    document.getElementById("btnSaveFirebaseConfig").addEventListener("click", () => {
-      const txt = document.getElementById("txtFirebaseConfigJson").value.trim();
-      try {
-        const parsed = JSON.parse(txt);
-        if (!parsed.projectId) throw new Error("projectId 필드가 필요합니다.");
-        localStorage.setItem("kyosa_universe_fb_config", JSON.stringify(parsed));
-        showToast("Firebase 설정이 저장되었습니다. 페이지를 새로고침합니다.", "success");
-        setTimeout(() => location.reload(), 800);
-      } catch (err) {
-        showToast("올바른 JSON 형식의 Firebase Config를 입력해주세요.", "error");
-      }
-    });
-
-    document.getElementById("btnResetToDemo").addEventListener("click", () => {
-      if (confirm("초기 교사유니버스 데모 데이터로 복원하시겠습니까?")) {
-        localStorage.removeItem("kyosa_universe_fb_config");
-        localStorage.removeItem("kyosa_universe_lectures");
-        localStorage.removeItem("kyosa_universe_enrollments");
-        showToast("데모 데이터로 초기화되었습니다.", "success");
-        setTimeout(() => location.reload(), 600);
-      }
-    });
-
     // Copy single HTML for GitHub Pages
-    document.getElementById("btnCopySingleHtml").addEventListener("click", () => {
+    document.getElementById("btnCopySingleHtml")?.addEventListener("click", () => {
       const html = document.documentElement.outerHTML;
       navigator.clipboard.writeText(html).then(() => {
         showToast("GitHub Pages용 index.html 전체 코드가 복사되었습니다!", "success");
@@ -4833,12 +4876,12 @@ from firebase_admin import credentials, firestore
       const monthlyGrid = document.getElementById("monthlyNoticeCalendarGrid");
       const monthBadgeEl = document.getElementById("viewNoticeMonthBadge");
       if (monthBadgeEl) {
-        monthBadgeEl.innerText = weeklyNoticeData.monthBadge || DEFAULT_WEEKLY_NOTICE.monthBadge;
+        monthBadgeEl.innerText = weeklyNoticeData.monthBadge || (hasRemoteNoticeLoaded ? "" : DEFAULT_WEEKLY_NOTICE.monthBadge);
       }
       if (monthlyGrid) {
-        const milestones = (Array.isArray(weeklyNoticeData.milestones) && weeklyNoticeData.milestones.length > 0)
-          ? weeklyNoticeData.milestones
-          : DEFAULT_WEEKLY_NOTICE.milestones;
+        const milestones = Array.isArray(weeklyNoticeData.milestones)
+          ? (weeklyNoticeData.milestones.length > 0 || hasRemoteNoticeLoaded ? weeklyNoticeData.milestones : DEFAULT_WEEKLY_NOTICE.milestones)
+          : (hasRemoteNoticeLoaded ? [] : DEFAULT_WEEKLY_NOTICE.milestones);
 
         monthlyGrid.className = `grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-${Math.min(Math.max(milestones.length, 1), 5)} gap-3.5`;
         monthlyGrid.innerHTML = milestones.map(m => {
@@ -5088,11 +5131,11 @@ from firebase_admin import credentials, firestore
       // Populate Monthly Notice Milestones (Requirement #1)
       const monthBadgeInput = document.getElementById("editNoticeMonthBadge");
       if (monthBadgeInput) {
-        monthBadgeInput.value = weeklyNoticeData.monthBadge || DEFAULT_WEEKLY_NOTICE.monthBadge;
+        monthBadgeInput.value = weeklyNoticeData.monthBadge || (hasRemoteNoticeLoaded ? "" : DEFAULT_WEEKLY_NOTICE.monthBadge);
       }
-      const milestones = (Array.isArray(weeklyNoticeData.milestones) && weeklyNoticeData.milestones.length > 0)
-        ? weeklyNoticeData.milestones
-        : DEFAULT_WEEKLY_NOTICE.milestones;
+      const milestones = Array.isArray(weeklyNoticeData.milestones)
+        ? (weeklyNoticeData.milestones.length > 0 || hasRemoteNoticeLoaded ? weeklyNoticeData.milestones : DEFAULT_WEEKLY_NOTICE.milestones)
+        : (hasRemoteNoticeLoaded ? [] : DEFAULT_WEEKLY_NOTICE.milestones);
       renderEditMilestones(milestones);
 
       // Populate 3 detail cards
@@ -5133,7 +5176,7 @@ from firebase_admin import credentials, firestore
         resourceTitle: document.getElementById("editNoticeResourceTitle").value.trim(),
         resourceUrl: document.getElementById("editNoticeResourceUrl").value.trim(),
         resourceDesc: document.getElementById("editNoticeResourceDesc").value.trim(),
-        monthBadge: document.getElementById("editNoticeMonthBadge")?.value.trim() || DEFAULT_WEEKLY_NOTICE.monthBadge,
+        monthBadge: document.getElementById("editNoticeMonthBadge") ? document.getElementById("editNoticeMonthBadge").value.trim() : (weeklyNoticeData.monthBadge || ""),
         days: [],
         milestones: [],
         noticeCards: [],
@@ -5183,20 +5226,38 @@ from firebase_admin import credentials, firestore
     async function saveWeeklyNotice(newData) {
       weeklyNoticeData = { ...weeklyNoticeData, ...newData };
       localStorage.setItem("kyosa_weekly_notice", JSON.stringify(weeklyNoticeData));
+      renderWeeklyNoticeViews();
 
       if (isFirebaseActive && db) {
         try {
-          await setDoc(doc(db, "weekly_notice", "current"), weeklyNoticeData);
-          showToast("Firestore DB에 이번 주 공지사항이 실시간 저장되었습니다.", "success");
+          const targetId = activeNoticeDocId || "current";
+          const payload = {
+            period: weeklyNoticeData.period || "",
+            headline: weeklyNoticeData.headline || "",
+            resourceTitle: weeklyNoticeData.resourceTitle || "",
+            resourceUrl: weeklyNoticeData.resourceUrl || "",
+            resourceDesc: weeklyNoticeData.resourceDesc || "",
+            monthBadge: weeklyNoticeData.monthBadge || "",
+            days: Array.isArray(weeklyNoticeData.days) ? weeklyNoticeData.days : [],
+            milestones: Array.isArray(weeklyNoticeData.milestones) ? weeklyNoticeData.milestones : [],
+            noticeCards: Array.isArray(weeklyNoticeData.noticeCards) ? weeklyNoticeData.noticeCards : [],
+            updatedAt: new Date().toISOString().substring(0, 16).replace("T", " ")
+          };
+
+          // Guarantee write to Firestore DB
+          await setDoc(doc(db, "weekly_notice", targetId), payload, { merge: true });
+          if (targetId !== "current") {
+            await setDoc(doc(db, "weekly_notice", "current"), payload, { merge: true }).catch(() => {});
+          }
+
+          showToast("Firestore DB에 공지사항 및 마일스톤이 완전히 저장되었습니다. (모든 사용자에게 실시간 반영)", "success");
         } catch (err) {
           console.error("Failed to save notice to Firestore:", err);
-          showToast("로컬에 저장되었습니다. (Firestore 연동 실패)", "info");
+          showToast(`Firestore 저장 오류 (${err.message}). 브라우저에 임시 저장되었습니다.`, "error");
         }
       } else {
-        showToast("이번 주 공지사항이 성공적으로 저장되었습니다.", "success");
+        showToast("⚠️ Firebase 미연결: 소스코드 상단의 firebaseConfig에 프로젝트 키를 입력하면 모든 사용자에게 실시간 동기화됩니다.", "warning");
       }
-
-      renderWeeklyNoticeViews();
     }
 
     // Window helpers for dynamically rendered buttons
