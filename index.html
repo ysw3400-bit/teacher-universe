@@ -93,10 +93,6 @@
           <div class="flex items-center bg-slate-100 rounded-lg p-1 border border-slate-200">
             <label for="selectMonth" class="text-xs font-semibold text-slate-600 px-1 hidden md:inline">월 선택:</label>
             <select id="selectMonth" class="bg-transparent text-xs sm:text-sm font-bold text-slate-800 focus:outline-none cursor-pointer pr-1">
-              <option value="2026-09">2026년 9월</option>
-              <option value="2026-10">2026년 10월</option>
-              <option value="2026-11">2026년 11월</option>
-              <option value="2026-12">2026년 12월</option>
             </select>
           </div>
 
@@ -216,7 +212,7 @@
       <div class="bg-white rounded-xl border border-slate-200 p-4 shadow-2xs">
         <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4">
           <div class="flex items-center gap-2">
-            <h2 id="calendarTitleText" class="text-base sm:text-lg font-bold text-slate-900">2026년 9월 강의 캘린더</h2>
+            <h2 id="calendarTitleText" class="text-base sm:text-lg font-bold text-slate-900">강의 캘린더</h2>
             <span class="text-xs px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 font-medium">실시간 동기화</span>
           </div>
           <div class="flex items-center gap-2">
@@ -359,8 +355,18 @@
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
-            <label class="block text-xs font-bold text-slate-700 mb-1">강사 닉네임 *</label>
-            <input type="text" id="regPresenter" list="memberListDatalist" required placeholder="교사 닉네임 입력" class="w-full text-xs sm:text-sm px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none" />
+            <label class="block text-xs font-bold text-slate-700 mb-1 flex items-center justify-between">
+              <span>강사 닉네임 *</span>
+              <span class="text-[11px] text-blue-600 font-normal">회원 드롭다운 선택</span>
+            </label>
+            <div class="space-y-1.5">
+              <select id="regPresenterSelect" class="w-full text-xs sm:text-sm px-3 py-2 bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none cursor-pointer">
+                <option value="">-- 강사(교사 회원) 선택 --</option>
+              </select>
+              <div id="wrapRegPresenterCustom" class="hidden">
+                <input type="text" id="regPresenterCustom" placeholder="새 강사 닉네임 직접 입력" class="w-full text-xs sm:text-sm px-3 py-1.5 border border-dashed border-blue-400 bg-blue-50/50 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none" />
+              </div>
+            </div>
             <datalist id="memberListDatalist"></datalist>
           </div>
           <div>
@@ -422,9 +428,9 @@
         <div>
           <h3 id="detailTitle" class="text-base sm:text-lg font-bold text-slate-900 leading-snug">강의 제목</h3>
           <p class="text-xs text-slate-500 mt-1 flex items-center gap-2">
-            <span>강사: <strong id="detailPresenter" class="text-slate-800">김선생</strong></span>
+            <span>강사: <strong id="detailPresenter" class="text-slate-800">강사명</strong></span>
             <span>&bull;</span>
-            <span id="detailDateTime">2026-09-08 (19:00 - 21:00)</span>
+            <span id="detailDateTime">날짜 및 시간</span>
           </p>
         </div>
 
@@ -459,16 +465,36 @@
         </div>
 
         <!-- Enrollment Form -->
-        <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200 space-y-2">
-          <label class="block text-xs font-bold text-slate-800">품앗이 수강 신청 (+1)</label>
-          <div class="flex gap-2">
-            <input type="text" id="inputStudentNickname" list="memberListDatalist" placeholder="신청할 교사 닉네임 입력" class="flex-1 text-xs sm:text-sm px-3 py-2 bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none" />
-            <button type="button" id="btnSubmitEnrollment" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs sm:text-sm font-bold rounded-lg shadow-sm flex items-center gap-1 shrink-0">
-              <i data-lucide="user-plus" class="w-4 h-4"></i>
-              <span>신청</span>
-            </button>
+        <div class="bg-emerald-50/60 p-3.5 rounded-xl border border-emerald-200/80 space-y-2.5">
+          <div class="flex items-center justify-between">
+            <label class="block text-xs font-bold text-emerald-950 flex items-center gap-1.5">
+              <i data-lucide="user-check" class="w-4 h-4 text-emerald-600"></i>
+              <span>품앗이 수강 신청 (+1)</span>
+            </label>
+            <span class="text-[11px] text-emerald-700 font-medium">회원 목록 드롭다운 선택</span>
           </div>
-          <p class="text-[11px] text-slate-400">교사유니버스 구성원 닉네임을 입력 후 [신청] 버튼을 누르면 즉시 동기화됩니다.</p>
+
+          <div class="space-y-1.5">
+            <div class="flex gap-2">
+              <select id="enrollStudentSelect" class="flex-1 text-xs sm:text-sm px-3 py-2 bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none cursor-pointer">
+                <option value="">-- 수강 신청할 교사(회원) 선택 --</option>
+              </select>
+              <button type="button" id="btnSubmitEnrollment" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs sm:text-sm font-bold rounded-lg shadow-sm flex items-center gap-1 shrink-0 transition cursor-pointer">
+                <i data-lucide="user-plus" class="w-4 h-4"></i>
+                <span>신청</span>
+              </button>
+            </div>
+
+            <!-- Custom nickname input if chosen or if member list is empty -->
+            <div id="wrapEnrollStudentCustom" class="hidden">
+              <input type="text" id="enrollStudentCustom" placeholder="수강할 새 교사 닉네임 직접 입력" class="w-full text-xs sm:text-sm px-3 py-1.5 border border-dashed border-emerald-400 bg-white rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none" />
+            </div>
+          </div>
+
+          <p class="text-[11px] text-slate-500 flex items-center gap-1">
+            <i data-lucide="info" class="w-3.5 h-3.5 text-emerald-600 shrink-0"></i>
+            <span>동기화된 회원 목록에서 본인을 선택하여 수강 신청할 수 있습니다.</span>
+          </p>
         </div>
 
         <!-- Actions Footer -->
@@ -736,21 +762,57 @@
       <!-- Member Management section if logged in -->
       <div id="adminPanelSection" class="hidden space-y-4">
         <div class="flex items-center justify-between pb-2 border-b border-slate-100">
-          <span class="text-xs font-bold text-emerald-600 flex items-center gap-1">
+          <span class="text-xs font-bold text-emerald-600 flex items-center gap-1.5">
             <i data-lucide="check-circle" class="w-4 h-4"></i> 관리자 인증됨
           </span>
-          <button type="button" id="btnAdminLogout" class="text-xs text-slate-400 hover:text-slate-600">로그아웃</button>
+          <button type="button" id="btnAdminLogout" class="text-xs text-slate-400 hover:text-slate-600 transition">로그아웃</button>
         </div>
 
+        <!-- 1. Quick Add Single Member -->
+        <div class="bg-indigo-50/70 p-3 rounded-xl border border-indigo-100 space-y-2">
+          <label class="block text-xs font-bold text-indigo-950 flex items-center justify-between">
+            <span class="flex items-center gap-1">
+              <i data-lucide="user-plus" class="w-3.5 h-3.5 text-indigo-600"></i>
+              <span>새 교사 회원 추가</span>
+            </span>
+            <span class="text-[11px] text-indigo-600 font-normal">매트릭스 & 강사 드롭다운 즉시 반영</span>
+          </label>
+          <div class="flex gap-2">
+            <input type="text" id="adminNewMemberInput" placeholder="추가할 교사 닉네임 입력 (예: 홍길동)" class="flex-1 text-xs px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-white" />
+            <button type="button" id="btnAddAdminSingleMember" class="px-3.5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded-lg shadow-sm flex items-center gap-1 shrink-0 transition cursor-pointer">
+              <i data-lucide="plus" class="w-4 h-4"></i>
+              <span>추가</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 2. Registered Members List / Chips -->
         <div>
-          <label class="block text-xs font-bold text-slate-700 mb-1">교사 회원 명단 관리 (쉼표로 구분)</label>
-          <textarea id="adminMemberListInput" rows="4" class="w-full text-xs p-2.5 border border-slate-300 rounded-lg font-mono leading-relaxed"></textarea>
-          <p class="text-[11px] text-slate-400 mt-1">예: 김선생, 박에듀, 이지식, 최인공, 정창의, 강미래</p>
+          <div class="flex items-center justify-between mb-1.5">
+            <label class="block text-xs font-bold text-slate-700 flex items-center gap-1">
+              <i data-lucide="users" class="w-3.5 h-3.5 text-slate-500"></i>
+              <span>현재 등록된 교사 회원 명단</span>
+            </label>
+            <span id="adminMemberCountBadge" class="text-[11px] px-2 py-0.5 rounded-full font-bold bg-indigo-100 text-indigo-700">0명</span>
+          </div>
+          <div id="adminMemberChipsContainer" class="flex flex-wrap gap-1.5 max-h-36 overflow-y-auto p-2.5 bg-slate-50 rounded-xl border border-slate-200 min-h-[44px] items-center">
+            <!-- Dynamically populated chips -->
+          </div>
         </div>
 
-        <button type="button" id="btnSaveAdminMembers" class="w-full py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs sm:text-sm font-bold rounded-lg shadow-sm flex items-center justify-center gap-1">
+        <!-- 3. Bulk Edit Textarea -->
+        <div>
+          <div class="flex items-center justify-between mb-1">
+            <label class="block text-xs font-bold text-slate-700">회원 명단 일괄 편집 (쉼표로 구분)</label>
+            <span class="text-[11px] text-slate-400">쉼표(,)로 구분하여 입력</span>
+          </div>
+          <textarea id="adminMemberListInput" rows="3" class="w-full text-xs p-2.5 border border-slate-300 rounded-lg font-mono leading-relaxed bg-white" placeholder="예: 김선생, 박에듀, 이지식"></textarea>
+          <p class="text-[11px] text-slate-400 mt-1">💡 쉼표로 여러 명을 붙여넣어 한 번에 저장할 수 있습니다.</p>
+        </div>
+
+        <button type="button" id="btnSaveAdminMembers" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs sm:text-sm font-bold rounded-lg shadow-sm flex items-center justify-center gap-1.5 transition cursor-pointer">
           <i data-lucide="save" class="w-4 h-4"></i>
-          <span>회원 목록 저장</span>
+          <span>회원 목록 일괄 저장 및 동기화</span>
         </button>
       </div>
 
@@ -1040,16 +1102,33 @@
 
     const DEFAULT_TEACHER_PASSWORDS = { };
 
+    // Dynamic Real-time Date Detection
+    function getTodayDateInfo() {
+      const now = new Date();
+      const y = now.getFullYear();
+      const m = String(now.getMonth() + 1).padStart(2, "0");
+      const d = String(now.getDate()).padStart(2, "0");
+      return {
+        year: y,
+        month: m,
+        monthInt: now.getMonth() + 1,
+        day: d,
+        monthStr: `${y}-${m}`,
+        dateStr: `${y}-${m}-${d}`
+      };
+    }
+    const todayInfo = getTodayDateInfo();
+
     const DEFAULT_WEEKLY_NOTICE = {
       badge: "이번 주 필독",
-      dateRange: "2026. 09. 07 ~ 2026. 09. 13",
-      title: "지식샘터 9월 강의 품앗이 수강 신청 안내",
-      body: "선생님 여러분 안녕하세요! 9월 지식샘터 강의 등록 및 수강 신청 안내드립니다.\n\n💡 이번 주 핵심 실천사항\n1. 개설하신 강좌는 지식샘터 링크 및 정원(기본 10명)과 함께 등록해주세요.\n2. 동료 선생님의 강의를 최소 1개 이상 수강 신청하여 품앗이를 완성합시다.",
+      dateRange: `${todayInfo.year}. ${todayInfo.month}. ${todayInfo.day} ~`,
+      title: `지식샘터 ${todayInfo.monthInt}월 강의 품앗이 수강 신청 안내`,
+      body: `선생님 여러분 안녕하세요! ${todayInfo.monthInt}월 지식샘터 강의 등록 및 수강 신청 안내드립니다.\n\n💡 이번 주 핵심 실천사항\n1. 개설하신 강좌는 지식샘터 링크 및 정원(기본 10명)과 함께 등록해주세요.\n2. 동료 선생님의 강의를 최소 1개 이상 수강 신청하여 품앗이를 완성합시다.`,
       linkUrl: "https://educourse.keris.or.kr"
     };
 
-    // App State
-    let currentSelectedMonth = "2026-09";
+    // App State (실시간 현재 날짜 기준으로 자동 초기화)
+    let currentSelectedMonth = todayInfo.monthStr;
     let calendarInstance = null;
     let isAdminLoggedIn = false;
     let selectedLectureForAction = null;
@@ -1061,6 +1140,58 @@
     let teacherPasswords = { ...DEFAULT_TEACHER_PASSWORDS };
     let weeklyNoticeData = { ...DEFAULT_WEEKLY_NOTICE };
     let activeChangingEnr = null;
+
+    // ----------------------------------------------------
+    // Month Dropdown Population & Synchronization
+    // ----------------------------------------------------
+    function populateMonthDropdown() {
+      const selectMonth = document.getElementById("selectMonth");
+      if (!selectMonth) return;
+
+      const now = new Date();
+      const curYear = now.getFullYear();
+      const curMonth = now.getMonth();
+
+      const monthSet = new Set();
+      // Generate -2 to +6 months window around today
+      for (let i = -2; i <= 6; i++) {
+        const d = new Date(curYear, curMonth + i, 1);
+        const y = d.getFullYear();
+        const m = String(d.getMonth() + 1).padStart(2, "0");
+        monthSet.add(`${y}-${m}`);
+      }
+      // Add any months from existing lectures
+      lecturesData.forEach((l) => {
+        if (l.month) monthSet.add(l.month);
+        if (l.date && l.date.length >= 7) monthSet.add(l.date.substring(0, 7));
+      });
+      if (currentSelectedMonth) {
+        monthSet.add(currentSelectedMonth);
+      }
+
+      const sortedMonths = Array.from(monthSet).sort();
+      const todayMonth = todayInfo.monthStr;
+
+      selectMonth.innerHTML = sortedMonths.map((mStr) => {
+        const [y, m] = mStr.split("-");
+        const isCurrent = mStr === todayMonth ? " (이번달)" : "";
+        return `<option value="${mStr}">${y}년 ${parseInt(m, 10)}월${isCurrent}</option>`;
+      }).join("");
+
+      selectMonth.value = currentSelectedMonth;
+    }
+
+    // ----------------------------------------------------
+    // Orphan Enrollments Cleanup (캘린더-수강매트릭스 완벽 동기화)
+    // ----------------------------------------------------
+    function pruneOrphanEnrollments() {
+      if (!lecturesData || lecturesData.length === 0) {
+        enrollmentsData = [];
+        return;
+      }
+      const validLectureIds = new Set(lecturesData.map((l) => String(l.id)));
+      enrollmentsData = enrollmentsData.filter((e) => validLectureIds.has(String(e.lectureId)));
+    }
 
     // ----------------------------------------------------
     // Safe Helper Functions
@@ -1129,6 +1260,9 @@
         saveLocalData();
       }
 
+      // Clean orphan enrollments on load
+      pruneOrphanEnrollments();
+
       const storedPasswords = localStorage.getItem("kyosa_teacher_passwords");
       if (storedPasswords) {
         try { teacherPasswords = { ...DEFAULT_TEACHER_PASSWORDS, ...JSON.parse(storedPasswords) }; } catch (e) {}
@@ -1156,6 +1290,7 @@
     function setupFirestoreRealtimeListeners() {
       if (!db || !isFirebaseActive) {
         loadLocalData();
+        populateMonthDropdown();
         renderAllViews();
         return;
       }
@@ -1169,32 +1304,25 @@
               snapshot.forEach((doc) => {
                 const data = doc.data();
                 list.push({
-                  id: doc.id,
+                  id: String(doc.id),
                   ...data,
                   currentCount: data.enrolledCount !== undefined ? Number(data.enrolledCount) : (data.currentCount !== undefined ? Number(data.currentCount) : 0),
                   enrolledCount: data.enrolledCount !== undefined ? Number(data.enrolledCount) : (data.currentCount !== undefined ? Number(data.currentCount) : 0)
                 });
               });
               lecturesData = list;
-              saveLocalData();
-              renderAllViews();
             } else {
-              // Only seed if Firestore is completely empty
-              console.log("Firestore 'courses' collection is empty. Seeding initial courses once...");
-              INITIAL_LECTURES.forEach((lec) => {
-                db.collection("courses").doc(lec.id).set({
-                  ...lec,
-                  enrolledCount: lec.currentCount || 0,
-                  createdAt: new Date().toISOString()
-                }).catch(() => {});
-              });
-              lecturesData = [...INITIAL_LECTURES];
-              renderAllViews();
+              lecturesData = [];
             }
+            pruneOrphanEnrollments();
+            saveLocalData();
+            populateMonthDropdown();
+            renderAllViews();
           },
           (err) => {
             console.warn("Firestore courses onSnapshot error:", err);
             loadLocalData();
+            populateMonthDropdown();
             renderAllViews();
           }
         );
@@ -1208,19 +1336,24 @@
           (snapshot) => {
             if (!snapshot.empty) {
               const list = [];
+              const validLectureIds = new Set(lecturesData.map((l) => String(l.id)));
               snapshot.forEach((doc) => {
-                list.push({ id: doc.id, ...doc.data() });
+                const enrData = { id: String(doc.id), ...doc.data() };
+                // Keep only enrollments corresponding to existing lectures
+                if (validLectureIds.size === 0 || validLectureIds.has(String(enrData.lectureId))) {
+                  list.push(enrData);
+                } else {
+                  // Purge orphan doc from Firestore database
+                  doc.ref.delete().catch(() => {});
+                }
               });
               enrollmentsData = list;
-              saveLocalData();
-              renderAllViews();
             } else {
-              INITIAL_ENROLLMENTS.forEach((enr) => {
-                db.collection("enrollments").doc(enr.id).set(enr).catch(() => {});
-              });
-              enrollmentsData = [...INITIAL_ENROLLMENTS];
-              renderAllViews();
+              enrollmentsData = [];
             }
+            pruneOrphanEnrollments();
+            saveLocalData();
+            renderAllViews();
           },
           (err) => {
             console.warn("Firestore enrollments onSnapshot error:", err);
@@ -1252,26 +1385,61 @@
       } catch (e) {
         console.warn("Failed to attach weekly_notice listener:", e);
       }
+
+      // 4. Listen to settings/members (관리자 회원명단 실시간 동기화)
+      try {
+        db.collection("settings").doc("members").onSnapshot(
+          (doc) => {
+            if (doc.exists && doc.data() && Array.isArray(doc.data().list)) {
+              memberList = doc.data().list;
+              saveLocalData();
+              renderAllViews();
+            }
+          },
+          (err) => {
+            console.warn("Firestore members onSnapshot error:", err);
+          }
+        );
+      } catch (e) {
+        console.warn("Failed to attach members listener:", e);
+      }
     }
 
     // ----------------------------------------------------
     // Firestore CRUD Operations
     // ----------------------------------------------------
+    async function saveMembersToDb(newMemberList) {
+      memberList = [...newMemberList];
+      saveLocalData();
+      renderAllViews();
+
+      if (db && isFirebaseActive) {
+        try {
+          await db.collection("settings").doc("members").set({
+            list: memberList,
+            updatedAt: new Date().toISOString()
+          }, { merge: true });
+        } catch (err) {
+          console.warn("Firestore save members error:", err);
+        }
+      }
+    }
     async function saveLectureToDb(newLecture) {
       // Local immediate update
-      const existingIdx = lecturesData.findIndex((l) => l.id === newLecture.id);
+      const existingIdx = lecturesData.findIndex((l) => String(l.id) === String(newLecture.id));
       if (existingIdx >= 0) {
         lecturesData[existingIdx] = newLecture;
       } else {
         lecturesData.unshift(newLecture);
       }
       saveLocalData();
+      populateMonthDropdown();
       renderAllViews();
 
       // Remote Firestore sync
       if (db && isFirebaseActive) {
         try {
-          await db.collection("courses").doc(newLecture.id).set({
+          await db.collection("courses").doc(String(newLecture.id)).set({
             ...newLecture,
             enrolledCount: newLecture.currentCount || 0,
             updatedAt: new Date().toISOString()
@@ -1283,14 +1451,52 @@
     }
 
     async function deleteLectureFromDb(lectureId) {
-      lecturesData = lecturesData.filter((l) => l.id !== lectureId);
-      enrollmentsData = enrollmentsData.filter((e) => e.lectureId !== lectureId);
+      const targetLecId = String(lectureId);
+
+      // 1. Collect all enrollments belonging to this lecture
+      const relatedEnrs = enrollmentsData.filter((e) => String(e.lectureId) === targetLecId);
+
+      // 2. Remove lecture from local lecturesData
+      lecturesData = lecturesData.filter((l) => String(l.id) !== targetLecId);
+
+      // 3. Remove all related enrollments from local enrollmentsData
+      enrollmentsData = enrollmentsData.filter((e) => String(e.lectureId) !== targetLecId);
+
+      // 4. Prune any other orphan enrollments
+      pruneOrphanEnrollments();
+
       saveLocalData();
+      populateMonthDropdown();
       renderAllViews();
 
+      // 5. Close / refresh open modals
+      if (selectedLectureForAction && String(selectedLectureForAction.id) === targetLecId) {
+        selectedLectureForAction = null;
+        closeModal("modalDetail");
+      }
+      if (!document.getElementById("modalMatrixDetail").classList.contains("hidden")) {
+        closeModal("modalMatrixDetail");
+      }
+      if (!document.getElementById("modalTeacherHistory").classList.contains("hidden") && window.currentHistoryTeacher) {
+        window.openTeacherHistoryModal(window.currentHistoryTeacher);
+      }
+
+      // 6. Delete from Firestore (both courses and enrollments collection)
       if (db && isFirebaseActive) {
         try {
-          await db.collection("courses").doc(lectureId).delete();
+          await db.collection("courses").doc(targetLecId).delete();
+
+          for (const enr of relatedEnrs) {
+            await db.collection("enrollments").doc(String(enr.id)).delete().catch(() => {});
+          }
+
+          // Query directly for any extra enrollments with this lectureId
+          const snap = await db.collection("enrollments").where("lectureId", "==", targetLecId).get().catch(() => null);
+          if (snap && !snap.empty) {
+            const batch = db.batch();
+            snap.forEach((doc) => batch.delete(doc.ref));
+            await batch.commit().catch(() => {});
+          }
         } catch (err) {
           console.warn("Firestore deleteLecture error:", err);
         }
@@ -1406,7 +1612,8 @@
           initialView: "dayGridMonth",
           locale: "ko",
           headerToolbar: false,
-          initialDate: `${currentSelectedMonth}-01`,
+          initialDate: todayInfo.dateStr,
+          nowIndicator: true,
           showNonCurrentDates: false,
           fixedWeekCount: false,
           dayMaxEvents: 3,
@@ -1532,10 +1739,29 @@
       const tbody = document.getElementById("matrixTbody");
       if (!thead || !tbody) return;
 
-      const members = memberList;
+      // Members to show in the matrix: all admin-registered members, plus any presenters/students
+      const allActiveTeachers = new Set(memberList);
+      lecturesData.forEach((l) => {
+        if (l.presenter) allActiveTeachers.add(l.presenter);
+      });
+      enrollmentsData.forEach((e) => {
+        if (e.studentName) allActiveTeachers.add(e.studentName);
+        if (e.presenterName) allActiveTeachers.add(e.presenterName);
+      });
+      const members = Array.from(allActiveTeachers).filter(Boolean);
+
       if (members.length === 0) {
         thead.innerHTML = "";
-        tbody.innerHTML = `<tr><td class="p-4 text-slate-400 text-center">등록된 회원이 없습니다.</td></tr>`;
+        tbody.innerHTML = `
+          <tr>
+            <td class="p-8 text-center text-slate-400">
+              <i data-lucide="users" class="w-10 h-10 mx-auto mb-2 text-slate-300"></i>
+              <p class="text-sm font-semibold text-slate-700">등록된 교사 회원이 없습니다.</p>
+              <p class="text-xs text-slate-400 mt-1">상단 [관리자] 메뉴에서 교사 회원 명단을 추가하면 매트릭스와 강사 드롭다운에 즉시 표시됩니다.</p>
+            </td>
+          </tr>
+        `;
+        safeRenderIcons();
         return;
       }
 
@@ -1555,7 +1781,15 @@
       `;
 
       // Build lookup map for fast query by presenter->student
-      const monthEnrollments = enrollmentsData.filter((e) => (e.month === currentSelectedMonth) || (!e.month));
+      // STRICT FILTER: Only enrollments for active lectures matching currentSelectedMonth!
+      const validLectureMap = new Map(lecturesData.map((l) => [String(l.id), l]));
+      const monthEnrollments = enrollmentsData.filter((e) => {
+        const lec = validLectureMap.get(String(e.lectureId));
+        if (!lec) return false;
+        const lecMonth = lec.month || (lec.date ? lec.date.substring(0, 7) : null);
+        const enrMonth = e.month || lecMonth;
+        return enrMonth === currentSelectedMonth;
+      });
       const pairEnrollmentsMap = new Map();
       monthEnrollments.forEach((e) => {
         const key = `${e.presenterName}->${e.studentName}`;
@@ -1712,8 +1946,10 @@
     // Global KPI and Dropdowns
     // ----------------------------------------------------
     function renderKPIs() {
+      const validLectureMap = new Map(lecturesData.map((l) => [String(l.id), l]));
       const monthLectures = lecturesData.filter((l) => (l.month === currentSelectedMonth) || (l.date && l.date.startsWith(currentSelectedMonth)));
-      const monthEnrollments = enrollmentsData.filter((e) => (e.month === currentSelectedMonth) || (!e.month));
+      const monthLectureIds = new Set(monthLectures.map((l) => String(l.id)));
+      const monthEnrollments = enrollmentsData.filter((e) => monthLectureIds.has(String(e.lectureId)) && validLectureMap.has(String(e.lectureId)));
 
       const elMonth = document.getElementById("kpiMonthLectures");
       const elEnroll = document.getElementById("kpiTotalEnrollments");
@@ -1724,11 +1960,166 @@
       if (elMember) elMember.innerText = memberList.length;
 
       const titleText = document.getElementById("calendarTitleText");
-      if (titleText) {
+      if (titleText && currentSelectedMonth) {
         const [y, m] = currentSelectedMonth.split("-");
-        titleText.innerText = `${y}년 ${m}월 강의 캘린더`;
+        titleText.innerText = `${y}년 ${parseInt(m, 10)}월 강의 캘린더`;
       }
     }
+
+    function updatePresenterDropdown() {
+      const selectEl = document.getElementById("regPresenterSelect");
+      const customWrap = document.getElementById("wrapRegPresenterCustom");
+      const customInput = document.getElementById("regPresenterCustom");
+      if (!selectEl) return;
+
+      const currentVal = selectEl.value;
+      const allTeachers = Array.from(new Set([
+        ...memberList,
+        ...lecturesData.map((l) => l.presenter)
+      ])).filter(Boolean);
+
+      if (allTeachers.length === 0) {
+        selectEl.innerHTML = `
+          <option value="__custom__">직접 입력 (등록된 회원 없음 - 관리자 메뉴에서 추가 가능)</option>
+        `;
+        selectEl.value = "__custom__";
+        if (customWrap) customWrap.classList.remove("hidden");
+      } else {
+        selectEl.innerHTML = `
+          <option value="">-- 강사(교사 회원) 선택 --</option>
+          ${allTeachers.map((t) => `<option value="${escapeHtml(t)}">${escapeHtml(t)} 선생님</option>`).join("")}
+          <option value="__custom__">➕ 직접 닉네임 새로 입력하기</option>
+        `;
+        if (currentVal && allTeachers.includes(currentVal)) {
+          selectEl.value = currentVal;
+          if (customWrap) customWrap.classList.add("hidden");
+        } else if (currentVal === "__custom__") {
+          selectEl.value = "__custom__";
+          if (customWrap) customWrap.classList.remove("hidden");
+        } else {
+          selectEl.value = "";
+          if (customWrap) customWrap.classList.add("hidden");
+        }
+      }
+    }
+
+    function updateEnrollStudentDropdown(targetLecture) {
+      const selectEl = document.getElementById("enrollStudentSelect");
+      const customWrap = document.getElementById("wrapEnrollStudentCustom");
+      const customInput = document.getElementById("enrollStudentCustom");
+      if (!selectEl) return;
+
+      const currentVal = selectEl.value;
+      const allTeachers = Array.from(new Set([
+        ...memberList,
+        ...lecturesData.map((l) => l.presenter),
+        ...enrollmentsData.map((e) => e.studentName)
+      ])).filter(Boolean);
+
+      const presenterName = targetLecture ? targetLecture.presenter : "";
+      const enrolledStudents = targetLecture
+        ? new Set(enrollmentsData.filter((e) => String(e.lectureId) === String(targetLecture.id)).map((e) => e.studentName))
+        : new Set();
+
+      if (allTeachers.length === 0) {
+        selectEl.innerHTML = `
+          <option value="__custom__">직접 입력 (등록된 회원 없음 - 관리자 메뉴에서 추가 가능)</option>
+        `;
+        selectEl.value = "__custom__";
+        if (customWrap) customWrap.classList.remove("hidden");
+      } else {
+        let optionsHtml = `<option value="">-- 수강 신청할 교사(회원) 선택 --</option>`;
+        allTeachers.forEach((t) => {
+          const isPresenter = t === presenterName;
+          const isAlreadyEnrolled = enrolledStudents.has(t);
+          let suffix = "";
+          let disabledAttr = "";
+          if (isPresenter) {
+            suffix = " (개설 강사 - 본인)";
+            disabledAttr = " disabled";
+          } else if (isAlreadyEnrolled) {
+            suffix = " (이미 신청 완료)";
+            disabledAttr = " disabled";
+          }
+          optionsHtml += `<option value="${escapeHtml(t)}"${disabledAttr}>${escapeHtml(t)} 선생님${suffix}</option>`;
+        });
+        optionsHtml += `<option value="__custom__">➕ 직접 닉네임 새로 입력하기</option>`;
+        selectEl.innerHTML = optionsHtml;
+
+        if (currentVal && allTeachers.includes(currentVal) && !enrolledStudents.has(currentVal) && currentVal !== presenterName) {
+          selectEl.value = currentVal;
+          if (customWrap) customWrap.classList.add("hidden");
+        } else if (currentVal === "__custom__") {
+          selectEl.value = "__custom__";
+          if (customWrap) customWrap.classList.remove("hidden");
+        } else {
+          selectEl.value = "";
+          if (customWrap) customWrap.classList.add("hidden");
+        }
+      }
+    }
+
+    function renderAdminMemberPanel() {
+      const textarea = document.getElementById("adminMemberListInput");
+      if (textarea && document.activeElement !== textarea) {
+        textarea.value = memberList.join(", ");
+      }
+      const countBadge = document.getElementById("adminMemberCountBadge");
+      if (countBadge) {
+        countBadge.innerText = `${memberList.length}명`;
+      }
+      const chipsContainer = document.getElementById("adminMemberChipsContainer");
+      if (chipsContainer) {
+        if (memberList.length === 0) {
+          chipsContainer.innerHTML = `<span class="text-xs text-slate-400 italic py-1">등록된 회원이 없습니다. 상단 입력창에서 회원을 추가해보세요.</span>`;
+        } else {
+          chipsContainer.innerHTML = memberList.map((m, idx) => `
+            <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-indigo-50 border border-indigo-200 text-indigo-900 text-xs font-semibold shadow-2xs group hover:bg-indigo-100 transition">
+              <i data-lucide="user" class="w-3 h-3 text-indigo-500"></i>
+              <span>${escapeHtml(m)}</span>
+              <button type="button" onclick="window.removeAdminMember(${idx})" class="text-indigo-400 hover:text-rose-600 transition ml-0.5 p-0.5 rounded cursor-pointer" title="${escapeHtml(m)} 삭제">
+                <i data-lucide="x" class="w-3 h-3"></i>
+              </button>
+            </span>
+          `).join("");
+          safeRenderIcons();
+        }
+      }
+    }
+
+    window.removeAdminMember = async function (idx) {
+      if (idx < 0 || idx >= memberList.length) return;
+      const removed = memberList[idx];
+      memberList.splice(idx, 1);
+      await saveMembersToDb(memberList);
+      renderAdminMemberPanel();
+      showToast(`${removed} 선생님이 회원 명단에서 삭제되었습니다. (매트릭스 및 강사 드롭다운 즉시 반영)`, "info");
+    };
+
+    window.openRegisterForPresenter = function (presenterName) {
+      closeModal("modalMatrixDetail");
+      closeModal("modalTeacherHistory");
+      updatePresenterDropdown();
+      const selectEl = document.getElementById("regPresenterSelect");
+      const customWrap = document.getElementById("wrapRegPresenterCustom");
+      const customInput = document.getElementById("regPresenterCustom");
+      if (selectEl) {
+        const allOptions = Array.from(selectEl.options).map((o) => o.value);
+        if (allOptions.includes(presenterName)) {
+          selectEl.value = presenterName;
+          customWrap?.classList.add("hidden");
+        } else {
+          selectEl.value = "__custom__";
+          customWrap?.classList.remove("hidden");
+          if (customInput) customInput.value = presenterName;
+        }
+      }
+      const dateInput = document.getElementById("regDate");
+      if (dateInput && !dateInput.value) {
+        dateInput.value = getTodayDateInfo().dateStr;
+      }
+      openModal("modalRegister");
+    };
 
     function updateDatalists() {
       const datalist = document.getElementById("memberListDatalist");
@@ -1737,8 +2128,13 @@
       }
 
       const adminMemberListInput = document.getElementById("adminMemberListInput");
-      if (adminMemberListInput) {
+      if (adminMemberListInput && document.activeElement !== adminMemberListInput) {
         adminMemberListInput.value = memberList.join(", ");
+      }
+
+      updatePresenterDropdown();
+      if (selectedLectureForAction) {
+        updateEnrollStudentDropdown(selectedLectureForAction);
       }
     }
 
@@ -1749,6 +2145,9 @@
       renderMatrixView();
       renderNoticeView();
       updateDatalists();
+      if (typeof renderAdminMemberPanel === "function") {
+        renderAdminMemberPanel();
+      }
       safeRenderIcons();
     }
 
@@ -1809,7 +2208,7 @@
         `).join("");
       }
 
-      document.getElementById("inputStudentNickname").value = "";
+      updateEnrollStudentDropdown(lec);
       openModal("modalDetail");
       safeRenderIcons();
     }
@@ -1930,13 +2329,22 @@
       const modal = document.getElementById("modalMatrixDetail");
       if (!modal) return;
 
-      const directEnrs = enrollmentsData.filter(
-        (e) => e.presenterName === presenter && e.studentName === student && (e.month === currentSelectedMonth || !e.month)
-      );
+      const validLectureMap = new Map(lecturesData.map((l) => [String(l.id), l]));
+      const directEnrs = enrollmentsData.filter((e) => {
+        const lec = validLectureMap.get(String(e.lectureId));
+        if (!lec) return false;
+        const lecMonth = lec.month || (lec.date ? lec.date.substring(0, 7) : null);
+        const enrMonth = e.month || lecMonth;
+        return e.presenterName === presenter && e.studentName === student && enrMonth === currentSelectedMonth;
+      });
 
-      const revEnrs = enrollmentsData.filter(
-        (e) => e.presenterName === student && e.studentName === presenter && (e.month === currentSelectedMonth || !e.month)
-      );
+      const revEnrs = enrollmentsData.filter((e) => {
+        const lec = validLectureMap.get(String(e.lectureId));
+        if (!lec) return false;
+        const lecMonth = lec.month || (lec.date ? lec.date.substring(0, 7) : null);
+        const enrMonth = e.month || lecMonth;
+        return e.presenterName === student && e.studentName === presenter && enrMonth === currentSelectedMonth;
+      });
 
       const isMutual = directEnrs.length > 0 && revEnrs.length > 0;
 
@@ -1964,7 +2372,16 @@
       if (directEnrs.length === 0) {
         const presenterLecs = lecturesData.filter((l) => l.presenter === presenter && (l.month === currentSelectedMonth || (l.date && l.date.startsWith(currentSelectedMonth))));
         if (presenterLecs.length === 0) {
-          directListEl.innerHTML = `<div class="p-3 text-xs text-slate-400 bg-slate-50 rounded-xl text-center">선택된 달에 ${escapeHtml(presenter)} 강사님이 개설한 강의가 없습니다.</div>`;
+          directListEl.innerHTML = `
+            <div class="p-4 text-xs text-slate-500 bg-slate-50 border border-slate-200 rounded-xl text-center">
+              <p class="font-medium text-slate-700">선택된 달에 ${escapeHtml(presenter)} 강사님이 개설한 강의가 없습니다.</p>
+              <button type="button" onclick="window.openRegisterForPresenter('${escapeHtml(presenter)}')" class="mt-2.5 inline-flex items-center gap-1 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold transition cursor-pointer shadow-2xs">
+                <i data-lucide="plus-circle" class="w-3.5 h-3.5"></i>
+                <span>${escapeHtml(presenter)} 강사로 강의 개설하기</span>
+              </button>
+            </div>
+          `;
+          safeRenderIcons();
         } else {
           directListEl.innerHTML = `
             <div class="p-3 bg-amber-50/70 border border-amber-200 rounded-xl text-xs text-amber-900 mb-2">
@@ -2199,12 +2616,13 @@
         titleEl.innerHTML = `<span class="text-blue-600 font-extrabold">${escapeHtml(teacherName)}</span> 선생님의 누적 수강 및 이수 이력`;
       }
 
-      // 1. Gather all enrollments where teacherName was the student (taken/completed lectures across all history)
-      const takenEnrs = enrollmentsData.filter((e) => e.studentName === teacherName);
+      // 1. Gather all enrollments where teacherName was the student (taken/completed lectures for active lectures)
+      const validLectureMap = new Map(lecturesData.map((l) => [String(l.id), l]));
+      const takenEnrs = enrollmentsData.filter((e) => validLectureMap.has(String(e.lectureId)) && e.studentName === teacherName);
       const completedEnrs = takenEnrs.filter((e) => e.status === "completed");
 
-      // 2. Gather all enrollments where teacherName was the presenter (given lectures)
-      const givenEnrs = enrollmentsData.filter((e) => e.presenterName === teacherName);
+      // 2. Gather all enrollments where teacherName was the presenter (given lectures for active lectures)
+      const givenEnrs = enrollmentsData.filter((e) => validLectureMap.has(String(e.lectureId)) && e.presenterName === teacherName);
 
       // Unique presenters whose lectures teacherName took
       const uniquePresenters = new Set(takenEnrs.map((e) => e.presenterName));
@@ -2267,24 +2685,28 @@
 
     window.filterHistoryModal = function (search) {
       if (!window.currentHistoryTeacher) return;
-      const takenEnrs = enrollmentsData.filter((e) => e.studentName === window.currentHistoryTeacher);
-      const givenEnrs = enrollmentsData.filter((e) => e.presenterName === window.currentHistoryTeacher);
+      const validLectureMap = new Map(lecturesData.map((l) => [String(l.id), l]));
+      const takenEnrs = enrollmentsData.filter((e) => validLectureMap.has(String(e.lectureId)) && e.studentName === window.currentHistoryTeacher);
+      const givenEnrs = enrollmentsData.filter((e) => validLectureMap.has(String(e.lectureId)) && e.presenterName === window.currentHistoryTeacher);
       window.renderHistoryModalContent(window.currentHistoryTeacher, takenEnrs, givenEnrs, search);
     };
 
     window.renderHistoryModalContent = function (teacherName, takenEnrs, givenEnrs, searchTerm) {
       const search = (searchTerm || "").toLowerCase().trim();
+      const validLectureMap = new Map(lecturesData.map((l) => [String(l.id), l]));
 
       const filteredTaken = takenEnrs.filter((enr) => {
-        const lec = lecturesData.find((l) => l.id === enr.lectureId);
-        const title = (lec ? lec.title : "").toLowerCase();
+        const lec = validLectureMap.get(String(enr.lectureId));
+        if (!lec) return false;
+        const title = (lec.title || "").toLowerCase();
         const presenter = (enr.presenterName || "").toLowerCase();
         return !search || title.includes(search) || presenter.includes(search);
       });
 
       const filteredGiven = givenEnrs.filter((enr) => {
-        const lec = lecturesData.find((l) => l.id === enr.lectureId);
-        const title = (lec ? lec.title : "").toLowerCase();
+        const lec = validLectureMap.get(String(enr.lectureId));
+        if (!lec) return false;
+        const title = (lec.title || "").toLowerCase();
         const student = (enr.studentName || "").toLowerCase();
         return !search || title.includes(search) || student.includes(search);
       });
@@ -2539,14 +2961,19 @@
           calendarInstance.gotoDate(`${currentSelectedMonth}-01`);
         }
         renderAllViews();
-        showToast(`${currentSelectedMonth.replace("-", "년 ")}월로 전환되었습니다.`, "info");
+        const [y, m] = currentSelectedMonth.split("-");
+        showToast(`${y}년 ${parseInt(m, 10)}월로 전환되었습니다.`, "info");
       });
 
       document.getElementById("btnCalendarToday")?.addEventListener("click", () => {
-        currentSelectedMonth = "2026-09";
-        if (selectMonth) selectMonth.value = "2026-09";
-        if (calendarInstance) calendarInstance.gotoDate("2026-09-01");
+        const today = getTodayDateInfo();
+        currentSelectedMonth = today.monthStr;
+        if (selectMonth) selectMonth.value = today.monthStr;
+        if (calendarInstance) {
+          calendarInstance.gotoDate(today.dateStr);
+        }
         renderAllViews();
+        showToast(`오늘 날짜(${today.year}년 ${today.monthInt}월 ${parseInt(today.day, 10)}일)로 이동했습니다.`, "info");
       });
 
       // 3. View Switcher: Calendar vs Card List
@@ -2582,11 +3009,24 @@
 
       document.getElementById("btnMobileRegister")?.addEventListener("click", () => {
         mobileDrawer?.classList.add("hidden");
+        const dateInput = document.getElementById("regDate");
+        if (dateInput && !dateInput.value) {
+          dateInput.value = getTodayDateInfo().dateStr;
+        }
+        updatePresenterDropdown();
         openModal("modalRegister");
       });
 
       document.getElementById("btnMobileAdmin")?.addEventListener("click", () => {
         mobileDrawer?.classList.add("hidden");
+        if (isAdminLoggedIn) {
+          document.getElementById("adminLoginSection")?.classList.add("hidden");
+          document.getElementById("adminPanelSection")?.classList.remove("hidden");
+          renderAdminMemberPanel();
+        } else {
+          document.getElementById("adminLoginSection")?.classList.remove("hidden");
+          document.getElementById("adminPanelSection")?.classList.add("hidden");
+        }
         openModal("modalAdmin");
       });
 
@@ -2599,13 +3039,38 @@
 
       // 6. Lecture Registration Form Submit
       document.getElementById("btnOpenRegisterModal")?.addEventListener("click", () => {
+        const dateInput = document.getElementById("regDate");
+        if (dateInput && !dateInput.value) {
+          dateInput.value = getTodayDateInfo().dateStr;
+        }
+        updatePresenterDropdown();
         openModal("modalRegister");
+      });
+
+      // Presenter Select Dropdown Change Event
+      document.getElementById("regPresenterSelect")?.addEventListener("change", (e) => {
+        const customWrap = document.getElementById("wrapRegPresenterCustom");
+        const customInput = document.getElementById("regPresenterCustom");
+        if (e.target.value === "__custom__") {
+          customWrap?.classList.remove("hidden");
+          customInput?.focus();
+        } else {
+          customWrap?.classList.add("hidden");
+        }
       });
 
       document.getElementById("formRegisterLecture")?.addEventListener("submit", async (e) => {
         e.preventDefault();
         const title = document.getElementById("regTitle").value.trim();
-        const presenter = document.getElementById("regPresenter").value.trim();
+        const presenterSelect = document.getElementById("regPresenterSelect");
+        const presenterCustom = document.getElementById("regPresenterCustom");
+        let presenter = "";
+        if (presenterSelect && presenterSelect.value === "__custom__") {
+          presenter = presenterCustom ? presenterCustom.value.trim() : "";
+        } else if (presenterSelect && presenterSelect.value) {
+          presenter = presenterSelect.value.trim();
+        }
+
         const maxCount = parseInt(document.getElementById("regMaxCount").value, 10) || 10;
         const date = document.getElementById("regDate").value;
         const time = document.getElementById("regTime").value.trim();
@@ -2613,7 +3078,11 @@
         const password = document.getElementById("regPassword").value.trim();
 
         if (!title || !presenter || !date || !password) {
-          showToast("필수 입력 항목을 확인해주세요.", "error");
+          if (!presenter) {
+            showToast("강사 닉네임을 선택하거나 직접 입력해주세요.", "error");
+          } else {
+            showToast("필수 입력 항목을 확인해주세요.", "error");
+          }
           return;
         }
 
@@ -2632,15 +3101,31 @@
           month
         };
 
-        // Add to member list if new
+        // Add to member list if new and save to Firestore & LocalStorage
         if (!memberList.includes(presenter)) {
           memberList.push(presenter);
-          localStorage.setItem("kyosa_members", JSON.stringify(memberList));
+          await saveMembersToDb(memberList);
+        }
+
+        // Save presenter password
+        if (password) {
+          teacherPasswords[presenter] = password;
+          localStorage.setItem("kyosa_teacher_passwords", JSON.stringify(teacherPasswords));
+          if (db && isFirebaseActive) {
+            try {
+              await db.collection("settings").doc("teacher_passwords").set({
+                passwords: teacherPasswords,
+                updatedAt: new Date().toISOString()
+              }, { merge: true });
+            } catch (err) {}
+          }
         }
 
         await saveLectureToDb(newLec);
         closeModal("modalRegister");
         e.target.reset();
+        if (presenterCustom) presenterCustom.value = "";
+        updatePresenterDropdown();
 
         if (typeof confetti === "function") {
           confetti({ particleCount: 50, spread: 60, origin: { y: 0.7 } });
@@ -2648,16 +3133,45 @@
         showToast("강의가 성공적으로 등록 및 동기화되었습니다!");
       });
 
-      // 7. Enrollment Submission (+1)
+      // 7. Enrollment Dropdown Change & Submission (+1)
+      document.getElementById("enrollStudentSelect")?.addEventListener("change", (e) => {
+        const customWrap = document.getElementById("wrapEnrollStudentCustom");
+        const customInput = document.getElementById("enrollStudentCustom");
+        if (e.target.value === "__custom__") {
+          customWrap?.classList.remove("hidden");
+          customInput?.focus();
+        } else {
+          customWrap?.classList.add("hidden");
+        }
+      });
+
+      document.getElementById("enrollStudentCustom")?.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          document.getElementById("btnSubmitEnrollment")?.click();
+        }
+      });
+
       document.getElementById("btnSubmitEnrollment")?.addEventListener("click", async () => {
         if (!selectedLectureForAction) return;
 
-        const studentInput = document.getElementById("inputStudentNickname");
-        const studentName = studentInput.value.trim();
+        const selectEl = document.getElementById("enrollStudentSelect");
+        const customInput = document.getElementById("enrollStudentCustom");
+        let studentName = "";
+
+        if (selectEl && selectEl.value === "__custom__") {
+          studentName = customInput ? customInput.value.trim() : "";
+        } else if (selectEl && selectEl.value) {
+          studentName = selectEl.value.trim();
+        }
 
         if (!studentName) {
-          showToast("수강 신청할 교사 닉네임을 입력해주세요.", "error");
-          studentInput.focus();
+          showToast("수강 신청할 교사 닉네임을 선택하거나 직접 입력해주세요.", "error");
+          if (selectEl && selectEl.value === "__custom__") {
+            customInput?.focus();
+          } else {
+            selectEl?.focus();
+          }
           return;
         }
 
@@ -2668,7 +3182,7 @@
 
         // Check duplicate
         const isAlreadyEnrolled = enrollmentsData.some(
-          (e) => e.lectureId === selectedLectureForAction.id && e.studentName === studentName
+          (e) => String(e.lectureId) === String(selectedLectureForAction.id) && e.studentName === studentName
         );
         if (isAlreadyEnrolled) {
           showToast("이미 수강 신청이 완료된 강의입니다.", "error");
@@ -2685,10 +3199,13 @@
 
         if (!memberList.includes(studentName)) {
           memberList.push(studentName);
-          localStorage.setItem("kyosa_members", JSON.stringify(memberList));
+          await saveMembersToDb(memberList);
         }
 
         await addEnrollmentToDb(newEnr);
+
+        // Reset custom input
+        if (customInput) customInput.value = "";
 
         // Refresh detail view
         openDetailModal(selectedLectureForAction);
@@ -2771,7 +3288,7 @@
       });
 
       // Add Student to Edit List
-      document.getElementById("btnAddStudentToEditList")?.addEventListener("click", () => {
+      document.getElementById("btnAddStudentToEditList")?.addEventListener("click", async () => {
         const input = document.getElementById("editLecNewStudentInput");
         const newName = input.value.trim();
         if (!newName) {
@@ -2798,7 +3315,7 @@
 
         if (!memberList.includes(newName)) {
           memberList.push(newName);
-          localStorage.setItem("kyosa_members", JSON.stringify(memberList));
+          await saveMembersToDb(memberList);
         }
 
         input.value = "";
@@ -2922,43 +3439,90 @@
 
       // 10. Admin Modal & Login
       document.getElementById("btnOpenAdminModal")?.addEventListener("click", () => {
+        if (isAdminLoggedIn) {
+          document.getElementById("adminLoginSection")?.classList.add("hidden");
+          document.getElementById("adminPanelSection")?.classList.remove("hidden");
+          renderAdminMemberPanel();
+        } else {
+          document.getElementById("adminLoginSection")?.classList.remove("hidden");
+          document.getElementById("adminPanelSection")?.classList.add("hidden");
+        }
         openModal("modalAdmin");
       });
 
-      document.getElementById("btnAdminLoginSubmit")?.addEventListener("click", () => {
+      function handleAdminLogin() {
         const pw = document.getElementById("adminPasswordInput").value.trim();
         if (pw === "admin1234") {
           isAdminLoggedIn = true;
-          document.getElementById("adminLoginSection").classList.add("hidden");
-          document.getElementById("adminPanelSection").classList.remove("hidden");
+          document.getElementById("adminLoginSection")?.classList.add("hidden");
+          document.getElementById("adminPanelSection")?.classList.remove("hidden");
           document.getElementById("adminBtnLabel").innerText = "관리자 (ON)";
           document.getElementById("adminPasswordInput").value = "";
+          renderAdminMemberPanel();
           showToast("관리자 모드로 인증되었습니다.");
         } else {
           showToast("관리자 비밀번호가 올바르지 않습니다.", "error");
+        }
+      }
+
+      document.getElementById("btnAdminLoginSubmit")?.addEventListener("click", handleAdminLogin);
+      document.getElementById("adminPasswordInput")?.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          handleAdminLogin();
         }
       });
 
       document.getElementById("btnAdminLogout")?.addEventListener("click", () => {
         isAdminLoggedIn = false;
-        document.getElementById("adminLoginSection").classList.remove("hidden");
-        document.getElementById("adminPanelSection").classList.add("hidden");
+        document.getElementById("adminLoginSection")?.classList.remove("hidden");
+        document.getElementById("adminPanelSection")?.classList.add("hidden");
         document.getElementById("adminBtnLabel").innerText = "관리자";
         showToast("관리자 로그아웃 되었습니다.", "info");
       });
 
-      document.getElementById("btnSaveAdminMembers")?.addEventListener("click", () => {
+      // Quick add single member from admin panel
+      async function handleAddSingleAdminMember() {
+        const input = document.getElementById("adminNewMemberInput");
+        if (!input) return;
+        const name = input.value.trim();
+        if (!name) {
+          showToast("추가할 교사 닉네임을 입력해주세요.", "error");
+          input.focus();
+          return;
+        }
+        if (memberList.includes(name)) {
+          showToast(`'${name}' 선생님은 이미 등록되어 있습니다.`, "warning");
+          return;
+        }
+        memberList.push(name);
+        await saveMembersToDb(memberList);
+        input.value = "";
+        renderAdminMemberPanel();
+        showToast(`'${name}' 선생님이 회원 명단에 추가되었습니다! (수강 매트릭스 및 강사 드롭다운 즉시 반영)`);
+      }
+
+      document.getElementById("btnAddAdminSingleMember")?.addEventListener("click", handleAddSingleAdminMember);
+      document.getElementById("adminNewMemberInput")?.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          handleAddSingleAdminMember();
+        }
+      });
+
+      // Bulk save admin members
+      document.getElementById("btnSaveAdminMembers")?.addEventListener("click", async () => {
         const raw = document.getElementById("adminMemberListInput").value;
         const parsed = raw.split(",").map((s) => s.trim()).filter(Boolean);
-        if (parsed.length === 0) {
+        const uniqueList = Array.from(new Set(parsed));
+        if (uniqueList.length === 0) {
           showToast("최소 한 명 이상의 회원을 입력해주세요.", "error");
           return;
         }
-        memberList = parsed;
-        localStorage.setItem("kyosa_members", JSON.stringify(memberList));
-        renderAllViews();
-        closeModal("modalAdmin");
-        showToast("교사 회원 명단이 성공적으로 업데이트되었습니다!");
+        memberList = uniqueList;
+        await saveMembersToDb(memberList);
+        renderAdminMemberPanel();
+        showToast("교사 회원 명단이 성공적으로 저장 및 실시간 동기화되었습니다! (수강 매트릭스 및 강사 드롭다운 즉시 반영)");
       });
 
       // 12. Teacher History Modal Tabs and Search
@@ -3065,16 +3629,19 @@
       // 1. Initial State
       loadLocalData();
 
-      // 2. Initialize Calendar
+      // 2. Populate Month Selector with real-time dynamic months
+      populateMonthDropdown();
+
+      // 3. Initialize Calendar
       initCalendar();
 
-      // 3. Connect Realtime Firestore Listeners
+      // 4. Connect Realtime Firestore Listeners
       setupFirestoreRealtimeListeners();
 
-      // 4. Setup Event Listeners
+      // 5. Setup Event Listeners
       setupEventListeners();
 
-      // 5. Initial Render
+      // 6. Initial Render
       renderAllViews();
     });
   </script>
