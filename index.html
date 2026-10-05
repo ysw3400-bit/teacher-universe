@@ -7,6 +7,9 @@
   <meta name="description" content="교사유니버스 구성원들의 지식샘터 강의 등록, 실시간 수강 신청 및 상호 이수 현황 매트릭스 대시보드" />
   <meta property="og:title" content="교사유니버스 - 지식샘터 강의 공유 및 수강 매트릭스" />
   <meta property="og:description" content="교사유니버스 구성원들의 지식샘터 강의 등록, 실시간 수강 신청 및 상호 이수 현황 매트릭스 대시보드" />
+  <meta property="og:type" content="website" />
+  <meta name="theme-color" content="#2563eb" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎓</text></svg>" />
 
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -118,18 +121,19 @@
 
       <!-- Navigation Tabs -->
       <div class="flex items-center border-t border-slate-100 -mb-px">
-        <button id="tabBtnCalendar" class="flex items-center gap-2 py-2.5 px-4 text-xs sm:text-sm font-semibold border-b-2 border-blue-600 text-blue-600 transition">
+        <button id="tabBtnCalendar" class="flex items-center gap-2 py-2.5 px-4 text-xs sm:text-sm font-semibold border-b-2 border-blue-600 text-blue-600 transition cursor-pointer">
           <i data-lucide="calendar" class="w-4 h-4"></i>
           <span>강의 캘린더</span>
         </button>
-        <button id="tabBtnNotice" class="flex items-center gap-2 py-2.5 px-4 text-xs sm:text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-800 transition">
+        <button id="tabBtnAttendedCourses" class="flex items-center gap-2 py-2.5 px-4 text-xs sm:text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-800 transition cursor-pointer">
+          <i data-lucide="award" class="w-4 h-4"></i>
+          <span>수강한 강의 목록</span>
+          <span id="tabAttendedCountBadge" class="px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-blue-100 text-blue-700">0</span>
+        </button>
+        <button id="tabBtnNotice" class="flex items-center gap-2 py-2.5 px-4 text-xs sm:text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-800 transition cursor-pointer">
           <i data-lucide="bell" class="w-4 h-4"></i>
           <span>이번 주 공지사항</span>
           <span id="noticeBadgeDot" class="w-2 h-2 rounded-full bg-rose-500"></span>
-        </button>
-        <button id="tabBtnMatrix" class="flex items-center gap-2 py-2.5 px-4 text-xs sm:text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-800 transition">
-          <i data-lucide="grid" class="w-4 h-4"></i>
-          <span>품앗이 수강 매트릭스</span>
         </button>
       </div>
     </div>
@@ -211,22 +215,39 @@
       <!-- Calendar View Control Bar -->
       <div class="bg-white rounded-xl border border-slate-200 p-4 shadow-2xs">
         <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4">
-          <div class="flex items-center gap-2">
+          <div class="flex items-center gap-2 sm:gap-3 flex-wrap">
             <h2 id="calendarTitleText" class="text-base sm:text-lg font-bold text-slate-900">강의 캘린더</h2>
-            <span class="text-xs px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 font-medium">실시간 동기화</span>
+
+            <!-- Month Navigation Buttons (< 이번 달 >) -->
+            <div class="inline-flex items-center rounded-lg border border-slate-200 bg-slate-100 p-0.5 shadow-2xs">
+              <button id="btnCalendarPrev" type="button" class="p-1 sm:px-2.5 sm:py-1 rounded-md text-xs font-bold text-slate-700 hover:text-slate-900 hover:bg-white transition flex items-center gap-1 cursor-pointer" title="지난달 (<)">
+                <i data-lucide="chevron-left" class="w-4 h-4"></i>
+                <span class="hidden md:inline">지난달</span>
+              </button>
+              <button id="btnCalendarToday" type="button" class="px-2.5 py-1 rounded-md text-xs font-bold text-slate-700 hover:text-slate-900 hover:bg-white transition cursor-pointer" title="오늘/이번 달로 이동">
+                이번 달
+              </button>
+              <button id="btnCalendarNext" type="button" class="p-1 sm:px-2.5 sm:py-1 rounded-md text-xs font-bold text-slate-700 hover:text-slate-900 hover:bg-white transition flex items-center gap-1 cursor-pointer" title="다음달 (>)">
+                <span class="hidden md:inline">다음달</span>
+                <i data-lucide="chevron-right" class="w-4 h-4"></i>
+              </button>
+            </div>
+
+            <span class="text-xs px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 font-medium hidden sm:inline">실시간 동기화</span>
           </div>
           <div class="flex items-center gap-2">
             <!-- View Mode Switch: Calendar vs Card List -->
             <div class="inline-flex rounded-lg border border-slate-200 p-0.5 bg-slate-100">
-              <button id="btnViewCalendar" class="px-2.5 py-1 rounded-md text-xs font-bold bg-white text-slate-800 shadow-2xs">
+              <button id="btnViewCalendar" class="px-2.5 py-1 rounded-md text-xs font-bold bg-white text-slate-800 shadow-2xs cursor-pointer">
                 달력 뷰
               </button>
-              <button id="btnViewCardList" class="px-2.5 py-1 rounded-md text-xs font-semibold text-slate-600 hover:text-slate-900">
+              <button id="btnViewCardList" class="px-2.5 py-1 rounded-md text-xs font-semibold text-slate-600 hover:text-slate-900 cursor-pointer">
                 목록 뷰
               </button>
             </div>
-            <button id="btnCalendarToday" class="px-2.5 py-1 text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg border border-slate-200">
-              이번 달
+            <button id="btnScrollToMatrix" type="button" class="px-2.5 py-1 text-xs font-semibold bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-lg border border-blue-200 flex items-center gap-1 transition cursor-pointer" title="하단 품앗이 수강 매트릭스로 바로 이동">
+              <i data-lucide="grid" class="w-3.5 h-3.5"></i>
+              <span class="hidden sm:inline">수강 매트릭스 ↓</span>
             </button>
           </div>
         </div>
@@ -274,7 +295,139 @@
       </div>
     </section>
 
-    <!-- TAB 2: WEEKLY NOTICE -->
+    <!-- TAB 2: ATTENDED COURSES (수강한 강의 목록 & 누가 기록) -->
+    <section id="tabContentAttendedCourses" class="hidden space-y-6">
+      
+      <!-- 1. Course Attendance Recording Card -->
+      <div class="bg-white rounded-2xl border border-slate-200 p-5 sm:p-6 shadow-2xs">
+        <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-4">
+          <div>
+            <h2 class="text-base sm:text-lg font-bold text-slate-900 flex items-center gap-2">
+              <i data-lucide="pen-tool" class="w-5 h-5 text-blue-600"></i>
+              <span>내가 수강한 강의 기록하기</span>
+            </h2>
+            <p class="text-xs text-slate-500 mt-0.5">회원 교사가 수강한 강의 제목과 수강 날짜를 등록하면 전체 회원에게 실시간 누가(누적) 기록으로 노출 및 공유됩니다.</p>
+          </div>
+          <span class="hidden sm:inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-blue-50 text-blue-700 border border-blue-200">
+            <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> 실시간 누가 기록
+          </span>
+        </div>
+
+        <form id="formRecordAttendedCourse" class="space-y-4">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <!-- 수강 교사 선택 -->
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1 flex items-center justify-between">
+                <span>수강 교사 닉네임 *</span>
+                <span class="text-[11px] text-blue-600 font-normal">회원 드롭다운 선택</span>
+              </label>
+              <div class="space-y-1.5">
+                <select id="recordStudentSelect" required class="w-full text-xs sm:text-sm px-3 py-2 bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none cursor-pointer">
+                  <option value="">-- 수강 교사(회원) 선택 --</option>
+                </select>
+                <div id="wrapRecordStudentCustom" class="hidden">
+                  <input type="text" id="recordStudentCustom" placeholder="새 교사 닉네임 직접 입력" class="w-full text-xs sm:text-sm px-3 py-1.5 border border-dashed border-blue-400 bg-blue-50/50 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none" />
+                </div>
+              </div>
+            </div>
+
+            <!-- 수강 날짜 -->
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">강의 수강 날짜 *</label>
+              <input type="date" id="recordCourseDate" required class="w-full text-xs sm:text-sm px-3 py-2 bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none" />
+            </div>
+          </div>
+
+          <!-- 강의 제목 -->
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">강의 제목 *</label>
+            <input type="text" id="recordCourseTitle" required placeholder="예: [초등] 생성형 AI를 활용한 학급경영 및 수업 설계" class="w-full text-xs sm:text-sm px-3 py-2 bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none" />
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <!-- 개설 강사 / 교육기관 (선택) -->
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">개설 강사 / 교육기관 (선택)</label>
+              <input type="text" id="recordCoursePresenter" placeholder="예: 박에듀 강사님, KERIS, 지식샘터" class="w-full text-xs sm:text-sm px-3 py-2 bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none" />
+            </div>
+
+            <!-- 수정/삭제용 비밀번호 (선택) -->
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">확인 비밀번호 (삭제 시 본인 인증)</label>
+              <input type="password" id="recordCoursePassword" value="1234" placeholder="4자리 비밀번호 (기본: 1234)" class="w-full text-xs sm:text-sm px-3 py-2 bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none" />
+            </div>
+          </div>
+
+          <!-- 수강 소감 / 한줄 메모 (선택) -->
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">한줄 수강 소감 / 메모 (선택)</label>
+            <input type="text" id="recordCourseMemo" placeholder="예: 학생 맞춤형 피드백 도구 활용법을 바로 수업에 적용해볼 수 있었음" class="w-full text-xs sm:text-sm px-3 py-2 bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none" />
+          </div>
+
+          <div class="flex justify-end pt-1">
+            <button type="submit" id="btnSubmitAttendedRecord" class="w-full sm:w-auto px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-xs sm:text-sm font-bold rounded-lg shadow-sm flex items-center justify-center gap-1.5 transition cursor-pointer">
+              <i data-lucide="check-circle" class="w-4 h-4"></i>
+              <span>수강한 강의 누가 기록 등록하기</span>
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- 2. Attended Courses List & Filter Section -->
+      <div class="bg-white rounded-2xl border border-slate-200 p-5 sm:p-6 shadow-2xs space-y-4">
+        
+        <!-- Summary Counters & Header -->
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-slate-100">
+          <div>
+            <div class="flex items-center gap-2">
+              <h3 class="text-base sm:text-lg font-bold text-slate-900 flex items-center gap-2">
+                <i data-lucide="book-check" class="w-5 h-5 text-emerald-600"></i>
+                <span>전체 교사 수강 완료 누가 기록 목록</span>
+              </h3>
+              <span id="attendedTotalBadge" class="text-xs px-2.5 py-0.5 rounded-full font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">총 0건</span>
+            </div>
+            <p class="text-xs text-slate-500 mt-1">회원들이 수강하고 기록한 강의 제목과 수강 날짜가 실시간으로 누가 기록되어 노출됩니다.</p>
+          </div>
+
+          <!-- Quick Stats Pill -->
+          <div class="flex items-center gap-2 flex-wrap">
+            <div class="px-3 py-1.5 bg-slate-50 rounded-lg border border-slate-200 text-xs text-slate-600 font-medium flex items-center gap-1.5">
+              <i data-lucide="users" class="w-3.5 h-3.5 text-blue-600"></i>
+              <span>참여 교사: <strong id="attendedUniqueTeachersCount" class="text-slate-900">0</strong>명</span>
+            </div>
+            <div class="px-3 py-1.5 bg-slate-50 rounded-lg border border-slate-200 text-xs text-slate-600 font-medium flex items-center gap-1.5">
+              <i data-lucide="calendar" class="w-3.5 h-3.5 text-emerald-600"></i>
+              <span>이번 달 기록: <strong id="attendedThisMonthCount" class="text-slate-900">0</strong>건</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Filter & Search Bar -->
+        <div class="flex flex-col sm:flex-row gap-2.5">
+          <div class="sm:w-56 shrink-0">
+            <select id="filterAttendedTeacher" class="w-full text-xs px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg font-medium focus:ring-2 focus:ring-blue-500 focus:outline-none cursor-pointer">
+              <option value="">전체 교사 보기</option>
+            </select>
+          </div>
+          <div class="relative flex-1">
+            <i data-lucide="search" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+            <input type="text" id="searchAttendedCourses" placeholder="강의 제목, 수강 교사, 강사명으로 검색" class="w-full text-xs pl-9 pr-8 py-2 bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none" />
+            <button type="button" id="btnClearAttendedSearch" class="hidden absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
+              <i data-lucide="x" class="w-3.5 h-3.5"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Attended Courses Dynamic List -->
+        <div id="attendedCoursesListContainer" class="space-y-3 pt-1">
+          <!-- Dynamically populated records -->
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- TAB 3: WEEKLY NOTICE -->
     <section id="tabContentNotice" class="hidden space-y-6">
       <div class="bg-white rounded-xl border border-slate-200 shadow-2xs overflow-hidden">
         
@@ -304,11 +457,18 @@
           </div>
 
           <!-- Notice Action Link -->
-          <div id="noticeLinkContainer" class="pt-4 border-t border-slate-100 flex items-center justify-between">
-            <a id="noticeLinkBtn" href="https://educourse.keris.or.kr" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white text-xs sm:text-sm font-bold rounded-lg transition">
-              <span>지식샘터 공식 포털 바로가기</span>
-              <i data-lucide="external-link" class="w-4 h-4"></i>
-            </a>
+          <div id="noticeLinkContainer" class="pt-4 border-t border-slate-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+            <div class="flex items-center gap-2.5 flex-wrap">
+              <a id="noticeLinkBtn" href="https://educourse.keris.or.kr" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white text-xs sm:text-sm font-bold rounded-lg transition shadow-xs">
+                <span id="noticeLinkText">지식샘터 공식 포털 바로가기</span>
+                <i data-lucide="external-link" class="w-4 h-4"></i>
+              </a>
+              <a id="noticeRefLinkBtn" href="https://www.keris.or.kr" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs sm:text-sm font-bold rounded-lg transition shadow-xs">
+                <i data-lucide="globe" class="w-4 h-4"></i>
+                <span id="noticeRefLinkText">참고 사이트</span>
+                <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+              </a>
+            </div>
             <span class="text-xs text-slate-400">최종 업데이트: <span id="noticeUpdatedAt">실시간 동기화됨</span></span>
           </div>
         </div>
@@ -713,9 +873,44 @@
           <label class="block text-xs font-bold text-slate-700 mb-1">공지 내용 *</label>
           <textarea id="editNoticeBody" rows="5" required class="w-full text-xs sm:text-sm px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none font-mono"></textarea>
         </div>
-        <div>
-          <label class="block text-xs font-bold text-slate-700 mb-1">포털 링크 URL</label>
-          <input type="url" id="editNoticeLink" value="https://educourse.keris.or.kr" class="w-full text-xs sm:text-sm px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none" />
+        <!-- 1. 지식샘터 공식 포털 링크 배너 설정 -->
+        <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
+          <label class="block text-xs font-bold text-slate-800 flex items-center gap-1.5">
+            <i data-lucide="link" class="w-3.5 h-3.5 text-slate-600"></i>
+            <span>배너 1: 공식 포털 바로가기 설정</span>
+          </label>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <div>
+              <label class="block text-[11px] font-semibold text-slate-600 mb-1">배너 버튼명</label>
+              <input type="text" id="editNoticeLinkTitle" placeholder="예: 지식샘터 공식 포털 바로가기" class="w-full text-xs sm:text-sm px-3 py-1.5 bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none" />
+            </div>
+            <div>
+              <label class="block text-[11px] font-semibold text-slate-600 mb-1">연동 URL</label>
+              <input type="url" id="editNoticeLink" placeholder="https://educourse.keris.or.kr" class="w-full text-xs sm:text-sm px-3 py-1.5 bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none" />
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. 추가 참고 사이트 연동 배너 설정 -->
+        <div class="p-3 bg-blue-50/70 rounded-xl border border-blue-200 space-y-2">
+          <div class="flex items-center justify-between">
+            <label class="block text-xs font-bold text-blue-950 flex items-center gap-1.5">
+              <i data-lucide="globe" class="w-3.5 h-3.5 text-blue-600"></i>
+              <span>배너 2: 참고 사이트 바로가기 설정</span>
+            </label>
+            <span class="text-[10px] font-bold text-blue-700 bg-blue-100 px-2 py-0.5 rounded-full border border-blue-200">참고 배너 연동</span>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <div>
+              <label class="block text-[11px] font-semibold text-slate-600 mb-1">참고 사이트 배너명</label>
+              <input type="text" id="editNoticeRefLinkTitle" placeholder="예: 참고 사이트, KERIS 교육포털" class="w-full text-xs sm:text-sm px-3 py-1.5 bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none" />
+            </div>
+            <div>
+              <label class="block text-[11px] font-semibold text-slate-600 mb-1">참고 사이트 연동 URL</label>
+              <input type="url" id="editNoticeRefLinkUrl" placeholder="예: https://www.keris.or.kr" class="w-full text-xs sm:text-sm px-3 py-1.5 bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none" />
+            </div>
+          </div>
+          <p class="text-[11px] text-slate-500 mt-0.5">💡 배너명과 연동 URL을 적으면 공지사항 하단에 바로가기 배너가 자동 노출됩니다.</p>
         </div>
 
         <div class="flex items-center justify-end gap-2 pt-3 border-t border-slate-100">
@@ -814,6 +1009,21 @@
           <i data-lucide="save" class="w-4 h-4"></i>
           <span>회원 목록 일괄 저장 및 동기화</span>
         </button>
+
+        <!-- 4. 이번 주 공지사항 및 배너 관리 -->
+        <div class="pt-3 border-t border-slate-100">
+          <div class="flex items-center justify-between mb-2">
+            <label class="block text-xs font-bold text-slate-800 flex items-center gap-1.5">
+              <i data-lucide="bell" class="w-3.5 h-3.5 text-blue-600"></i>
+              <span>이번 주 공지사항 & 사이트 배너 관리</span>
+            </label>
+            <span class="text-[10px] px-2 py-0.5 rounded-full font-bold bg-blue-50 text-blue-700 border border-blue-200">배너 2종 연동</span>
+          </div>
+          <button type="button" id="btnAdminOpenEditNotice" class="w-full py-2 bg-blue-50 hover:bg-blue-100 text-blue-700 text-xs font-bold rounded-lg border border-blue-200 flex items-center justify-center gap-1.5 transition cursor-pointer">
+            <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
+            <span>공지사항 내용 및 연동 배너 수정하기</span>
+          </button>
+        </div>
       </div>
 
     </div>
@@ -1052,6 +1262,41 @@
     </div>
   </div>
 
+  <!-- 9. 수강한 강의 기록 삭제 확인 모달 -->
+  <div id="modalDeleteAttendedRecord" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-xl border border-slate-200 relative animate-in fade-in zoom-in duration-150">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-4">
+        <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+          <i data-lucide="trash-2" class="w-5 h-5 text-rose-600"></i>
+          <span>수강 기록 삭제</span>
+        </h3>
+        <button type="button" class="btnModalClose text-slate-400 hover:text-slate-600 p-1 cursor-pointer">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <div class="space-y-3">
+        <p id="deleteAttendedTargetDesc" class="text-xs text-slate-700 font-medium bg-slate-50 p-2.5 rounded-lg border border-slate-200 leading-relaxed"></p>
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">등록 시 설정한 비밀번호 (또는 관리자 비밀번호)</label>
+          <div class="relative">
+            <input type="password" id="deleteAttendedPasswordInput" placeholder="비밀번호 입력 (기본: 1234)" class="w-full text-xs pl-3 pr-9 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:outline-none" />
+            <button type="button" class="btnTogglePassword absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 focus:outline-none cursor-pointer" data-target="deleteAttendedPasswordInput" title="비밀번호 보기/숨기기">
+              <i data-lucide="eye" class="w-4 h-4"></i>
+            </button>
+          </div>
+        </div>
+        <div class="flex justify-end gap-2 pt-2">
+          <button type="button" class="btnModalClose px-3 py-1.5 text-xs text-slate-600 hover:bg-slate-100 rounded-lg font-medium cursor-pointer">취소</button>
+          <button type="button" id="btnConfirmDeleteAttended" class="px-4 py-1.5 bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold rounded-lg shadow-sm flex items-center gap-1 cursor-pointer">
+            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+            <span>삭제 확인</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Toast Notification Container -->
   <div id="toastContainer" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
 
@@ -1124,8 +1369,34 @@
       dateRange: `${todayInfo.year}. ${todayInfo.month}. ${todayInfo.day} ~`,
       title: `지식샘터 ${todayInfo.monthInt}월 강의 품앗이 수강 신청 안내`,
       body: `선생님 여러분 안녕하세요! ${todayInfo.monthInt}월 지식샘터 강의 등록 및 수강 신청 안내드립니다.\n\n💡 이번 주 핵심 실천사항\n1. 개설하신 강좌는 지식샘터 링크 및 정원(기본 10명)과 함께 등록해주세요.\n2. 동료 선생님의 강의를 최소 1개 이상 수강 신청하여 품앗이를 완성합시다.`,
-      linkUrl: "https://educourse.keris.or.kr"
+      linkTitle: "지식샘터 공식 포털 바로가기",
+      linkUrl: "https://educourse.keris.or.kr",
+      refLinkTitle: "참고 사이트 (KERIS 교육정보)",
+      refLinkUrl: "https://www.keris.or.kr"
     };
+
+    const DEFAULT_ATTENDED_COURSES = [
+      {
+        id: "att-default-1",
+        studentName: "김교사",
+        title: "[초등] 생성형 AI를 활용한 학생 참여형 수업 및 학급 경영",
+        date: "2026-09-18",
+        presenter: "이교사 강사님",
+        memo: "수업 현장에서 바로 쓸 수 있는 프롬프트와 학생 활동지 템플릿이 유익했습니다.",
+        password: "1234",
+        createdAt: "2026-09-18T14:30:00.000Z"
+      },
+      {
+        id: "att-default-2",
+        studentName: "박교사",
+        title: "[중등] 노션을 활용한 교원 다이어리 및 학생 포트폴리오 제작",
+        date: "2026-09-22",
+        presenter: "정교사 강사님",
+        memo: "관계형 데이터베이스 구조로 학생 상담일지를 누적 정리하는 방법을 배웠습니다.",
+        password: "1234",
+        createdAt: "2026-09-22T19:00:00.000Z"
+      }
+    ];
 
     // App State (실시간 현재 날짜 기준으로 자동 초기화)
     let currentSelectedMonth = todayInfo.monthStr;
@@ -1140,6 +1411,8 @@
     let teacherPasswords = { ...DEFAULT_TEACHER_PASSWORDS };
     let weeklyNoticeData = { ...DEFAULT_WEEKLY_NOTICE };
     let activeChangingEnr = null;
+    let attendedCoursesData = [...DEFAULT_ATTENDED_COURSES];
+    let activeDeletingAttendedId = null;
 
     // ----------------------------------------------------
     // Month Dropdown Population & Synchronization
@@ -1235,6 +1508,16 @@
         .replace(/'/g, "&#039;");
     }
 
+    function normalizeUrl(url) {
+      if (!url) return "";
+      const trimmed = String(url).trim();
+      if (!trimmed) return "";
+      if (/^https?:\/\//i.test(trimmed)) {
+        return trimmed;
+      }
+      return "https://" + trimmed;
+    }
+
     // ----------------------------------------------------
     // LocalStorage Fallback Handler
     // ----------------------------------------------------
@@ -1274,6 +1557,15 @@
       if (storedNotice) {
         try { weeklyNoticeData = { ...DEFAULT_WEEKLY_NOTICE, ...JSON.parse(storedNotice) }; } catch (e) {}
       }
+
+      const storedAttended = localStorage.getItem("kyosa_attended_courses");
+      if (storedAttended) {
+        try { attendedCoursesData = JSON.parse(storedAttended); } catch (e) {
+          attendedCoursesData = [...DEFAULT_ATTENDED_COURSES];
+        }
+      } else {
+        attendedCoursesData = [...DEFAULT_ATTENDED_COURSES];
+      }
     }
 
     function saveLocalData() {
@@ -1282,6 +1574,7 @@
       localStorage.setItem("kyosa_enrollments", JSON.stringify(enrollmentsData));
       localStorage.setItem("kyosa_teacher_passwords", JSON.stringify(teacherPasswords));
       localStorage.setItem("kyosa_weekly_notice", JSON.stringify(weeklyNoticeData));
+      localStorage.setItem("kyosa_attended_courses", JSON.stringify(attendedCoursesData));
     }
 
     // ----------------------------------------------------
@@ -1403,11 +1696,80 @@
       } catch (e) {
         console.warn("Failed to attach members listener:", e);
       }
+
+      // 5. Listen to attended_courses collection (수강한 강의 목록 실시간 동기화)
+      try {
+        db.collection("attended_courses").onSnapshot(
+          (snapshot) => {
+            if (!snapshot.empty) {
+              const list = [];
+              snapshot.forEach((doc) => {
+                const data = doc.data();
+                list.push({ id: String(doc.id), ...data });
+              });
+              list.sort((a, b) => (b.date || "").localeCompare(a.date || "") || (b.createdAt || "").localeCompare(a.createdAt || ""));
+              attendedCoursesData = list;
+            } else {
+              const localAttended = localStorage.getItem("kyosa_attended_courses");
+              if (localAttended) {
+                try { attendedCoursesData = JSON.parse(localAttended); } catch (e) {
+                  attendedCoursesData = [...DEFAULT_ATTENDED_COURSES];
+                }
+              } else {
+                attendedCoursesData = [...DEFAULT_ATTENDED_COURSES];
+              }
+            }
+            saveLocalData();
+            renderAttendedCoursesView();
+          },
+          (err) => {
+            console.warn("Firestore attended_courses onSnapshot error:", err);
+          }
+        );
+      } catch (e) {
+        console.warn("Failed to attach attended_courses listener:", e);
+      }
     }
 
     // ----------------------------------------------------
     // Firestore CRUD Operations
     // ----------------------------------------------------
+    async function saveAttendedCourseToDb(record) {
+      const idx = attendedCoursesData.findIndex((r) => String(r.id) === String(record.id));
+      if (idx >= 0) {
+        attendedCoursesData[idx] = record;
+      } else {
+        attendedCoursesData.unshift(record);
+      }
+      attendedCoursesData.sort((a, b) => (b.date || "").localeCompare(a.date || "") || (b.createdAt || "").localeCompare(a.createdAt || ""));
+      saveLocalData();
+      renderAttendedCoursesView();
+
+      if (db && isFirebaseActive) {
+        try {
+          await db.collection("attended_courses").doc(String(record.id)).set({
+            ...record,
+            updatedAt: new Date().toISOString()
+          }, { merge: true });
+        } catch (err) {
+          console.warn("Firestore save attended course error:", err);
+        }
+      }
+    }
+
+    async function deleteAttendedCourseFromDb(recordId) {
+      attendedCoursesData = attendedCoursesData.filter((r) => String(r.id) !== String(recordId));
+      saveLocalData();
+      renderAttendedCoursesView();
+
+      if (db && isFirebaseActive) {
+        try {
+          await db.collection("attended_courses").doc(String(recordId)).delete();
+        } catch (err) {
+          console.warn("Firestore delete attended course error:", err);
+        }
+      }
+    }
     async function saveMembersToDb(newMemberList) {
       memberList = [...newMemberList];
       saveLocalData();
@@ -1601,9 +1963,15 @@
     // FullCalendar Rendering
     // ----------------------------------------------------
     function initCalendar() {
+      if (calendarInstance) return calendarInstance;
       const calendarEl = document.getElementById("calendar");
       if (!calendarEl || typeof FullCalendar === "undefined" || !FullCalendar.Calendar) {
-        console.warn("FullCalendar library not yet loaded.");
+        setTimeout(() => {
+          if (!calendarInstance && typeof FullCalendar !== "undefined" && FullCalendar.Calendar) {
+            initCalendar();
+            updateCalendarEvents();
+          }
+        }, 300);
         return;
       }
 
@@ -1650,6 +2018,9 @@
     }
 
     function updateCalendarEvents() {
+      if (!calendarInstance) {
+        initCalendar();
+      }
       if (!calendarInstance || typeof calendarInstance.getEventSources !== "function") return;
 
       try {
@@ -1923,7 +2294,11 @@
       const dateRange = document.getElementById("noticeDateRange");
       const body = document.getElementById("noticeBodyDisplay");
       const link = document.getElementById("noticeLinkBtn");
+      const linkText = document.getElementById("noticeLinkText");
+      const refLink = document.getElementById("noticeRefLinkBtn");
+      const refLinkText = document.getElementById("noticeRefLinkText");
       const bannerTitle = document.getElementById("bannerNoticeTitle");
+      const btnEditNotice = document.getElementById("btnEditNoticeModal");
 
       if (title) title.innerText = weeklyNoticeData.title || "";
       if (badge) badge.innerText = weeklyNoticeData.badge || "공지";
@@ -1937,9 +2312,39 @@
           .join("");
       }
 
-      if (link && weeklyNoticeData.linkUrl) {
-        link.href = weeklyNoticeData.linkUrl;
+      // Banner 1: 지식샘터 공식 포털 링크
+      if (link) {
+        if (weeklyNoticeData.linkUrl) {
+          link.href = normalizeUrl(weeklyNoticeData.linkUrl);
+          link.classList.remove("hidden");
+          if (linkText) linkText.innerText = weeklyNoticeData.linkTitle || "지식샘터 공식 포털 바로가기";
+        } else {
+          link.classList.add("hidden");
+        }
       }
+
+      // Banner 2: 참고 사이트 연동 바로가기
+      if (refLink) {
+        if (weeklyNoticeData.refLinkUrl) {
+          refLink.href = normalizeUrl(weeklyNoticeData.refLinkUrl);
+          refLink.classList.remove("hidden");
+          if (refLinkText) refLinkText.innerText = weeklyNoticeData.refLinkTitle || "참고 사이트";
+        } else {
+          refLink.classList.add("hidden");
+        }
+      }
+
+      // 관리자 권한 여부에 따른 공지사항 수정 버튼 표시
+      if (btnEditNotice) {
+        if (isAdminLoggedIn) {
+          btnEditNotice.innerHTML = `<i data-lucide="edit-3" class="w-4 h-4"></i><span>공지사항 수정 (관리자)</span>`;
+          btnEditNotice.className = "px-3.5 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs sm:text-sm font-semibold rounded-lg flex items-center gap-1.5 shadow-sm transition cursor-pointer";
+        } else {
+          btnEditNotice.innerHTML = `<i data-lucide="lock" class="w-4 h-4 text-blue-200"></i><span>공지사항 수정 (관리자 전용)</span>`;
+          btnEditNotice.className = "px-3.5 py-2 bg-slate-800 hover:bg-slate-700 text-white text-xs sm:text-sm font-semibold rounded-lg flex items-center gap-1.5 shadow-sm transition cursor-pointer border border-slate-700";
+        }
+      }
+      safeRenderIcons();
     }
 
     // ----------------------------------------------------
@@ -2121,6 +2526,168 @@
       openModal("modalRegister");
     };
 
+    function updateRecordStudentDropdown() {
+      const selectEl = document.getElementById("recordStudentSelect");
+      const customWrap = document.getElementById("wrapRecordStudentCustom");
+      const filterEl = document.getElementById("filterAttendedTeacher");
+
+      const allTeachers = Array.from(new Set([
+        ...memberList,
+        ...lecturesData.map((l) => l.presenter),
+        ...enrollmentsData.map((e) => e.studentName),
+        ...attendedCoursesData.map((a) => a.studentName)
+      ])).filter(Boolean);
+
+      if (selectEl) {
+        const curVal = selectEl.value;
+        if (allTeachers.length === 0) {
+          selectEl.innerHTML = `<option value="__custom__">직접 입력 (등록된 회원 없음 - 관리자 메뉴에서 추가 가능)</option>`;
+          selectEl.value = "__custom__";
+          if (customWrap) customWrap.classList.remove("hidden");
+        } else {
+          selectEl.innerHTML = `
+            <option value="">-- 수강 교사(회원) 선택 --</option>
+            ${allTeachers.map((t) => `<option value="${escapeHtml(t)}">${escapeHtml(t)} 선생님</option>`).join("")}
+            <option value="__custom__">➕ 직접 닉네임 새로 입력하기</option>
+          `;
+          if (curVal && allTeachers.includes(curVal)) {
+            selectEl.value = curVal;
+            if (customWrap) customWrap.classList.add("hidden");
+          } else if (curVal === "__custom__") {
+            selectEl.value = "__custom__";
+            if (customWrap) customWrap.classList.remove("hidden");
+          } else {
+            selectEl.value = "";
+            if (customWrap) customWrap.classList.add("hidden");
+          }
+        }
+      }
+
+      if (filterEl) {
+        const curFilter = filterEl.value;
+        const attendedTeachers = Array.from(new Set(attendedCoursesData.map((a) => a.studentName))).filter(Boolean);
+        filterEl.innerHTML = `
+          <option value="">전체 교사 보기 (${attendedCoursesData.length}건)</option>
+          ${attendedTeachers.map((t) => {
+            const count = attendedCoursesData.filter((a) => a.studentName === t).length;
+            return `<option value="${escapeHtml(t)}">${escapeHtml(t)} 선생님 (${count}건)</option>`;
+          }).join("")}
+        `;
+        if (curFilter && attendedTeachers.includes(curFilter)) {
+          filterEl.value = curFilter;
+        } else {
+          filterEl.value = "";
+        }
+      }
+    }
+
+    function renderAttendedCoursesView() {
+      const listContainer = document.getElementById("attendedCoursesListContainer");
+      const tabBadge = document.getElementById("tabAttendedCountBadge");
+      const totalBadge = document.getElementById("attendedTotalBadge");
+      const uniqueTeachersEl = document.getElementById("attendedUniqueTeachersCount");
+      const thisMonthEl = document.getElementById("attendedThisMonthCount");
+      const filterEl = document.getElementById("filterAttendedTeacher");
+      const searchInput = document.getElementById("searchAttendedCourses");
+
+      if (tabBadge) tabBadge.innerText = attendedCoursesData.length;
+      if (totalBadge) totalBadge.innerText = `총 ${attendedCoursesData.length}건`;
+
+      const uniqueTeachers = new Set(attendedCoursesData.map((a) => a.studentName));
+      if (uniqueTeachersEl) uniqueTeachersEl.innerText = uniqueTeachers.size;
+
+      const curMonth = currentSelectedMonth || todayInfo.monthStr;
+      const thisMonthCount = attendedCoursesData.filter((a) => a.date && a.date.startsWith(curMonth)).length;
+      if (thisMonthEl) thisMonthEl.innerText = thisMonthCount;
+
+      if (!listContainer) return;
+
+      const selectedTeacher = filterEl ? filterEl.value : "";
+      const searchKeyword = searchInput ? searchInput.value.trim().toLowerCase() : "";
+
+      let filtered = [...attendedCoursesData];
+      if (selectedTeacher) {
+        filtered = filtered.filter((a) => a.studentName === selectedTeacher);
+      }
+      if (searchKeyword) {
+        filtered = filtered.filter((a) =>
+          (a.title && a.title.toLowerCase().includes(searchKeyword)) ||
+          (a.studentName && a.studentName.toLowerCase().includes(searchKeyword)) ||
+          (a.presenter && a.presenter.toLowerCase().includes(searchKeyword)) ||
+          (a.memo && a.memo.toLowerCase().includes(searchKeyword))
+        );
+      }
+
+      if (filtered.length === 0) {
+        listContainer.innerHTML = `
+          <div class="p-8 text-center bg-slate-50 rounded-xl border border-slate-200">
+            <div class="w-12 h-12 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center mx-auto mb-2.5">
+              <i data-lucide="book-open" class="w-6 h-6"></i>
+            </div>
+            <p class="text-sm font-bold text-slate-800">${searchKeyword || selectedTeacher ? "검색 조건에 맞는 수강 기록이 없습니다." : "등록된 수강 기록이 없습니다."}</p>
+            <p class="text-xs text-slate-500 mt-1">${searchKeyword || selectedTeacher ? "검색어나 필터를 초기화해보세요." : "상단 [내가 수강한 강의 기록하기] 양식에서 첫 수강 기록을 남겨보세요!"}</p>
+          </div>
+        `;
+        safeRenderIcons();
+        return;
+      }
+
+      listContainer.innerHTML = filtered.map((item) => {
+        return `
+          <div class="p-4 bg-white border border-slate-200 rounded-xl shadow-2xs hover:border-blue-300 transition flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+            <div class="space-y-1.5 flex-1 min-w-0">
+              <div class="flex items-center gap-2 flex-wrap">
+                <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-blue-50 text-blue-700 border border-blue-200">
+                  <i data-lucide="user" class="w-3 h-3 text-blue-500"></i>
+                  <span>${escapeHtml(item.studentName)} 선생님</span>
+                </span>
+                <span class="inline-flex items-center gap-1 text-xs text-slate-600 font-medium">
+                  <i data-lucide="calendar" class="w-3.5 h-3.5 text-slate-400"></i>
+                  <span>${escapeHtml(item.date)} 수강</span>
+                </span>
+                ${item.presenter ? `
+                  <span class="inline-flex items-center gap-1 text-[11px] text-slate-500 bg-slate-100 px-2 py-0.5 rounded-md">
+                    <i data-lucide="mic" class="w-3 h-3 text-slate-400"></i>
+                    <span>강사/기관: ${escapeHtml(item.presenter)}</span>
+                  </span>
+                ` : ""}
+              </div>
+              <h4 class="text-sm sm:text-base font-bold text-slate-900 leading-snug">
+                ${escapeHtml(item.title)}
+              </h4>
+              ${item.memo ? `
+                <p class="text-xs text-slate-600 bg-slate-50 p-2 rounded-lg border border-slate-100 italic leading-relaxed">
+                  💬 "${escapeHtml(item.memo)}"
+                </p>
+              ` : ""}
+            </div>
+            <div class="flex items-center gap-2 shrink-0 self-end sm:self-center">
+              <button type="button" onclick="window.openDeleteAttendedModal('${escapeHtml(item.id)}')" class="px-2.5 py-1.5 text-xs text-rose-600 hover:bg-rose-50 border border-rose-200 rounded-lg font-medium flex items-center gap-1 transition cursor-pointer" title="수강 기록 삭제">
+                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                <span>삭제</span>
+              </button>
+            </div>
+          </div>
+        `;
+      }).join("");
+
+      safeRenderIcons();
+    }
+
+    window.openDeleteAttendedModal = function (recordId) {
+      const record = attendedCoursesData.find((r) => String(r.id) === String(recordId));
+      if (!record) return;
+      activeDeletingAttendedId = recordId;
+      const descEl = document.getElementById("deleteAttendedTargetDesc");
+      if (descEl) {
+        descEl.innerHTML = `<strong>${escapeHtml(record.studentName)} 선생님</strong>의 수강 기록<br/><span class="text-slate-900 font-bold">"${escapeHtml(record.title)}"</span> (${escapeHtml(record.date)}) 을(를) 삭제하시겠습니까?`;
+      }
+      const pwInput = document.getElementById("deleteAttendedPasswordInput");
+      if (pwInput) pwInput.value = "";
+      openModal("modalDeleteAttendedRecord");
+      if (pwInput) pwInput.focus();
+    };
+
     function updateDatalists() {
       const datalist = document.getElementById("memberListDatalist");
       if (datalist) {
@@ -2136,6 +2703,7 @@
       if (selectedLectureForAction) {
         updateEnrollStudentDropdown(selectedLectureForAction);
       }
+      updateRecordStudentDropdown();
     }
 
     function renderAllViews() {
@@ -2144,6 +2712,7 @@
       renderCardListView();
       renderMatrixView();
       renderNoticeView();
+      renderAttendedCoursesView();
       updateDatalists();
       if (typeof renderAdminMemberPanel === "function") {
         renderAdminMemberPanel();
@@ -2183,7 +2752,7 @@
       const urlBtn = document.getElementById("detailKerisUrl");
       if (urlBtn) {
         if (lec.url) {
-          urlBtn.href = lec.url;
+          urlBtn.href = normalizeUrl(lec.url);
           urlBtn.parentElement.classList.remove("hidden");
         } else {
           urlBtn.parentElement.classList.add("hidden");
@@ -2714,16 +3283,68 @@
       // 1. Render Taken Lectures (Grouped by Presenter)
       const takenContainer = document.getElementById("thTakenContainer");
       if (takenContainer) {
-        if (filteredTaken.length === 0) {
-          takenContainer.innerHTML = `
-            <div class="p-8 text-center bg-slate-50 rounded-xl border border-slate-200">
-              <div class="w-12 h-12 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center mx-auto mb-2">
-                <i data-lucide="book-open" class="w-6 h-6"></i>
+        const myAttendedCourses = attendedCoursesData.filter((a) =>
+          a.studentName === teacherName &&
+          (!search || (a.title && a.title.toLowerCase().includes(search)) || (a.presenter && a.presenter.toLowerCase().includes(search)))
+        );
+
+        let attendedSectionHtml = "";
+        if (myAttendedCourses.length > 0) {
+          attendedSectionHtml = `
+            <div class="border border-indigo-200 rounded-xl overflow-hidden shadow-2xs bg-white mb-4">
+              <div class="bg-indigo-50/80 px-3.5 py-2.5 border-b border-indigo-200 flex flex-wrap items-center justify-between gap-2">
+                <div class="flex items-center gap-2">
+                  <span class="font-bold text-xs text-indigo-950 flex items-center gap-1.5">
+                    <i data-lucide="award" class="w-4 h-4 text-indigo-600"></i>
+                    <span>내가 직접 작성한 수강 완료 기록</span>
+                  </span>
+                  <span class="text-[10px] px-2 py-0.5 bg-indigo-100 text-indigo-800 font-bold rounded-full border border-indigo-200">누적 ${myAttendedCourses.length}건</span>
+                </div>
+                <button type="button" onclick="window.navigateToAttendedTabWithTeacher('${escapeHtml(teacherName)}')" class="text-xs font-bold text-indigo-700 hover:text-indigo-900 flex items-center gap-1 transition cursor-pointer">
+                  <span>수강한 강의 목록 탭에서 모아보기</span>
+                  <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+                </button>
               </div>
-              <p class="text-sm font-bold text-slate-800">${escapeHtml(teacherName)} 선생님의 수강 이력이 ${search ? '검색 결과에 없습니다.' : '아직 없습니다.'}</p>
-              <p class="text-xs text-slate-500 mt-1">${search ? '검색어를 변경하거나 초기화해보세요.' : '동료 선생님의 강의를 수강 신청하여 품앗이를 시작해보세요!'}</p>
+              <div class="divide-y divide-indigo-100">
+                ${myAttendedCourses.map((att) => `
+                  <div class="p-3 hover:bg-indigo-50/30 transition flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                    <div class="flex-1 min-w-0">
+                      <div class="flex items-center gap-1.5 mb-1 flex-wrap">
+                        <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-indigo-100 text-indigo-800 border border-indigo-200 shrink-0">🎓 수강완료</span>
+                        <span class="text-xs font-bold text-slate-900 leading-snug">${escapeHtml(att.title)}</span>
+                      </div>
+                      <div class="text-[11px] text-slate-500 flex flex-wrap items-center gap-2">
+                        <span>📅 ${escapeHtml(att.date)} 수강</span>
+                        ${att.presenter ? `<span>&bull; 강사/기관: ${escapeHtml(att.presenter)}</span>` : ""}
+                        ${att.memo ? `<span class="italic text-slate-600">&bull; "${escapeHtml(att.memo)}"</span>` : ""}
+                      </div>
+                    </div>
+                  </div>
+                `).join("")}
+              </div>
             </div>
           `;
+        }
+
+        if (filteredTaken.length === 0) {
+          if (myAttendedCourses.length > 0) {
+            takenContainer.innerHTML = attendedSectionHtml + `
+              <div class="p-6 text-center bg-slate-50 rounded-xl border border-slate-200">
+                <p class="text-xs font-semibold text-slate-700">지식샘터 캘린더 개설 강좌 중 신청/이수한 내역은 없습니다.</p>
+                <p class="text-[11px] text-slate-400 mt-0.5">상단의 [직접 작성한 수강 완료 기록]을 확인하시거나 동료 교사의 강의를 수강 신청해보세요.</p>
+              </div>
+            `;
+          } else {
+            takenContainer.innerHTML = `
+              <div class="p-8 text-center bg-slate-50 rounded-xl border border-slate-200">
+                <div class="w-12 h-12 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center mx-auto mb-2">
+                  <i data-lucide="book-open" class="w-6 h-6"></i>
+                </div>
+                <p class="text-sm font-bold text-slate-800">${escapeHtml(teacherName)} 선생님의 수강 이력이 ${search ? '검색 결과에 없습니다.' : '아직 없습니다.'}</p>
+                <p class="text-xs text-slate-500 mt-1">${search ? '검색어를 변경하거나 초기화해보세요.' : '동료 선생님의 강의를 수강 신청하거나 [수강한 강의 목록] 탭에서 수강 기록을 남겨보세요!'}</p>
+              </div>
+            `;
+          }
         } else {
           // Group by presenter
           const presenterGroups = new Map();
@@ -2735,13 +3356,13 @@
             presenterGroups.get(p).push(enr);
           });
 
-          takenContainer.innerHTML = Array.from(presenterGroups.entries()).map(([presenter, enrList]) => {
+          const presenterGroupsHtml = Array.from(presenterGroups.entries()).map(([presenter, enrList]) => {
             // Check mutual reciprocity with this presenter
             const hasRev = enrollmentsData.some((e) => e.studentName === presenter && e.presenterName === teacherName);
 
-                  const completedInGroup = enrList.filter((e) => e.status === "completed").length;
-                  return `
-              <div class="border border-slate-200 rounded-xl overflow-hidden shadow-2xs bg-white">
+            const completedInGroup = enrList.filter((e) => e.status === "completed").length;
+            return `
+              <div class="border border-slate-200 rounded-xl overflow-hidden shadow-2xs bg-white mb-3">
                 <div class="bg-slate-50 px-3.5 py-2.5 border-b border-slate-200 flex flex-wrap items-center justify-between gap-2">
                   <div class="flex items-center gap-2">
                     <span class="font-bold text-xs text-slate-900 flex items-center gap-1.5">
@@ -2808,6 +3429,8 @@
               </div>
             `;
           }).join("");
+
+          takenContainer.innerHTML = attendedSectionHtml + presenterGroupsHtml;
         }
       }
 
@@ -2882,6 +3505,21 @@
       window.openTeacherHistoryModal(studentName);
     };
 
+    window.navigateToAttendedTabWithTeacher = function (teacherName) {
+      closeModal("modalTeacherHistory");
+      const tabAttended = document.getElementById("tabBtnAttendedCourses");
+      if (tabAttended) {
+        tabAttended.click();
+        setTimeout(() => {
+          const filterEl = document.getElementById("filterAttendedTeacher");
+          if (filterEl) {
+            filterEl.value = teacherName;
+            renderAttendedCoursesView();
+          }
+        }, 50);
+      }
+    };
+
     // ----------------------------------------------------
     // Password Toggle Functionality (👁️)
     // ----------------------------------------------------
@@ -2911,24 +3549,28 @@
       // 1. Navigation Tabs
       const tabCalendar = document.getElementById("tabBtnCalendar");
       const tabNotice = document.getElementById("tabBtnNotice");
-      const tabMatrix = document.getElementById("tabBtnMatrix");
+      const tabAttended = document.getElementById("tabBtnAttendedCourses");
 
       const secCalendar = document.getElementById("tabContentCalendar");
       const secNotice = document.getElementById("tabContentNotice");
+      const secAttended = document.getElementById("tabContentAttendedCourses");
 
       function switchTab(activeTab, activeSec) {
-        [tabCalendar, tabNotice, tabMatrix].forEach((t) => {
+        [tabCalendar, tabNotice, tabAttended].forEach((t) => {
           if (t) t.className = "flex items-center gap-2 py-2.5 px-4 text-xs sm:text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-800 transition cursor-pointer";
         });
         if (activeTab) {
           activeTab.className = "flex items-center gap-2 py-2.5 px-4 text-xs sm:text-sm font-semibold border-b-2 border-blue-600 text-blue-600 transition cursor-pointer";
         }
 
-        [secCalendar, secNotice].forEach((s) => s?.classList.add("hidden"));
+        [secCalendar, secNotice, secAttended].forEach((s) => s?.classList.add("hidden"));
         activeSec?.classList.remove("hidden");
 
         if (activeSec === secCalendar && calendarInstance) {
           setTimeout(() => calendarInstance.render(), 100);
+        } else if (activeSec === secAttended) {
+          updateRecordStudentDropdown();
+          renderAttendedCoursesView();
         }
       }
 
@@ -2942,8 +3584,13 @@
         window.scrollTo({ top: 0, behavior: "smooth" });
       });
 
-      tabMatrix?.addEventListener("click", () => {
-        switchTab(tabMatrix, secCalendar);
+      tabAttended?.addEventListener("click", () => {
+        switchTab(tabAttended, secAttended);
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      });
+
+      document.getElementById("btnScrollToMatrix")?.addEventListener("click", () => {
+        switchTab(tabCalendar, secCalendar);
         setTimeout(() => {
           document.getElementById("matrixSection")?.scrollIntoView({ behavior: "smooth", block: "start" });
         }, 80);
@@ -2953,24 +3600,77 @@
         switchTab(tabNotice, secNotice);
       });
 
-      // 2. Month Selector
+      // 2. Month Selector & Navigation (< 이번 달 >)
+      function changeSelectedMonth(delta) {
+        if (!currentSelectedMonth) {
+          currentSelectedMonth = todayInfo.monthStr;
+        }
+        let [y, m] = currentSelectedMonth.split("-").map(Number);
+        m += delta;
+        if (m < 1) {
+          m = 12;
+          y -= 1;
+        } else if (m > 12) {
+          m = 1;
+          y += 1;
+        }
+        const newMonthStr = `${y}-${String(m).padStart(2, "0")}`;
+        currentSelectedMonth = newMonthStr;
+
+        populateMonthDropdown();
+        const selectMonth = document.getElementById("selectMonth");
+        if (selectMonth) selectMonth.value = newMonthStr;
+
+        if (calendarInstance) {
+          calendarInstance.gotoDate(`${newMonthStr}-01`);
+          setTimeout(() => {
+            if (calendarInstance && typeof calendarInstance.updateSize === "function") {
+              calendarInstance.updateSize();
+            }
+          }, 50);
+        }
+
+        renderAllViews();
+        showToast(`${y}년 ${m}월로 이동했습니다.`, "info");
+      }
+      window.changeSelectedMonth = changeSelectedMonth;
+
       const selectMonth = document.getElementById("selectMonth");
       selectMonth?.addEventListener("change", (e) => {
         currentSelectedMonth = e.target.value;
         if (calendarInstance) {
           calendarInstance.gotoDate(`${currentSelectedMonth}-01`);
+          setTimeout(() => {
+            if (calendarInstance && typeof calendarInstance.updateSize === "function") {
+              calendarInstance.updateSize();
+            }
+          }, 50);
         }
         renderAllViews();
         const [y, m] = currentSelectedMonth.split("-");
         showToast(`${y}년 ${parseInt(m, 10)}월로 전환되었습니다.`, "info");
       });
 
+      document.getElementById("btnCalendarPrev")?.addEventListener("click", () => {
+        changeSelectedMonth(-1);
+      });
+
+      document.getElementById("btnCalendarNext")?.addEventListener("click", () => {
+        changeSelectedMonth(1);
+      });
+
       document.getElementById("btnCalendarToday")?.addEventListener("click", () => {
         const today = getTodayDateInfo();
         currentSelectedMonth = today.monthStr;
+        populateMonthDropdown();
         if (selectMonth) selectMonth.value = today.monthStr;
         if (calendarInstance) {
           calendarInstance.gotoDate(today.dateStr);
+          setTimeout(() => {
+            if (calendarInstance && typeof calendarInstance.updateSize === "function") {
+              calendarInstance.updateSize();
+            }
+          }, 50);
         }
         renderAllViews();
         showToast(`오늘 날짜(${today.year}년 ${today.monthInt}월 ${parseInt(today.day, 10)}일)로 이동했습니다.`, "info");
@@ -3074,7 +3774,7 @@
         const maxCount = parseInt(document.getElementById("regMaxCount").value, 10) || 10;
         const date = document.getElementById("regDate").value;
         const time = document.getElementById("regTime").value.trim();
-        const url = document.getElementById("regUrl").value.trim();
+        const url = normalizeUrl(document.getElementById("regUrl").value.trim());
         const password = document.getElementById("regPassword").value.trim();
 
         if (!title || !presenter || !date || !password) {
@@ -3331,7 +4031,7 @@
         const title = document.getElementById("editLecTitle").value.trim();
         const date = document.getElementById("editLecDate").value;
         const time = document.getElementById("editLecTime").value.trim();
-        const url = document.getElementById("editLecUrl").value.trim();
+        const url = normalizeUrl(document.getElementById("editLecUrl").value.trim());
         const maxCount = parseInt(document.getElementById("editLecMaxCount").value, 10) || 10;
         const currentCount = parseInt(document.getElementById("editLecCurrentCount").value, 10) || 0;
 
@@ -3412,29 +4112,62 @@
         showToast("강사의 수강 신청 현황 및 강의 정보가 성공적으로 수정되었습니다!");
       });
 
-      // 9. Weekly Notice Edit
-      document.getElementById("btnEditNoticeModal")?.addEventListener("click", () => {
+      // 9. Weekly Notice Edit (관리자 전용 기능)
+      function populateAndOpenEditNoticeModal() {
         document.getElementById("editNoticeBadge").value = weeklyNoticeData.badge || "이번 주 필독";
         document.getElementById("editNoticeDateRange").value = weeklyNoticeData.dateRange || "";
         document.getElementById("editNoticeTitle").value = weeklyNoticeData.title || "";
         document.getElementById("editNoticeBody").value = weeklyNoticeData.body || "";
-        document.getElementById("editNoticeLink").value = weeklyNoticeData.linkUrl || "";
+        document.getElementById("editNoticeLinkTitle").value = weeklyNoticeData.linkTitle || "지식샘터 공식 포털 바로가기";
+        document.getElementById("editNoticeLink").value = weeklyNoticeData.linkUrl || "https://educourse.keris.or.kr";
+        document.getElementById("editNoticeRefLinkTitle").value = weeklyNoticeData.refLinkTitle || "참고 사이트";
+        document.getElementById("editNoticeRefLinkUrl").value = weeklyNoticeData.refLinkUrl || "https://www.keris.or.kr";
         openModal("modalEditNotice");
+      }
+
+      document.getElementById("btnEditNoticeModal")?.addEventListener("click", () => {
+        if (!isAdminLoggedIn) {
+          window.adminPendingAction = "editNotice";
+          showToast("🔒 이번 주 공지사항 및 배너 수정은 관리자만 가능합니다. 관리자 비밀번호를 입력해주세요.", "info");
+          document.getElementById("adminLoginSection")?.classList.remove("hidden");
+          document.getElementById("adminPanelSection")?.classList.add("hidden");
+          openModal("modalAdmin");
+          setTimeout(() => {
+            document.getElementById("adminPasswordInput")?.focus();
+          }, 100);
+        } else {
+          populateAndOpenEditNoticeModal();
+        }
+      });
+
+      document.getElementById("btnAdminOpenEditNotice")?.addEventListener("click", () => {
+        closeModal("modalAdmin");
+        populateAndOpenEditNoticeModal();
       });
 
       document.getElementById("formEditNotice")?.addEventListener("submit", async (e) => {
         e.preventDefault();
+        if (!isAdminLoggedIn) {
+          showToast("공지사항 및 배너 수정은 관리자만 가능합니다. 관리자 인증이 필요합니다.", "error");
+          closeModal("modalEditNotice");
+          openModal("modalAdmin");
+          return;
+        }
+
         const updated = {
           badge: document.getElementById("editNoticeBadge").value.trim(),
           dateRange: document.getElementById("editNoticeDateRange").value.trim(),
           title: document.getElementById("editNoticeTitle").value.trim(),
           body: document.getElementById("editNoticeBody").value.trim(),
-          linkUrl: document.getElementById("editNoticeLink").value.trim()
+          linkTitle: document.getElementById("editNoticeLinkTitle").value.trim() || "지식샘터 공식 포털 바로가기",
+          linkUrl: normalizeUrl(document.getElementById("editNoticeLink").value.trim()),
+          refLinkTitle: document.getElementById("editNoticeRefLinkTitle").value.trim() || "참고 사이트",
+          refLinkUrl: normalizeUrl(document.getElementById("editNoticeRefLinkUrl").value.trim())
         };
 
         await saveNoticeToDb(updated);
         closeModal("modalEditNotice");
-        showToast("공지사항이 수정 및 모든 사용자에게 실시간 반영되었습니다!");
+        showToast("공지사항 및 사이트 연동 배너가 성공적으로 수정되어 모든 사용자에게 실시간 반영되었습니다!");
       });
 
       // 10. Admin Modal & Login
@@ -3459,7 +4192,14 @@
           document.getElementById("adminBtnLabel").innerText = "관리자 (ON)";
           document.getElementById("adminPasswordInput").value = "";
           renderAdminMemberPanel();
+          renderNoticeView();
           showToast("관리자 모드로 인증되었습니다.");
+
+          if (window.adminPendingAction === "editNotice") {
+            window.adminPendingAction = null;
+            closeModal("modalAdmin");
+            populateAndOpenEditNoticeModal();
+          }
         } else {
           showToast("관리자 비밀번호가 올바르지 않습니다.", "error");
         }
@@ -3478,6 +4218,7 @@
         document.getElementById("adminLoginSection")?.classList.remove("hidden");
         document.getElementById("adminPanelSection")?.classList.add("hidden");
         document.getElementById("adminBtnLabel").innerText = "관리자";
+        renderNoticeView();
         showToast("관리자 로그아웃 되었습니다.", "info");
       });
 
@@ -3615,6 +4356,143 @@
           window.openTeacherHistoryModal(studentName);
         } else if (presenterName && studentName) {
           window.openMatrixDetailModal(presenterName, studentName);
+        }
+      });
+
+      // 14. Attended Course Recording & Management
+      const recordDateInput = document.getElementById("recordCourseDate");
+      if (recordDateInput && !recordDateInput.value) {
+        recordDateInput.value = getTodayDateInfo().dateStr;
+      }
+
+      document.getElementById("recordStudentSelect")?.addEventListener("change", (e) => {
+        const customWrap = document.getElementById("wrapRecordStudentCustom");
+        const customInput = document.getElementById("recordStudentCustom");
+        if (e.target.value === "__custom__") {
+          customWrap?.classList.remove("hidden");
+          customInput?.focus();
+        } else {
+          customWrap?.classList.add("hidden");
+        }
+      });
+
+      document.getElementById("formRecordAttendedCourse")?.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const selectEl = document.getElementById("recordStudentSelect");
+        const customInput = document.getElementById("recordStudentCustom");
+        let studentName = "";
+
+        if (selectEl && selectEl.value === "__custom__") {
+          studentName = customInput ? customInput.value.trim() : "";
+        } else if (selectEl && selectEl.value) {
+          studentName = selectEl.value.trim();
+        }
+
+        const title = document.getElementById("recordCourseTitle").value.trim();
+        const date = document.getElementById("recordCourseDate").value;
+        const presenter = document.getElementById("recordCoursePresenter").value.trim();
+        const memo = document.getElementById("recordCourseMemo").value.trim();
+        const password = document.getElementById("recordCoursePassword").value.trim() || "1234";
+
+        if (!studentName || !title || !date) {
+          if (!studentName) {
+            showToast("수강 교사 닉네임을 선택하거나 직접 입력해주세요.", "error");
+          } else {
+            showToast("강의 제목과 수강 날짜를 모두 입력해주세요.", "error");
+          }
+          return;
+        }
+
+        const record = {
+          id: `att-${Date.now()}`,
+          studentName,
+          title,
+          date,
+          presenter,
+          memo,
+          password,
+          createdAt: new Date().toISOString()
+        };
+
+        // Add to members if new
+        if (!memberList.includes(studentName)) {
+          memberList.push(studentName);
+          await saveMembersToDb(memberList);
+        }
+
+        await saveAttendedCourseToDb(record);
+
+        // Reset form except date (keep today's date)
+        document.getElementById("recordCourseTitle").value = "";
+        document.getElementById("recordCoursePresenter").value = "";
+        document.getElementById("recordCourseMemo").value = "";
+        if (customInput) customInput.value = "";
+        if (selectEl) selectEl.value = "";
+        document.getElementById("wrapRecordStudentCustom")?.classList.add("hidden");
+
+        updateRecordStudentDropdown();
+
+        if (typeof confetti === "function") {
+          confetti({ particleCount: 45, spread: 60, origin: { y: 0.7 } });
+        }
+        showToast(`${studentName} 선생님의 수강 완료 기록이 성공적으로 등록되었습니다!`);
+      });
+
+      document.getElementById("filterAttendedTeacher")?.addEventListener("change", () => {
+        renderAttendedCoursesView();
+      });
+
+      const searchAttendedInput = document.getElementById("searchAttendedCourses");
+      const btnClearAttended = document.getElementById("btnClearAttendedSearch");
+
+      searchAttendedInput?.addEventListener("input", (e) => {
+        if (btnClearAttended) {
+          if (e.target.value.trim().length > 0) {
+            btnClearAttended.classList.remove("hidden");
+          } else {
+            btnClearAttended.classList.add("hidden");
+          }
+        }
+        renderAttendedCoursesView();
+      });
+
+      btnClearAttended?.addEventListener("click", () => {
+        if (searchAttendedInput) searchAttendedInput.value = "";
+        btnClearAttended.classList.add("hidden");
+        renderAttendedCoursesView();
+      });
+
+      // Confirm Delete Attended Course Record
+      document.getElementById("btnConfirmDeleteAttended")?.addEventListener("click", async () => {
+        if (!activeDeletingAttendedId) return;
+
+        const targetRecord = attendedCoursesData.find((r) => String(r.id) === String(activeDeletingAttendedId));
+        if (!targetRecord) {
+          closeModal("modalDeleteAttendedRecord");
+          return;
+        }
+
+        const pwInput = document.getElementById("deleteAttendedPasswordInput");
+        const enteredPw = pwInput ? pwInput.value.trim() : "";
+        const isMaster = isAdminLoggedIn || enteredPw === "admin1234";
+        const isOwner = targetRecord.password && (targetRecord.password === enteredPw);
+
+        if (!isMaster && !isOwner) {
+          showToast("비밀번호가 일치하지 않습니다. (관리자 비밀번호로도 삭제 가능)", "error");
+          return;
+        }
+
+        await deleteAttendedCourseFromDb(activeDeletingAttendedId);
+        closeModal("modalDeleteAttendedRecord");
+        activeDeletingAttendedId = null;
+        showToast("수강 기록이 성공적으로 삭제되었습니다.", "info");
+      });
+
+      document.getElementById("deleteAttendedPasswordInput")?.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          document.getElementById("btnConfirmDeleteAttended")?.click();
         }
       });
 
