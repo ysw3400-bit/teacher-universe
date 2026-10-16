@@ -244,8 +244,16 @@
             </div>
 
             <span class="text-xs px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 font-medium hidden sm:inline">실시간 동기화</span>
+            <div id="calendarCountBadges" class="flex items-center gap-1.5 flex-wrap"></div>
           </div>
-          <div class="flex items-center gap-2">
+          <div class="flex items-center gap-2 flex-wrap">
+            <!-- Event & Lecture Filter Buttons (전체 / 강의만 / 행사만) -->
+            <div class="inline-flex rounded-lg border border-slate-200 p-0.5 bg-slate-100">
+              <button type="button" id="btnFilterCalendarAll" class="calendarFilterBtn px-2 sm:px-2.5 py-1 rounded-md text-xs font-bold bg-white text-slate-900 shadow-2xs cursor-pointer transition" data-filter="all">전체</button>
+              <button type="button" id="btnFilterCalendarLectures" class="calendarFilterBtn px-2 sm:px-2.5 py-1 rounded-md text-xs font-medium text-slate-600 hover:text-slate-900 cursor-pointer transition" data-filter="lectures">강의만</button>
+              <button type="button" id="btnFilterCalendarEvents" class="calendarFilterBtn px-2 sm:px-2.5 py-1 rounded-md text-xs font-medium text-slate-600 hover:text-slate-900 cursor-pointer transition" data-filter="events">행사만</button>
+            </div>
+
             <!-- View Mode Switch: Calendar vs Card List -->
             <div class="inline-flex rounded-lg border border-slate-200 p-0.5 bg-slate-100">
               <button id="btnViewCalendar" class="px-2.5 py-1 rounded-md text-xs font-bold bg-white text-slate-800 shadow-2xs cursor-pointer">
@@ -255,6 +263,13 @@
                 목록 뷰
               </button>
             </div>
+
+            <!-- Add Event Button (Admin) -->
+            <button id="btnOpenAddCalendarEvent" type="button" class="px-3 py-1.5 text-xs font-bold bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-lg shadow-sm flex items-center gap-1.5 transition cursor-pointer active:scale-95" title="관리자 권한으로 캘린더에 행사/일정 추가">
+              <i data-lucide="calendar-plus" class="w-3.5 h-3.5"></i>
+              <span>행사 추가 (관리자)</span>
+            </button>
+
             <button id="btnScrollToMatrix" type="button" class="px-2.5 py-1 text-xs font-semibold bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-lg border border-blue-200 flex items-center gap-1 transition cursor-pointer" title="하단 품앗이 수강 매트릭스로 바로 이동">
               <i data-lucide="grid" class="w-3.5 h-3.5"></i>
               <span class="hidden sm:inline">수강 매트릭스 ↓</span>
@@ -1288,6 +1303,24 @@
             <span>공지사항 내용 및 연동 배너 수정하기</span>
           </button>
         </div>
+
+        <!-- 5. 캘린더 행사 & 공식 일정 관리 (관리자 권한) -->
+        <div class="pt-3 border-t border-slate-100 space-y-2">
+          <div class="flex items-center justify-between">
+            <label class="block text-xs font-bold text-slate-800 flex items-center gap-1.5">
+              <i data-lucide="calendar" class="w-3.5 h-3.5 text-indigo-600"></i>
+              <span>캘린더 행사 &amp; 공식 일정 관리</span>
+            </label>
+            <span id="adminEventCountBadge" class="text-[10px] px-2 py-0.5 rounded-full font-bold bg-indigo-50 text-indigo-700 border border-indigo-200">0건</span>
+          </div>
+          <button type="button" id="btnAdminOpenAddEvent" class="w-full py-2 bg-gradient-to-r from-indigo-50 to-purple-50 hover:from-indigo-100 hover:to-purple-100 text-indigo-700 text-xs font-bold rounded-lg border border-indigo-200 flex items-center justify-center gap-1.5 transition cursor-pointer shadow-2xs">
+            <i data-lucide="calendar-plus" class="w-3.5 h-3.5"></i>
+            <span>+ 새 캘린더 행사 등록하기</span>
+          </button>
+          <div id="adminEventListContainer" class="space-y-1.5 max-h-40 overflow-y-auto pr-1">
+            <!-- Dynamically populated event list -->
+          </div>
+        </div>
       </div>
 
     </div>
@@ -1766,10 +1799,151 @@
     </div>
   </div>
 
-  <!-- 12. 강의 아이디어 등록 모달 (페인포인트 & 강의 아이디어 작성) -->
-  <div id="modalRegisterIdea" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4">
+  <!-- 11-2. 수업 피드백 및 개선방향 수정 모달 -->
+  <div id="modalEditFeedback" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl max-w-xl w-full p-6 shadow-2xl border border-slate-200 relative animate-in fade-in zoom-in duration-150 max-h-[92vh] overflow-y-auto">
       <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-4 sticky top-0 bg-white z-10">
+        <h3 class="text-base sm:text-lg font-bold text-slate-900 flex items-center gap-2">
+          <i data-lucide="edit-3" class="w-5 h-5 text-amber-500"></i>
+          <span>수업 피드백 및 개선방향 수정</span>
+        </h3>
+        <button type="button" class="btnModalClose text-slate-400 hover:text-slate-600 p-1 cursor-pointer">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <form id="formEditFeedback" onsubmit="window.submitEditFeedback(event); return false;" class="space-y-4">
+        <!-- Teacher name & Password -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1 flex items-center justify-between">
+              <span>작성 강사 닉네임 *</span>
+              <span class="text-[11px] text-blue-600 font-normal">회원 드롭다운 선택</span>
+            </label>
+            <select id="editFeedbackTeacherSelect" required class="w-full text-xs sm:text-sm px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:outline-none bg-white">
+              <option value="">강사를 선택하세요</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">등록 비밀번호 확인 *</label>
+            <div class="relative">
+              <input type="password" id="editFeedbackPassword" required maxlength="12" placeholder="등록 시 비밀번호 (기본: 1234)" class="w-full text-xs sm:text-sm pl-3 pr-9 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:outline-none" />
+              <button type="button" class="btnTogglePassword absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 focus:outline-none cursor-pointer" data-target="editFeedbackPassword" title="비밀번호 보기/숨기기">
+                <i data-lucide="eye" class="w-4 h-4"></i>
+              </button>
+            </div>
+            <p class="text-[10px] text-slate-400 mt-0.5">※ 등록 시 설정한 비밀번호(기본: 1234)를 입력하세요.</p>
+          </div>
+        </div>
+
+        <!-- Lecture title & Date -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div class="sm:col-span-2">
+            <label class="block text-xs font-bold text-slate-700 mb-1">강의명 / 수업 주제 *</label>
+            <input type="text" id="editFeedbackTitle" required placeholder="예: [초등] 생성형 AI를 활용한 글쓰기 수업 - 학생 참여 유도" class="w-full text-xs sm:text-sm px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:outline-none" />
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">수업 일자 *</label>
+            <input type="date" id="editFeedbackDate" required class="w-full text-xs sm:text-sm px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:outline-none" />
+          </div>
+        </div>
+
+        <!-- Category -->
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">개선 카테고리 *</label>
+          <select id="editFeedbackCategory" required class="w-full text-xs sm:text-sm px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:outline-none bg-white">
+            <option value="수업 운영·시간 관리">⏱️ 수업 운영·시간 관리 (실습 배분, 진행 템포)</option>
+            <option value="학생 참여·상호작용">💬 학생 참여·상호작용 (마이크 꺼짐 극복, 질문 유도)</option>
+            <option value="AI·에듀테크 도구">🤖 AI·에듀테크 도구 (프롬프트 활용, 도구 오류 대처)</option>
+            <option value="교안 수정">📖 교안 수정 (커리큘럼, 슬라이드, 난이도 보완)</option>
+            <option value="강의 자료·실습">📑 강의 자료·실습 템플릿 (활동지, 사전 배포자료)</option>
+            <option value="돌발상황·대처팁">⚡ 돌발상황·대처팁 (네트워크, 접속 장애, 돌발 질문)</option>
+            <option value="기타 꿀팁">💡 기타 수업 꿀팁</option>
+          </select>
+        </div>
+
+        <!-- Photo Upload & Presets -->
+        <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200 space-y-2.5">
+          <div class="flex items-center justify-between">
+            <label class="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+              <i data-lucide="camera" class="w-4 h-4 text-amber-600"></i>
+              <span>현장 사진 / 수업 캡처 변경</span>
+            </label>
+            <span class="text-[11px] text-slate-500">새 사진 업로드 또는 추천 사진 선택</span>
+          </div>
+
+          <div class="flex flex-col sm:flex-row items-center gap-2">
+            <label class="w-full sm:w-auto shrink-0 inline-flex items-center justify-center gap-1.5 px-3 py-2 bg-white hover:bg-slate-100 border border-slate-300 text-slate-700 text-xs font-bold rounded-lg cursor-pointer shadow-2xs transition">
+              <i data-lucide="upload" class="w-4 h-4 text-blue-600"></i>
+              <span>내 사진 파일 선택</span>
+              <input type="file" id="editFeedbackFileInput" accept="image/*" class="hidden" />
+            </label>
+            <span class="text-xs text-slate-400">또는</span>
+            <div class="flex items-center gap-1.5 flex-wrap">
+              <button type="button" class="btnEditFbPresetPhoto text-[11px] px-2 py-1 bg-white hover:bg-amber-50 border border-slate-200 hover:border-amber-300 rounded-md text-slate-600 font-medium transition cursor-pointer" data-preset="ai">
+                🤖 AI실습
+              </button>
+              <button type="button" class="btnEditFbPresetPhoto text-[11px] px-2 py-1 bg-white hover:bg-amber-50 border border-slate-200 hover:border-amber-300 rounded-md text-slate-600 font-medium transition cursor-pointer" data-preset="curriculum">
+                📖 교안·자료
+              </button>
+              <button type="button" class="btnEditFbPresetPhoto text-[11px] px-2 py-1 bg-white hover:bg-amber-50 border border-slate-200 hover:border-amber-300 rounded-md text-slate-600 font-medium transition cursor-pointer" data-preset="classroom">
+                🏫 교실활동
+              </button>
+              <button type="button" class="btnEditFbPresetPhoto text-[11px] px-2 py-1 bg-white hover:bg-amber-50 border border-slate-200 hover:border-amber-300 rounded-md text-slate-600 font-medium transition cursor-pointer" data-preset="zoom">
+                💻 화상회의/줌
+              </button>
+            </div>
+          </div>
+
+          <!-- Image Preview Area -->
+          <div id="editFbImagePreviewContainer" class="hidden relative rounded-lg overflow-hidden border border-slate-200 bg-slate-900/5 max-h-48 flex items-center justify-center">
+            <img id="editFbImagePreviewEl" src="" alt="미리보기" class="max-h-48 w-full object-contain" />
+            <button type="button" id="btnRemoveEditFbImage" class="absolute top-2 right-2 bg-rose-600/90 hover:bg-rose-700 text-white p-1 rounded-full shadow-md cursor-pointer transition" title="사진 삭제">
+              <i data-lucide="x" class="w-3.5 h-3.5"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Improvement Notes -->
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">
+            <span>수업 중 겪었던 문제점 및 애로사항 (선택)</span>
+          </label>
+          <textarea id="editFeedbackBefore" rows="2" placeholder="예: 이론 설명을 길게 하느라 실습 시간이 부족했거나..." class="w-full text-xs sm:text-sm px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:outline-none"></textarea>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">
+            <span>어떻게 개선했나요? (개선 방향 및 실천 내용) *</span>
+          </label>
+          <textarea id="editFeedbackImprovement" required rows="3" placeholder="예: 복잡한 설정은 미리 템플릿 복제 링크로 배포하고..." class="w-full text-xs sm:text-sm px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:outline-none"></textarea>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1 flex items-center gap-1">
+            <i data-lucide="lightbulb" class="w-3.5 h-3.5 text-amber-500"></i>
+            <span>동료 강사에게 전하는 핵심 꿀팁 / 배운 점</span>
+          </label>
+          <input type="text" id="editFeedbackTip" placeholder="예: 💡 실습 전 3분 요약 숏폼 영상 QR을 학습지에 인쇄..." class="w-full text-xs sm:text-sm px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:outline-none bg-amber-50/30" />
+        </div>
+
+        <div class="flex justify-end gap-2 pt-3 border-t border-slate-100">
+          <button type="button" class="btnModalClose px-4 py-2 text-xs sm:text-sm text-slate-600 hover:bg-slate-100 rounded-lg font-medium cursor-pointer">
+            취소
+          </button>
+          <button type="button" id="btnSubmitEditFeedback" onclick="window.submitEditFeedback(event)" class="px-5 py-2 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-950 text-xs sm:text-sm font-bold rounded-lg shadow-sm flex items-center gap-1.5 cursor-pointer active:scale-95">
+            <i data-lucide="check-circle" class="w-4 h-4 text-slate-950"></i>
+            <span>수정 완료</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 12. 강의 아이디어 등록 모달 (페인포인트 & 강의 아이디어 및 벤치마킹 포인트 작성) -->
+  <div id="modalRegisterIdea" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-xl w-full p-6 shadow-2xl border border-slate-200 relative animate-in fade-in zoom-in duration-150 max-h-[92vh] overflow-y-auto">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-3 sticky top-0 bg-white z-10">
         <h3 class="text-base sm:text-lg font-bold text-slate-900 flex items-center gap-2">
           <i data-lucide="lightbulb" class="w-5 h-5 text-emerald-600"></i>
           <span>새 강의 아이디어 등록</span>
@@ -1777,6 +1951,15 @@
         <button type="button" class="btnModalClose text-slate-400 hover:text-slate-600 p-1 cursor-pointer">
           <i data-lucide="x" class="w-5 h-5"></i>
         </button>
+      </div>
+
+      <!-- 안내 배너: 타 강의 벤치마킹 안내 -->
+      <div class="mb-3.5 p-3 bg-gradient-to-r from-emerald-50 to-teal-50 rounded-xl border border-emerald-200 text-xs text-emerald-950 flex items-start gap-2.5">
+        <i data-lucide="sparkles" class="w-4 h-4 text-emerald-600 shrink-0 mt-0.5"></i>
+        <div class="leading-relaxed">
+          <p class="font-bold text-emerald-900">선생님의 수업 고민과 강의 아이디어를 자유롭게 제안해주세요!</p>
+          <p class="text-emerald-800 text-[11px] mt-0.5">※ <strong>'페인포인트'</strong>와 <strong>'강의 아이디어(벤치마킹)'</strong> 중 <strong>둘 중 하나만 입력해도</strong> 자유롭게 등록할 수 있습니다.</p>
+        </div>
       </div>
 
       <form id="formRegisterIdea" onsubmit="window.submitIdea(event); return false;" class="space-y-4">
@@ -1827,25 +2010,36 @@
           <label class="block text-xs font-bold text-amber-900 flex items-center justify-between">
             <span class="flex items-center gap-1.5">
               <i data-lucide="alert-circle" class="w-4 h-4 text-amber-600"></i>
-              <span>수업 현장의 페인포인트 (불편함, 고민, 문제점) *</span>
+              <span>수업 현장의 페인포인트 (불편함, 고민, 문제점)</span>
             </span>
-            <span class="text-[11px] text-amber-700 font-normal">어떤 어려움이 있었나요?</span>
+            <span class="text-[11px] px-2 py-0.5 rounded-full font-medium bg-amber-100 text-amber-800 border border-amber-200">둘 중 1개 이상 작성</span>
           </label>
-          <textarea id="regIdeaPainPoint" required rows="3" placeholder="예: 매 학기마다 학생 개별 상담 일지와 출결 특이사항이 종이와 엑셀에 흩어져 있어 학기말에 취합하기 너무 번거롭고 시간이 오래 걸립니다." class="w-full text-xs sm:text-sm px-3 py-2 border border-amber-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:outline-none bg-white"></textarea>
-          <p class="text-[11px] text-amber-700/90 leading-tight">💡 수업 준비나 진행 중 겪었던 구체적인 불편이나 학생들의 반응 문제를 적어주세요.</p>
+          <textarea id="regIdeaPainPoint" rows="3" placeholder="예: 매 학기마다 학생 개별 상담 일지와 출결 특이사항이 종이와 엑셀에 흩어져 있어 학기말에 취합하기 너무 번거롭고 시간이 오래 걸립니다." class="w-full text-xs sm:text-sm px-3 py-2 border border-amber-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:outline-none bg-white"></textarea>
+          <p class="text-[11px] text-amber-700/90 leading-tight">💡 수업 준비나 진행 중 겪었던 구체적인 불편이나 학생들의 반응 문제를 적어주세요. (강의 아이디어 작성 시 생략 가능)</p>
         </div>
 
-        <!-- 2. 강의 아이디어 작성칸 (Lecture Idea) -->
-        <div class="bg-emerald-50/60 p-3.5 rounded-xl border border-emerald-200 space-y-1.5">
-          <label class="block text-xs font-bold text-emerald-900 flex items-center justify-between">
-            <span class="flex items-center gap-1.5">
+        <!-- 2. 강의 아이디어 & 벤치마킹 포인트 작성칸 (Lecture Idea & Benchmarking) -->
+        <div class="bg-emerald-50/70 p-3.5 rounded-xl border border-emerald-300 space-y-2">
+          <div class="flex items-center justify-between">
+            <label class="text-xs font-bold text-emerald-950 flex items-center gap-1.5">
               <i data-lucide="sparkles" class="w-4 h-4 text-emerald-600"></i>
-              <span>강의 아이디어 (해결 방안 및 다루고 싶은 수업 내용) *</span>
+              <span>강의 아이디어 & 타 강의 벤치마킹 포인트</span>
+            </label>
+            <span class="text-[11px] px-2 py-0.5 rounded-full font-semibold bg-emerald-100 text-emerald-800 border border-emerald-200">
+              둘 중 1개 이상 작성
             </span>
-            <span class="text-[11px] text-emerald-700 font-normal">어떻게 풀고 싶으신가요?</span>
-          </label>
-          <textarea id="regIdeaSolution" required rows="3" placeholder="예: 노션(Notion) 무료 템플릿을 제작해 출결·상담·과제 현황을 1페이지로 연동하고, 실제 학급 운영에 바로 적용할 수 있도록 함께 세팅해보는 2시간 실습 강의를 구상 중입니다." class="w-full text-xs sm:text-sm px-3 py-2 border border-emerald-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none bg-white"></textarea>
-          <p class="text-[11px] text-emerald-700/90 leading-tight">💡 위 페인포인트를 해결하기 위해 동료 교사들과 함께 나누고 싶은 강의 내용이나 실습 구상을 적어주세요.</p>
+          </div>
+          <textarea id="regIdeaSolution" rows="4" placeholder="예:&#10;1) 강의 해결 구상: 노션(Notion) 무료 템플릿으로 학생별 상담 일지·출결·과제 현황을 1페이지로 통합하고, 학급 운영에 바로 적용하는 2시간 실습 강의를 제안합니다.&#10;&#10;2) 타 강의에서 벤치마킹할 점: 지난 00선생님 연수에서 진행하신 '수업 전 사전 복제 템플릿 배포' 방식과 '슬라이도 실시간 익명 질의응답' 운영 팁을 벤치마킹하여 실습 시간 부족과 질문 부담을 해결하고자 합니다." class="w-full text-xs sm:text-sm p-3 border border-emerald-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none bg-white leading-relaxed"></textarea>
+          <div class="bg-white/80 p-2.5 rounded-lg border border-emerald-200/80 text-[11px] text-emerald-900 space-y-1">
+            <p class="font-bold flex items-center gap-1 text-emerald-800">
+              <i data-lucide="info" class="w-3.5 h-3.5 text-emerald-600"></i>
+              <span>정돈된 아이디어 작성 팁 (페인포인트 작성 시 생략 가능)</span>
+            </p>
+            <p class="text-slate-600 leading-relaxed pl-1">
+              • <strong>강의 아이디어:</strong> 위 페인포인트를 해결하기 위해 동료 교사들과 함께 나누고 싶은 구체적인 강의 내용이나 실습 구상을 적어주세요.<br/>
+              • <strong>타 강의 벤치마킹할 점:</strong> 지식샘터나 다른 연수에서 좋았던 <strong>진행 방식, 활동지 배포 팁, 청중 상호작용 방식, 에러 대처 노하우</strong> 등을 어떻게 접목할지 함께 적어주시면 더욱 정돈된 강의가 설계됩니다.
+            </p>
+          </div>
         </div>
 
         <div class="flex justify-end gap-2 pt-3 border-t border-slate-100">
@@ -1893,6 +2087,321 @@
             <span>삭제 확인</span>
           </button>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 13-2. 강의 아이디어 수정 모달 -->
+  <div id="modalEditIdea" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-xl w-full p-6 shadow-2xl border border-slate-200 relative animate-in fade-in zoom-in duration-150 max-h-[92vh] overflow-y-auto">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-4 sticky top-0 bg-white z-10">
+        <h3 class="text-base sm:text-lg font-bold text-slate-900 flex items-center gap-2">
+          <i data-lucide="edit-3" class="w-5 h-5 text-emerald-600"></i>
+          <span>강의 아이디어 수정</span>
+        </h3>
+        <button type="button" class="btnModalClose text-slate-400 hover:text-slate-600 p-1 cursor-pointer">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <form id="formEditIdea" onsubmit="window.submitEditIdea(event); return false;" class="space-y-4">
+        <!-- Teacher name & Password -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1 flex items-center justify-between">
+              <span>제안 교사 닉네임 *</span>
+              <span class="text-[11px] text-emerald-600 font-normal">관리자 등록 회원 선택</span>
+            </label>
+            <select id="editIdeaTeacherSelect" required class="w-full text-xs sm:text-sm px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none bg-white">
+              <option value="">제안 교사를 선택하세요</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">등록 비밀번호 확인 *</label>
+            <div class="relative">
+              <input type="password" id="editIdeaPassword" required maxlength="12" placeholder="등록 시 비밀번호 (기본: 1234)" class="w-full text-xs sm:text-sm pl-3 pr-9 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none" />
+              <button type="button" class="btnTogglePassword absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 focus:outline-none cursor-pointer" data-target="editIdeaPassword" title="비밀번호 보기/숨기기">
+                <i data-lucide="eye" class="w-4 h-4"></i>
+              </button>
+            </div>
+            <p class="text-[10px] text-slate-400 mt-0.5">※ 등록 시 설정한 비밀번호(기본: 1234)를 입력하세요.</p>
+          </div>
+        </div>
+
+        <!-- Topic/Title & Category -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div class="sm:col-span-2">
+            <label class="block text-xs font-bold text-slate-700 mb-1">강의로 만들 수업 주제 / 가제 *</label>
+            <input type="text" id="editIdeaTitle" required placeholder="수업 주제 또는 가제" class="w-full text-xs sm:text-sm px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none" />
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">분야 / 학교급 *</label>
+            <select id="editIdeaCategory" required class="w-full text-xs sm:text-sm px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none bg-white">
+              <option value="초등">🎒 초등</option>
+              <option value="중등">📐 중등</option>
+              <option value="고등">🏛️ 고등</option>
+              <option value="AI·에듀테크">🤖 AI·에듀테크</option>
+              <option value="학급경영·소통">🌱 학급경영·소통</option>
+              <option value="수업설계·평가">📊 수업설계·평가</option>
+              <option value="기타">💡 기타</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- 1. 페인포인트 작성칸 (Pain Point) -->
+        <div class="bg-amber-50/60 p-3.5 rounded-xl border border-amber-200 space-y-1.5">
+          <label class="block text-xs font-bold text-amber-900 flex items-center justify-between">
+            <span class="flex items-center gap-1.5">
+              <i data-lucide="alert-circle" class="w-4 h-4 text-amber-600"></i>
+              <span>수업 현장의 페인포인트 (불편함, 고민, 문제점)</span>
+            </span>
+            <span class="text-[11px] px-2 py-0.5 rounded-full font-medium bg-amber-100 text-amber-800 border border-amber-200">둘 중 1개 이상 작성</span>
+          </label>
+          <textarea id="editIdeaPainPoint" rows="3" placeholder="수업 현장의 페인포인트" class="w-full text-xs sm:text-sm px-3 py-2 border border-amber-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:outline-none bg-white"></textarea>
+        </div>
+
+        <!-- 2. 강의 아이디어 & 벤치마킹 포인트 작성칸 (Lecture Idea & Benchmarking) -->
+        <div class="bg-emerald-50/70 p-3.5 rounded-xl border border-emerald-300 space-y-2">
+          <div class="flex items-center justify-between">
+            <label class="text-xs font-bold text-emerald-950 flex items-center gap-1.5">
+              <i data-lucide="sparkles" class="w-4 h-4 text-emerald-600"></i>
+              <span>강의 아이디어 & 타 강의 벤치마킹 포인트</span>
+            </label>
+            <span class="text-[11px] px-2 py-0.5 rounded-full font-semibold bg-emerald-100 text-emerald-800 border border-emerald-200">
+              둘 중 1개 이상 작성
+            </span>
+          </div>
+          <textarea id="editIdeaSolution" rows="4" placeholder="강의 해결 구상 및 타 강의에서 벤치마킹할 점을 정돈하여 입력해주세요." class="w-full text-xs sm:text-sm p-3 border border-emerald-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none bg-white leading-relaxed"></textarea>
+          <p class="text-[11px] text-emerald-800 leading-relaxed">
+            💡 <strong>작성 가이드:</strong> 페인포인트와 강의 아이디어&벤치마킹 중 최소 하나를 작성해주시면 수정 완료할 수 있습니다.
+          </p>
+        </div>
+
+        <div class="flex justify-end gap-2 pt-3 border-t border-slate-100">
+          <button type="button" class="btnModalClose px-4 py-2 text-xs sm:text-sm text-slate-600 hover:bg-slate-100 rounded-lg font-medium cursor-pointer">
+            취소
+          </button>
+          <button type="button" id="btnSubmitEditIdea" onclick="window.submitEditIdea(event)" class="px-5 py-2 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-slate-950 text-xs sm:text-sm font-bold rounded-lg shadow-sm flex items-center gap-1.5 cursor-pointer active:scale-95">
+            <i data-lucide="check-circle" class="w-4 h-4 text-slate-950"></i>
+            <span>아이디어 수정 완료</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 14. 캘린더 행사 등록 및 수정 모달 (관리자 권한) -->
+  <div id="modalAddEvent" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 relative animate-in fade-in zoom-in duration-150 max-h-[92vh] overflow-y-auto">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-3 sticky top-0 bg-white z-10">
+        <h3 class="text-base sm:text-lg font-bold text-slate-900 flex items-center gap-2">
+          <i data-lucide="calendar-plus" class="w-5 h-5 text-indigo-600"></i>
+          <span id="modalAddEventTitleText">캘린더 행사 등록 (관리자)</span>
+        </h3>
+        <button type="button" class="btnModalClose text-slate-400 hover:text-slate-600 p-1 cursor-pointer">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <!-- Admin Authority Badge -->
+      <div class="mb-3.5 p-3 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl border border-indigo-200 text-xs text-indigo-950 flex items-start gap-2.5">
+        <i data-lucide="shield-check" class="w-4 h-4 text-indigo-600 shrink-0 mt-0.5"></i>
+        <div class="leading-relaxed">
+          <p class="font-bold text-indigo-900">👑 관리자 권한 행사 등록</p>
+          <p class="text-indigo-800 text-[11px] mt-0.5">지식샘터 워크숍, 마감 일정, 교사 협의회 등 모든 회원이 달력에서 확인할 공지 행사를 등록합니다.</p>
+        </div>
+      </div>
+
+      <form id="formAddEvent" onsubmit="window.submitCalendarEvent(event); return false;" class="space-y-3.5">
+        <input type="hidden" id="eventEditId" value="" />
+
+        <!-- Event Title -->
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">행사 / 일정 명칭 *</label>
+          <input type="text" id="eventTitle" required placeholder="예: [지식샘터 워크숍] 2026 강사 상반기 오프라인 연수 및 에듀테크 나눔" class="w-full text-xs sm:text-sm px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none" />
+        </div>
+
+        <!-- Category & Badge Color -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">행사 구분 / 분류 *</label>
+            <select id="eventCategory" required class="w-full text-xs sm:text-sm px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-white">
+              <option value="연수·워크숍">🎓 연수·워크숍</option>
+              <option value="공지·마감">📢 공지·마감일정</option>
+              <option value="모임·협의회">🤝 모임·협의회</option>
+              <option value="행사·축제">🎪 행사·축제</option>
+              <option value="기타">📌 기타 주요 일정</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">배지 테마 색상</label>
+            <select id="eventBadgeColor" class="w-full text-xs sm:text-sm px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-white">
+              <option value="indigo">🟣 인디고/보라 (기본)</option>
+              <option value="rose">🔴 로즈/레드 (마감/강조)</option>
+              <option value="emerald">🟢 에메랄드/그린 (모임/안내)</option>
+              <option value="amber">🟠 앰버/오렌지 (축제/이벤트)</option>
+              <option value="blue">🔵 블루 (일반)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Date: Start Date & End Date -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">시작일자 *</label>
+            <input type="date" id="eventDate" required class="w-full text-xs sm:text-sm px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none" />
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1 flex items-center justify-between">
+              <span>종료일자 (선택)</span>
+              <span class="text-[10px] text-slate-400 font-normal">단일 행사는 동일 날짜</span>
+            </label>
+            <input type="date" id="eventEndDate" class="w-full text-xs sm:text-sm px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none" />
+          </div>
+        </div>
+
+        <!-- Time & Location -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">진행 시간대 (선택)</label>
+            <input type="text" id="eventTime" placeholder="예: 14:00 ~ 17:00 또는 종일" class="w-full text-xs sm:text-sm px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none" />
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">장소 / 진행 방식 (선택)</label>
+            <input type="text" id="eventLocation" placeholder="예: KERIS 대강당 및 ZOOM 실시간" class="w-full text-xs sm:text-sm px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none" />
+          </div>
+        </div>
+
+        <!-- Link URL -->
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">관련 링크 / 공문 URL (선택)</label>
+          <input type="url" id="eventUrl" placeholder="예: https://educourse.keris.or.kr" class="w-full text-xs sm:text-sm px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none" />
+        </div>
+
+        <!-- Description -->
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">행사 상세 안내 / 준비물 (선택)</label>
+          <textarea id="eventDescription" rows="3" placeholder="행사 세부 내용, 참석 대상, 준비물 등을 입력해주세요." class="w-full text-xs sm:text-sm px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"></textarea>
+        </div>
+
+        <div class="flex justify-end gap-2 pt-3 border-t border-slate-100">
+          <button type="button" class="btnModalClose px-4 py-2 text-xs sm:text-sm text-slate-600 hover:bg-slate-100 rounded-lg font-medium cursor-pointer">
+            취소
+          </button>
+          <button type="submit" id="btnSubmitAddEvent" class="px-5 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white text-xs sm:text-sm font-bold rounded-lg shadow-sm flex items-center gap-1.5 cursor-pointer active:scale-95">
+            <i data-lucide="check-circle" class="w-4 h-4"></i>
+            <span id="btnSubmitAddEventText">행사 등록 완료</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 15. 캘린더 행사 상세 확인 모달 -->
+  <div id="modalEventDetail" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 relative animate-in fade-in zoom-in duration-150">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-4">
+        <div class="flex items-center gap-2">
+          <span id="eventDetailCategoryBadge" class="text-xs px-2.5 py-0.5 rounded-full font-bold bg-indigo-100 text-indigo-700 border border-indigo-200">
+            행사
+          </span>
+          <span class="text-[11px] text-slate-400">공식 일정 안내</span>
+        </div>
+        <button type="button" class="btnModalClose text-slate-400 hover:text-slate-600 p-1 cursor-pointer">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <div class="space-y-4">
+        <!-- Title -->
+        <h3 id="eventDetailTitle" class="text-base sm:text-lg font-bold text-slate-900 leading-snug"></h3>
+
+        <!-- Meta Grid: Date, Time, Location -->
+        <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200 space-y-2 text-xs">
+          <div class="flex items-center gap-2 text-slate-700">
+            <i data-lucide="calendar" class="w-4 h-4 text-indigo-600 shrink-0"></i>
+            <span class="font-semibold text-slate-500 w-16 shrink-0">일정 일자:</span>
+            <span id="eventDetailDate" class="font-bold text-slate-900"></span>
+          </div>
+          <div id="eventDetailTimeRow" class="flex items-center gap-2 text-slate-700">
+            <i data-lucide="clock" class="w-4 h-4 text-indigo-600 shrink-0"></i>
+            <span class="font-semibold text-slate-500 w-16 shrink-0">진행 시간:</span>
+            <span id="eventDetailTime" class="font-bold text-slate-900"></span>
+          </div>
+          <div id="eventDetailLocationRow" class="flex items-center gap-2 text-slate-700">
+            <i data-lucide="map-pin" class="w-4 h-4 text-indigo-600 shrink-0"></i>
+            <span class="font-semibold text-slate-500 w-16 shrink-0">진행 장소:</span>
+            <span id="eventDetailLocation" class="font-bold text-slate-900"></span>
+          </div>
+        </div>
+
+        <!-- Description -->
+        <div id="eventDetailDescBox" class="bg-indigo-50/50 p-4 rounded-xl border border-indigo-100 text-xs sm:text-sm space-y-1">
+          <h4 class="font-bold text-indigo-950 flex items-center gap-1.5 text-xs">
+            <i data-lucide="info" class="w-3.5 h-3.5 text-indigo-600"></i>
+            <span>상세 안내 및 전달사항</span>
+          </h4>
+          <p id="eventDetailDescription" class="text-slate-800 leading-relaxed whitespace-pre-line"></p>
+        </div>
+
+        <!-- Link Button -->
+        <div id="eventDetailLinkContainer" class="hidden">
+          <a id="eventDetailLinkBtn" href="#" target="_blank" rel="noopener noreferrer" class="w-full py-2.5 px-4 bg-slate-900 hover:bg-slate-800 text-white text-xs sm:text-sm font-bold rounded-xl flex items-center justify-center gap-2 transition shadow-xs">
+            <i data-lucide="external-link" class="w-4 h-4"></i>
+            <span>관련 링크 바로가기</span>
+          </a>
+        </div>
+
+        <!-- Admin Controls (수정 & 삭제) -->
+        <div class="pt-3 border-t border-slate-100 flex items-center justify-between gap-2">
+          <div id="eventDetailAdminStatus" class="text-[11px] text-slate-400 flex items-center gap-1">
+            <i data-lucide="shield" class="w-3.5 h-3.5 text-indigo-500"></i>
+            <span>관리자 행사 관리</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <button type="button" id="btnEditCurrentEvent" class="px-3 py-1.5 text-xs font-bold text-indigo-700 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 rounded-lg flex items-center gap-1 transition cursor-pointer">
+              <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
+              <span>행사 수정</span>
+            </button>
+            <button type="button" id="btnDeleteCurrentEvent" class="px-3 py-1.5 text-xs font-bold text-rose-600 bg-rose-50 hover:bg-rose-100 border border-rose-200 rounded-lg flex items-center gap-1 transition cursor-pointer">
+              <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+              <span>행사 삭제</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 16. 행사 삭제 확인 모달 -->
+  <div id="modalDeleteEvent" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-xl border border-slate-200 relative animate-in fade-in zoom-in duration-150 space-y-4">
+      <div class="flex items-center justify-between pb-2 border-b border-slate-100">
+        <h3 class="text-base font-bold text-rose-600 flex items-center gap-2">
+          <i data-lucide="alert-triangle" class="w-5 h-5"></i>
+          <span>행사 삭제 확인</span>
+        </h3>
+        <button type="button" class="btnModalClose text-slate-400 hover:text-slate-600 p-1 cursor-pointer">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <p id="deleteEventTargetDesc" class="text-xs text-slate-600 leading-relaxed">
+        선택한 행사를 캘린더에서 완전히 삭제하시겠습니까?
+      </p>
+
+      <div id="deleteEventAdminPwSection" class="space-y-1.5 hidden">
+        <label class="block text-xs font-bold text-slate-700">관리자 비밀번호 확인</label>
+        <input type="password" id="deleteEventPasswordInput" placeholder="관리자 비밀번호 (기본: admin1234)" class="w-full text-xs px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:outline-none" />
+      </div>
+
+      <div class="flex justify-end gap-2 pt-2">
+        <button type="button" class="btnModalClose px-4 py-2 text-xs text-slate-600 hover:bg-slate-100 rounded-lg font-medium cursor-pointer">
+          취소
+        </button>
+        <button type="button" id="btnConfirmDeleteEvent" class="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold rounded-lg shadow-sm cursor-pointer">
+          삭제 확정
+        </button>
       </div>
     </div>
   </div>
@@ -2083,8 +2592,49 @@
     let feedbacksData = [...DEFAULT_FEEDBACKS];
     let likedFeedbacks = [];
     let activeDeletingFeedbackId = null;
+    let activeEditingFeedbackId = null;
     let currentFeedbackImageDataUrl = "";
+    let currentEditFeedbackImageDataUrl = "";
     let selectedFeedbackCategory = "";
+
+    // 캘린더 공식 행사 및 일정 기본 데이터
+    const DEFAULT_CALENDAR_EVENTS = [
+      {
+        id: "ev-default-1",
+        title: "[지식샘터 워크숍] 2026 강사 상반기 오프라인 연수 및 에듀테크 나눔",
+        date: "2026-10-24",
+        endDate: "2026-10-24",
+        time: "14:00 ~ 17:00",
+        category: "연수·워크숍",
+        badgeColor: "indigo",
+        location: "한국교육학술정보원(KERIS) 세미나실 & 온라인 줌 병행",
+        url: "https://educourse.keris.or.kr",
+        description: "지식샘터 활성화 및 강사 역량 강화를 위한 오프라인 네트워킹 및 2학기 우수 수업사례 나눔 연수입니다. 실시간 줌 동시 송출도 진행됩니다.",
+        isEvent: true,
+        createdAt: "2026-10-10T10:00:00.000Z"
+      },
+      {
+        id: "ev-default-2",
+        title: "[공지/마감] 11월 지식샘터 정규 강좌 개설 신청 마감일",
+        date: "2026-10-28",
+        endDate: "2026-10-28",
+        time: "23:59 마감",
+        category: "공지·마감",
+        badgeColor: "rose",
+        location: "지식샘터 강좌 관리 시스템",
+        url: "https://educourse.keris.or.kr",
+        description: "11월 수강생 모집을 위한 정규 강의 개설 심사 신청 마감일입니다. 강좌 개설을 원하시는 강사님께서는 기한 내 등록을 완료해주시기 바랍니다.",
+        isEvent: true,
+        createdAt: "2026-10-12T09:00:00.000Z"
+      }
+    ];
+
+    let calendarEventsData = [...DEFAULT_CALENDAR_EVENTS];
+    let deletedEventIds = new Set();
+    let currentCalendarFilter = "all"; // "all" | "lectures" | "events"
+    let activeEditingEventId = null;
+    let activeDeletingEventId = null;
+    let selectedEventForDetail = null;
 
     const DEFAULT_IDEAS = [
       {
@@ -2093,7 +2643,7 @@
         title: "[초등] 디지털 선도학교를 위한 노션(Notion) 학급일지 & 다면 상담 대시보드 구축",
         category: "학급경영·소통",
         painPoint: "매 학기마다 출결, 학생 개별 상담 일지, 특기사항 기록이 한글(HWP) 파일과 종이 문서로 분산되어 있어 학기말 생기부 작성 때마다 자료를 취합하느라 수많은 야근이 발생합니다.",
-        lectureIdea: "노션 무료 계정을 이용해 단 1개 페이지에서 출결 체크, 일일 관찰일지, 학생별 누적 상담 기록을 클릭 한 번으로 자동 연동하고 태그로 검색하는 학급경영 템플릿 제작 및 실습 강의를 제안합니다.",
+        lectureIdea: "1) 강의 해결 구상: 노션 무료 계정으로 단 1개 페이지에서 출결 체크, 일일 관찰일지, 학생별 누적 상담 기록을 클릭 한 번으로 자동 연동하고 태그로 검색하는 학급경영 템플릿 제작 및 실습 강의를 제안합니다.\n\n2) 타 강의 벤치마킹할 점: 박교사 강사님의 '사전 복제 템플릿 배포' 방식을 벤치마킹하여 복잡한 DB 세팅 시간을 단축하고 실습 시간을 2배 확보하고자 합니다.",
         cheerCount: 14,
         comments: [
           {
@@ -2118,7 +2668,7 @@
         title: "[중·고등] 생성형 AI(클로드·챗GPT)로 서·논술형 평가 채점 기준표(루브릭) 및 예시 피드백 3분 완성",
         category: "수업설계·평가",
         painPoint: "2022 개정 교육과정 도입 이후 서·논술형 평가 비중이 커졌으나, 교과별 성취기준에 부합하는 정밀한 루브릭 채점표를 작성하고 학생 개별 서술형 답안에 피드백을 주는 데 과도한 시간이 소요됩니다.",
-        lectureIdea: "교육과정 성취기준 문장을 AI 프롬프트에 입력하여 상·중·하 수준별 평가 루브릭과 모범/오답 예시문을 3분 만에 생성하고, 실제 학생 글에 대한 맞춤형 첨삭 피드백 멘트를 안전하게 추출하는 실전 노하우 강의입니다.",
+        lectureIdea: "1) 강의 해결 구상: 교육과정 성취기준 문장을 AI 프롬프트에 입력하여 상·중·하 수준별 평가 루브릭과 모범/오답 예시문을 3분 만에 생성하고, 실제 학생 글에 대한 맞춤형 첨삭 피드백 멘트를 안전하게 추출하는 실전 노하우 강의입니다.\n\n2) 타 강의 벤치마킹할 점: 김교사 강사님의 '4단계(역할-상황-질문-조건) 프롬프트 템플릿'을 벤치마킹해 서논술형 평가 설계에 최적화된 활동지를 제공하고자 합니다.",
         cheerCount: 21,
         comments: [
           {
@@ -2137,7 +2687,7 @@
         title: "[공통] 수업 집중도를 높이는 캔바(Canva) 인터랙티브 인터뷰·퀴즈 활동지 제작 실습",
         category: "AI·에듀테크",
         painPoint: "교과서 위주의 평면적인 활동지는 태블릿을 든 학생들의 집중력을 유지하기 어렵고, 비대면 쌍방향 수업이나 스마트 기기 수업 시 참여도가 떨어지는 문제가 있습니다.",
-        lectureIdea: "캔바의 교육용 무료 기능을 활용해 클릭하면 소리와 애니메이션이 나오는 반응형 퀴즈 활동지와 QR코드 기반 인터랙티브 모둠 활동지를 40분 만에 제작해 수업에 바로 적용하는 워크숍 강의입니다.",
+        lectureIdea: "1) 강의 해결 구상: 캔바의 교육용 무료 기능을 활용해 클릭하면 소리와 애니메이션이 나오는 반응형 퀴즈 활동지와 QR코드 기반 인터랙티브 모둠 활동지를 40분 만에 제작해 수업에 바로 적용하는 워크숍 강의입니다.\n\n2) 타 강의 벤치마킹할 점: 최교사 강사님의 '슬라이도·멘티미터 실시간 단어 구름 익명 투표' 아이스브레이킹 기법을 벤치마킹하여 캔바 퀴즈 시작 전 참여도를 95% 이상으로 끌어올릴 계획입니다.",
         cheerCount: 17,
         comments: [
           {
@@ -2156,7 +2706,7 @@
         title: "[초등] 학급 규칙과 감정 카드로 학기 초 마찰 없는 평화로운 교실 만들기",
         category: "초등",
         painPoint: "학기 초 학생 간 사소한 오해나 말다툼이 커져 교우관계 갈등으로 번지기 쉽고, 교사가 매번 개입해 중재하느라 수업과 행정에 차질이 생깁니다.",
-        lectureIdea: "회복적 생활교육 기반의 감정 단어 카드와 학급 회의 구조화 서식을 공유하고, 학생들이 갈등 상황에서 스스로 자신의 감정을 표현하고 합의된 규칙으로 해결하는 실전 사례 강의를 열어보고 싶습니다.",
+        lectureIdea: "1) 강의 해결 구상: 회복적 생활교육 기반의 감정 단어 카드와 학급 회의 구조화 서식을 공유하고, 학생들이 갈등 상황에서 스스로 자신의 감정을 표현하고 합의된 규칙으로 해결하는 실전 사례 강의를 열어보고 싶습니다.\n\n2) 타 강의 벤치마킹할 점: 이교사 강사님의 '단계별 1분 셀프 체크리스트' 슬라이드 운영 팁을 벤치마킹하여 학생들이 회의 진도를 스스로 파악하도록 돕겠습니다.",
         cheerCount: 9,
         comments: [],
         password: "1234",
@@ -2167,6 +2717,7 @@
     let ideasData = [...DEFAULT_IDEAS];
     let cheeredIdeas = [];
     let activeDeletingIdeaId = null;
+    let activeEditingIdeaId = null;
     let selectedIdeaCategory = "";
     let deletedIdeaIds = new Set();
     let deletedFeedbackIds = new Set();
@@ -2326,8 +2877,10 @@
       }
 
       deletedFeedbackIds = new Set();
+      deletedFeedbackIds = new Set();
       deletedAttendedIds = new Set();
       deletedIdeaIds = new Set();
+      deletedEventIds = new Set();
 
       const storedDelFb = localStorage.getItem("kyosa_deleted_feedbacks");
       if (storedDelFb) {
@@ -2341,17 +2894,45 @@
       if (storedDelIdea) {
         try { deletedIdeaIds = new Set(JSON.parse(storedDelIdea)); } catch (e) {}
       }
+      const storedDelEv = localStorage.getItem("kyosa_deleted_events");
+      if (storedDelEv) {
+        try { deletedEventIds = new Set(JSON.parse(storedDelEv)); } catch (e) {}
+      }
+
+      // 캘린더 행사 데이터 로드
+      const storedEvents = localStorage.getItem("kyosa_calendar_events");
+      const hasInitEvents = localStorage.getItem("kyosa_events_initialized");
+      if (storedEvents !== null) {
+        try {
+          const parsed = JSON.parse(storedEvents);
+          calendarEventsData = Array.isArray(parsed) ? parsed : [];
+        } catch (e) {
+          calendarEventsData = [];
+        }
+      } else if (!hasInitEvents) {
+        calendarEventsData = [...DEFAULT_CALENDAR_EVENTS];
+        localStorage.setItem("kyosa_events_initialized", "true");
+      } else {
+        calendarEventsData = [];
+      }
+      calendarEventsData = calendarEventsData.filter(
+        (e) => e && typeof e === "object" && e.title && !deletedEventIds.has(String(e.id)) && !e._deleted && !e.deleted
+      );
 
       const storedIdeas = localStorage.getItem("kyosa_lecture_ideas");
-      if (storedIdeas) {
+      const hasInitIdeas = localStorage.getItem("kyosa_ideas_initialized");
+      if (storedIdeas !== null) {
         try {
           const parsed = JSON.parse(storedIdeas);
-          ideasData = Array.isArray(parsed) && parsed.length > 0 ? parsed : [...DEFAULT_IDEAS];
+          ideasData = Array.isArray(parsed) ? parsed : [];
         } catch (e) {
-          ideasData = [...DEFAULT_IDEAS];
+          ideasData = [];
         }
-      } else {
+      } else if (!hasInitIdeas) {
         ideasData = [...DEFAULT_IDEAS];
+        localStorage.setItem("kyosa_ideas_initialized", "true");
+      } else {
+        ideasData = [];
       }
       ideasData = ideasData.filter(
         (i) => i && typeof i === "object" && i.title && String(i.title).trim().length > 0 && !deletedIdeaIds.has(String(i.id))
@@ -2370,18 +2951,22 @@
       }
 
       const storedFeedbacks = localStorage.getItem("kyosa_feedbacks");
-      if (storedFeedbacks) {
+      const hasInitFeedbacks = localStorage.getItem("kyosa_feedbacks_initialized");
+      if (storedFeedbacks !== null) {
         try {
           const parsed = JSON.parse(storedFeedbacks);
-          feedbacksData = Array.isArray(parsed) && parsed.length > 0 ? parsed : [...DEFAULT_FEEDBACKS];
+          feedbacksData = Array.isArray(parsed) ? parsed : [];
         } catch (e) {
-          feedbacksData = [...DEFAULT_FEEDBACKS];
+          feedbacksData = [];
         }
-      } else {
+      } else if (!hasInitFeedbacks) {
         feedbacksData = [...DEFAULT_FEEDBACKS];
+        localStorage.setItem("kyosa_feedbacks_initialized", "true");
+      } else {
+        feedbacksData = [];
       }
       // Filter out explicitly deleted feedbacks
-      feedbacksData = feedbacksData.filter((f) => !deletedFeedbackIds.has(String(f.id)));
+      feedbacksData = feedbacksData.filter((f) => f && !deletedFeedbackIds.has(String(f.id)));
 
       const storedLikes = localStorage.getItem("kyosa_liked_feedbacks");
       if (storedLikes) {
@@ -2411,12 +2996,17 @@
           }));
           localStorage.setItem("kyosa_feedbacks", JSON.stringify(safeFeedbacks));
         }
+        localStorage.setItem("kyosa_feedbacks_initialized", "true");
+        localStorage.setItem("kyosa_ideas_initialized", "true");
         localStorage.setItem("kyosa_liked_feedbacks", JSON.stringify(likedFeedbacks));
         localStorage.setItem("kyosa_deleted_feedbacks", JSON.stringify(Array.from(deletedFeedbackIds)));
         localStorage.setItem("kyosa_deleted_attended", JSON.stringify(Array.from(deletedAttendedIds)));
         localStorage.setItem("kyosa_lecture_ideas", JSON.stringify(ideasData));
         localStorage.setItem("kyosa_cheered_ideas", JSON.stringify(cheeredIdeas));
         localStorage.setItem("kyosa_deleted_ideas", JSON.stringify(Array.from(deletedIdeaIds)));
+        localStorage.setItem("kyosa_calendar_events", JSON.stringify(calendarEventsData));
+        localStorage.setItem("kyosa_events_initialized", "true");
+        localStorage.setItem("kyosa_deleted_events", JSON.stringify(Array.from(deletedEventIds)));
       } catch (err) {
         console.warn("saveLocalData safe fallback:", err);
       }
@@ -2431,6 +3021,70 @@
         populateMonthDropdown();
         renderAllViews();
         return;
+      }
+
+      // 0. Listen to settings/deleted_defaults FIRST (삭제된 기본 예시 및 삭제 항목 ID 최우선 실시간 동기화)
+      try {
+        db.collection("settings").doc("deleted_defaults").onSnapshot(
+          (doc) => {
+            if (doc.exists && doc.data()) {
+              const data = doc.data();
+              let changed = false;
+              if (Array.isArray(data.feedbackIds)) {
+                data.feedbackIds.forEach((id) => {
+                  if (!deletedFeedbackIds.has(String(id))) {
+                    deletedFeedbackIds.add(String(id));
+                    changed = true;
+                  }
+                });
+              }
+              if (Array.isArray(data.ideaIds)) {
+                data.ideaIds.forEach((id) => {
+                  if (!deletedIdeaIds.has(String(id))) {
+                    deletedIdeaIds.add(String(id));
+                    changed = true;
+                  }
+                });
+              }
+              if (Array.isArray(data.attendedIds)) {
+                data.attendedIds.forEach((id) => {
+                  if (!deletedAttendedIds.has(String(id))) {
+                    deletedAttendedIds.add(String(id));
+                    changed = true;
+                  }
+                });
+              }
+              if (Array.isArray(data.eventIds)) {
+                data.eventIds.forEach((id) => {
+                  if (!deletedEventIds.has(String(id))) {
+                    deletedEventIds.add(String(id));
+                    changed = true;
+                  }
+                });
+              }
+              if (changed) {
+                feedbacksData = feedbacksData.filter((f) => f && !deletedFeedbackIds.has(String(f.id)) && !f._deleted && !f.deleted);
+                ideasData = ideasData.filter((i) => i && !deletedIdeaIds.has(String(i.id)) && !i._deleted && !i.deleted);
+                attendedCoursesData = attendedCoursesData.filter((a) => a && !deletedAttendedIds.has(String(a.id)) && !a._deleted && !a.deleted);
+                calendarEventsData = calendarEventsData.filter((e) => e && !deletedEventIds.has(String(e.id)) && !e._deleted && !e.deleted);
+                saveLocalData();
+                renderFeedbackView();
+                renderIdeaView();
+                renderAttendedCoursesView();
+                updateCalendarEvents();
+                renderCardListView();
+                if (typeof renderAdminEventsList === "function") {
+                  renderAdminEventsList();
+                }
+              }
+            }
+          },
+          (err) => {
+            console.warn("Firestore deleted_defaults onSnapshot error:", err);
+          }
+        );
+      } catch (e) {
+        console.warn("Failed to attach deleted_defaults listener:", e);
       }
 
       // 1. Listen to courses collection
@@ -2582,8 +3236,11 @@
         db.collection("feedback_improvements").onSnapshot(
           (snapshot) => {
             const listMap = new Map();
+            const hasInitFb = localStorage.getItem("kyosa_feedbacks_initialized");
             DEFAULT_FEEDBACKS.forEach((f) => {
-              if (!deletedFeedbackIds.has(String(f.id))) {
+              const isDeleted = deletedFeedbackIds.has(String(f.id));
+              const wasExplicitlyRemoved = hasInitFb && !feedbacksData.some((existing) => String(existing.id) === String(f.id));
+              if (!isDeleted && !wasExplicitlyRemoved) {
                 listMap.set(String(f.id), { ...f });
               }
             });
@@ -2592,13 +3249,20 @@
               snapshot.forEach((doc) => {
                 const data = doc.data();
                 const docId = String(doc.id);
+                if (data && (data._deleted || data.deleted)) {
+                  deletedFeedbackIds.add(docId);
+                  listMap.delete(docId);
+                  return;
+                }
                 if (!deletedFeedbackIds.has(docId)) {
                   const existing = listMap.get(docId) || {};
                   listMap.set(docId, { ...existing, id: docId, ...data });
+                } else {
+                  listMap.delete(docId);
                 }
               });
             }
-            const list = Array.from(listMap.values());
+            const list = Array.from(listMap.values()).filter((f) => f && !deletedFeedbackIds.has(String(f.id)) && !f._deleted && !f.deleted);
             list.sort((a, b) => (b.createdAt || "").localeCompare(a.createdAt || "") || (b.date || "").localeCompare(a.date || ""));
             feedbacksData = list;
             saveLocalData();
@@ -2612,13 +3276,16 @@
         console.warn("Failed to attach feedback_improvements listener:", e);
       }
 
-      // 5. Lecture Ideas Collection Realtime Listener
+      // 7. Lecture Ideas Collection Realtime Listener
       try {
         db.collection("lecture_ideas").onSnapshot(
           (snapshot) => {
             const listMap = new Map();
+            const hasInitIdeas = localStorage.getItem("kyosa_ideas_initialized");
             DEFAULT_IDEAS.forEach((i) => {
-              if (!deletedIdeaIds.has(String(i.id))) {
+              const isDeleted = deletedIdeaIds.has(String(i.id));
+              const wasExplicitlyRemoved = hasInitIdeas && !ideasData.some((existing) => String(existing.id) === String(i.id));
+              if (!isDeleted && !wasExplicitlyRemoved) {
                 listMap.set(String(i.id), { ...i });
               }
             });
@@ -2627,21 +3294,21 @@
               snapshot.forEach((doc) => {
                 const data = doc.data();
                 const docId = String(doc.id);
+                if (data && (data._deleted || data.deleted)) {
+                  deletedIdeaIds.add(docId);
+                  listMap.delete(docId);
+                  return;
+                }
                 const hasValidTitle = (data && data.title && String(data.title).trim().length > 0) || listMap.has(docId);
                 if (!deletedIdeaIds.has(docId) && hasValidTitle) {
                   const existing = listMap.get(docId) || {};
                   listMap.set(docId, { ...existing, id: docId, ...data });
-                } else if (!hasValidTitle) {
-                  deletedIdeaIds.add(docId);
-                  if (db && isFirebaseActive) {
-                    try {
-                      db.collection("lecture_ideas").doc(docId).delete().catch(() => {});
-                    } catch (e) {}
-                  }
+                } else {
+                  listMap.delete(docId);
                 }
               });
             }
-            const list = Array.from(listMap.values());
+            const list = Array.from(listMap.values()).filter((i) => i && !deletedIdeaIds.has(String(i.id)) && !i._deleted && !i.deleted);
             list.sort((a, b) => (b.createdAt || "").localeCompare(a.createdAt || ""));
             ideasData = list;
             saveLocalData();
@@ -2652,13 +3319,131 @@
           }
         );
       } catch (e) {
-        console.warn("Failed to attach lecture_ideas listener:", e);
+      // 8. Calendar Events Collection Realtime Listener (캘린더 공식 행사 및 일정 실시간 동기화)
+      try {
+        db.collection("calendar_events").onSnapshot(
+          (snapshot) => {
+            const listMap = new Map();
+            const hasInitEv = localStorage.getItem("kyosa_events_initialized");
+            DEFAULT_CALENDAR_EVENTS.forEach((e) => {
+              const isDeleted = deletedEventIds.has(String(e.id));
+              const wasExplicitlyRemoved = hasInitEv && !calendarEventsData.some((existing) => String(existing.id) === String(e.id));
+              if (!isDeleted && !wasExplicitlyRemoved) {
+                listMap.set(String(e.id), { ...e });
+              }
+            });
+
+            if (!snapshot.empty) {
+              snapshot.forEach((doc) => {
+                const data = doc.data();
+                const docId = String(doc.id);
+                if (data && (data._deleted || data.deleted)) {
+                  deletedEventIds.add(docId);
+                  listMap.delete(docId);
+                  return;
+                }
+                const hasValidTitle = data && data.title && String(data.title).trim().length > 0;
+                if (!deletedEventIds.has(docId) && hasValidTitle) {
+                  const existing = listMap.get(docId) || {};
+                  listMap.set(docId, { ...existing, id: docId, ...data });
+                } else {
+                  listMap.delete(docId);
+                }
+              });
+            }
+            const list = Array.from(listMap.values()).filter((e) => e && !deletedEventIds.has(String(e.id)) && !e._deleted && !e.deleted);
+            list.sort((a, b) => (a.date || "").localeCompare(b.date || ""));
+            calendarEventsData = list;
+            saveLocalData();
+            updateCalendarEvents();
+            renderCardListView();
+            if (typeof renderAdminEventsList === "function") {
+              renderAdminEventsList();
+            }
+          },
+          (err) => {
+            console.warn("Firestore calendar_events onSnapshot error:", err);
+          }
+        );
+      } catch (e) {
+        console.warn("Failed to attach calendar_events listener:", e);
       }
     }
 
     // ----------------------------------------------------
     // Firestore CRUD Operations
     // ----------------------------------------------------
+    async function syncDeletedDefaultsToFirestore() {
+      if (!db || !isFirebaseActive) return;
+      try {
+        await db.collection("settings").doc("deleted_defaults").set({
+          feedbackIds: Array.from(deletedFeedbackIds),
+          ideaIds: Array.from(deletedIdeaIds),
+          attendedIds: Array.from(deletedAttendedIds),
+          eventIds: Array.from(deletedEventIds),
+          updatedAt: new Date().toISOString()
+        }, { merge: true });
+      } catch (e) {
+        console.warn("Firestore syncDeletedDefaults error:", e);
+      }
+    }
+
+    async function saveEventToDb(record) {
+      deletedEventIds.delete(String(record.id));
+      const idx = calendarEventsData.findIndex((e) => String(e.id) === String(record.id));
+      if (idx >= 0) {
+        calendarEventsData[idx] = record;
+      } else {
+        calendarEventsData.push(record);
+      }
+      calendarEventsData.sort((a, b) => (a.date || "").localeCompare(b.date || ""));
+      saveLocalData();
+      updateCalendarEvents();
+      renderCardListView();
+      if (typeof renderAdminEventsList === "function") {
+        renderAdminEventsList();
+      }
+      syncDeletedDefaultsToFirestore();
+
+      if (db && isFirebaseActive) {
+        try {
+          await db.collection("calendar_events").doc(String(record.id)).set({
+            ...record,
+            _deleted: false,
+            deleted: false,
+            updatedAt: new Date().toISOString()
+          }, { merge: true });
+        } catch (err) {
+          console.warn("Firestore save event error:", err);
+        }
+      }
+    }
+
+    async function deleteEventFromDb(recordId) {
+      deletedEventIds.add(String(recordId));
+      calendarEventsData = calendarEventsData.filter((e) => String(e.id) !== String(recordId));
+      saveLocalData();
+      updateCalendarEvents();
+      renderCardListView();
+      if (typeof renderAdminEventsList === "function") {
+        renderAdminEventsList();
+      }
+      syncDeletedDefaultsToFirestore();
+
+      if (db && isFirebaseActive) {
+        try {
+          await db.collection("calendar_events").doc(String(recordId)).set({
+            _deleted: true,
+            deleted: true,
+            id: String(recordId),
+            deletedAt: new Date().toISOString()
+          }, { merge: true });
+        } catch (err) {
+          console.warn("Firestore delete event error:", err);
+        }
+      }
+    }
+
     async function saveAttendedCourseToDb(record) {
       deletedAttendedIds.delete(String(record.id));
       const idx = attendedCoursesData.findIndex((r) => String(r.id) === String(record.id));
@@ -2670,6 +3455,7 @@
       attendedCoursesData.sort((a, b) => (b.date || "").localeCompare(a.date || "") || (b.createdAt || "").localeCompare(a.createdAt || ""));
       saveLocalData();
       renderAttendedCoursesView();
+      syncDeletedDefaultsToFirestore();
 
       if (db && isFirebaseActive) {
         try {
@@ -2688,10 +3474,16 @@
       attendedCoursesData = attendedCoursesData.filter((r) => String(r.id) !== String(recordId));
       saveLocalData();
       renderAttendedCoursesView();
+      syncDeletedDefaultsToFirestore();
 
       if (db && isFirebaseActive) {
         try {
-          await db.collection("attended_courses").doc(String(recordId)).delete();
+          await db.collection("attended_courses").doc(String(recordId)).set({
+            _deleted: true,
+            deleted: true,
+            id: String(recordId),
+            deletedAt: new Date().toISOString()
+          }, { merge: true });
         } catch (err) {
           console.warn("Firestore delete attended course error:", err);
         }
@@ -2709,11 +3501,14 @@
       feedbacksData.sort((a, b) => (b.createdAt || "").localeCompare(a.createdAt || "") || (b.date || "").localeCompare(a.date || ""));
       saveLocalData();
       renderFeedbackView();
+      syncDeletedDefaultsToFirestore();
 
       if (db && isFirebaseActive) {
         try {
           await db.collection("feedback_improvements").doc(String(record.id)).set({
             ...record,
+            _deleted: false,
+            deleted: false,
             updatedAt: new Date().toISOString()
           }, { merge: true });
         } catch (err) {
@@ -2727,10 +3522,16 @@
       feedbacksData = feedbacksData.filter((r) => String(r.id) !== String(recordId));
       saveLocalData();
       renderFeedbackView();
+      syncDeletedDefaultsToFirestore();
 
       if (db && isFirebaseActive) {
         try {
-          await db.collection("feedback_improvements").doc(String(recordId)).delete();
+          await db.collection("feedback_improvements").doc(String(recordId)).set({
+            _deleted: true,
+            deleted: true,
+            id: String(recordId),
+            deletedAt: new Date().toISOString()
+          }, { merge: true });
         } catch (err) {
           console.warn("Firestore delete feedback error:", err);
         }
@@ -2780,11 +3581,14 @@
       ideasData.sort((a, b) => (b.createdAt || "").localeCompare(a.createdAt || ""));
       saveLocalData();
       renderIdeaView();
+      syncDeletedDefaultsToFirestore();
 
       if (db && isFirebaseActive) {
         try {
           await db.collection("lecture_ideas").doc(String(record.id)).set({
             ...record,
+            _deleted: false,
+            deleted: false,
             updatedAt: new Date().toISOString()
           }, { merge: true });
         } catch (err) {
@@ -2798,10 +3602,16 @@
       ideasData = ideasData.filter((i) => String(i.id) !== String(recordId));
       saveLocalData();
       renderIdeaView();
+      syncDeletedDefaultsToFirestore();
 
       if (db && isFirebaseActive) {
         try {
-          await db.collection("lecture_ideas").doc(String(recordId)).delete();
+          await db.collection("lecture_ideas").doc(String(recordId)).set({
+            _deleted: true,
+            deleted: true,
+            id: String(recordId),
+            deletedAt: new Date().toISOString()
+          }, { merge: true });
         } catch (err) {
           console.warn("Firestore delete idea error:", err);
         }
@@ -3061,6 +3871,44 @@
           height: "auto",
           eventContent: function (arg) {
             const props = arg.event.extendedProps;
+            if (props.type === "event") {
+              const category = props.category || "행사";
+              const time = props.time || "";
+              let bgClass = "bg-gradient-to-r from-indigo-600 to-purple-600 text-white border-indigo-700";
+              let badgeBg = "bg-white/20 text-white";
+              let iconName = "sparkles";
+
+              if (category === "공지·마감" || props.badgeColor === "rose") {
+                bgClass = "bg-gradient-to-r from-rose-600 to-pink-600 text-white border-rose-700";
+                iconName = "alert-circle";
+              } else if (category === "모임·협의회" || props.badgeColor === "emerald") {
+                bgClass = "bg-gradient-to-r from-emerald-600 to-teal-600 text-white border-emerald-700";
+                iconName = "users";
+              } else if (category === "행사·축제" || props.badgeColor === "amber") {
+                bgClass = "bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 border-amber-600";
+                badgeBg = "bg-black/15 text-slate-950";
+                iconName = "flag";
+              } else if (props.badgeColor === "blue") {
+                bgClass = "bg-gradient-to-r from-blue-600 to-indigo-600 text-white border-blue-700";
+                iconName = "calendar";
+              }
+
+              return {
+                html: `
+                  <div class="p-1 sm:p-1.5 rounded-md ${bgClass} shadow-xs hover:brightness-110 transition cursor-pointer border leading-tight select-none">
+                    <div class="flex items-center justify-between gap-1 mb-0.5">
+                      <span class="text-[9px] sm:text-[10px] px-1 py-0.2 rounded font-black ${badgeBg} tracking-tight flex items-center gap-0.5 shrink-0">
+                        <i data-lucide="${iconName}" class="w-2.5 h-2.5"></i>
+                        <span>[${escapeHtml(category)}]</span>
+                      </span>
+                      ${time ? `<span class="text-[9px] opacity-90 truncate">${escapeHtml(time)}</span>` : `<span class="text-[9px] opacity-80">종일</span>`}
+                    </div>
+                    <div class="text-[11px] font-bold truncate leading-snug">${escapeHtml(arg.event.title)}</div>
+                  </div>
+                `
+              };
+            }
+
             const curr = props.enrolledCount !== undefined ? props.enrolledCount : (props.currentCount || 0);
             const max = props.maxCount || 10;
             const isFull = curr >= max;
@@ -3068,7 +3916,7 @@
 
             return {
               html: `
-                <div class="p-1 rounded bg-white shadow-2xs border border-slate-200 hover:border-blue-400 transition">
+                <div class="p-1 rounded bg-white shadow-2xs border border-slate-200 hover:border-blue-400 transition cursor-pointer">
                   <div class="flex items-center justify-between gap-1 mb-0.5">
                     <span class="font-bold text-[11px] text-slate-800 truncate">${escapeHtml(props.presenter || "")}</span>
                     <span class="text-[10px] px-1 py-0.2 rounded font-semibold ${badgeBg}">${curr}/${max}</span>
@@ -3079,8 +3927,18 @@
             };
           },
           eventClick: function (info) {
-            const lec = lecturesData.find((l) => String(l.id) === String(info.event.id));
-            if (lec) openDetailModal(lec);
+            const props = info.event.extendedProps;
+            if (props.type === "event") {
+              const rawId = props.rawId || String(info.event.id).replace(/^ev-/, "");
+              const ev = calendarEventsData.find((e) => String(e.id) === String(rawId));
+              if (ev) {
+                window.openEventDetailModal(ev);
+              }
+            } else {
+              const rawId = props.rawId || String(info.event.id).replace(/^lec-/, "");
+              const lec = lecturesData.find((l) => String(l.id) === String(rawId));
+              if (lec) openDetailModal(lec);
+            }
           }
         });
 
@@ -3099,25 +3957,88 @@
       try {
         const monthLectures = lecturesData.filter((l) => (l.month === currentSelectedMonth) || (l.date && l.date.startsWith(currentSelectedMonth)));
         
-        const events = monthLectures.map((lec) => ({
-          id: String(lec.id),
-          title: lec.title,
-          start: lec.date,
-          allDay: true,
-          extendedProps: {
-            presenter: lec.presenter,
-            time: lec.time,
-            url: lec.url,
-            currentCount: lec.currentCount,
-            enrolledCount: lec.enrolledCount,
-            maxCount: lec.maxCount,
-            month: lec.month
-          }
-        }));
+        const monthEvents = calendarEventsData.filter((e) => {
+          if (!e || e._deleted || e.deleted) return false;
+          if (e.date && e.date.startsWith(currentSelectedMonth)) return true;
+          if (e.endDate && e.endDate.startsWith(currentSelectedMonth)) return true;
+          return false;
+        });
+
+        // Update count badges on calendar header
+        const badgeContainer = document.getElementById("calendarCountBadges");
+        if (badgeContainer) {
+          badgeContainer.innerHTML = `
+            <span class="text-[11px] px-2 py-0.5 rounded-full font-bold bg-blue-50 text-blue-700 border border-blue-200">
+              강의 ${monthLectures.length}건
+            </span>
+            <span class="text-[11px] px-2 py-0.5 rounded-full font-bold bg-indigo-50 text-indigo-700 border border-indigo-200 flex items-center gap-1">
+              <i data-lucide="sparkles" class="w-3 h-3 text-indigo-600"></i>
+              행사 ${monthEvents.length}건
+            </span>
+          `;
+        }
+
+        const events = [];
+
+        if (currentCalendarFilter !== "events") {
+          monthLectures.forEach((lec) => {
+            events.push({
+              id: "lec-" + String(lec.id),
+              title: lec.title,
+              start: lec.date,
+              allDay: true,
+              extendedProps: {
+                type: "lecture",
+                rawId: String(lec.id),
+                presenter: lec.presenter,
+                time: lec.time,
+                url: lec.url,
+                currentCount: lec.currentCount,
+                enrolledCount: lec.enrolledCount,
+                maxCount: lec.maxCount,
+                month: lec.month
+              }
+            });
+          });
+        }
+
+        if (currentCalendarFilter !== "lectures") {
+          monthEvents.forEach((ev) => {
+            let fcEnd = ev.date;
+            if (ev.endDate && ev.endDate > ev.date) {
+              try {
+                const d = new Date(ev.endDate);
+                d.setDate(d.getDate() + 1);
+                fcEnd = d.toISOString().substring(0, 10);
+              } catch (e) {
+                fcEnd = ev.endDate;
+              }
+            }
+            events.push({
+              id: "ev-" + String(ev.id),
+              title: ev.title,
+              start: ev.date,
+              end: fcEnd,
+              allDay: true,
+              extendedProps: {
+                type: "event",
+                rawId: String(ev.id),
+                category: ev.category || "연수·워크숍",
+                badgeColor: ev.badgeColor || "indigo",
+                time: ev.time || "",
+                location: ev.location || "",
+                url: ev.url || "",
+                description: ev.description || "",
+                rawEvent: ev
+              }
+            });
+          });
+        }
 
         const sources = calendarInstance.getEventSources();
         sources.forEach((s) => s.remove());
         calendarInstance.addEventSource(events);
+        safeRenderIcons();
       } catch (err) {
         console.warn("updateCalendarEvents warning:", err);
       }
@@ -3131,50 +4052,116 @@
       if (!container) return;
 
       const monthLectures = lecturesData.filter((l) => (l.month === currentSelectedMonth) || (l.date && l.date.startsWith(currentSelectedMonth)));
+      const monthEvents = calendarEventsData.filter((e) => {
+        if (!e || e._deleted || e.deleted) return false;
+        if (e.date && e.date.startsWith(currentSelectedMonth)) return true;
+        if (e.endDate && e.endDate.startsWith(currentSelectedMonth)) return true;
+        return false;
+      });
 
-      if (monthLectures.length === 0) {
+      const showEvents = currentCalendarFilter !== "lectures";
+      const showLectures = currentCalendarFilter !== "events";
+
+      let html = "";
+
+      // 1. Month Events Section (공식 행사 & 일정)
+      if (showEvents && monthEvents.length > 0) {
+        html += `
+          <div class="col-span-full mb-2 bg-gradient-to-r from-indigo-50/80 to-purple-50/80 p-3.5 rounded-2xl border border-indigo-200">
+            <div class="flex items-center justify-between mb-2.5">
+              <h4 class="text-xs sm:text-sm font-bold text-indigo-950 flex items-center gap-1.5">
+                <i data-lucide="sparkles" class="w-4 h-4 text-indigo-600"></i>
+                <span>이달의 공식 행사 &amp; 주요 일정 (${monthEvents.length}건)</span>
+              </h4>
+              <button type="button" onclick="window.openAddEventModal()" class="text-xs font-bold text-indigo-700 hover:text-indigo-900 bg-white hover:bg-indigo-50 border border-indigo-200 px-2.5 py-1 rounded-lg flex items-center gap-1 transition cursor-pointer shadow-2xs">
+                <i data-lucide="calendar-plus" class="w-3.5 h-3.5 text-indigo-600"></i>
+                <span>+ 행사 추가</span>
+              </button>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-2.5">
+              ${monthEvents.map((ev) => `
+                <div class="bg-white rounded-xl border border-indigo-100 p-3.5 shadow-2xs hover:border-indigo-300 transition flex flex-col justify-between space-y-2">
+                  <div>
+                    <div class="flex items-center justify-between gap-2 mb-1.5">
+                      <span class="text-[11px] px-2 py-0.5 rounded-full font-bold bg-indigo-100 text-indigo-800 border border-indigo-200">
+                        [${escapeHtml(ev.category || "행사")}]
+                      </span>
+                      <span class="text-xs font-semibold text-slate-500">
+                        ${escapeHtml(ev.date)}${ev.endDate && ev.endDate !== ev.date ? ` ~ ${escapeHtml(ev.endDate)}` : ""}
+                      </span>
+                    </div>
+                    <h5 class="text-sm font-bold text-slate-900 leading-snug line-clamp-2">${escapeHtml(ev.title)}</h5>
+                    ${ev.time ? `<p class="text-xs text-slate-500 mt-1 flex items-center gap-1"><i data-lucide="clock" class="w-3.5 h-3.5 text-indigo-500"></i><span>${escapeHtml(ev.time)}</span></p>` : ""}
+                    ${ev.location ? `<p class="text-xs text-slate-500 mt-0.5 flex items-center gap-1"><i data-lucide="map-pin" class="w-3.5 h-3.5 text-indigo-500"></i><span class="truncate">${escapeHtml(ev.location)}</span></p>` : ""}
+                  </div>
+                  <div class="flex items-center gap-1.5 pt-2 border-t border-slate-100">
+                    <button type="button" onclick='window.openEventDetailById("${escapeHtml(ev.id)}")' class="flex-1 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-xs font-bold rounded-lg transition text-center cursor-pointer">
+                      행사 상세 안내
+                    </button>
+                    ${isAdminLoggedIn ? `
+                      <button type="button" onclick="window.openAddEventModal('${escapeHtml(ev.id)}')" class="px-2.5 py-1.5 text-xs text-indigo-600 hover:text-indigo-800 hover:bg-indigo-50 border border-slate-200 hover:border-indigo-200 rounded-lg font-semibold transition cursor-pointer flex items-center gap-1" title="행사 수정">
+                        <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
+                        <span>수정</span>
+                      </button>
+                      <button type="button" onclick="window.openDeleteEventModal('${escapeHtml(ev.id)}')" class="px-2.5 py-1.5 text-xs text-rose-600 hover:text-rose-800 hover:bg-rose-50 border border-slate-200 hover:border-rose-200 rounded-lg font-semibold transition cursor-pointer flex items-center gap-1" title="행사 삭제">
+                        <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                        <span>삭제</span>
+                      </button>
+                    ` : ""}
+                  </div>
+                </div>
+              `).join("")}
+            </div>
+          </div>
+        `;
+      }
+
+      // 2. Month Lectures Section
+      if (showLectures && monthLectures.length > 0) {
+        monthLectures.forEach((lec) => {
+          const curr = lec.currentCount || 0;
+          const max = lec.maxCount || 10;
+          const isFull = curr >= max;
+          const badgeColor = isFull ? "bg-rose-50 text-rose-700 border-rose-200" : "bg-emerald-50 text-emerald-700 border-emerald-200";
+
+          html += `
+            <div class="bg-white rounded-xl border border-slate-200 p-4 shadow-2xs hover:shadow-sm transition flex flex-col justify-between">
+              <div>
+                <div class="flex items-center justify-between gap-2 mb-2">
+                  <span class="text-xs font-bold text-slate-800 bg-slate-100 px-2 py-0.5 rounded-md">${escapeHtml(lec.presenter)} 선생님</span>
+                  <span class="text-xs font-semibold px-2 py-0.5 rounded-full border ${badgeColor}">${curr} / ${max}명</span>
+                </div>
+                <h4 class="text-sm font-bold text-slate-900 mb-1 leading-snug line-clamp-2">${escapeHtml(lec.title)}</h4>
+                <p class="text-xs text-slate-500 mb-3 flex items-center gap-1.5">
+                  <i data-lucide="clock" class="w-3.5 h-3.5"></i>
+                  <span>${escapeHtml(lec.date)} (${escapeHtml(lec.time)})</span>
+                </p>
+              </div>
+              <div class="flex items-center gap-1.5 pt-2 border-t border-slate-100">
+                <button type="button" onclick="window.viewLectureDetail('${escapeHtml(lec.id)}')" class="flex-1 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 text-xs font-bold rounded-lg transition text-center cursor-pointer">
+                  상세 &amp; 신청
+                </button>
+                <button type="button" onclick="window.openDeleteModal('${escapeHtml(lec.id)}')" class="px-2.5 py-1.5 text-xs text-rose-600 hover:text-rose-800 hover:bg-rose-50 border border-slate-200 hover:border-rose-200 rounded-lg font-medium transition cursor-pointer flex items-center gap-1" title="강의 삭제">
+                  <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                  <span>삭제</span>
+                </button>
+                ${lec.url ? `<a href="${escapeHtml(lec.url)}" target="_blank" rel="noopener noreferrer" class="p-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs" title="지식샘터 바로가기"><i data-lucide="external-link" class="w-4 h-4"></i></a>` : ''}
+              </div>
+            </div>
+          `;
+        });
+      }
+
+      if (!html) {
         container.innerHTML = `
           <div class="col-span-full py-12 text-center text-slate-400">
             <i data-lucide="inbox" class="w-10 h-10 mx-auto mb-2 stroke-1"></i>
-            <p class="text-sm font-medium">선택된 달에 등록된 강의가 없습니다.</p>
+            <p class="text-sm font-medium">선택된 조건에 등록된 강의 또는 행사가 없습니다.</p>
           </div>
         `;
-        safeRenderIcons();
-        return;
+      } else {
+        container.innerHTML = html;
       }
-
-      container.innerHTML = monthLectures.map((lec) => {
-        const curr = lec.currentCount || 0;
-        const max = lec.maxCount || 10;
-        const isFull = curr >= max;
-        const badgeColor = isFull ? "bg-rose-50 text-rose-700 border-rose-200" : "bg-emerald-50 text-emerald-700 border-emerald-200";
-
-        return `
-          <div class="bg-white rounded-xl border border-slate-200 p-4 shadow-2xs hover:shadow-sm transition flex flex-col justify-between">
-            <div>
-              <div class="flex items-center justify-between gap-2 mb-2">
-                <span class="text-xs font-bold text-slate-800 bg-slate-100 px-2 py-0.5 rounded-md">${escapeHtml(lec.presenter)} 선생님</span>
-                <span class="text-xs font-semibold px-2 py-0.5 rounded-full border ${badgeColor}">${curr} / ${max}명</span>
-              </div>
-              <h4 class="text-sm font-bold text-slate-900 mb-1 leading-snug line-clamp-2">${escapeHtml(lec.title)}</h4>
-              <p class="text-xs text-slate-500 mb-3 flex items-center gap-1.5">
-                <i data-lucide="clock" class="w-3.5 h-3.5"></i>
-                <span>${escapeHtml(lec.date)} (${escapeHtml(lec.time)})</span>
-              </p>
-            </div>
-            <div class="flex items-center gap-1.5 pt-2 border-t border-slate-100">
-              <button type="button" onclick="window.viewLectureDetail('${escapeHtml(lec.id)}')" class="flex-1 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 text-xs font-bold rounded-lg transition text-center cursor-pointer">
-                상세 &amp; 신청
-              </button>
-              <button type="button" onclick="window.openDeleteModal('${escapeHtml(lec.id)}')" class="px-2.5 py-1.5 text-xs text-rose-600 hover:text-rose-800 hover:bg-rose-50 border border-slate-200 hover:border-rose-200 rounded-lg font-medium transition cursor-pointer flex items-center gap-1" title="강의 삭제">
-                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
-                <span>삭제</span>
-              </button>
-              ${lec.url ? `<a href="${escapeHtml(lec.url)}" target="_blank" rel="noopener noreferrer" class="p-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs" title="지식샘터 바로가기"><i data-lucide="external-link" class="w-4 h-4"></i></a>` : ''}
-            </div>
-          </div>
-        `;
-      }).join("");
 
       safeRenderIcons();
     }
@@ -3817,6 +4804,9 @@
     }
 
     function renderFeedbackView() {
+      // Sanitize feedbacksData: remove any deleted items
+      feedbacksData = feedbacksData.filter((f) => f && !deletedFeedbackIds.has(String(f.id)));
+
       const tabBadge = document.getElementById("tabFeedbackCountBadge");
       const statCount = document.getElementById("statFeedbackCount");
       const statHearts = document.getElementById("statFeedbackHearts");
@@ -4019,6 +5009,12 @@
                   <i data-lucide="copy" class="w-4 h-4"></i>
                 </button>
 
+                <!-- Edit Post (수정 버튼) -->
+                <button type="button" onclick="window.openEditFeedbackModal('${escapeHtml(item.id)}')" class="inline-flex items-center gap-1 px-2.5 py-1 text-slate-500 hover:text-amber-700 hover:bg-amber-50 border border-slate-200 hover:border-amber-200 rounded-lg text-xs font-semibold transition cursor-pointer active:scale-95" title="피드백 수정">
+                  <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
+                  <span>수정</span>
+                </button>
+
                 <!-- Delete Post (활성화된 삭제 버튼) -->
                 <button type="button" onclick="window.openDeleteFeedbackModal('${escapeHtml(item.id)}')" class="inline-flex items-center gap-1 px-2.5 py-1 text-slate-500 hover:text-rose-600 hover:bg-rose-50 border border-slate-200 hover:border-rose-200 rounded-lg text-xs font-semibold transition cursor-pointer active:scale-95" title="피드백 삭제">
                   <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
@@ -4213,26 +5209,30 @@
               </div>
 
               <!-- Pain Point Box -->
-              <div class="bg-amber-50/70 border-l-3 border-amber-400 p-3 rounded-r-xl space-y-1">
-                <div class="flex items-center gap-1 text-[11px] font-bold text-amber-800">
-                  <i data-lucide="alert-circle" class="w-3.5 h-3.5 text-amber-600"></i>
-                  <span>현장의 페인포인트 (불편·고민)</span>
+              ${item.painPoint ? `
+                <div class="bg-amber-50/70 border-l-3 border-amber-400 p-3 rounded-r-xl space-y-1">
+                  <div class="flex items-center gap-1 text-[11px] font-bold text-amber-800">
+                    <i data-lucide="alert-circle" class="w-3.5 h-3.5 text-amber-600"></i>
+                    <span>현장의 페인포인트 (불편·고민)</span>
+                  </div>
+                  <p class="text-xs text-slate-700 leading-relaxed font-medium">
+                    "${escapeHtml(item.painPoint)}"
+                  </p>
                 </div>
-                <p class="text-xs text-slate-700 leading-relaxed font-medium">
-                  "${escapeHtml(item.painPoint || "")}"
-                </p>
-              </div>
+              ` : ""}
 
-              <!-- Lecture Idea Box -->
-              <div class="bg-emerald-50/70 border-l-3 border-emerald-500 p-3 rounded-r-xl space-y-1">
-                <div class="flex items-center gap-1 text-[11px] font-bold text-emerald-800">
-                  <i data-lucide="sparkles" class="w-3.5 h-3.5 text-emerald-600"></i>
-                  <span>제안하는 강의 아이디어 (해결 방안)</span>
+              <!-- Lecture Idea & Benchmarking Box -->
+              ${item.lectureIdea ? `
+                <div class="bg-emerald-50/70 border-l-3 border-emerald-500 p-3 rounded-r-xl space-y-1">
+                  <div class="flex items-center gap-1 text-[11px] font-bold text-emerald-800">
+                    <i data-lucide="sparkles" class="w-3.5 h-3.5 text-emerald-600"></i>
+                    <span>제안 강의 아이디어 & 벤치마킹 포인트</span>
+                  </div>
+                  <p class="text-xs text-slate-800 leading-relaxed font-medium whitespace-pre-line">
+                    ${escapeHtml(item.lectureIdea)}
+                  </p>
                 </div>
-                <p class="text-xs text-slate-800 leading-relaxed font-medium">
-                  ${escapeHtml(item.lectureIdea || "")}
-                </p>
-              </div>
+              ` : ""}
             </div>
 
               <!-- Comments Section (아이디어 댓글 및 피드백) -->
@@ -4296,11 +5296,19 @@
                 </button>
               </div>
 
-              <!-- Delete Button -->
-              <button type="button" onclick="window.openDeleteIdeaModal('${escapeHtml(item.id)}')" class="inline-flex items-center gap-1 px-2.5 py-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 border border-transparent hover:border-rose-200 rounded-lg text-xs font-medium transition cursor-pointer" title="아이디어 삭제">
-                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
-                <span class="hidden sm:inline">삭제</span>
-              </button>
+              <div class="flex items-center gap-1">
+                <!-- Edit Button (수정 버튼) -->
+                <button type="button" onclick="window.openEditIdeaModal('${escapeHtml(item.id)}')" class="inline-flex items-center gap-1 px-2.5 py-1 text-slate-500 hover:text-emerald-700 hover:bg-emerald-50 border border-slate-200 hover:border-emerald-200 rounded-lg text-xs font-semibold transition cursor-pointer active:scale-95" title="아이디어 수정">
+                  <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
+                  <span>수정</span>
+                </button>
+
+                <!-- Delete Button (삭제 버튼) -->
+                <button type="button" onclick="window.openDeleteIdeaModal('${escapeHtml(item.id)}')" class="inline-flex items-center gap-1 px-2.5 py-1 text-slate-500 hover:text-rose-600 hover:bg-rose-50 border border-slate-200 hover:border-rose-200 rounded-lg text-xs font-semibold transition cursor-pointer active:scale-95" title="아이디어 삭제">
+                  <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                  <span>삭제</span>
+                </button>
+              </div>
             </div>
           </div>
         `;
@@ -4790,6 +5798,152 @@
       showToast("개선 피드백이 성공적으로 삭제되었습니다.", "info");
     };
 
+    window.setEditFeedbackPreviewImage = function (url) {
+      currentEditFeedbackImageDataUrl = url || "";
+      const previewContainer = document.getElementById("editFbImagePreviewContainer");
+      const previewEl = document.getElementById("editFbImagePreviewEl");
+      if (previewEl) previewEl.src = currentEditFeedbackImageDataUrl;
+      if (previewContainer) {
+        if (currentEditFeedbackImageDataUrl) {
+          previewContainer.classList.remove("hidden");
+        } else {
+          previewContainer.classList.add("hidden");
+        }
+      }
+      safeRenderIcons();
+    };
+
+    window.openEditFeedbackModal = function (recordId) {
+      const record = feedbacksData.find((f) => String(f.id) === String(recordId));
+      if (!record) {
+        showToast("수정할 피드백 카드를 찾을 수 없습니다.", "error");
+        return;
+      }
+
+      activeEditingFeedbackId = recordId;
+
+      // Populate teacher dropdown
+      const selectEl = document.getElementById("editFeedbackTeacherSelect");
+      if (selectEl) {
+        const allTeachers = Array.from(new Set([
+          ...memberList,
+          record.teacherName,
+          ...lecturesData.map((l) => l.presenter).filter(Boolean)
+        ])).filter(Boolean);
+
+        let opts = '<option value="">-- 작성 강사 선택 --</option>';
+        allTeachers.forEach((t) => {
+          opts += `<option value="${escapeHtml(t)}">${escapeHtml(t)} 강사님</option>`;
+        });
+        selectEl.innerHTML = opts;
+        selectEl.value = record.teacherName || "";
+      }
+
+      const pwInput = document.getElementById("editFeedbackPassword");
+      if (pwInput) pwInput.value = record.password || "1234";
+
+      const titleInput = document.getElementById("editFeedbackTitle");
+      if (titleInput) titleInput.value = record.title || "";
+
+      const dateInput = document.getElementById("editFeedbackDate");
+      if (dateInput) dateInput.value = record.date || getTodayDateInfo().dateStr;
+
+      const catSelect = document.getElementById("editFeedbackCategory");
+      if (catSelect) catSelect.value = record.category || "수업 운영·시간 관리";
+
+      window.setEditFeedbackPreviewImage(record.imageUrl || "");
+
+      const beforeInput = document.getElementById("editFeedbackBefore");
+      if (beforeInput) beforeInput.value = record.beforeIssue || "";
+
+      const improvInput = document.getElementById("editFeedbackImprovement");
+      if (improvInput) improvInput.value = record.improvementNote || "";
+
+      const tipInput = document.getElementById("editFeedbackTip");
+      if (tipInput) tipInput.value = record.teacherTip || "";
+
+      openModal("modalEditFeedback");
+      safeRenderIcons();
+    };
+
+    window.submitEditFeedback = async function (e) {
+      if (e && typeof e.preventDefault === "function") {
+        e.preventDefault();
+      }
+
+      if (!activeEditingFeedbackId) {
+        closeModal("modalEditFeedback");
+        return;
+      }
+
+      const targetRecord = feedbacksData.find((f) => String(f.id) === String(activeEditingFeedbackId));
+      if (!targetRecord) {
+        closeModal("modalEditFeedback");
+        showToast("수정 대상 피드백을 찾을 수 없습니다.", "error");
+        return;
+      }
+
+      const enteredPw = document.getElementById("editFeedbackPassword")?.value.trim() || "";
+      const isMaster = isAdminLoggedIn || enteredPw === "admin1234";
+      const isOwner = !targetRecord.password || targetRecord.password === "1234" || enteredPw === (targetRecord.password || "1234") || enteredPw === "1234";
+
+      if (!isMaster && !isOwner) {
+        showToast("비밀번호가 일치하지 않습니다. (등록 시 비밀번호 또는 기본: 1234)", "error");
+        document.getElementById("editFeedbackPassword")?.focus();
+        return;
+      }
+
+      const teacherSelect = document.getElementById("editFeedbackTeacherSelect");
+      const teacherName = teacherSelect ? teacherSelect.value.trim() : "";
+      if (!teacherName) {
+        showToast("작성 강사 닉네임을 선택해주세요.", "error");
+        teacherSelect?.focus();
+        return;
+      }
+
+      const title = document.getElementById("editFeedbackTitle")?.value.trim() || "";
+      const date = document.getElementById("editFeedbackDate")?.value || getTodayDateInfo().dateStr;
+      const category = document.getElementById("editFeedbackCategory")?.value || "수업 운영·시간 관리";
+      const beforeIssue = document.getElementById("editFeedbackBefore")?.value.trim() || "";
+      const improvementNote = document.getElementById("editFeedbackImprovement")?.value.trim() || "";
+      const teacherTip = document.getElementById("editFeedbackTip")?.value.trim() || "";
+
+      if (!title) {
+        showToast("강의명 / 수업 주제를 입력해주세요.", "error");
+        document.getElementById("editFeedbackTitle")?.focus();
+        return;
+      }
+
+      if (!improvementNote) {
+        showToast("개선 방향 및 실천 내용을 입력해주세요.", "error");
+        document.getElementById("editFeedbackImprovement")?.focus();
+        return;
+      }
+
+      targetRecord.teacherName = teacherName;
+      targetRecord.title = title;
+      targetRecord.date = date;
+      targetRecord.category = category;
+      targetRecord.imageUrl = currentEditFeedbackImageDataUrl || targetRecord.imageUrl || "";
+      targetRecord.beforeIssue = beforeIssue;
+      targetRecord.improvementNote = improvementNote;
+      targetRecord.teacherTip = teacherTip;
+      if (enteredPw) {
+        targetRecord.password = enteredPw;
+      }
+      targetRecord.updatedAt = new Date().toISOString();
+
+      await saveFeedbackToDb(targetRecord);
+
+      closeModal("modalEditFeedback");
+      activeEditingFeedbackId = null;
+
+      if (typeof confetti === "function") {
+        confetti({ particleCount: 50, spread: 65, origin: { y: 0.6 } });
+      }
+      showToast(`${teacherName} 강사님의 개선 피드백이 성공적으로 수정되었습니다! ✨`);
+    };
+
     // [Idea Collection Window Handlers]
     window.openRegisterIdeaModal = function () {
       updateIdeaTeacherDropdown();
@@ -4840,15 +5994,9 @@
         return;
       }
 
-      if (!painPoint) {
-        showToast("수업 현장의 페인포인트를 입력해주세요.", "error");
+      if (!painPoint && !lectureIdea) {
+        showToast("페인포인트 또는 강의 아이디어(벤치마킹) 중 최소 하나는 입력해주세요.", "error");
         document.getElementById("regIdeaPainPoint")?.focus();
-        return;
-      }
-
-      if (!lectureIdea) {
-        showToast("제안하는 강의 아이디어를 입력해주세요.", "error");
-        document.getElementById("regIdeaSolution")?.focus();
         return;
       }
 
@@ -4915,6 +6063,119 @@
       closeModal("modalDeleteIdea");
       activeDeletingIdeaId = null;
       showToast("강의 아이디어가 성공적으로 삭제되었습니다.", "info");
+    };
+
+    window.openEditIdeaModal = function (recordId) {
+      const record = ideasData.find((i) => String(i.id) === String(recordId));
+      if (!record) {
+        showToast("수정할 아이디어 카드를 찾을 수 없습니다.", "error");
+        return;
+      }
+
+      activeEditingIdeaId = recordId;
+
+      const adminMembers = Array.from(new Set(memberList)).filter(Boolean);
+      const selectEl = document.getElementById("editIdeaTeacherSelect");
+      if (selectEl) {
+        const teacherList = Array.from(new Set([...adminMembers, record.teacherName])).filter(Boolean);
+        let opts = '<option value="">-- 제안 교사 선택 --</option>';
+        teacherList.forEach((t) => {
+          opts += `<option value="${escapeHtml(t)}">${escapeHtml(t)} 선생님</option>`;
+        });
+        selectEl.innerHTML = opts;
+        selectEl.value = record.teacherName || "";
+      }
+
+      const pwInput = document.getElementById("editIdeaPassword");
+      if (pwInput) pwInput.value = record.password || "1234";
+
+      const titleInput = document.getElementById("editIdeaTitle");
+      if (titleInput) titleInput.value = record.title || "";
+
+      const catSelect = document.getElementById("editIdeaCategory");
+      if (catSelect) catSelect.value = record.category || "초등";
+
+      const painInput = document.getElementById("editIdeaPainPoint");
+      if (painInput) painInput.value = record.painPoint || "";
+
+      const solInput = document.getElementById("editIdeaSolution");
+      if (solInput) solInput.value = record.lectureIdea || "";
+
+      openModal("modalEditIdea");
+      safeRenderIcons();
+    };
+
+    window.submitEditIdea = async function (e) {
+      if (e && typeof e.preventDefault === "function") {
+        e.preventDefault();
+      }
+
+      if (!activeEditingIdeaId) {
+        closeModal("modalEditIdea");
+        return;
+      }
+
+      const targetRecord = ideasData.find((i) => String(i.id) === String(activeEditingIdeaId));
+      if (!targetRecord) {
+        closeModal("modalEditIdea");
+        showToast("수정 대상 아이디어를 찾을 수 없습니다.", "error");
+        return;
+      }
+
+      const enteredPw = document.getElementById("editIdeaPassword")?.value.trim() || "";
+      const isMaster = isAdminLoggedIn || enteredPw === "admin1234";
+      const isOwner = !targetRecord.password || targetRecord.password === "1234" || enteredPw === (targetRecord.password || "1234") || enteredPw === "1234";
+
+      if (!isMaster && !isOwner) {
+        showToast("비밀번호가 일치하지 않습니다. (등록 시 비밀번호 또는 기본: 1234)", "error");
+        document.getElementById("editIdeaPassword")?.focus();
+        return;
+      }
+
+      const teacherSelect = document.getElementById("editIdeaTeacherSelect");
+      const teacherName = teacherSelect ? teacherSelect.value.trim() : "";
+      if (!teacherName) {
+        showToast("제안 교사를 선택해주세요.", "error");
+        teacherSelect?.focus();
+        return;
+      }
+
+      const title = document.getElementById("editIdeaTitle")?.value.trim() || "";
+      const category = document.getElementById("editIdeaCategory")?.value || "초등";
+      const painPoint = document.getElementById("editIdeaPainPoint")?.value.trim() || "";
+      const lectureIdea = document.getElementById("editIdeaSolution")?.value.trim() || "";
+
+      if (!title) {
+        showToast("수업 주제 또는 강의 가제를 입력해주세요.", "error");
+        document.getElementById("editIdeaTitle")?.focus();
+        return;
+      }
+
+      if (!painPoint && !lectureIdea) {
+        showToast("페인포인트 또는 강의 아이디어(벤치마킹) 중 최소 하나는 입력해주세요.", "error");
+        document.getElementById("editIdeaPainPoint")?.focus();
+        return;
+      }
+
+      targetRecord.teacherName = teacherName;
+      targetRecord.title = title;
+      targetRecord.category = category;
+      targetRecord.painPoint = painPoint;
+      targetRecord.lectureIdea = lectureIdea;
+      if (enteredPw) {
+        targetRecord.password = enteredPw;
+      }
+      targetRecord.updatedAt = new Date().toISOString();
+
+      await saveIdeaToDb(targetRecord);
+
+      closeModal("modalEditIdea");
+      activeEditingIdeaId = null;
+
+      if (typeof confetti === "function") {
+        confetti({ particleCount: 50, spread: 65, origin: { y: 0.6 } });
+      }
+      showToast(`${teacherName} 선생님의 강의 아이디어가 성공적으로 수정되었습니다! 🎉`);
     };
 
     window.toggleIdeaCheer = async function (recordId) {
@@ -7121,6 +8382,82 @@
         }
       });
 
+      // Feedback Edit Modal Listeners
+      document.querySelectorAll(".btnEditFbPresetPhoto").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const presetKey = btn.getAttribute("data-preset");
+          if (presetKey && PRESET_FEEDBACK_PHOTOS[presetKey]) {
+            window.setEditFeedbackPreviewImage(PRESET_FEEDBACK_PHOTOS[presetKey]);
+            showToast("추천 수업 사진이 선택되었습니다.", "info");
+          }
+        });
+      });
+
+      document.getElementById("btnRemoveEditFbImage")?.addEventListener("click", () => {
+        window.setEditFeedbackPreviewImage("");
+        const fileInput = document.getElementById("editFeedbackFileInput");
+        if (fileInput) fileInput.value = "";
+      });
+
+      document.getElementById("editFeedbackFileInput")?.addEventListener("change", (e) => {
+        const file = e.target.files && e.target.files[0];
+        if (!file) return;
+
+        if (!file.type.startsWith("image/")) {
+          showToast("이미지 파일(JPG, PNG, WebP 등)만 업로드 가능합니다.", "error");
+          return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          const img = new Image();
+          img.onload = () => {
+            const maxDimension = 800;
+            let width = img.width;
+            let height = img.height;
+
+            if (width > maxDimension || height > maxDimension) {
+              if (width > height) {
+                height = Math.round((height * maxDimension) / width);
+                width = maxDimension;
+              } else {
+                width = Math.round((width * maxDimension) / height);
+                height = maxDimension;
+              }
+            }
+
+            const canvas = document.createElement("canvas");
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext("2d");
+            if (ctx) {
+              ctx.imageSmoothingEnabled = true;
+              ctx.imageSmoothingQuality = "high";
+              ctx.drawImage(img, 0, 0, width, height);
+              const compressedDataUrl = canvas.toDataURL("image/jpeg", 0.82);
+              window.setEditFeedbackPreviewImage(compressedDataUrl);
+              showToast("수정할 사진이 등록되었습니다!");
+            } else {
+              window.setEditFeedbackPreviewImage(event.target.result);
+            }
+          };
+          img.onerror = () => {
+            showToast("이미지를 불러오는 데 실패했습니다.", "error");
+          };
+          img.src = event.target.result;
+        };
+        reader.readAsDataURL(file);
+      });
+
+      const formEditFeedback = document.getElementById("formEditFeedback");
+      formEditFeedback?.addEventListener("submit", (e) => {
+        window.submitEditFeedback(e);
+      });
+
+      document.getElementById("btnSubmitEditFeedback")?.addEventListener("click", (e) => {
+        window.submitEditFeedback(e);
+      });
+
       // ====================================================
       // 11. Idea Collection Tab Event Listeners
       // ====================================================
@@ -7182,6 +8519,16 @@
         if (searchIdeaInput) searchIdeaInput.value = "";
         btnClearIdeaSearch.classList.add("hidden");
         renderIdeaView();
+      });
+
+      // Idea Edit Modal Listeners
+      const formEditIdea = document.getElementById("formEditIdea");
+      formEditIdea?.addEventListener("submit", (e) => {
+        window.submitEditIdea(e);
+      });
+
+      document.getElementById("btnSubmitEditIdea")?.addEventListener("click", (e) => {
+        window.submitEditIdea(e);
       });
 
       // Setup eye icon visibility toggles
