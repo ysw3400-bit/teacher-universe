@@ -243,6 +243,16 @@
               </button>
             </div>
 
+            <!-- Admin Calendar Event Add Button -->
+            <button id="btnCalendarAddEvent" type="button" onclick="window.openCalendarEventModal()" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white text-xs sm:text-sm font-bold rounded-lg shadow-2xs transition cursor-pointer active:scale-95" title="관리자 권한: 캘린더에 새 행사 및 공식 일정 추가">
+              <i data-lucide="calendar-plus" class="w-4 h-4 text-purple-200"></i>
+              <span>행사 추가</span>
+              <span class="text-[10px] bg-purple-800/80 px-1.5 py-0.2 rounded text-purple-200 font-medium">관리자</span>
+            </button>
+
+            <span class="text-xs px-2 py-0.5 rounded-md bg-purple-50 text-purple-700 border border-purple-200 font-semibold hidden md:inline-flex items-center gap-1">
+              <span class="w-2 h-2 rounded-full bg-purple-600"></span> 📌 행사/일정 연동
+            </span>
             <span class="text-xs px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 font-medium hidden sm:inline">실시간 동기화</span>
           </div>
           <div class="flex items-center gap-2">
@@ -1130,12 +1140,28 @@
           <input type="text" id="editNoticeDateRange" value="2026. 09. 07 ~ 2026. 09. 13" class="w-full text-xs sm:text-sm px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none" />
         </div>
         <div>
-          <label class="block text-xs font-bold text-slate-700 mb-1">공지 제목 *</label>
+          <div class="flex items-center justify-between mb-1">
+            <label class="block text-xs font-bold text-slate-700">공지 제목 *</label>
+            <button type="button" onclick="window.applyBoldToField('editNoticeTitle')" class="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 bg-blue-50 hover:bg-blue-100 text-blue-700 rounded border border-blue-200 transition cursor-pointer" title="선택한 텍스트 굵게 강조 (**강조**)">
+              <i data-lucide="bold" class="w-3 h-3"></i>
+              <span>굵게 B</span>
+            </button>
+          </div>
           <input type="text" id="editNoticeTitle" required class="w-full text-xs sm:text-sm px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none" />
         </div>
         <div>
-          <label class="block text-xs font-bold text-slate-700 mb-1">공지 내용 *</label>
-          <textarea id="editNoticeBody" rows="5" required class="w-full text-xs sm:text-sm px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none font-mono"></textarea>
+          <div class="flex items-center justify-between mb-1">
+            <label class="block text-xs font-bold text-slate-700">공지 내용 *</label>
+            <div class="flex items-center gap-2">
+              <span class="text-[11px] text-slate-400">**강조** 또는 Ctrl+B</span>
+              <button type="button" onclick="window.applyBoldToField('editNoticeBody')" class="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 bg-blue-50 hover:bg-blue-100 text-blue-700 rounded border border-blue-200 transition cursor-pointer" title="선택한 텍스트 굵게 강조 (**강조**)">
+                <i data-lucide="bold" class="w-3 h-3"></i>
+                <span>굵게 B</span>
+              </button>
+            </div>
+          </div>
+          <textarea id="editNoticeBody" rows="6" required class="w-full text-xs sm:text-sm px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none font-mono" placeholder="공지할 내용을 작성해주세요. 드래그 후 [굵게 B] 버튼을 누르면 강조됩니다."></textarea>
+          <p class="text-[11px] text-slate-500 mt-1">💡 텍스트를 선택한 후 <b>[굵게 B]</b> 버튼을 누르면 **강조** 서식이 적용되며, 한 번 더 누르면 해제됩니다.</p>
         </div>
         <!-- 1. 지식샘터 공식 포털 링크 배너 설정 -->
         <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
@@ -1288,8 +1314,198 @@
             <span>공지사항 내용 및 연동 배너 수정하기</span>
           </button>
         </div>
+
+        <!-- 5. 캘린더 행사 및 공식 일정 관리 (관리자 전용) -->
+        <div class="pt-3 border-t border-slate-100">
+          <div class="flex items-center justify-between mb-2">
+            <label class="block text-xs font-bold text-slate-800 flex items-center gap-1.5">
+              <i data-lucide="calendar-plus" class="w-3.5 h-3.5 text-purple-600"></i>
+              <span>캘린더 행사 및 공식 일정 관리</span>
+            </label>
+            <span id="adminEventCountBadge" class="text-[10px] px-2 py-0.5 rounded-full font-bold bg-purple-50 text-purple-700 border border-purple-200">0건 등록</span>
+          </div>
+          <button type="button" onclick="closeModal('modalAdmin'); window.openCalendarEventModal();" class="w-full py-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white text-xs font-bold rounded-lg shadow-2xs flex items-center justify-center gap-1.5 transition cursor-pointer">
+            <i data-lucide="calendar-plus" class="w-4 h-4"></i>
+            <span>캘린더에 새 행사/일정 추가하기</span>
+          </button>
+        </div>
       </div>
 
+    </div>
+  </div>
+
+  <!-- 5-2. 캘린더 행사/공식일정 등록 및 수정 모달 (관리자 권한) -->
+  <div id="modalCalendarEventForm" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 relative animate-in fade-in zoom-in duration-150 max-h-[92vh] overflow-y-auto">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-4 sticky top-0 bg-white z-10">
+        <h3 class="text-base sm:text-lg font-bold text-slate-900 flex items-center gap-2">
+          <i data-lucide="calendar-plus" class="w-5 h-5 text-purple-600"></i>
+          <span id="eventFormModalTitle">새 행사/일정 등록 (관리자)</span>
+        </h3>
+        <button type="button" class="btnModalClose text-slate-400 hover:text-slate-600 p-1 cursor-pointer">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <form id="formCalendarEvent" onsubmit="window.submitCalendarEventForm(event); return false;" class="space-y-4">
+        <input type="hidden" id="eventFormMode" value="create" />
+        <input type="hidden" id="eventFormId" value="" />
+
+        <!-- Title -->
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">행사/일정명 *</label>
+          <input type="text" id="eventInputTitle" required placeholder="예: 2026 지식샘터 강사진 정기 역량강화 워크숍" class="w-full text-xs sm:text-sm px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:outline-none" />
+        </div>
+
+        <!-- Date & End Date -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">행사 시작일 *</label>
+            <input type="date" id="eventInputDate" required class="w-full text-xs sm:text-sm px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:outline-none" />
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">
+              <span>행사 종료일</span>
+              <span class="text-[11px] text-slate-400 font-normal">(당일 행사 시 시작일과 동일)</span>
+            </label>
+            <input type="date" id="eventInputEndDate" class="w-full text-xs sm:text-sm px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:outline-none" />
+          </div>
+        </div>
+
+        <!-- Time & Category -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">행사 시간</label>
+            <input type="text" id="eventInputTime" placeholder="예: 14:00 ~ 16:30 또는 종일" class="w-full text-xs sm:text-sm px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:outline-none" />
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">행사 카테고리 *</label>
+            <select id="eventInputCategory" required class="w-full text-xs sm:text-sm px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:outline-none bg-white">
+              <option value="공식행사">🏛️ 공식행사</option>
+              <option value="교원연수">📖 교원연수</option>
+              <option value="워크숍">💡 워크숍</option>
+              <option value="학사일정">📅 학사일정</option>
+              <option value="모임·특강">👥 모임·특강</option>
+              <option value="기타">📌 기타 일정</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Location & Color Theme -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">장소 / 온라인 접속 링크</label>
+            <input type="text" id="eventInputLocation" placeholder="예: 온라인 Zoom 회의실, 시청각실" class="w-full text-xs sm:text-sm px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:outline-none" />
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">캘린더 배지 색상</label>
+            <select id="eventInputColor" class="w-full text-xs sm:text-sm px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:outline-none bg-white">
+              <option value="purple">🟣 보라색 (기본 워크숍/공식행사)</option>
+              <option value="indigo">🔵 남색 (학술/연수)</option>
+              <option value="emerald">🟢 초록색 (나눔/소통)</option>
+              <option value="amber">🟠 주황색 (특별모임/알림)</option>
+              <option value="rose">🔴 붉은색 (중요/필수일정)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Description with Bold Toolbar Button -->
+        <div>
+          <div class="flex items-center justify-between mb-1">
+            <label class="block text-xs font-bold text-slate-700">행사 상세 설명 / 참여 안내</label>
+            <button type="button" onclick="window.applyBoldToField('eventInputDescription')" class="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 bg-purple-50 hover:bg-purple-100 text-purple-700 rounded border border-purple-200 transition cursor-pointer" title="선택한 텍스트 굵게 강조 (**강조**)">
+              <i data-lucide="bold" class="w-3 h-3"></i>
+              <span>굵게 B</span>
+            </button>
+          </div>
+          <textarea id="eventInputDescription" rows="3" placeholder="행사 상세 내용 및 준비물, 참여 대상 안내를 입력해주세요. (**굵은 글씨** 지원)" class="w-full text-xs sm:text-sm px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:outline-none font-sans"></textarea>
+          <p class="text-[11px] text-slate-400 mt-0.5">💡 텍스트를 드래그하고 [굵게 B]를 누르면 캘린더 상세 팝업에서 굵은 글씨로 강조됩니다.</p>
+        </div>
+
+        <!-- Admin Password Check (shown when not logged in) -->
+        <div id="eventAdminPwSection" class="bg-purple-50/70 p-3 rounded-xl border border-purple-200 space-y-1">
+          <label class="block text-xs font-bold text-purple-950 flex items-center justify-between">
+            <span>관리자 비밀번호 확인 *</span>
+            <span class="text-[11px] text-purple-700 font-normal">기본: admin1234</span>
+          </label>
+          <div class="relative">
+            <input type="password" id="eventAdminPwInput" placeholder="관리자 비밀번호 입력" class="w-full text-xs sm:text-sm pl-3 pr-9 py-1.5 bg-white border border-purple-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:outline-none" />
+            <button type="button" class="btnTogglePassword absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 focus:outline-none cursor-pointer" data-target="eventAdminPwInput">
+              <i data-lucide="eye" class="w-4 h-4"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="flex justify-end gap-2 pt-3 border-t border-slate-100">
+          <button type="button" class="btnModalClose px-4 py-2 text-xs sm:text-sm text-slate-600 hover:bg-slate-100 rounded-lg font-medium cursor-pointer">
+            취소
+          </button>
+          <button type="submit" id="btnSubmitCalendarEvent" class="px-5 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white text-xs sm:text-sm font-bold rounded-lg shadow-sm flex items-center gap-1.5 cursor-pointer active:scale-95">
+            <i data-lucide="check-circle" class="w-4 h-4"></i>
+            <span id="btnSubmitCalendarEventLabel">행사 등록 완료</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 5-3. 캘린더 행사 상세 팝업 모달 -->
+  <div id="modalEventDetail" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 relative animate-in fade-in zoom-in duration-150">
+      <div class="flex items-start justify-between pb-3 border-b border-slate-100 mb-4">
+        <div class="space-y-1">
+          <div class="flex items-center gap-2">
+            <span id="eventDetailBadge" class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-purple-100 text-purple-800 border border-purple-200">
+              📌 행사
+            </span>
+            <span id="eventDetailCategory" class="text-xs font-semibold text-slate-500"></span>
+          </div>
+          <h3 id="eventDetailTitle" class="text-base sm:text-lg font-bold text-slate-900 leading-snug"></h3>
+        </div>
+        <button type="button" class="btnModalClose text-slate-400 hover:text-slate-600 p-1 cursor-pointer">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <div class="space-y-3.5 text-xs sm:text-sm">
+        <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200 space-y-2">
+          <div class="flex items-center gap-2 text-slate-700">
+            <i data-lucide="calendar" class="w-4 h-4 text-purple-600 shrink-0"></i>
+            <span class="font-bold text-slate-900">일시:</span>
+            <span id="eventDetailDateText" class="font-medium"></span>
+          </div>
+          <div id="eventDetailLocationWrap" class="flex items-center gap-2 text-slate-700">
+            <i data-lucide="map-pin" class="w-4 h-4 text-purple-600 shrink-0"></i>
+            <span class="font-bold text-slate-900">장소:</span>
+            <span id="eventDetailLocationText" class="font-medium"></span>
+          </div>
+        </div>
+
+        <div class="space-y-1.5">
+          <label class="block font-bold text-slate-800 flex items-center gap-1.5">
+            <i data-lucide="info" class="w-4 h-4 text-purple-600"></i>
+            <span>행사 상세 내용 및 안내</span>
+          </label>
+          <div id="eventDetailDescription" class="p-3.5 bg-purple-50/50 rounded-xl border border-purple-100 text-slate-800 leading-relaxed whitespace-pre-line text-xs sm:text-sm font-medium"></div>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-between pt-4 mt-4 border-t border-slate-100">
+        <button type="button" class="btnModalClose px-4 py-2 text-xs sm:text-sm text-slate-600 hover:bg-slate-100 rounded-lg font-semibold cursor-pointer">
+          닫기
+        </button>
+        <div class="flex items-center gap-2">
+          <!-- Admin actions: Edit and Delete -->
+          <button type="button" id="btnEventDetailEdit" onclick="window.editCalendarEventFromDetail()" class="px-3.5 py-2 bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200 text-xs sm:text-sm font-bold rounded-lg flex items-center gap-1 transition cursor-pointer active:scale-95">
+            <i data-lucide="edit-3" class="w-4 h-4"></i>
+            <span>행사 수정</span>
+          </button>
+          <button type="button" id="btnEventDetailDelete" onclick="window.deleteCalendarEventFromDetail()" class="px-3.5 py-2 bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 text-xs sm:text-sm font-bold rounded-lg flex items-center gap-1 transition cursor-pointer active:scale-95">
+            <i data-lucide="trash-2" class="w-4 h-4"></i>
+            <span>행사 삭제</span>
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -1674,25 +1890,43 @@
 
         <!-- Improvement Notes: Problem -> Solution -> Takeaway Tips -->
         <div>
-          <label class="block text-xs font-bold text-slate-700 mb-1">
-            <span>수업 중 겪었던 문제점 및 애로사항 (선택)</span>
-          </label>
+          <div class="flex items-center justify-between mb-1">
+            <label class="block text-xs font-bold text-slate-700">
+              수업 중 겪었던 문제점 및 애로사항 (선택)
+            </label>
+            <button type="button" onclick="window.applyBoldToField('regFeedbackBefore')" class="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 bg-amber-50 hover:bg-amber-100 text-amber-800 rounded border border-amber-200 transition cursor-pointer" title="선택한 텍스트 굵게 강조 (**강조**)">
+              <i data-lucide="bold" class="w-3 h-3"></i>
+              <span>굵게 B</span>
+            </button>
+          </div>
           <textarea id="regFeedbackBefore" rows="2" placeholder="예: 이론 설명을 길게 하느라 실습 시간이 부족했거나, 학생들이 마이크를 켜지 않아 어색한 침묵이 흘렀던 점 등" class="w-full text-xs sm:text-sm px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:outline-none"></textarea>
         </div>
 
         <div>
-          <label class="block text-xs font-bold text-slate-700 mb-1">
-            <span>어떻게 개선했나요? (개선 방향 및 실천 내용) *</span>
-          </label>
-          <textarea id="regFeedbackImprovement" required rows="3" placeholder="예: 복잡한 설정은 미리 템플릿 복제 링크로 배포하고, 익명 실시간 설문 도구(슬라이도)를 통해 전원 참여를 이끌어냈습니다." class="w-full text-xs sm:text-sm px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:outline-none"></textarea>
+          <div class="flex items-center justify-between mb-1">
+            <label class="block text-xs font-bold text-slate-700">
+              어떻게 개선했나요? (개선 방향 및 실천 내용) *
+            </label>
+            <button type="button" onclick="window.applyBoldToField('regFeedbackImprovement')" class="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 bg-amber-50 hover:bg-amber-100 text-amber-800 rounded border border-amber-200 transition cursor-pointer" title="선택한 텍스트 굵게 강조 (**강조**)">
+              <i data-lucide="bold" class="w-3 h-3"></i>
+              <span>굵게 B</span>
+            </button>
+          </div>
+          <textarea id="regFeedbackImprovement" required rows="3" placeholder="예: 복잡한 설정은 미리 템플릿 복제 링크로 배포하고, **익명 실시간 설문 도구(슬라이도)**를 통해 전원 참여를 이끌어냈습니다." class="w-full text-xs sm:text-sm px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:outline-none"></textarea>
         </div>
 
         <div>
-          <label class="block text-xs font-bold text-slate-700 mb-1 flex items-center gap-1">
-            <i data-lucide="lightbulb" class="w-3.5 h-3.5 text-amber-500"></i>
-            <span>동료 강사에게 전하는 핵심 꿀팁 / 배운 점</span>
-          </label>
-          <input type="text" id="regFeedbackTip" placeholder="예: 💡 실습 전 3분 요약 숏폼 영상 QR을 학습지에 인쇄해두면 개별 질문이 70% 감소합니다!" class="w-full text-xs sm:text-sm px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:outline-none bg-amber-50/30" />
+          <div class="flex items-center justify-between mb-1">
+            <label class="block text-xs font-bold text-slate-700 flex items-center gap-1">
+              <i data-lucide="lightbulb" class="w-3.5 h-3.5 text-amber-500"></i>
+              <span>동료 강사에게 전하는 핵심 꿀팁 / 배운 점</span>
+            </label>
+            <button type="button" onclick="window.applyBoldToField('regFeedbackTip')" class="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 bg-amber-50 hover:bg-amber-100 text-amber-800 rounded border border-amber-200 transition cursor-pointer" title="선택한 텍스트 굵게 강조 (**강조**)">
+              <i data-lucide="bold" class="w-3 h-3"></i>
+              <span>굵게 B</span>
+            </button>
+          </div>
+          <input type="text" id="regFeedbackTip" placeholder="예: 💡 실습 전 3분 요약 숏폼 영상 QR을 학습지에 인쇄해두면 개별 질문이 70% 감소합니다! (**굵은 글씨** 지원)" class="w-full text-xs sm:text-sm px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:outline-none bg-amber-50/30" />
         </div>
 
         <div class="flex justify-end gap-2 pt-3 border-t border-slate-100">
@@ -1873,25 +2107,43 @@
 
         <!-- Improvement Notes -->
         <div>
-          <label class="block text-xs font-bold text-slate-700 mb-1">
-            <span>수업 중 겪었던 문제점 및 애로사항 (선택)</span>
-          </label>
+          <div class="flex items-center justify-between mb-1">
+            <label class="block text-xs font-bold text-slate-700">
+              수업 중 겪었던 문제점 및 애로사항 (선택)
+            </label>
+            <button type="button" onclick="window.applyBoldToField('editFeedbackBefore')" class="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 bg-amber-50 hover:bg-amber-100 text-amber-800 rounded border border-amber-200 transition cursor-pointer" title="선택한 텍스트 굵게 강조 (**강조**)">
+              <i data-lucide="bold" class="w-3 h-3"></i>
+              <span>굵게 B</span>
+            </button>
+          </div>
           <textarea id="editFeedbackBefore" rows="2" placeholder="예: 이론 설명을 길게 하느라 실습 시간이 부족했거나..." class="w-full text-xs sm:text-sm px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:outline-none"></textarea>
         </div>
 
         <div>
-          <label class="block text-xs font-bold text-slate-700 mb-1">
-            <span>어떻게 개선했나요? (개선 방향 및 실천 내용) *</span>
-          </label>
+          <div class="flex items-center justify-between mb-1">
+            <label class="block text-xs font-bold text-slate-700">
+              어떻게 개선했나요? (개선 방향 및 실천 내용) *
+            </label>
+            <button type="button" onclick="window.applyBoldToField('editFeedbackImprovement')" class="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 bg-amber-50 hover:bg-amber-100 text-amber-800 rounded border border-amber-200 transition cursor-pointer" title="선택한 텍스트 굵게 강조 (**강조**)">
+              <i data-lucide="bold" class="w-3 h-3"></i>
+              <span>굵게 B</span>
+            </button>
+          </div>
           <textarea id="editFeedbackImprovement" required rows="3" placeholder="예: 복잡한 설정은 미리 템플릿 복제 링크로 배포하고..." class="w-full text-xs sm:text-sm px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:outline-none"></textarea>
         </div>
 
         <div>
-          <label class="block text-xs font-bold text-slate-700 mb-1 flex items-center gap-1">
-            <i data-lucide="lightbulb" class="w-3.5 h-3.5 text-amber-500"></i>
-            <span>동료 강사에게 전하는 핵심 꿀팁 / 배운 점</span>
-          </label>
-          <input type="text" id="editFeedbackTip" placeholder="예: 💡 실습 전 3분 요약 숏폼 영상 QR을 학습지에 인쇄..." class="w-full text-xs sm:text-sm px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:outline-none bg-amber-50/30" />
+          <div class="flex items-center justify-between mb-1">
+            <label class="block text-xs font-bold text-slate-700 flex items-center gap-1">
+              <i data-lucide="lightbulb" class="w-3.5 h-3.5 text-amber-500"></i>
+              <span>동료 강사에게 전하는 핵심 꿀팁 / 배운 점</span>
+            </label>
+            <button type="button" onclick="window.applyBoldToField('editFeedbackTip')" class="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 bg-amber-50 hover:bg-amber-100 text-amber-800 rounded border border-amber-200 transition cursor-pointer" title="선택한 텍스트 굵게 강조 (**강조**)">
+              <i data-lucide="bold" class="w-3 h-3"></i>
+              <span>굵게 B</span>
+            </button>
+          </div>
+          <input type="text" id="editFeedbackTip" placeholder="예: 💡 실습 전 3분 요약 숏폼 영상 QR을 학습지에 인쇄... (**굵은 글씨** 지원)" class="w-full text-xs sm:text-sm px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:outline-none bg-amber-50/30" />
         </div>
 
         <div class="flex justify-end gap-2 pt-3 border-t border-slate-100">
@@ -1974,13 +2226,19 @@
 
         <!-- 1. 페인포인트 작성칸 (Pain Point) -->
         <div class="bg-amber-50/60 p-3.5 rounded-xl border border-amber-200 space-y-1.5">
-          <label class="block text-xs font-bold text-amber-900 flex items-center justify-between">
-            <span class="flex items-center gap-1.5">
+          <div class="flex items-center justify-between">
+            <label class="block text-xs font-bold text-amber-900 flex items-center gap-1.5">
               <i data-lucide="alert-circle" class="w-4 h-4 text-amber-600"></i>
               <span>수업 현장의 페인포인트 (불편함, 고민, 문제점)</span>
-            </span>
-            <span class="text-[11px] px-2 py-0.5 rounded-full font-medium bg-amber-100 text-amber-800 border border-amber-200">둘 중 1개 이상 작성</span>
-          </label>
+            </label>
+            <div class="flex items-center gap-1.5">
+              <button type="button" onclick="window.applyBoldToField('regIdeaPainPoint')" class="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 bg-amber-100 hover:bg-amber-200 text-amber-900 rounded border border-amber-300 transition cursor-pointer" title="선택한 텍스트 굵게 강조 (**강조**)">
+                <i data-lucide="bold" class="w-3 h-3"></i>
+                <span>굵게 B</span>
+              </button>
+              <span class="text-[11px] px-2 py-0.5 rounded-full font-medium bg-amber-100 text-amber-800 border border-amber-200">둘 중 1개 이상 작성</span>
+            </div>
+          </div>
           <textarea id="regIdeaPainPoint" rows="3" placeholder="예: 매 학기마다 학생 개별 상담 일지와 출결 특이사항이 종이와 엑셀에 흩어져 있어 학기말에 취합하기 너무 번거롭고 시간이 오래 걸립니다." class="w-full text-xs sm:text-sm px-3 py-2 border border-amber-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:outline-none bg-white"></textarea>
           <p class="text-[11px] text-amber-700/90 leading-tight">💡 수업 준비나 진행 중 겪었던 구체적인 불편이나 학생들의 반응 문제를 적어주세요. (강의 아이디어 작성 시 생략 가능)</p>
         </div>
@@ -1992,11 +2250,17 @@
               <i data-lucide="sparkles" class="w-4 h-4 text-emerald-600"></i>
               <span>강의 아이디어 & 타 강의 벤치마킹 포인트</span>
             </label>
-            <span class="text-[11px] px-2 py-0.5 rounded-full font-semibold bg-emerald-100 text-emerald-800 border border-emerald-200">
-              둘 중 1개 이상 작성
-            </span>
+            <div class="flex items-center gap-1.5">
+              <button type="button" onclick="window.applyBoldToField('regIdeaSolution')" class="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 bg-emerald-100 hover:bg-emerald-200 text-emerald-900 rounded border border-emerald-300 transition cursor-pointer" title="선택한 텍스트 굵게 강조 (**강조**)">
+                <i data-lucide="bold" class="w-3 h-3"></i>
+                <span>굵게 B</span>
+              </button>
+              <span class="text-[11px] px-2 py-0.5 rounded-full font-semibold bg-emerald-100 text-emerald-800 border border-emerald-200">
+                둘 중 1개 이상 작성
+              </span>
+            </div>
           </div>
-          <textarea id="regIdeaSolution" rows="4" placeholder="예:&#10;1) 강의 해결 구상: 노션(Notion) 무료 템플릿으로 학생별 상담 일지·출결·과제 현황을 1페이지로 통합하고, 학급 운영에 바로 적용하는 2시간 실습 강의를 제안합니다.&#10;&#10;2) 타 강의에서 벤치마킹할 점: 지난 00선생님 연수에서 진행하신 '수업 전 사전 복제 템플릿 배포' 방식과 '슬라이도 실시간 익명 질의응답' 운영 팁을 벤치마킹하여 실습 시간 부족과 질문 부담을 해결하고자 합니다." class="w-full text-xs sm:text-sm p-3 border border-emerald-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none bg-white leading-relaxed"></textarea>
+          <textarea id="regIdeaSolution" rows="4" placeholder="예:&#10;1) 강의 해결 구상: 노션(Notion) 무료 템플릿으로 학생별 상담 일지·출결·과제 현황을 1페이지로 통합하고, 학급 운영에 바로 적용하는 2시간 실습 강의를 제안합니다.&#10;&#10;2) 타 강의에서 벤치마킹할 점: 지난 00선생님 연수에서 진행하신 '**사전 복제 템플릿 배포**' 방식과 '**슬라이도 실시간 익명 질의응답**' 운영 팁을 벤치마킹하여 실습 시간 부족과 질문 부담을 해결하고자 합니다." class="w-full text-xs sm:text-sm p-3 border border-emerald-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none bg-white leading-relaxed"></textarea>
           <div class="bg-white/80 p-2.5 rounded-lg border border-emerald-200/80 text-[11px] text-emerald-900 space-y-1">
             <p class="font-bold flex items-center gap-1 text-emerald-800">
               <i data-lucide="info" class="w-3.5 h-3.5 text-emerald-600"></i>
@@ -2117,13 +2381,19 @@
 
         <!-- 1. 페인포인트 작성칸 (Pain Point) -->
         <div class="bg-amber-50/60 p-3.5 rounded-xl border border-amber-200 space-y-1.5">
-          <label class="block text-xs font-bold text-amber-900 flex items-center justify-between">
-            <span class="flex items-center gap-1.5">
+          <div class="flex items-center justify-between">
+            <label class="block text-xs font-bold text-amber-900 flex items-center gap-1.5">
               <i data-lucide="alert-circle" class="w-4 h-4 text-amber-600"></i>
               <span>수업 현장의 페인포인트 (불편함, 고민, 문제점)</span>
-            </span>
-            <span class="text-[11px] px-2 py-0.5 rounded-full font-medium bg-amber-100 text-amber-800 border border-amber-200">둘 중 1개 이상 작성</span>
-          </label>
+            </label>
+            <div class="flex items-center gap-1.5">
+              <button type="button" onclick="window.applyBoldToField('editIdeaPainPoint')" class="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 bg-amber-100 hover:bg-amber-200 text-amber-900 rounded border border-amber-300 transition cursor-pointer" title="선택한 텍스트 굵게 강조 (**강조**)">
+                <i data-lucide="bold" class="w-3 h-3"></i>
+                <span>굵게 B</span>
+              </button>
+              <span class="text-[11px] px-2 py-0.5 rounded-full font-medium bg-amber-100 text-amber-800 border border-amber-200">둘 중 1개 이상 작성</span>
+            </div>
+          </div>
           <textarea id="editIdeaPainPoint" rows="3" placeholder="수업 현장의 페인포인트" class="w-full text-xs sm:text-sm px-3 py-2 border border-amber-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:outline-none bg-white"></textarea>
         </div>
 
@@ -2134,13 +2404,19 @@
               <i data-lucide="sparkles" class="w-4 h-4 text-emerald-600"></i>
               <span>강의 아이디어 & 타 강의 벤치마킹 포인트</span>
             </label>
-            <span class="text-[11px] px-2 py-0.5 rounded-full font-semibold bg-emerald-100 text-emerald-800 border border-emerald-200">
-              둘 중 1개 이상 작성
-            </span>
+            <div class="flex items-center gap-1.5">
+              <button type="button" onclick="window.applyBoldToField('editIdeaSolution')" class="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 bg-emerald-100 hover:bg-emerald-200 text-emerald-900 rounded border border-emerald-300 transition cursor-pointer" title="선택한 텍스트 굵게 강조 (**강조**)">
+                <i data-lucide="bold" class="w-3 h-3"></i>
+                <span>굵게 B</span>
+              </button>
+              <span class="text-[11px] px-2 py-0.5 rounded-full font-semibold bg-emerald-100 text-emerald-800 border border-emerald-200">
+                둘 중 1개 이상 작성
+              </span>
+            </div>
           </div>
           <textarea id="editIdeaSolution" rows="4" placeholder="강의 해결 구상 및 타 강의에서 벤치마킹할 점을 정돈하여 입력해주세요." class="w-full text-xs sm:text-sm p-3 border border-emerald-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none bg-white leading-relaxed"></textarea>
           <p class="text-[11px] text-emerald-800 leading-relaxed">
-            💡 <strong>작성 가이드:</strong> 페인포인트와 강의 아이디어&벤치마킹 중 최소 하나를 작성해주시면 수정 완료할 수 있습니다.
+            💡 <strong>작성 가이드:</strong> 페인포인트와 강의 아이디어&벤치마킹 중 최소 하나를 작성해주시면 수정 완료할 수 있으며, <strong>**강조할 내용**</strong> 또는 [굵게 B] 버튼으로 핵심 내용을 강조할 수 있습니다.
           </p>
         </div>
 
@@ -2228,7 +2504,7 @@
       badge: "이번 주 필독",
       dateRange: `${todayInfo.year}. ${todayInfo.month}. ${todayInfo.day} ~`,
       title: `지식샘터 ${todayInfo.monthInt}월 강의 품앗이 수강 신청 안내`,
-      body: `선생님 여러분 안녕하세요! ${todayInfo.monthInt}월 지식샘터 강의 등록 및 수강 신청 안내드립니다.\n\n💡 이번 주 핵심 실천사항\n1. 개설하신 강좌는 지식샘터 링크 및 정원(기본 10명)과 함께 등록해주세요.\n2. 동료 선생님의 강의를 최소 1개 이상 수강 신청하여 품앗이를 완성합시다.`,
+      body: `선생님 여러분 안녕하세요! **${todayInfo.monthInt}월 지식샘터 강의 등록 및 수강 신청** 안내드립니다.\n\n💡 **이번 주 핵심 실천사항**\n1. 개설하신 강좌는 **지식샘터 링크** 및 **정원(기본 10명)**과 함께 등록해주세요.\n2. 동료 선생님의 강의를 **최소 1개 이상 수강 신청**하여 품앗이를 완성합시다.`,
       linkTitle: "지식샘터 공식 포털 바로가기",
       linkUrl: "https://educourse.keris.or.kr",
       refLinkTitle: "참고 사이트 (KERIS 교육정보)",
@@ -2434,6 +2710,41 @@
     let deletedIdeaIds = new Set();
     let deletedFeedbackIds = new Set();
     let deletedAttendedIds = new Set();
+    let deletedEventIds = new Set();
+
+    // Default Calendar Events (행사 및 공식 일정)
+    const DEFAULT_CALENDAR_EVENTS = [
+      {
+        id: "event-default-1",
+        title: "2026 지식샘터 강사진 정기 역량강화 워크숍",
+        date: "2026-10-22",
+        endDate: "2026-10-22",
+        time: "15:00 ~ 17:00",
+        category: "워크숍",
+        location: "온라인 Zoom 회의실 (접속링크 별도 공지)",
+        description: "하반기 지식샘터 강의 개선 및 수업 운영 팁 공유, 우수 강의 교안 나눔 **(필수 참석 권장)**",
+        color: "purple",
+        createdBy: "관리자",
+        createdAt: "2026-10-15T09:00:00.000Z"
+      },
+      {
+        id: "event-default-2",
+        title: "디지털 선도학교 에듀테크 수업 성과 나눔 한마당",
+        date: "2026-10-29",
+        endDate: "2026-10-29",
+        time: "14:00 ~ 16:30",
+        category: "교원연수",
+        location: "한국교육학술정보원(KERIS) 온라인 연수실",
+        description: "AI 및 디지털 도구를 활용한 교과별 학생 맞춤형 수업 사례 발표 및 실시간 질의응답",
+        color: "indigo",
+        createdBy: "관리자",
+        createdAt: "2026-10-16T10:00:00.000Z"
+      }
+    ];
+
+    let calendarEventsData = [...DEFAULT_CALENDAR_EVENTS];
+    let activeEditingEventId = null;
+    let activeViewingEventId = null;
 
     // ----------------------------------------------------
     // Month Dropdown Population & Synchronization
@@ -2539,6 +2850,145 @@
       return "https://" + trimmed;
     }
 
+    // Helper: Rich text markdown bold formatter (**text** or <b>text</b>)
+    function formatRichContent(str) {
+      if (!str) return "";
+      let safe = escapeHtml(String(str));
+      // Replace **text** or __text__ or <b>text</b> or <strong>text</strong> with highlighted bold tag
+      safe = safe.replace(/\*\*([\s\S]+?)\*\*/g, '<strong class="font-extrabold text-slate-950 bg-amber-200/60 px-1 py-0.5 rounded shadow-2xs">$1</strong>');
+      safe = safe.replace(/__([\s\S]+?)__/g, '<strong class="font-extrabold text-slate-950 bg-amber-200/60 px-1 py-0.5 rounded shadow-2xs">$1</strong>');
+      safe = safe.replace(/&lt;b&gt;([\s\S]+?)&lt;\/b&gt;/gi, '<strong class="font-extrabold text-slate-950 bg-amber-200/60 px-1 py-0.5 rounded shadow-2xs">$1</strong>');
+      safe = safe.replace(/&lt;strong&gt;([\s\S]+?)&lt;\/strong&gt;/gi, '<strong class="font-extrabold text-slate-950 bg-amber-200/60 px-1 py-0.5 rounded shadow-2xs">$1</strong>');
+      return safe;
+    }
+
+    // Helper: Apply or toggle bold markdown formatting (**text**)
+    window.applyBoldToField = function (fieldOrId) {
+      const el = (typeof fieldOrId === "string") ? document.getElementById(fieldOrId) : fieldOrId;
+      if (!el) return;
+      const start = el.selectionStart;
+      const end = el.selectionEnd;
+      const val = el.value || "";
+
+      let isUnbold = false;
+
+      if (start !== undefined && end !== undefined && start !== end) {
+        const selected = val.substring(start, end);
+
+        // Case 1: The selected text itself starts with ** and ends with ** (e.g. "**선택텍스트**")
+        if (selected.startsWith("**") && selected.endsWith("**") && selected.length >= 4) {
+          const unwrapped = selected.substring(2, selected.length - 2);
+          el.value = val.substring(0, start) + unwrapped + val.substring(end);
+          el.selectionStart = start;
+          el.selectionEnd = start + unwrapped.length;
+          isUnbold = true;
+        }
+        // Case 2: The text immediately outside the selection has ** on both sides (e.g. "**[선택텍스트]**")
+        else if (start >= 2 && end <= val.length - 2 && val.substring(start - 2, start) === "**" && val.substring(end, end + 2) === "**") {
+          // Remove the outer ** markers
+          el.value = val.substring(0, start - 2) + selected + val.substring(end + 2);
+          el.selectionStart = start - 2;
+          el.selectionEnd = end - 2;
+          isUnbold = true;
+        }
+        // Case 3: Multiple nested asterisks like ****선택텍스트****
+        else if (/^\*+.*\*+$/.test(selected) && selected.length >= 4) {
+          const stripped = selected.replace(/^\*+|\*+$/g, "");
+          el.value = val.substring(0, start) + stripped + val.substring(end);
+          el.selectionStart = start;
+          el.selectionEnd = start + stripped.length;
+          isUnbold = true;
+        }
+        // Case 4: Normal text - wrap in **
+        else {
+          const replaced = `**${selected}**`;
+          el.value = val.substring(0, start) + replaced + val.substring(end);
+          // Keep inner text selected so clicking Bold again toggles it off!
+          el.selectionStart = start + 2;
+          el.selectionEnd = end + 2;
+          isUnbold = false;
+        }
+      } else if (start !== undefined) {
+        // No text explicitly selected (collapsed cursor)
+        const before = val.substring(0, start);
+        const after = val.substring(start);
+
+        // Check if cursor is right between ** and **
+        if (before.endsWith("**") && after.startsWith("**")) {
+          el.value = val.substring(0, start - 2) + val.substring(start + 2);
+          el.selectionStart = start - 2;
+          el.selectionEnd = start - 2;
+          isUnbold = true;
+        } else {
+          // Check if cursor is inside a **...** pair on the current line
+          const lineStart = before.lastIndexOf("\n") + 1;
+          const nextNewline = after.indexOf("\n");
+          const lineEnd = nextNewline === -1 ? val.length : start + nextNewline;
+          const lineText = val.substring(lineStart, lineEnd);
+          const col = start - lineStart;
+
+          const boldRegex = /\*\*([^*]+)\*\*/g;
+          let match;
+          let matchedRange = null;
+          while ((match = boldRegex.exec(lineText)) !== null) {
+            const mStart = match.index;
+            const mEnd = match.index + match[0].length;
+            if (col >= mStart && col <= mEnd) {
+              matchedRange = {
+                absStart: lineStart + mStart,
+                absEnd: lineStart + mEnd,
+                inner: match[1]
+              };
+              break;
+            }
+          }
+
+          if (matchedRange) {
+            // Remove the bold wrapping around current cursor position
+            el.value = val.substring(0, matchedRange.absStart) + matchedRange.inner + val.substring(matchedRange.absEnd);
+            const newCursor = Math.max(matchedRange.absStart, Math.min(start - 2, matchedRange.absStart + matchedRange.inner.length));
+            el.selectionStart = newCursor;
+            el.selectionEnd = newCursor;
+            isUnbold = true;
+          } else {
+            // Insert placeholder and select it so a 2nd click removes it or user can type
+            const insertPlaceholder = "강조할 내용";
+            const insertText = `**${insertPlaceholder}**`;
+            el.value = val.substring(0, start) + insertText + val.substring(start);
+            el.selectionStart = start + 2;
+            el.selectionEnd = start + 2 + insertPlaceholder.length;
+            isUnbold = false;
+          }
+        }
+      } else {
+        el.value += " **강조할 내용** ";
+      }
+      try {
+        el.dispatchEvent(new Event("input", { bubbles: true }));
+        el.dispatchEvent(new Event("change", { bubbles: true }));
+      } catch (e) {}
+      el.focus();
+      if (typeof showToast === "function") {
+        showToast(
+          isUnbold ? "굵은 글씨 강조가 해제되었습니다." : "굵은 글씨 강조(**)가 적용되었습니다. (다시 누르면 해제)",
+          isUnbold ? "default" : "info"
+        );
+      }
+    };
+
+    // Keyboard shortcut listener: Ctrl+B or Cmd+B to toggle bold in any input/textarea
+    document.addEventListener("keydown", function (e) {
+      if ((e.ctrlKey || e.metaKey) && (e.key === "b" || e.key === "B")) {
+        const target = e.target;
+        if (!target) return;
+        const tag = target.tagName;
+        if (tag === "TEXTAREA" || (tag === "INPUT" && (target.type === "text" || !target.type))) {
+          e.preventDefault();
+          window.applyBoldToField(target);
+        }
+      }
+    });
+
     // ----------------------------------------------------
     // LocalStorage Fallback Handler
     // ----------------------------------------------------
@@ -2591,6 +3041,7 @@
       deletedFeedbackIds = new Set();
       deletedAttendedIds = new Set();
       deletedIdeaIds = new Set();
+      deletedEventIds = new Set();
 
       const storedDelFb = localStorage.getItem("kyosa_deleted_feedbacks");
       if (storedDelFb) {
@@ -2604,6 +3055,28 @@
       if (storedDelIdea) {
         try { deletedIdeaIds = new Set(JSON.parse(storedDelIdea)); } catch (e) {}
       }
+      const storedDelEvent = localStorage.getItem("kyosa_deleted_events");
+      if (storedDelEvent) {
+        try { deletedEventIds = new Set(JSON.parse(storedDelEvent)); } catch (e) {}
+      }
+
+      // Load Calendar Events
+      const storedEvents = localStorage.getItem("kyosa_calendar_events");
+      const hasInitEvents = localStorage.getItem("kyosa_events_initialized");
+      if (storedEvents !== null) {
+        try {
+          const parsed = JSON.parse(storedEvents);
+          calendarEventsData = Array.isArray(parsed) ? parsed : [];
+        } catch (e) {
+          calendarEventsData = [];
+        }
+      } else if (!hasInitEvents) {
+        calendarEventsData = [...DEFAULT_CALENDAR_EVENTS];
+        localStorage.setItem("kyosa_events_initialized", "true");
+      } else {
+        calendarEventsData = [];
+      }
+      calendarEventsData = calendarEventsData.filter((ev) => ev && !deletedEventIds.has(String(ev.id)) && !ev._deleted);
 
       const storedIdeas = localStorage.getItem("kyosa_lecture_ideas");
       const hasInitIdeas = localStorage.getItem("kyosa_ideas_initialized");
@@ -2672,6 +3145,9 @@
         localStorage.setItem("kyosa_teacher_passwords", JSON.stringify(teacherPasswords));
         localStorage.setItem("kyosa_weekly_notice", JSON.stringify(weeklyNoticeData));
         localStorage.setItem("kyosa_attended_courses", JSON.stringify(attendedCoursesData));
+        localStorage.setItem("kyosa_calendar_events", JSON.stringify(calendarEventsData));
+        localStorage.setItem("kyosa_deleted_events", JSON.stringify(Array.from(deletedEventIds)));
+        localStorage.setItem("kyosa_events_initialized", "true");
         try {
           localStorage.setItem("kyosa_feedbacks", JSON.stringify(feedbacksData));
         } catch (e) {
@@ -2737,14 +3213,26 @@
                   }
                 });
               }
+              if (Array.isArray(data.eventIds)) {
+                data.eventIds.forEach((id) => {
+                  if (!deletedEventIds.has(String(id))) {
+                    deletedEventIds.add(String(id));
+                    changed = true;
+                  }
+                });
+              }
               if (changed) {
                 feedbacksData = feedbacksData.filter((f) => f && !deletedFeedbackIds.has(String(f.id)) && !f._deleted && !f.deleted);
                 ideasData = ideasData.filter((i) => i && !deletedIdeaIds.has(String(i.id)) && !i._deleted && !i.deleted);
                 attendedCoursesData = attendedCoursesData.filter((a) => a && !deletedAttendedIds.has(String(a.id)) && !a._deleted && !a.deleted);
+                calendarEventsData = calendarEventsData.filter((ev) => ev && !deletedEventIds.has(String(ev.id)) && !ev._deleted && !ev.deleted);
                 saveLocalData();
                 renderFeedbackView();
                 renderIdeaView();
                 renderAttendedCoursesView();
+                updateCalendarEvents();
+                renderCardListView();
+                updateAdminEventCountBadge();
               }
             }
           },
@@ -2990,6 +3478,53 @@
       } catch (e) {
         console.warn("Failed to attach lecture_ideas listener:", e);
       }
+
+      // 8. Listen to calendar_events collection (캘린더 행사 및 공식 일정 실시간 동기화)
+      try {
+        db.collection("calendar_events").onSnapshot(
+          (snapshot) => {
+            const listMap = new Map();
+            const hasInitEvents = localStorage.getItem("kyosa_events_initialized");
+            DEFAULT_CALENDAR_EVENTS.forEach((ev) => {
+              const isDeleted = deletedEventIds.has(String(ev.id));
+              const wasExplicitlyRemoved = hasInitEvents && !calendarEventsData.some((existing) => String(existing.id) === String(ev.id));
+              if (!isDeleted && !wasExplicitlyRemoved) {
+                listMap.set(String(ev.id), { ...ev });
+              }
+            });
+
+            if (!snapshot.empty) {
+              snapshot.forEach((doc) => {
+                const data = doc.data();
+                const docId = String(doc.id);
+                if (data && (data._deleted || data.deleted)) {
+                  deletedEventIds.add(docId);
+                  listMap.delete(docId);
+                  return;
+                }
+                if (!deletedEventIds.has(docId)) {
+                  const existing = listMap.get(docId) || {};
+                  listMap.set(docId, { ...existing, id: docId, ...data });
+                } else {
+                  listMap.delete(docId);
+                }
+              });
+            }
+            const list = Array.from(listMap.values()).filter((ev) => ev && !deletedEventIds.has(String(ev.id)) && !ev._deleted && !ev.deleted);
+            list.sort((a, b) => (a.date || "").localeCompare(b.date || ""));
+            calendarEventsData = list;
+            saveLocalData();
+            updateCalendarEvents();
+            renderCardListView();
+            updateAdminEventCountBadge();
+          },
+          (err) => {
+            console.warn("Firestore calendar_events onSnapshot error:", err);
+          }
+        );
+      } catch (e) {
+        console.warn("Failed to attach calendar_events listener:", e);
+      }
     }
 
     // ----------------------------------------------------
@@ -3002,12 +3537,315 @@
           feedbackIds: Array.from(deletedFeedbackIds),
           ideaIds: Array.from(deletedIdeaIds),
           attendedIds: Array.from(deletedAttendedIds),
+          eventIds: Array.from(deletedEventIds),
           updatedAt: new Date().toISOString()
         }, { merge: true });
       } catch (e) {
         console.warn("Firestore syncDeletedDefaults error:", e);
       }
     }
+
+    async function saveCalendarEventToDb(record) {
+      deletedEventIds.delete(String(record.id));
+      const idx = calendarEventsData.findIndex((e) => String(e.id) === String(record.id));
+      if (idx >= 0) {
+        calendarEventsData[idx] = record;
+      } else {
+        calendarEventsData.unshift(record);
+      }
+      calendarEventsData.sort((a, b) => (a.date || "").localeCompare(b.date || ""));
+      saveLocalData();
+      updateCalendarEvents();
+      renderCardListView();
+      updateAdminEventCountBadge();
+      syncDeletedDefaultsToFirestore();
+
+      if (db && isFirebaseActive) {
+        try {
+          await db.collection("calendar_events").doc(String(record.id)).set({
+            ...record,
+            _deleted: false,
+            deleted: false,
+            updatedAt: new Date().toISOString()
+          }, { merge: true });
+        } catch (err) {
+          console.warn("Firestore save event error:", err);
+        }
+      }
+    }
+
+    async function deleteCalendarEventFromDb(eventId) {
+      deletedEventIds.add(String(eventId));
+      calendarEventsData = calendarEventsData.filter((e) => String(e.id) !== String(eventId));
+      saveLocalData();
+      updateCalendarEvents();
+      renderCardListView();
+      updateAdminEventCountBadge();
+      syncDeletedDefaultsToFirestore();
+
+      if (db && isFirebaseActive) {
+        try {
+          await db.collection("calendar_events").doc(String(eventId)).set({
+            _deleted: true,
+            deleted: true,
+            id: String(eventId),
+            deletedAt: new Date().toISOString()
+          }, { merge: true });
+        } catch (err) {
+          console.warn("Firestore delete event error:", err);
+        }
+      }
+    }
+
+    // ----------------------------------------------------
+    // Calendar Event Modal & Admin Action Handlers
+    // ----------------------------------------------------
+    function updateAdminEventCountBadge() {
+      const badge = document.getElementById("adminEventCountBadge");
+      if (badge) {
+        const count = calendarEventsData.filter((e) => e && !e._deleted && !deletedEventIds.has(String(e.id))).length;
+        badge.innerText = `${count}건 등록`;
+      }
+    }
+
+    window.openCalendarEventModal = function (eventId) {
+      const modeInput = document.getElementById("eventFormMode");
+      const idInput = document.getElementById("eventFormId");
+      const titleInput = document.getElementById("eventInputTitle");
+      const dateInput = document.getElementById("eventInputDate");
+      const endDateInput = document.getElementById("eventInputEndDate");
+      const timeInput = document.getElementById("eventInputTime");
+      const categoryInput = document.getElementById("eventInputCategory");
+      const locationInput = document.getElementById("eventInputLocation");
+      const colorInput = document.getElementById("eventInputColor");
+      const descInput = document.getElementById("eventInputDescription");
+      const pwSection = document.getElementById("eventAdminPwSection");
+      const pwInput = document.getElementById("eventAdminPwInput");
+      const modalTitle = document.getElementById("eventFormModalTitle");
+      const submitLabel = document.getElementById("btnSubmitCalendarEventLabel");
+
+      if (pwSection) {
+        if (isAdminLoggedIn) {
+          pwSection.classList.add("hidden");
+        } else {
+          pwSection.classList.remove("hidden");
+          if (pwInput) pwInput.value = "";
+        }
+      }
+
+      if (eventId) {
+        const ev = calendarEventsData.find((e) => String(e.id) === String(eventId));
+        if (!ev) return;
+        activeEditingEventId = ev.id;
+        if (modeInput) modeInput.value = "edit";
+        if (idInput) idInput.value = ev.id;
+        if (modalTitle) modalTitle.innerText = "행사/공식일정 수정 (관리자)";
+        if (submitLabel) submitLabel.innerText = "행사 수정 완료";
+
+        if (titleInput) titleInput.value = ev.title || "";
+        if (dateInput) dateInput.value = ev.date || "";
+        if (endDateInput) endDateInput.value = ev.endDate || ev.date || "";
+        if (timeInput) timeInput.value = ev.time || "";
+        if (categoryInput) categoryInput.value = ev.category || "공식행사";
+        if (locationInput) locationInput.value = ev.location || "";
+        if (colorInput) colorInput.value = ev.color || "purple";
+        if (descInput) descInput.value = ev.description || "";
+      } else {
+        activeEditingEventId = null;
+        if (modeInput) modeInput.value = "create";
+        if (idInput) idInput.value = "";
+        if (modalTitle) modalTitle.innerText = "새 행사/일정 등록 (관리자)";
+        if (submitLabel) submitLabel.innerText = "행사 등록 완료";
+
+        if (titleInput) titleInput.value = "";
+        const defaultDate = currentSelectedMonth ? `${currentSelectedMonth}-15` : todayInfo.dateStr;
+        if (dateInput) dateInput.value = defaultDate;
+        if (endDateInput) endDateInput.value = defaultDate;
+        if (timeInput) timeInput.value = "";
+        if (categoryInput) categoryInput.value = "공식행사";
+        if (locationInput) locationInput.value = "";
+        if (colorInput) colorInput.value = "purple";
+        if (descInput) descInput.value = "";
+      }
+
+      openModal("modalCalendarEventForm");
+      safeRenderIcons();
+    };
+
+    window.submitCalendarEventForm = async function (e) {
+      if (e && e.preventDefault) e.preventDefault();
+
+      // Check admin privileges
+      if (!isAdminLoggedIn) {
+        const pwInput = document.getElementById("eventAdminPwInput");
+        const enteredPw = pwInput ? pwInput.value.trim() : "";
+        if (enteredPw === "admin1234") {
+          isAdminLoggedIn = true;
+          if (typeof updateAdminUI === "function") updateAdminUI();
+        } else {
+          showToast("관리자 비밀번호가 올바르지 않습니다. (기본 비밀번호: admin1234)", "error");
+          if (pwInput) pwInput.focus();
+          return false;
+        }
+      }
+
+      const mode = document.getElementById("eventFormMode")?.value || "create";
+      const idVal = document.getElementById("eventFormId")?.value;
+      const title = document.getElementById("eventInputTitle")?.value.trim();
+      const date = document.getElementById("eventInputDate")?.value;
+      let endDate = document.getElementById("eventInputEndDate")?.value;
+      const time = document.getElementById("eventInputTime")?.value.trim();
+      const category = document.getElementById("eventInputCategory")?.value || "공식행사";
+      const location = document.getElementById("eventInputLocation")?.value.trim();
+      const color = document.getElementById("eventInputColor")?.value || "purple";
+      const description = document.getElementById("eventInputDescription")?.value.trim();
+
+      if (!title || !date) {
+        showToast("행사명과 행사 시작일은 필수 입력 사항입니다.", "warning");
+        return false;
+      }
+
+      if (!endDate) {
+        endDate = date;
+      } else if (endDate < date) {
+        showToast("행사 종료일은 시작일보다 빠를 수 없습니다.", "warning");
+        return false;
+      }
+
+      const eventId = (mode === "edit" && idVal) ? idVal : `event-${Date.now()}`;
+      const existing = calendarEventsData.find((ev) => String(ev.id) === String(eventId));
+
+      const newRecord = {
+        id: eventId,
+        title,
+        date,
+        endDate,
+        time: time || "종일",
+        category,
+        location: location || "",
+        color,
+        description: description || "",
+        createdBy: "관리자",
+        createdAt: (existing && existing.createdAt) || new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      };
+
+      await saveCalendarEventToDb(newRecord);
+      closeModal("modalCalendarEventForm");
+      showToast(mode === "edit" ? "행사 일정이 수정되었습니다." : "캘린더에 새 행사가 등록되었습니다!", "success");
+      return false;
+    };
+
+    window.openEventDetailModal = function (evOrId) {
+      let ev = evOrId;
+      if (typeof evOrId === "string" || typeof evOrId === "number") {
+        ev = calendarEventsData.find((e) => String(e.id) === String(evOrId));
+      }
+      if (!ev) return;
+      activeViewingEventId = ev.id;
+
+      const badge = document.getElementById("eventDetailBadge");
+      const cat = document.getElementById("eventDetailCategory");
+      const title = document.getElementById("eventDetailTitle");
+      const dateText = document.getElementById("eventDetailDateText");
+      const locWrap = document.getElementById("eventDetailLocationWrap");
+      const locText = document.getElementById("eventDetailLocationText");
+      const desc = document.getElementById("eventDetailDescription");
+
+      if (badge) {
+        const color = ev.color || "purple";
+        let colorClasses = "bg-purple-100 text-purple-800 border-purple-200";
+        if (color === "indigo") colorClasses = "bg-indigo-100 text-indigo-800 border-indigo-200";
+        else if (color === "emerald") colorClasses = "bg-emerald-100 text-emerald-800 border-emerald-200";
+        else if (color === "amber") colorClasses = "bg-amber-100 text-amber-800 border-amber-200";
+        else if (color === "rose") colorClasses = "bg-rose-100 text-rose-800 border-rose-200";
+        badge.className = `px-2.5 py-0.5 rounded-full text-xs font-bold border ${colorClasses}`;
+        badge.innerText = `📌 ${ev.category || "행사"}`;
+      }
+
+      if (cat) cat.innerText = ev.createdBy ? `등록: ${ev.createdBy}` : "";
+      if (title) title.innerHTML = formatRichContent(ev.title || "");
+
+      let dText = ev.date || "";
+      if (ev.endDate && ev.endDate !== ev.date) {
+        dText += ` ~ ${ev.endDate}`;
+      }
+      if (ev.time) {
+        dText += ` (${ev.time})`;
+      }
+      if (dateText) dateText.innerText = dText;
+
+      if (locWrap && locText) {
+        if (ev.location) {
+          locWrap.classList.remove("hidden");
+          locText.innerText = ev.location;
+        } else {
+          locWrap.classList.add("hidden");
+        }
+      }
+
+      if (desc) {
+        if (ev.description) {
+          desc.innerHTML = formatRichContent(ev.description);
+        } else {
+          desc.innerHTML = '<span class="text-slate-400">등록된 상세 내용이 없습니다.</span>';
+        }
+      }
+
+      openModal("modalEventDetail");
+      safeRenderIcons();
+    };
+
+    window.editCalendarEventFromDetail = function () {
+      if (!activeViewingEventId) return;
+      const ev = calendarEventsData.find((e) => String(e.id) === String(activeViewingEventId));
+      closeModal("modalEventDetail");
+      if (ev) {
+        window.openCalendarEventModal(ev.id);
+      }
+    };
+
+    window.deleteCalendarEventFromDetail = async function () {
+      if (!activeViewingEventId) return;
+      
+      if (!isAdminLoggedIn) {
+        const inputPw = window.prompt("행사를 삭제하려면 관리자 비밀번호를 입력해주세요. (기본: admin1234)");
+        if (inputPw === null) return;
+        if (inputPw.trim() !== "admin1234") {
+          showToast("관리자 비밀번호가 올바르지 않습니다.", "error");
+          return;
+        }
+        isAdminLoggedIn = true;
+        if (typeof updateAdminUI === "function") updateAdminUI();
+      }
+
+      const ev = calendarEventsData.find((e) => String(e.id) === String(activeViewingEventId));
+      const evTitle = ev ? ev.title : "행사";
+
+      await deleteCalendarEventFromDb(activeViewingEventId);
+      closeModal("modalEventDetail");
+      showToast(`'${evTitle}' 행사가 삭제되었습니다.`, "info");
+    };
+
+    window.deleteCalendarEventDirect = async function (eventId) {
+      if (!eventId) return;
+      if (!isAdminLoggedIn) {
+        const inputPw = window.prompt("행사를 삭제하려면 관리자 비밀번호를 입력해주세요. (기본: admin1234)");
+        if (inputPw === null) return;
+        if (inputPw.trim() !== "admin1234") {
+          showToast("관리자 비밀번호가 올바르지 않습니다.", "error");
+          return;
+        }
+        isAdminLoggedIn = true;
+        if (typeof updateAdminUI === "function") updateAdminUI();
+      }
+
+      const ev = calendarEventsData.find((e) => String(e.id) === String(eventId));
+      const evTitle = ev ? ev.title : "행사";
+
+      await deleteCalendarEventFromDb(eventId);
+      showToast(`'${evTitle}' 행사가 삭제되었습니다.`, "info");
+    };
 
     async function saveAttendedCourseToDb(record) {
       deletedAttendedIds.delete(String(record.id));
@@ -3432,10 +4270,34 @@
           nowIndicator: true,
           showNonCurrentDates: false,
           fixedWeekCount: false,
-          dayMaxEvents: 3,
+          dayMaxEvents: 4,
           height: "auto",
           eventContent: function (arg) {
             const props = arg.event.extendedProps;
+            if (props && props.isEvent) {
+              const colorTheme = props.color || "purple";
+              let colorClasses = "bg-gradient-to-r from-purple-600 to-indigo-600 border-purple-500 text-white";
+              if (colorTheme === "indigo") colorClasses = "bg-gradient-to-r from-indigo-600 to-blue-600 border-indigo-500 text-white";
+              else if (colorTheme === "emerald") colorClasses = "bg-gradient-to-r from-emerald-600 to-teal-600 border-emerald-500 text-white";
+              else if (colorTheme === "amber") colorClasses = "bg-gradient-to-r from-amber-600 to-orange-600 border-amber-500 text-white";
+              else if (colorTheme === "rose") colorClasses = "bg-gradient-to-r from-rose-600 to-red-600 border-rose-500 text-white";
+
+              return {
+                html: `
+                  <div class="p-1 rounded ${colorClasses} shadow-xs border transition cursor-pointer hover:brightness-110">
+                    <div class="flex items-center justify-between gap-1 mb-0.5">
+                      <span class="font-extrabold text-[10px] tracking-tight bg-black/25 px-1 py-0.2 rounded truncate flex items-center gap-0.5">
+                        <span>📌</span>
+                        <span>${escapeHtml(props.category || "행사")}</span>
+                      </span>
+                      ${props.time ? `<span class="text-[9px] font-medium opacity-90 truncate">${escapeHtml(props.time)}</span>` : ""}
+                    </div>
+                    <div class="text-[11px] font-bold truncate leading-tight">${escapeHtml(arg.event.title)}</div>
+                  </div>
+                `
+              };
+            }
+
             const curr = props.enrolledCount !== undefined ? props.enrolledCount : (props.currentCount || 0);
             const max = props.maxCount || 10;
             const isFull = curr >= max;
@@ -3443,7 +4305,7 @@
 
             return {
               html: `
-                <div class="p-1 rounded bg-white shadow-2xs border border-slate-200 hover:border-blue-400 transition">
+                <div class="p-1 rounded bg-white shadow-2xs border border-slate-200 hover:border-blue-400 transition cursor-pointer">
                   <div class="flex items-center justify-between gap-1 mb-0.5">
                     <span class="font-bold text-[11px] text-slate-800 truncate">${escapeHtml(props.presenter || "")}</span>
                     <span class="text-[10px] px-1 py-0.2 rounded font-semibold ${badgeBg}">${curr}/${max}</span>
@@ -3454,8 +4316,14 @@
             };
           },
           eventClick: function (info) {
-            const lec = lecturesData.find((l) => String(l.id) === String(info.event.id));
-            if (lec) openDetailModal(lec);
+            const props = info.event.extendedProps;
+            if (props && props.isEvent) {
+              const ev = calendarEventsData.find((e) => String(e.id) === String(info.event.id));
+              if (ev) window.openEventDetailModal(ev);
+            } else {
+              const lec = lecturesData.find((l) => String(l.id) === String(info.event.id));
+              if (lec) openDetailModal(lec);
+            }
           }
         });
 
@@ -3463,6 +4331,21 @@
       } catch (err) {
         console.warn("FullCalendar setup warning:", err);
       }
+    }
+
+    function getNextDayString(dateStr) {
+      if (!dateStr) return "";
+      try {
+        const parts = dateStr.split("-").map(Number);
+        if (parts.length === 3) {
+          const d = new Date(parts[0], parts[1] - 1, parts[2] + 1);
+          const y = d.getFullYear();
+          const m = String(d.getMonth() + 1).padStart(2, "0");
+          const day = String(d.getDate()).padStart(2, "0");
+          return `${y}-${m}-${day}`;
+        }
+      } catch (e) {}
+      return dateStr;
     }
 
     function updateCalendarEvents() {
@@ -3474,12 +4357,13 @@
       try {
         const monthLectures = lecturesData.filter((l) => (l.month === currentSelectedMonth) || (l.date && l.date.startsWith(currentSelectedMonth)));
         
-        const events = monthLectures.map((lec) => ({
+        const lectureEvents = monthLectures.map((lec) => ({
           id: String(lec.id),
           title: lec.title,
           start: lec.date,
           allDay: true,
           extendedProps: {
+            isEvent: false,
             presenter: lec.presenter,
             time: lec.time,
             url: lec.url,
@@ -3490,9 +4374,36 @@
           }
         }));
 
+        const monthEvents = calendarEventsData.filter((ev) => {
+          if (!ev || ev._deleted || deletedEventIds.has(String(ev.id))) return false;
+          const sMonth = (ev.date || "").substring(0, 7);
+          const eMonth = (ev.endDate || ev.date || "").substring(0, 7);
+          return sMonth === currentSelectedMonth || eMonth === currentSelectedMonth;
+        });
+
+        const adminEvents = monthEvents.map((ev) => {
+          const isMultiDay = ev.endDate && ev.endDate !== ev.date;
+          return {
+            id: String(ev.id),
+            title: ev.title,
+            start: ev.date,
+            end: isMultiDay ? getNextDayString(ev.endDate) : undefined,
+            allDay: true,
+            extendedProps: {
+              isEvent: true,
+              category: ev.category,
+              time: ev.time,
+              location: ev.location,
+              color: ev.color,
+              description: ev.description,
+              createdBy: ev.createdBy
+            }
+          };
+        });
+
         const sources = calendarInstance.getEventSources();
         sources.forEach((s) => s.remove());
-        calendarInstance.addEventSource(events);
+        calendarInstance.addEventSource([...adminEvents, ...lectureEvents]);
       } catch (err) {
         console.warn("updateCalendarEvents warning:", err);
       }
@@ -3506,19 +4417,93 @@
       if (!container) return;
 
       const monthLectures = lecturesData.filter((l) => (l.month === currentSelectedMonth) || (l.date && l.date.startsWith(currentSelectedMonth)));
+      const monthEvents = calendarEventsData.filter((ev) => {
+        if (!ev || ev._deleted || deletedEventIds.has(String(ev.id))) return false;
+        const sMonth = (ev.date || "").substring(0, 7);
+        const eMonth = (ev.endDate || ev.date || "").substring(0, 7);
+        return sMonth === currentSelectedMonth || eMonth === currentSelectedMonth;
+      });
 
-      if (monthLectures.length === 0) {
+      if (monthLectures.length === 0 && monthEvents.length === 0) {
         container.innerHTML = `
           <div class="col-span-full py-12 text-center text-slate-400">
             <i data-lucide="inbox" class="w-10 h-10 mx-auto mb-2 stroke-1"></i>
-            <p class="text-sm font-medium">선택된 달에 등록된 강의가 없습니다.</p>
+            <p class="text-sm font-medium">선택된 달에 등록된 강의 및 공식 행사가 없습니다.</p>
           </div>
         `;
         safeRenderIcons();
         return;
       }
 
-      container.innerHTML = monthLectures.map((lec) => {
+      let html = "";
+
+      // Render Admin Calendar Events Section in List View if any exist
+      if (monthEvents.length > 0) {
+        html += `
+          <div class="col-span-full mb-3 bg-gradient-to-r from-purple-50/90 to-indigo-50/90 border border-purple-200/80 rounded-2xl p-4 shadow-2xs space-y-3">
+            <div class="flex items-center justify-between">
+              <h4 class="text-xs sm:text-sm font-bold text-purple-950 flex items-center gap-1.5">
+                <i data-lucide="calendar-plus" class="w-4 h-4 text-purple-600"></i>
+                <span>📌 이달의 공식 행사 및 일정 (${monthEvents.length}건)</span>
+              </h4>
+              <button type="button" onclick="window.openCalendarEventModal()" class="text-xs font-bold text-purple-700 hover:text-purple-900 bg-white px-2.5 py-1 rounded-lg border border-purple-200 shadow-2xs hover:bg-purple-50 transition cursor-pointer flex items-center gap-1">
+                <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+                <span>행사 추가</span>
+              </button>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+              ${monthEvents.map((ev) => {
+                const color = ev.color || "purple";
+                let badgeClass = "bg-purple-100 text-purple-800 border-purple-200";
+                if (color === "indigo") badgeClass = "bg-indigo-100 text-indigo-800 border-indigo-200";
+                else if (color === "emerald") badgeClass = "bg-emerald-100 text-emerald-800 border-emerald-200";
+                else if (color === "amber") badgeClass = "bg-amber-100 text-amber-800 border-amber-200";
+                else if (color === "rose") badgeClass = "bg-rose-100 text-rose-800 border-rose-200";
+
+                let dText = ev.date || "";
+                if (ev.endDate && ev.endDate !== ev.date) dText += ` ~ ${ev.endDate}`;
+                if (ev.time) dText += ` (${ev.time})`;
+
+                return `
+                  <div class="bg-white rounded-xl border border-purple-200/90 p-3.5 shadow-2xs hover:shadow-sm transition flex flex-col justify-between space-y-2.5">
+                    <div>
+                      <div class="flex items-center justify-between gap-1 mb-1.5">
+                        <span class="text-xs font-bold px-2 py-0.5 rounded-full border ${badgeClass}">📌 ${escapeHtml(ev.category || "행사")}</span>
+                        <span class="text-[11px] text-slate-400 font-medium">${escapeHtml(ev.createdBy || "관리자")}</span>
+                      </div>
+                      <h4 class="text-sm font-bold text-slate-900 line-clamp-2 leading-snug">${escapeHtml(ev.title)}</h4>
+                      <p class="text-xs text-slate-500 mt-1 flex items-center gap-1">
+                        <i data-lucide="clock" class="w-3.5 h-3.5 text-purple-600"></i>
+                        <span>${escapeHtml(dText)}</span>
+                      </p>
+                      ${ev.location ? `
+                        <p class="text-xs text-slate-600 mt-0.5 flex items-center gap-1 truncate">
+                          <i data-lucide="map-pin" class="w-3.5 h-3.5 text-purple-600 shrink-0"></i>
+                          <span>${escapeHtml(ev.location)}</span>
+                        </p>
+                      ` : ''}
+                    </div>
+                    <div class="flex items-center gap-1.5 pt-2 border-t border-purple-100">
+                      <button type="button" onclick="window.openEventDetailModal('${escapeHtml(ev.id)}')" class="flex-1 py-1.5 bg-purple-50 hover:bg-purple-100 text-purple-700 text-xs font-bold rounded-lg transition text-center cursor-pointer">
+                        상세보기
+                      </button>
+                      <button type="button" onclick="window.openCalendarEventModal('${escapeHtml(ev.id)}')" class="px-2.5 py-1.5 text-xs text-slate-600 hover:text-purple-700 hover:bg-purple-50 border border-slate-200 hover:border-purple-200 rounded-lg font-medium transition cursor-pointer" title="행사 수정">
+                        수정
+                      </button>
+                      <button type="button" onclick="window.deleteCalendarEventDirect('${escapeHtml(ev.id)}')" class="px-2 py-1.5 text-xs text-rose-600 hover:text-rose-800 hover:bg-rose-50 border border-slate-200 hover:border-rose-200 rounded-lg font-medium transition cursor-pointer" title="행사 삭제">
+                        삭제
+                      </button>
+                    </div>
+                  </div>
+                `;
+              }).join("")}
+            </div>
+          </div>
+        `;
+      }
+
+      // Render Month Lectures
+      html += monthLectures.map((lec) => {
         const curr = lec.currentCount || 0;
         const max = lec.maxCount || 10;
         const isFull = curr >= max;
@@ -3531,7 +4516,7 @@
                 <span class="text-xs font-bold text-slate-800 bg-slate-100 px-2 py-0.5 rounded-md">${escapeHtml(lec.presenter)} 선생님</span>
                 <span class="text-xs font-semibold px-2 py-0.5 rounded-full border ${badgeColor}">${curr} / ${max}명</span>
               </div>
-              <h4 class="text-sm font-bold text-slate-900 mb-1 leading-snug line-clamp-2">${escapeHtml(lec.title)}</h4>
+              <h4 class="text-sm font-bold text-slate-900 mb-1 leading-snug line-clamp-2">${formatRichContent(lec.title)}</h4>
               <p class="text-xs text-slate-500 mb-3 flex items-center gap-1.5">
                 <i data-lucide="clock" class="w-3.5 h-3.5"></i>
                 <span>${escapeHtml(lec.date)} (${escapeHtml(lec.time)})</span>
@@ -3551,6 +4536,7 @@
         `;
       }).join("");
 
+      container.innerHTML = html;
       safeRenderIcons();
     }
 
@@ -3752,15 +4738,15 @@
       const bannerTitle = document.getElementById("bannerNoticeTitle");
       const btnEditNotice = document.getElementById("btnEditNoticeModal");
 
-      if (title) title.innerText = weeklyNoticeData.title || "";
+      if (title) title.innerHTML = formatRichContent(weeklyNoticeData.title || "");
       if (badge) badge.innerText = weeklyNoticeData.badge || "공지";
       if (dateRange) dateRange.innerText = weeklyNoticeData.dateRange || "";
-      if (bannerTitle) bannerTitle.innerText = weeklyNoticeData.title || "";
+      if (bannerTitle) bannerTitle.innerHTML = formatRichContent(weeklyNoticeData.title || "");
 
       if (body) {
         body.innerHTML = (weeklyNoticeData.body || "")
           .split("\n\n")
-          .map((para) => `<p class="whitespace-pre-line">${escapeHtml(para)}</p>`)
+          .map((para) => `<p class="whitespace-pre-line leading-relaxed text-sm sm:text-base">${formatRichContent(para)}</p>`)
           .join("");
       }
 
@@ -4308,103 +5294,103 @@
         const initial = (item.teacherName || "교").charAt(0);
 
         return `
-          <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-2xs hover:shadow-md hover:border-amber-300 transition duration-200 flex flex-col justify-between space-y-4">
+          <div class="bg-white rounded-2xl border border-slate-200 p-5 sm:p-6 shadow-2xs hover:shadow-md hover:border-amber-300 transition duration-200 flex flex-col justify-between space-y-4">
             <!-- Header: Teacher info + Category badge -->
-            <div class="space-y-3">
+            <div class="space-y-3.5">
               <div class="flex items-center justify-between gap-2">
                 <div class="flex items-center gap-2.5">
-                  <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-amber-500 to-amber-300 text-slate-950 font-black text-xs flex items-center justify-center shrink-0 shadow-2xs">
+                  <div class="w-9 h-9 rounded-full bg-gradient-to-tr from-amber-500 to-amber-300 text-slate-950 font-black text-sm flex items-center justify-center shrink-0 shadow-2xs">
                     ${escapeHtml(initial)}
                   </div>
                   <div>
-                    <h5 class="text-xs font-bold text-slate-900 leading-tight">
+                    <h5 class="text-sm sm:text-base font-bold text-slate-900 leading-tight">
                       ${escapeHtml(item.teacherName)} 강사님
                     </h5>
-                    <p class="text-[11px] text-slate-400">
+                    <p class="text-xs text-slate-500 mt-0.5">
                       ${escapeHtml(item.date || "")} 수업
                     </p>
                   </div>
                 </div>
 
-                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold border ${badgeClass}">
+                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold border ${badgeClass}">
                   ${escapeHtml(item.category || "수업 개선")}
                 </span>
               </div>
 
-              <!-- Title -->
-              <h4 class="text-sm sm:text-base font-bold text-slate-900 leading-snug">
-                ${escapeHtml(item.title)}
+              <!-- Title (Larger & supports bold) -->
+              <h4 class="text-base sm:text-lg font-bold text-slate-900 leading-snug">
+                ${formatRichContent(item.title)}
               </h4>
 
               <!-- Photo (with click to zoom lightbox) -->
               ${item.imageUrl ? `
                 <div class="relative group cursor-pointer overflow-hidden rounded-xl bg-slate-950/5 border border-slate-200" onclick="window.openFeedbackLightbox('${escapeHtml(item.id)}')">
-                  <img src="${escapeHtml(item.imageUrl)}" alt="${escapeHtml(item.title)}" class="w-full h-44 object-cover group-hover:scale-105 transition duration-300" loading="lazy" />
-                  <div class="absolute inset-0 bg-slate-950/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center gap-1.5 text-white text-xs font-bold backdrop-blur-2xs">
+                  <img src="${escapeHtml(item.imageUrl)}" alt="${escapeHtml(item.title)}" class="w-full h-48 object-cover group-hover:scale-105 transition duration-300" loading="lazy" />
+                  <div class="absolute inset-0 bg-slate-950/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center gap-1.5 text-white text-xs sm:text-sm font-bold backdrop-blur-2xs">
                     <i data-lucide="zoom-in" class="w-4 h-4"></i>
                     <span>사진 크게 보기</span>
                   </div>
-                  <span class="absolute bottom-2 right-2 bg-slate-900/75 text-white text-[10px] font-medium px-2 py-0.5 rounded-full flex items-center gap-1 shadow-xs">
-                    <i data-lucide="image" class="w-3 h-3"></i> 현장 사진
+                  <span class="absolute bottom-2 right-2 bg-slate-900/75 text-white text-xs font-medium px-2.5 py-0.5 rounded-full flex items-center gap-1 shadow-xs">
+                    <i data-lucide="image" class="w-3.5 h-3.5"></i> 현장 사진
                   </span>
                 </div>
               ` : ""}
 
-              <!-- Problem Faced (Optional) -->
+              <!-- Problem Faced (Optional, Larger Font & Bold formatting) -->
               ${item.beforeIssue ? `
-                <div class="bg-rose-50/70 border border-rose-100 p-2.5 rounded-xl text-xs space-y-1">
-                  <p class="font-bold text-rose-700 flex items-center gap-1">
-                    <i data-lucide="alert-circle" class="w-3.5 h-3.5"></i>
+                <div class="bg-rose-50/70 border border-rose-200/80 p-3 sm:p-3.5 rounded-xl space-y-1.5">
+                  <p class="font-bold text-sm text-rose-800 flex items-center gap-1.5">
+                    <i data-lucide="alert-circle" class="w-4 h-4 text-rose-600"></i>
                     <span>개선 전 시행착오 / 애로사항</span>
                   </p>
-                  <p class="text-slate-700 leading-relaxed">${escapeHtml(item.beforeIssue)}</p>
+                  <p class="text-sm sm:text-base text-slate-800 leading-relaxed">${formatRichContent(item.beforeIssue)}</p>
                 </div>
               ` : ""}
 
-              <!-- Improvement Solution -->
-              <div class="bg-blue-50/70 border border-blue-100 p-3 rounded-xl text-xs space-y-1">
-                <p class="font-bold text-blue-800 flex items-center gap-1">
-                  <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-blue-600"></i>
+              <!-- Improvement Solution (Larger Font & Bold formatting) -->
+              <div class="bg-blue-50/70 border border-blue-200/80 p-3.5 sm:p-4 rounded-xl space-y-1.5">
+                <p class="font-bold text-sm text-blue-900 flex items-center gap-1.5">
+                  <i data-lucide="check-circle-2" class="w-4 h-4 text-blue-600"></i>
                   <span>어떻게 개선했나요? (개선 방향)</span>
                 </p>
-                <p class="text-slate-800 font-medium leading-relaxed whitespace-pre-line">${escapeHtml(item.improvementNote)}</p>
+                <p class="text-sm sm:text-base text-slate-800 font-medium leading-relaxed whitespace-pre-line">${formatRichContent(item.improvementNote)}</p>
               </div>
 
-              <!-- Peer Instructor Tip -->
+              <!-- Peer Instructor Tip (Larger Font & Bold formatting) -->
               ${item.teacherTip ? `
-                <div class="bg-amber-50 border border-amber-200 p-3 rounded-xl text-xs space-y-1">
-                  <p class="font-bold text-amber-900 flex items-center gap-1">
-                    <i data-lucide="sparkles" class="w-3.5 h-3.5 text-amber-600"></i>
+                <div class="bg-amber-50 border border-amber-200/90 p-3.5 sm:p-4 rounded-xl space-y-1.5">
+                  <p class="font-bold text-sm text-amber-950 flex items-center gap-1.5">
+                    <i data-lucide="sparkles" class="w-4 h-4 text-amber-600"></i>
                     <span>동료 강사를 위한 실천 꿀팁</span>
                   </p>
-                  <p class="text-amber-950 font-bold leading-relaxed">${escapeHtml(item.teacherTip)}</p>
+                  <p class="text-sm sm:text-base text-amber-950 font-bold leading-relaxed">${formatRichContent(item.teacherTip)}</p>
                 </div>
               ` : ""}
             </div>
 
             <!-- Footer Action Controls: Heart ("도움됐어요"), Copy, Delete -->
-            <div class="pt-3 border-t border-slate-100 flex items-center justify-between gap-2">
+            <div class="pt-3.5 border-t border-slate-100 flex items-center justify-between gap-2">
               <!-- Heart "도움됐어요" button -->
-              <button type="button" onclick="window.toggleFeedbackHeart('${escapeHtml(item.id)}')" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer active:scale-95 ${isLiked ? 'bg-rose-50 text-rose-600 border border-rose-200 shadow-2xs ring-2 ring-rose-200/50' : 'bg-slate-100 text-slate-700 hover:bg-rose-50 hover:text-rose-600 border border-slate-200'}">
+              <button type="button" onclick="window.toggleFeedbackHeart('${escapeHtml(item.id)}')" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold transition cursor-pointer active:scale-95 ${isLiked ? 'bg-rose-50 text-rose-600 border border-rose-200 shadow-2xs ring-2 ring-rose-200/50' : 'bg-slate-100 text-slate-700 hover:bg-rose-50 hover:text-rose-600 border border-slate-200'}">
                 <i data-lucide="heart" class="w-4 h-4 transition ${isLiked ? 'fill-rose-500 text-rose-500 scale-110' : 'text-slate-400'}"></i>
                 <span>도움됐어요</span>
-                <span class="px-1.5 py-0.2 rounded-full text-[11px] font-black ${isLiked ? 'bg-rose-500 text-white' : 'bg-slate-200 text-slate-700'}">${item.helpfulCount || 0}</span>
+                <span class="px-1.5 py-0.2 rounded-full text-xs font-black ${isLiked ? 'bg-rose-500 text-white' : 'bg-slate-200 text-slate-700'}">${item.helpfulCount || 0}</span>
               </button>
 
               <div class="flex items-center gap-1.5">
                 <!-- Copy Tip -->
-                <button type="button" onclick="window.copyFeedbackTip('${escapeHtml(item.id)}')" class="p-1.5 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-lg text-xs transition cursor-pointer" title="개선 꿀팁 내용 복사">
+                <button type="button" onclick="window.copyFeedbackTip('${escapeHtml(item.id)}')" class="p-2 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-lg text-xs sm:text-sm transition cursor-pointer" title="개선 꿀팁 내용 복사">
                   <i data-lucide="copy" class="w-4 h-4"></i>
                 </button>
 
                 <!-- Edit Post (수정 버튼) -->
-                <button type="button" onclick="window.openEditFeedbackModal('${escapeHtml(item.id)}')" class="inline-flex items-center gap-1 px-2.5 py-1 text-slate-500 hover:text-amber-700 hover:bg-amber-50 border border-slate-200 hover:border-amber-200 rounded-lg text-xs font-semibold transition cursor-pointer active:scale-95" title="피드백 수정">
+                <button type="button" onclick="window.openEditFeedbackModal('${escapeHtml(item.id)}')" class="inline-flex items-center gap-1 px-3 py-1.5 text-slate-600 hover:text-amber-700 hover:bg-amber-50 border border-slate-200 hover:border-amber-200 rounded-lg text-xs sm:text-sm font-semibold transition cursor-pointer active:scale-95" title="피드백 수정">
                   <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
                   <span>수정</span>
                 </button>
 
                 <!-- Delete Post (활성화된 삭제 버튼) -->
-                <button type="button" onclick="window.openDeleteFeedbackModal('${escapeHtml(item.id)}')" class="inline-flex items-center gap-1 px-2.5 py-1 text-slate-500 hover:text-rose-600 hover:bg-rose-50 border border-slate-200 hover:border-rose-200 rounded-lg text-xs font-semibold transition cursor-pointer active:scale-95" title="피드백 삭제">
+                <button type="button" onclick="window.openDeleteFeedbackModal('${escapeHtml(item.id)}')" class="inline-flex items-center gap-1 px-3 py-1.5 text-slate-600 hover:text-rose-600 hover:bg-rose-50 border border-slate-200 hover:border-rose-200 rounded-lg text-xs sm:text-sm font-semibold transition cursor-pointer active:scale-95" title="피드백 삭제">
                   <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
                   <span>삭제</span>
                 </button>
@@ -4422,8 +5408,6 @@
       const adminMembers = Array.from(new Set(memberList)).filter(Boolean);
 
       const selectEl = document.getElementById("regIdeaTeacherSelect");
-      const customWrap = document.getElementById("wrapIdeaTeacherCustom");
-      if (customWrap) customWrap.classList.add("hidden");
 
       if (selectEl) {
         const curVal = selectEl.value;
@@ -4565,134 +5549,134 @@
         const dateStr = item.createdAt ? item.createdAt.substring(0, 10) : "";
 
         return `
-          <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs hover:shadow-md transition flex flex-col justify-between group">
-            <div class="space-y-3.5">
+          <div class="bg-white rounded-2xl border border-slate-200 p-5 sm:p-6 shadow-xs hover:shadow-md transition flex flex-col justify-between group space-y-4">
+            <div class="space-y-4">
               <!-- Top Row: Badge, Author & Date -->
               <div class="flex items-start justify-between gap-2">
-                <div class="flex items-center gap-1.5 flex-wrap">
-                  <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                <div class="flex items-center gap-2 flex-wrap">
+                  <span class="px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">
                     ${escapeHtml(item.category || "아이디어")}
                   </span>
                   ${cheers >= 5 ? `
-                    <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200 flex items-center gap-0.5">
-                      <i data-lucide="flame" class="w-3 h-3 text-amber-500"></i> 인기 기대 강좌
+                    <span class="px-2.5 py-1 rounded-full text-xs font-bold bg-amber-50 text-amber-800 border border-amber-200 flex items-center gap-1">
+                      <i data-lucide="flame" class="w-3.5 h-3.5 text-amber-500"></i> 인기 기대 강좌
                     </span>
                   ` : ""}
                 </div>
-                <div class="flex items-center gap-1 text-[11px] text-slate-400 shrink-0">
-                  <i data-lucide="calendar" class="w-3 h-3"></i>
+                <div class="flex items-center gap-1.5 text-xs text-slate-500 shrink-0">
+                  <i data-lucide="calendar" class="w-3.5 h-3.5"></i>
                   <span>${escapeHtml(dateStr)}</span>
                 </div>
               </div>
 
-              <!-- Title -->
+              <!-- Title (Larger & supports bold) -->
               <div>
-                <h3 class="text-sm sm:text-base font-bold text-slate-900 group-hover:text-emerald-700 transition leading-snug">
-                  ${escapeHtml(item.title)}
+                <h3 class="text-base sm:text-lg font-bold text-slate-900 group-hover:text-emerald-700 transition leading-snug">
+                  ${formatRichContent(item.title)}
                 </h3>
-                <div class="flex items-center gap-1.5 mt-1 text-xs text-slate-500">
-                  <span class="font-semibold text-slate-700">${escapeHtml(item.teacherName)} 선생님</span>
+                <div class="flex items-center gap-1.5 mt-1.5 text-sm text-slate-600">
+                  <span class="font-bold text-slate-800">${escapeHtml(item.teacherName)} 선생님</span>
                   <span>제안</span>
                 </div>
               </div>
 
-              <!-- Pain Point Box -->
+              <!-- Pain Point Box (Larger font & Bold formatting) -->
               ${item.painPoint ? `
-                <div class="bg-amber-50/70 border-l-3 border-amber-400 p-3 rounded-r-xl space-y-1">
-                  <div class="flex items-center gap-1 text-[11px] font-bold text-amber-800">
-                    <i data-lucide="alert-circle" class="w-3.5 h-3.5 text-amber-600"></i>
+                <div class="bg-amber-50/70 border-l-4 border-amber-400 p-3.5 sm:p-4 rounded-r-xl space-y-1.5">
+                  <div class="flex items-center gap-1.5 text-xs sm:text-sm font-bold text-amber-900">
+                    <i data-lucide="alert-circle" class="w-4 h-4 text-amber-600"></i>
                     <span>현장의 페인포인트 (불편·고민)</span>
                   </div>
-                  <p class="text-xs text-slate-700 leading-relaxed font-medium">
-                    "${escapeHtml(item.painPoint)}"
+                  <p class="text-sm sm:text-base text-slate-800 leading-relaxed font-medium">
+                    "${formatRichContent(item.painPoint)}"
                   </p>
                 </div>
               ` : ""}
 
-              <!-- Lecture Idea & Benchmarking Box -->
+              <!-- Lecture Idea & Benchmarking Box (Larger font & Bold formatting) -->
               ${item.lectureIdea ? `
-                <div class="bg-emerald-50/70 border-l-3 border-emerald-500 p-3 rounded-r-xl space-y-1">
-                  <div class="flex items-center gap-1 text-[11px] font-bold text-emerald-800">
-                    <i data-lucide="sparkles" class="w-3.5 h-3.5 text-emerald-600"></i>
+                <div class="bg-emerald-50/70 border-l-4 border-emerald-500 p-3.5 sm:p-4 rounded-r-xl space-y-1.5">
+                  <div class="flex items-center gap-1.5 text-xs sm:text-sm font-bold text-emerald-900">
+                    <i data-lucide="sparkles" class="w-4 h-4 text-emerald-600"></i>
                     <span>제안 강의 아이디어 & 벤치마킹 포인트</span>
                   </div>
-                  <p class="text-xs text-slate-800 leading-relaxed font-medium whitespace-pre-line">
-                    ${escapeHtml(item.lectureIdea)}
+                  <p class="text-sm sm:text-base text-slate-800 leading-relaxed font-medium whitespace-pre-line">
+                    ${formatRichContent(item.lectureIdea)}
                   </p>
                 </div>
               ` : ""}
             </div>
 
-              <!-- Comments Section (아이디어 댓글 및 피드백) -->
-              <div class="mt-3.5 pt-3 border-t border-slate-100 space-y-2.5">
-                <div class="flex items-center justify-between">
-                  <span class="text-xs font-bold text-slate-800 flex items-center gap-1.5">
-                    <i data-lucide="message-square" class="w-3.5 h-3.5 text-emerald-600"></i>
-                    <span>동료 교사 댓글 & 기대평</span>
-                    <span class="px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800">${(item.comments || []).length}</span>
-                  </span>
-                  <span class="text-[11px] text-slate-400">자유롭게 의견을 나눠보세요</span>
-                </div>
-
-                <!-- Existing Comments List -->
-                <div class="space-y-1.5 max-h-40 overflow-y-auto pr-1">
-                  ${(item.comments && item.comments.length > 0) ? item.comments.map((cmt) => `
-                    <div class="bg-slate-50 hover:bg-slate-100/90 p-2 rounded-xl border border-slate-200/70 text-xs transition group/cmt flex items-start justify-between gap-2">
-                      <div class="space-y-0.5 min-w-0">
-                        <div class="flex items-center gap-1.5">
-                          <span class="font-bold text-slate-800 text-[11px]">${escapeHtml(cmt.authorName)} 선생님</span>
-                          <span class="text-[10px] text-slate-400">${cmt.createdAt ? escapeHtml(cmt.createdAt.substring(0, 10)) : ""}</span>
-                        </div>
-                        <p class="text-slate-700 leading-relaxed font-normal text-xs break-words">${escapeHtml(cmt.content)}</p>
-                      </div>
-                      <button type="button" onclick="window.deleteIdeaComment('${escapeHtml(item.id)}', '${escapeHtml(cmt.id)}')" class="opacity-0 group-hover/cmt:opacity-100 text-slate-400 hover:text-rose-600 p-1 transition cursor-pointer shrink-0" title="댓글 삭제">
-                        <i data-lucide="x" class="w-3 h-3"></i>
-                      </button>
-                    </div>
-                  `).join("") : `
-                    <p class="text-[11px] text-slate-400 italic py-1 px-1">아직 등록된 댓글이 없습니다. 첫 번째 피드백이나 기대평을 남겨보세요!</p>
-                  `}
-                </div>
-
-                <!-- Add Comment Input Box -->
-                <div class="pt-1.5 flex flex-col sm:flex-row items-stretch sm:items-center gap-1.5">
-                  <div class="flex items-center gap-1 shrink-0">
-                    <select id="commentAuthor_${escapeHtml(item.id)}" onchange="window.toggleCommentCustomAuthor('${escapeHtml(item.id)}')" class="text-xs px-2 py-1.5 border border-slate-300 rounded-lg bg-white text-slate-700 focus:ring-1 focus:ring-emerald-500 focus:outline-none">
-                      ${allTeachers.map((t) => `<option value="${escapeHtml(t)}">${escapeHtml(t)}</option>`).join("")}
-                      <option value="__custom__">➕ 직접 입력</option>
-                    </select>
-                    <input type="text" id="commentAuthorCustom_${escapeHtml(item.id)}" placeholder="작성자명" class="hidden text-xs px-2 py-1.5 w-20 border border-dashed border-emerald-400 rounded-lg bg-emerald-50/50 focus:ring-1 focus:ring-emerald-500 focus:outline-none" />
-                  </div>
-                  <div class="flex-1 flex items-center gap-1.5">
-                    <input type="text" id="commentInput_${escapeHtml(item.id)}" placeholder="아이디어 피드백이나 기대평 남기기..." class="flex-1 min-w-0 text-xs px-3 py-1.5 border border-slate-300 rounded-lg bg-white focus:ring-2 focus:ring-emerald-500 focus:outline-none transition" onkeydown="if(event.key==='Enter'){event.preventDefault();window.submitIdeaComment('${escapeHtml(item.id)}');}" />
-                    <button type="button" onclick="window.submitIdeaComment('${escapeHtml(item.id)}')" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-lg shadow-2xs flex items-center gap-1 transition cursor-pointer active:scale-95 shrink-0">
-                      <i data-lucide="send" class="w-3.5 h-3.5"></i>
-                      <span>등록</span>
-                    </button>
-                  </div>
-                </div>
+            <!-- Comments Section (아이디어 댓글 및 피드백) -->
+            <div class="mt-4 pt-3.5 border-t border-slate-100 space-y-3">
+              <div class="flex items-center justify-between">
+                <span class="text-sm font-bold text-slate-900 flex items-center gap-1.5">
+                  <i data-lucide="message-square" class="w-4 h-4 text-emerald-600"></i>
+                  <span>동료 교사 댓글 & 기대평</span>
+                  <span class="px-2 py-0.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800">${(item.comments || []).length}</span>
+                </span>
+                <span class="text-xs text-slate-400">자유롭게 의견을 나눠보세요</span>
               </div>
 
+              <!-- Existing Comments List (Larger font & Bold formatting) -->
+              <div class="space-y-2 max-h-48 overflow-y-auto pr-1">
+                ${(item.comments && item.comments.length > 0) ? item.comments.map((cmt) => `
+                  <div class="bg-slate-50 hover:bg-slate-100/90 p-2.5 sm:p-3 rounded-xl border border-slate-200/80 transition group/cmt flex items-start justify-between gap-2.5">
+                    <div class="space-y-1 min-w-0">
+                      <div class="flex items-center gap-2">
+                        <span class="font-bold text-slate-900 text-xs sm:text-sm">${escapeHtml(cmt.authorName)} 선생님</span>
+                        <span class="text-xs text-slate-400">${cmt.createdAt ? escapeHtml(cmt.createdAt.substring(0, 10)) : ""}</span>
+                      </div>
+                      <p class="text-slate-800 leading-relaxed font-normal text-xs sm:text-sm break-words">${formatRichContent(cmt.content)}</p>
+                    </div>
+                    <button type="button" onclick="window.deleteIdeaComment('${escapeHtml(item.id)}', '${escapeHtml(cmt.id)}')" class="opacity-0 group-hover/cmt:opacity-100 text-slate-400 hover:text-rose-600 p-1 transition cursor-pointer shrink-0" title="댓글 삭제">
+                      <i data-lucide="x" class="w-3.5 h-3.5"></i>
+                    </button>
+                  </div>
+                `).join("") : `
+                  <p class="text-xs text-slate-400 italic py-1.5 px-1">아직 등록된 댓글이 없습니다. 첫 번째 피드백이나 기대평을 남겨보세요!</p>
+                `}
+              </div>
+
+              <!-- Add Comment Input Box -->
+              <div class="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+                <div class="flex items-center gap-1.5 shrink-0">
+                  <select id="commentAuthor_${escapeHtml(item.id)}" onchange="window.toggleCommentCustomAuthor('${escapeHtml(item.id)}')" class="text-xs sm:text-sm px-2.5 py-1.5 border border-slate-300 rounded-lg bg-white text-slate-700 focus:ring-1 focus:ring-emerald-500 focus:outline-none">
+                    ${allTeachers.map((t) => `<option value="${escapeHtml(t)}">${escapeHtml(t)}</option>`).join("")}
+                    <option value="__custom__">➕ 직접 입력</option>
+                  </select>
+                  <input type="text" id="commentAuthorCustom_${escapeHtml(item.id)}" placeholder="작성자명" class="hidden text-xs sm:text-sm px-2.5 py-1.5 w-24 border border-dashed border-emerald-400 rounded-lg bg-emerald-50/50 focus:ring-1 focus:ring-emerald-500 focus:outline-none" />
+                </div>
+                <div class="flex-1 flex items-center gap-1.5">
+                  <input type="text" id="commentInput_${escapeHtml(item.id)}" placeholder="아이디어 피드백이나 기대평 남기기... (**굵은글씨** 지원)" class="flex-1 min-w-0 text-xs sm:text-sm px-3 py-1.5 border border-slate-300 rounded-lg bg-white focus:ring-2 focus:ring-emerald-500 focus:outline-none transition" onkeydown="if(event.key==='Enter'){event.preventDefault();window.submitIdeaComment('${escapeHtml(item.id)}');}" />
+                  <button type="button" onclick="window.submitIdeaComment('${escapeHtml(item.id)}')" class="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs sm:text-sm font-bold rounded-lg shadow-2xs flex items-center gap-1 transition cursor-pointer active:scale-95 shrink-0">
+                    <i data-lucide="send" class="w-3.5 h-3.5"></i>
+                    <span>등록</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+
             <!-- Bottom Actions -->
-            <div class="pt-3.5 mt-3 border-t border-slate-100 flex items-center justify-between gap-2">
+            <div class="pt-3.5 border-t border-slate-100 flex items-center justify-between gap-2">
               <div class="flex items-center gap-1.5">
                 <!-- Cheer / Vote Button -->
-                <button type="button" onclick="window.toggleIdeaCheer('${escapeHtml(item.id)}')" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer active:scale-95 ${isCheered ? 'bg-emerald-600 text-white shadow-xs' : 'bg-slate-100 hover:bg-emerald-50 text-slate-700 hover:text-emerald-700 border border-slate-200 hover:border-emerald-200'}" title="강의 개설 응원하기">
-                  <i data-lucide="lightbulb" class="w-3.5 h-3.5 ${isCheered ? 'fill-white text-white' : 'text-emerald-500'}"></i>
+                <button type="button" onclick="window.toggleIdeaCheer('${escapeHtml(item.id)}')" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold transition cursor-pointer active:scale-95 ${isCheered ? 'bg-emerald-600 text-white shadow-xs' : 'bg-slate-100 hover:bg-emerald-50 text-slate-700 hover:text-emerald-700 border border-slate-200 hover:border-emerald-200'}" title="강의 개설 응원하기">
+                  <i data-lucide="lightbulb" class="w-4 h-4 ${isCheered ? 'fill-white text-white' : 'text-emerald-500'}"></i>
                   <span>강의 개설 원해요</span>
-                  <span class="px-1.5 py-0.2 rounded-full text-[10px] ${isCheered ? 'bg-emerald-700 text-white' : 'bg-slate-200 text-slate-700'}">${cheers}</span>
+                  <span class="px-2 py-0.2 rounded-full text-xs font-black ${isCheered ? 'bg-emerald-700 text-white' : 'bg-slate-200 text-slate-700'}">${cheers}</span>
                 </button>
               </div>
 
-              <div class="flex items-center gap-1">
+              <div class="flex items-center gap-1.5">
                 <!-- Edit Button (수정 버튼) -->
-                <button type="button" onclick="window.openEditIdeaModal('${escapeHtml(item.id)}')" class="inline-flex items-center gap-1 px-2.5 py-1 text-slate-500 hover:text-emerald-700 hover:bg-emerald-50 border border-slate-200 hover:border-emerald-200 rounded-lg text-xs font-semibold transition cursor-pointer active:scale-95" title="아이디어 수정">
+                <button type="button" onclick="window.openEditIdeaModal('${escapeHtml(item.id)}')" class="inline-flex items-center gap-1 px-3 py-1.5 text-slate-600 hover:text-emerald-700 hover:bg-emerald-50 border border-slate-200 hover:border-emerald-200 rounded-lg text-xs sm:text-sm font-semibold transition cursor-pointer active:scale-95" title="아이디어 수정">
                   <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
                   <span>수정</span>
                 </button>
 
                 <!-- Delete Button (삭제 버튼) -->
-                <button type="button" onclick="window.openDeleteIdeaModal('${escapeHtml(item.id)}')" class="inline-flex items-center gap-1 px-2.5 py-1 text-slate-500 hover:text-rose-600 hover:bg-rose-50 border border-slate-200 hover:border-rose-200 rounded-lg text-xs font-semibold transition cursor-pointer active:scale-95" title="아이디어 삭제">
+                <button type="button" onclick="window.openDeleteIdeaModal('${escapeHtml(item.id)}')" class="inline-flex items-center gap-1 px-3 py-1.5 text-slate-600 hover:text-rose-600 hover:bg-rose-50 border border-slate-200 hover:border-rose-200 rounded-lg text-xs sm:text-sm font-semibold transition cursor-pointer active:scale-95" title="아이디어 삭제">
                   <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
                   <span>삭제</span>
                 </button>
@@ -5676,7 +6660,7 @@
       const modal = document.getElementById("modalDetail");
       if (!modal) return;
 
-      document.getElementById("detailTitle").innerText = lec.title || "";
+      document.getElementById("detailTitle").innerHTML = formatRichContent(lec.title || "");
       document.getElementById("detailPresenter").innerText = lec.presenter || "";
       document.getElementById("detailDateTime").innerText = `${lec.date || ""} (${lec.time || ""})`;
       document.getElementById("detailMonthBadge").innerText = lec.month || currentSelectedMonth;
@@ -6513,6 +7497,8 @@
 
         if (activeSec === secCalendar && calendarInstance) {
           setTimeout(() => calendarInstance.render(), 100);
+        } else if (activeSec === secNotice) {
+          renderNoticeView();
         } else if (activeSec === secAttended) {
           updateRecordStudentDropdown();
           renderAttendedCoursesView();
@@ -6559,6 +7545,7 @@
 
       document.getElementById("btnBannerViewNotice")?.addEventListener("click", () => {
         switchTab(tabNotice, secNotice);
+        window.scrollTo({ top: 0, behavior: "smooth" });
       });
 
       // 2. Month Selector & Navigation (< 이번 달 >)
@@ -7118,6 +8105,7 @@
         document.getElementById("editNoticeRefLinkTitle").value = weeklyNoticeData.refLinkTitle || "참고 사이트";
         document.getElementById("editNoticeRefLinkUrl").value = weeklyNoticeData.refLinkUrl || "https://www.keris.or.kr";
         openModal("modalEditNotice");
+        safeRenderIcons();
       }
 
       document.getElementById("btnEditNoticeModal")?.addEventListener("click", () => {
