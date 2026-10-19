@@ -91,28 +91,28 @@
         </div>
 
         <!-- Month Selector & Global Controls -->
-        <div class="flex items-center gap-2 sm:gap-3">
+        <div class="flex items-center gap-1.5 sm:gap-2.5 shrink-0 flex-nowrap">
           <!-- Month Dropdown -->
-          <div class="flex items-center bg-slate-100 rounded-lg p-1 border border-slate-200">
+          <div class="flex items-center bg-slate-100 rounded-lg p-1 border border-slate-200 shrink-0">
             <label for="selectMonth" class="text-xs font-semibold text-slate-600 px-1 hidden md:inline">월 선택:</label>
             <select id="selectMonth" class="bg-transparent text-xs sm:text-sm font-bold text-slate-800 focus:outline-none cursor-pointer pr-1">
             </select>
           </div>
 
-          <!-- Register Lecture Button -->
-          <button id="btnOpenRegisterModal" type="button" onclick="window.openRegisterModal()" class="inline-flex items-center gap-1.5 px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs sm:text-sm font-semibold rounded-lg shadow-sm transition cursor-pointer active:scale-95">
-            <i data-lucide="plus-circle" class="w-4 h-4"></i>
-            <span>강의 등록</span>
+          <!-- Register Lecture Button (Optimized for Mobile & PC) -->
+          <button id="btnOpenRegisterModal" type="button" onclick="window.openRegisterModal()" class="inline-flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3.5 py-1.5 sm:py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs sm:text-sm font-bold rounded-lg shadow-sm transition cursor-pointer active:scale-95 whitespace-nowrap shrink-0 tracking-tighter sm:tracking-tight break-keep" title="지식샘터 새 강의 등록">
+            <i data-lucide="plus-circle" class="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0"></i>
+            <span class="whitespace-nowrap tracking-tighter sm:tracking-tight break-keep font-bold">강의 등록</span>
           </button>
 
           <!-- Admin Mode Button -->
-          <button id="btnOpenAdminModal" type="button" class="inline-flex items-center gap-1 px-2.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs sm:text-sm font-medium rounded-lg border border-slate-200 transition cursor-pointer">
-            <i data-lucide="shield" class="w-4 h-4 text-slate-600"></i>
-            <span id="adminBtnLabel" class="hidden md:inline">관리자</span>
+          <button id="btnOpenAdminModal" type="button" class="inline-flex items-center gap-1 px-2 sm:px-2.5 py-1.5 sm:py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs sm:text-sm font-medium rounded-lg border border-slate-200 transition cursor-pointer shrink-0" title="관리자 모드">
+            <i data-lucide="shield" class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-600 shrink-0"></i>
+            <span id="adminBtnLabel" class="hidden md:inline whitespace-nowrap tracking-tight break-keep">관리자</span>
           </button>
 
           <!-- Mobile Hamburger -->
-          <button id="btnToggleMobileMenu" type="button" class="sm:hidden p-2 rounded-lg text-slate-600 hover:bg-slate-100 cursor-pointer">
+          <button id="btnToggleMobileMenu" type="button" class="sm:hidden p-1.5 sm:p-2 rounded-lg text-slate-600 hover:bg-slate-100 cursor-pointer shrink-0" title="메뉴 열기">
             <i data-lucide="menu" class="w-5 h-5"></i>
           </button>
         </div>
@@ -155,12 +155,14 @@
       <span class="text-xs font-semibold text-slate-500">실시간 연동 상태</span>
       <span id="mobileDbStatusBadge" class="text-xs font-medium text-emerald-600">● Firestore 동기화 활성</span>
     </div>
-    <div class="flex gap-2 pt-1">
-      <button id="btnMobileRegister" type="button" onclick="window.openRegisterModal()" class="flex-1 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold flex items-center justify-center gap-1 cursor-pointer active:scale-95">
-        <i data-lucide="plus" class="w-4 h-4"></i> 강의 등록
+    <div class="flex gap-2 pt-1 flex-nowrap">
+      <button id="btnMobileRegister" type="button" onclick="window.openRegisterModal()" class="flex-1 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-1.5 cursor-pointer active:scale-95 whitespace-nowrap tracking-tighter sm:tracking-tight break-keep shadow-xs">
+        <i data-lucide="plus-circle" class="w-4 h-4 shrink-0"></i>
+        <span class="whitespace-nowrap tracking-tighter sm:tracking-tight break-keep font-bold">강의 등록</span>
       </button>
-      <button id="btnMobileAdmin" class="flex-1 py-2 bg-slate-100 text-slate-800 rounded-lg text-xs font-bold flex items-center justify-center gap-1 border border-slate-200">
-        <i data-lucide="shield" class="w-4 h-4"></i> 관리자 모드
+      <button id="btnMobileAdmin" class="flex-1 py-2.5 bg-slate-100 text-slate-800 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-1.5 border border-slate-200 cursor-pointer active:scale-95 whitespace-nowrap tracking-tight break-keep">
+        <i data-lucide="shield" class="w-4 h-4 text-slate-600 shrink-0"></i>
+        <span class="whitespace-nowrap tracking-tight break-keep">관리자 모드</span>
       </button>
     </div>
   </div>
@@ -226,34 +228,40 @@
       <div class="bg-white rounded-xl border border-slate-200 p-4 shadow-2xs">
         <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4">
           <div class="flex items-center gap-2 sm:gap-3 flex-wrap">
-            <h2 id="calendarTitleText" class="text-base sm:text-lg font-bold text-slate-900">강의 캘린더</h2>
+            <h2 id="calendarTitleText" class="text-base sm:text-lg font-bold text-slate-900 whitespace-nowrap tracking-tight break-keep">강의 캘린더</h2>
 
             <!-- Month Navigation Buttons (< 이번 달 >) -->
-            <div class="inline-flex items-center rounded-lg border border-slate-200 bg-slate-100 p-0.5 shadow-2xs">
-              <button id="btnCalendarPrev" type="button" class="p-1 sm:px-2.5 sm:py-1 rounded-md text-xs font-bold text-slate-700 hover:text-slate-900 hover:bg-white transition flex items-center gap-1 cursor-pointer" title="지난달 (<)">
-                <i data-lucide="chevron-left" class="w-4 h-4"></i>
-                <span class="hidden md:inline">지난달</span>
+            <div class="inline-flex items-center rounded-lg border border-slate-200 bg-slate-100 p-0.5 shadow-2xs shrink-0 flex-nowrap">
+              <button id="btnCalendarPrev" type="button" class="p-1 sm:px-2.5 sm:py-1 rounded-md text-xs font-bold text-slate-700 hover:text-slate-900 hover:bg-white transition flex items-center gap-1 cursor-pointer whitespace-nowrap tracking-tight break-keep" title="지난달 (<)">
+                <i data-lucide="chevron-left" class="w-4 h-4 shrink-0"></i>
+                <span class="hidden md:inline whitespace-nowrap">지난달</span>
               </button>
-              <button id="btnCalendarToday" type="button" class="px-2.5 py-1 rounded-md text-xs font-bold text-slate-700 hover:text-slate-900 hover:bg-white transition cursor-pointer" title="오늘/이번 달로 이동">
+              <button id="btnCalendarToday" type="button" class="px-2.5 py-1 rounded-md text-xs font-bold text-slate-700 hover:text-slate-900 hover:bg-white transition cursor-pointer whitespace-nowrap tracking-tight break-keep" title="오늘/이번 달로 이동">
                 이번 달
               </button>
-              <button id="btnCalendarNext" type="button" class="p-1 sm:px-2.5 sm:py-1 rounded-md text-xs font-bold text-slate-700 hover:text-slate-900 hover:bg-white transition flex items-center gap-1 cursor-pointer" title="다음달 (>)">
-                <span class="hidden md:inline">다음달</span>
-                <i data-lucide="chevron-right" class="w-4 h-4"></i>
+              <button id="btnCalendarNext" type="button" class="p-1 sm:px-2.5 sm:py-1 rounded-md text-xs font-bold text-slate-700 hover:text-slate-900 hover:bg-white transition flex items-center gap-1 cursor-pointer whitespace-nowrap tracking-tight break-keep" title="다음달 (>)">
+                <span class="hidden md:inline whitespace-nowrap">다음달</span>
+                <i data-lucide="chevron-right" class="w-4 h-4 shrink-0"></i>
               </button>
             </div>
 
-            <!-- Admin Calendar Event Add Button -->
-            <button id="btnCalendarAddEvent" type="button" onclick="window.openCalendarEventModal()" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white text-xs sm:text-sm font-bold rounded-lg shadow-2xs transition cursor-pointer active:scale-95" title="관리자 권한: 캘린더에 새 행사 및 공식 일정 추가">
-              <i data-lucide="calendar-plus" class="w-4 h-4 text-purple-200"></i>
-              <span>행사 추가</span>
-              <span class="text-[10px] bg-purple-800/80 px-1.5 py-0.2 rounded text-purple-200 font-medium">관리자</span>
+            <!-- Quick Register Lecture Button on Calendar Bar -->
+            <button type="button" onclick="window.openRegisterModal()" class="inline-flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs sm:text-sm font-bold rounded-lg shadow-2xs transition cursor-pointer active:scale-95 whitespace-nowrap shrink-0 tracking-tighter sm:tracking-tight break-keep" title="새 지식샘터 강의 등록">
+              <i data-lucide="plus-circle" class="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0"></i>
+              <span class="whitespace-nowrap tracking-tighter sm:tracking-tight break-keep font-bold">강의 등록</span>
             </button>
 
-            <span class="text-xs px-2 py-0.5 rounded-md bg-purple-50 text-purple-700 border border-purple-200 font-semibold hidden md:inline-flex items-center gap-1">
+            <!-- Admin Calendar Event Add Button -->
+            <button id="btnCalendarAddEvent" type="button" onclick="window.openCalendarEventModal()" class="inline-flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1.5 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white text-xs sm:text-sm font-bold rounded-lg shadow-2xs transition cursor-pointer active:scale-95 whitespace-nowrap shrink-0 tracking-tighter sm:tracking-tight break-keep" title="관리자 권한: 캘린더에 새 행사 및 공식 일정 추가">
+              <i data-lucide="calendar-plus" class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-purple-200 shrink-0"></i>
+              <span class="whitespace-nowrap tracking-tighter sm:tracking-tight break-keep">행사 추가</span>
+              <span class="text-[10px] bg-purple-800/80 px-1.5 py-0.2 rounded text-purple-200 font-medium whitespace-nowrap shrink-0">관리자</span>
+            </button>
+
+            <span class="text-xs px-2 py-0.5 rounded-md bg-purple-50 text-purple-700 border border-purple-200 font-semibold hidden md:inline-flex items-center gap-1 whitespace-nowrap shrink-0">
               <span class="w-2 h-2 rounded-full bg-purple-600"></span> 📌 행사/일정 연동
             </span>
-            <span class="text-xs px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 font-medium hidden sm:inline">실시간 동기화</span>
+            <span class="text-xs px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 font-medium hidden sm:inline whitespace-nowrap shrink-0">실시간 동기화</span>
           </div>
           <div class="flex items-center gap-2">
             <!-- View Mode Switch: Calendar vs Card List -->
@@ -772,9 +780,9 @@
   <div id="modalRegister" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-xl border border-slate-200 relative animate-in fade-in zoom-in duration-150">
       <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-4">
-        <h3 class="text-lg font-bold text-slate-900 flex items-center gap-2">
-          <i data-lucide="plus-circle" class="w-5 h-5 text-blue-600"></i>
-          <span>새 지식샘터 강의 등록</span>
+        <h3 class="text-base sm:text-lg font-bold text-slate-900 flex items-center gap-2 whitespace-nowrap tracking-tight break-keep">
+          <i data-lucide="plus-circle" class="w-5 h-5 text-blue-600 shrink-0"></i>
+          <span class="whitespace-nowrap tracking-tight break-keep">새 지식샘터 강의 등록</span>
         </h3>
         <button type="button" class="btnModalClose text-slate-400 hover:text-slate-600 p-1">
           <i data-lucide="x" class="w-5 h-5"></i>
@@ -837,11 +845,11 @@
           <p class="text-[11px] text-slate-400 mt-1">강의 수정 또는 삭제 시 필요합니다. (기본값: 1234)</p>
         </div>
 
-        <div class="flex items-center justify-end gap-2 pt-3 border-t border-slate-100">
-          <button type="button" class="btnModalClose px-4 py-2 bg-slate-100 text-slate-700 text-xs sm:text-sm font-semibold rounded-lg hover:bg-slate-200 cursor-pointer">취소</button>
-          <button type="button" id="btnSubmitRegister" onclick="window.submitRegisterLecture(event)" class="px-4 py-2 bg-blue-600 text-white text-xs sm:text-sm font-bold rounded-lg hover:bg-blue-700 shadow-sm flex items-center gap-1.5 cursor-pointer active:scale-95">
-            <i data-lucide="check" class="w-4 h-4"></i>
-            <span>등록하기</span>
+        <div class="flex items-center justify-end gap-2 pt-3 border-t border-slate-100 flex-nowrap">
+          <button type="button" class="btnModalClose px-4 py-2 bg-slate-100 text-slate-700 text-xs sm:text-sm font-semibold rounded-lg hover:bg-slate-200 cursor-pointer whitespace-nowrap">취소</button>
+          <button type="button" id="btnSubmitRegister" onclick="window.submitRegisterLecture(event)" class="px-4 py-2 bg-blue-600 text-white text-xs sm:text-sm font-bold rounded-lg hover:bg-blue-700 shadow-sm flex items-center gap-1.5 cursor-pointer active:scale-95 whitespace-nowrap tracking-tight break-keep">
+            <i data-lucide="check" class="w-4 h-4 shrink-0"></i>
+            <span class="whitespace-nowrap tracking-tight break-keep">강의 등록하기</span>
           </button>
         </div>
       </form>
@@ -931,19 +939,19 @@
           </p>
         </div>
 
-        <!-- Actions Footer -->
-        <div class="flex items-center justify-between pt-2 border-t border-slate-100">
-          <div class="flex items-center gap-2">
-            <button type="button" id="btnOpenEditLectureModal" class="text-xs text-blue-700 hover:text-blue-900 font-bold flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 hover:bg-blue-100 rounded-lg border border-blue-200 transition cursor-pointer">
-              <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
-              <span>수강현황 / 강의 수정</span>
+        <!-- Actions Footer (Single line on mobile & PC) -->
+        <div class="flex items-center justify-between pt-2 border-t border-slate-100 flex-nowrap gap-1 sm:gap-2">
+          <div class="flex items-center gap-1 sm:gap-1.5 shrink-0 flex-nowrap">
+            <button type="button" id="btnOpenEditLectureModal" class="text-[11px] sm:text-xs text-blue-700 hover:text-blue-900 font-bold flex items-center gap-1 px-2.5 sm:px-3 py-1.5 bg-blue-50 hover:bg-blue-100 rounded-lg border border-blue-200 transition cursor-pointer whitespace-nowrap tracking-tighter sm:tracking-tight break-keep">
+              <i data-lucide="edit-3" class="w-3.5 h-3.5 shrink-0"></i>
+              <span class="whitespace-nowrap tracking-tighter sm:tracking-tight break-keep">수강현황 / 강의 수정</span>
             </button>
-            <button type="button" id="btnOpenDeleteModal" onclick="window.openDeleteModal()" class="text-xs text-rose-600 hover:text-rose-800 font-semibold flex items-center gap-1 px-2.5 py-1.5 hover:bg-rose-50 rounded-lg transition cursor-pointer">
-              <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
-              <span>삭제</span>
+            <button type="button" id="btnOpenDeleteModal" onclick="window.openDeleteModal()" class="text-[11px] sm:text-xs text-rose-600 hover:text-rose-800 font-semibold flex items-center gap-1 px-2 sm:px-2.5 py-1.5 hover:bg-rose-50 border border-transparent hover:border-rose-200 rounded-lg transition cursor-pointer whitespace-nowrap tracking-tighter sm:tracking-tight break-keep">
+              <i data-lucide="trash-2" class="w-3.5 h-3.5 shrink-0"></i>
+              <span class="whitespace-nowrap tracking-tighter sm:tracking-tight break-keep">삭제</span>
             </button>
           </div>
-          <button type="button" class="btnModalClose px-4 py-2 bg-slate-100 text-slate-700 text-xs sm:text-sm font-semibold rounded-lg hover:bg-slate-200 cursor-pointer">닫기</button>
+          <button type="button" class="btnModalClose px-3 sm:px-4 py-1.5 bg-slate-100 text-slate-700 text-xs font-semibold rounded-lg hover:bg-slate-200 cursor-pointer whitespace-nowrap shrink-0">닫기</button>
         </div>
       </div>
     </div>
@@ -976,10 +984,10 @@
         </div>
 
         <div class="flex items-center justify-end gap-2 pt-2">
-          <button type="button" class="btnModalClose px-3 py-1.5 bg-slate-100 text-slate-700 text-xs font-semibold rounded-lg hover:bg-slate-200 cursor-pointer">취소</button>
-          <button type="button" id="btnConfirmDeleteLecture" onclick="window.confirmDeleteLecture()" class="px-3.5 py-1.5 bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold rounded-lg shadow-sm flex items-center gap-1 cursor-pointer active:scale-95">
-            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
-            <span>삭제 확인</span>
+          <button type="button" class="btnModalClose px-3 py-1.5 bg-slate-100 text-slate-700 text-xs font-semibold rounded-lg hover:bg-slate-200 cursor-pointer whitespace-nowrap">취소</button>
+          <button type="button" id="btnConfirmDeleteLecture" onclick="window.confirmDeleteLecture()" class="px-3.5 py-1.5 bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold rounded-lg shadow-sm flex items-center gap-1 cursor-pointer active:scale-95 whitespace-nowrap tracking-tight break-keep">
+            <i data-lucide="trash-2" class="w-3.5 h-3.5 shrink-0"></i>
+            <span class="whitespace-nowrap tracking-tight break-keep">삭제 확인</span>
           </button>
         </div>
       </div>
@@ -1490,19 +1498,19 @@
         </div>
       </div>
 
-      <div class="flex items-center justify-between pt-4 mt-4 border-t border-slate-100">
-        <button type="button" class="btnModalClose px-4 py-2 text-xs sm:text-sm text-slate-600 hover:bg-slate-100 rounded-lg font-semibold cursor-pointer">
+      <div class="flex items-center justify-between pt-3 mt-3 border-t border-slate-100 flex-nowrap gap-1.5">
+        <button type="button" class="btnModalClose px-3 py-1.5 text-xs sm:text-sm text-slate-600 hover:bg-slate-100 rounded-lg font-semibold cursor-pointer whitespace-nowrap shrink-0">
           닫기
         </button>
-        <div class="flex items-center gap-2">
+        <div class="flex items-center gap-1.5 shrink-0 flex-nowrap">
           <!-- Admin actions: Edit and Delete -->
-          <button type="button" id="btnEventDetailEdit" onclick="window.editCalendarEventFromDetail()" class="px-3.5 py-2 bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200 text-xs sm:text-sm font-bold rounded-lg flex items-center gap-1 transition cursor-pointer active:scale-95">
-            <i data-lucide="edit-3" class="w-4 h-4"></i>
-            <span>행사 수정</span>
+          <button type="button" id="btnEventDetailEdit" onclick="window.editCalendarEventFromDetail()" class="px-2.5 sm:px-3 py-1.5 bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200 text-[11px] sm:text-xs font-bold rounded-lg flex items-center gap-1 transition cursor-pointer active:scale-95 whitespace-nowrap tracking-tighter sm:tracking-tight break-keep">
+            <i data-lucide="edit-3" class="w-3.5 h-3.5 shrink-0"></i>
+            <span class="whitespace-nowrap tracking-tighter sm:tracking-tight break-keep">행사 수정</span>
           </button>
-          <button type="button" id="btnEventDetailDelete" onclick="window.deleteCalendarEventFromDetail()" class="px-3.5 py-2 bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 text-xs sm:text-sm font-bold rounded-lg flex items-center gap-1 transition cursor-pointer active:scale-95">
-            <i data-lucide="trash-2" class="w-4 h-4"></i>
-            <span>행사 삭제</span>
+          <button type="button" id="btnEventDetailDelete" onclick="window.deleteCalendarEventFromDetail()" class="px-2.5 sm:px-3 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 text-[11px] sm:text-xs font-bold rounded-lg flex items-center gap-1 transition cursor-pointer active:scale-95 whitespace-nowrap tracking-tighter sm:tracking-tight break-keep">
+            <i data-lucide="trash-2" class="w-3.5 h-3.5 shrink-0"></i>
+            <span class="whitespace-nowrap tracking-tighter sm:tracking-tight break-keep">행사 삭제</span>
           </button>
         </div>
       </div>
@@ -1768,10 +1776,10 @@
           <p class="text-[11px] text-slate-400 mt-1">※ 기본 비밀번호 1234가 자동 입력되어 바로 삭제 확인이 가능합니다.</p>
         </div>
         <div class="flex justify-end gap-2 pt-2">
-          <button type="button" class="btnModalClose px-3 py-1.5 text-xs text-slate-600 hover:bg-slate-100 rounded-lg font-medium cursor-pointer">취소</button>
-          <button type="button" id="btnConfirmDeleteAttended" onclick="window.confirmDeleteAttended()" class="px-4 py-1.5 bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold rounded-lg shadow-sm flex items-center gap-1 cursor-pointer active:scale-95">
-            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
-            <span>삭제 확인</span>
+          <button type="button" class="btnModalClose px-3 py-1.5 text-xs text-slate-600 hover:bg-slate-100 rounded-lg font-medium cursor-pointer whitespace-nowrap">취소</button>
+          <button type="button" id="btnConfirmDeleteAttended" onclick="window.confirmDeleteAttended()" class="px-4 py-1.5 bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold rounded-lg shadow-sm flex items-center gap-1 cursor-pointer active:scale-95 whitespace-nowrap tracking-tight break-keep">
+            <i data-lucide="trash-2" class="w-3.5 h-3.5 shrink-0"></i>
+            <span class="whitespace-nowrap tracking-tight break-keep">삭제 확인</span>
           </button>
         </div>
       </div>
@@ -1990,10 +1998,10 @@
           <p class="text-[11px] text-slate-400 mt-1">※ 기본 비밀번호 1234가 자동 입력되어 바로 삭제 확인이 가능합니다.</p>
         </div>
         <div class="flex justify-end gap-2 pt-2">
-          <button type="button" class="btnModalClose px-3 py-1.5 text-xs text-slate-600 hover:bg-slate-100 rounded-lg font-medium cursor-pointer">취소</button>
-          <button type="button" id="btnConfirmDeleteFeedback" onclick="window.confirmDeleteFeedback()" class="px-4 py-1.5 bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold rounded-lg shadow-sm flex items-center gap-1 cursor-pointer active:scale-95">
-            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
-            <span>삭제 확인</span>
+          <button type="button" class="btnModalClose px-3 py-1.5 text-xs text-slate-600 hover:bg-slate-100 rounded-lg font-medium cursor-pointer whitespace-nowrap">취소</button>
+          <button type="button" id="btnConfirmDeleteFeedback" onclick="window.confirmDeleteFeedback()" class="px-4 py-1.5 bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold rounded-lg shadow-sm flex items-center gap-1 cursor-pointer active:scale-95 whitespace-nowrap tracking-tight break-keep">
+            <i data-lucide="trash-2" class="w-3.5 h-3.5 shrink-0"></i>
+            <span class="whitespace-nowrap tracking-tight break-keep">삭제 확인</span>
           </button>
         </div>
       </div>
@@ -2147,12 +2155,12 @@
         </div>
 
         <div class="flex justify-end gap-2 pt-3 border-t border-slate-100">
-          <button type="button" class="btnModalClose px-4 py-2 text-xs sm:text-sm text-slate-600 hover:bg-slate-100 rounded-lg font-medium cursor-pointer">
+          <button type="button" class="btnModalClose px-4 py-2 text-xs sm:text-sm text-slate-600 hover:bg-slate-100 rounded-lg font-medium cursor-pointer whitespace-nowrap">
             취소
           </button>
-          <button type="button" id="btnSubmitEditFeedback" onclick="window.submitEditFeedback(event)" class="px-5 py-2 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-950 text-xs sm:text-sm font-bold rounded-lg shadow-sm flex items-center gap-1.5 cursor-pointer active:scale-95">
-            <i data-lucide="check-circle" class="w-4 h-4 text-slate-950"></i>
-            <span>수정 완료</span>
+          <button type="button" id="btnSubmitEditFeedback" onclick="window.submitEditFeedback(event)" class="px-5 py-2 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-950 text-xs sm:text-sm font-bold rounded-lg shadow-sm flex items-center gap-1.5 cursor-pointer active:scale-95 whitespace-nowrap tracking-tight break-keep">
+            <i data-lucide="check-circle" class="w-4 h-4 text-slate-950 shrink-0"></i>
+            <span class="whitespace-nowrap tracking-tight break-keep">수정 완료</span>
           </button>
         </div>
       </form>
@@ -2312,10 +2320,10 @@
           <p class="text-[11px] text-slate-400 mt-1">※ 기본 비밀번호 1234가 자동 입력되어 바로 삭제 확인이 가능합니다.</p>
         </div>
         <div class="flex justify-end gap-2 pt-2">
-          <button type="button" class="btnModalClose px-3 py-1.5 text-xs text-slate-600 hover:bg-slate-100 rounded-lg font-medium cursor-pointer">취소</button>
-          <button type="button" id="btnConfirmDeleteIdea" onclick="window.confirmDeleteIdea()" class="px-4 py-1.5 bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold rounded-lg shadow-sm flex items-center gap-1 cursor-pointer active:scale-95">
-            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
-            <span>삭제 확인</span>
+          <button type="button" class="btnModalClose px-3 py-1.5 text-xs text-slate-600 hover:bg-slate-100 rounded-lg font-medium cursor-pointer whitespace-nowrap">취소</button>
+          <button type="button" id="btnConfirmDeleteIdea" onclick="window.confirmDeleteIdea()" class="px-4 py-1.5 bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold rounded-lg shadow-sm flex items-center gap-1 cursor-pointer active:scale-95 whitespace-nowrap tracking-tight break-keep">
+            <i data-lucide="trash-2" class="w-3.5 h-3.5 shrink-0"></i>
+            <span class="whitespace-nowrap tracking-tight break-keep">삭제 확인</span>
           </button>
         </div>
       </div>
@@ -2421,12 +2429,12 @@
         </div>
 
         <div class="flex justify-end gap-2 pt-3 border-t border-slate-100">
-          <button type="button" class="btnModalClose px-4 py-2 text-xs sm:text-sm text-slate-600 hover:bg-slate-100 rounded-lg font-medium cursor-pointer">
+          <button type="button" class="btnModalClose px-4 py-2 text-xs sm:text-sm text-slate-600 hover:bg-slate-100 rounded-lg font-medium cursor-pointer whitespace-nowrap">
             취소
           </button>
-          <button type="button" id="btnSubmitEditIdea" onclick="window.submitEditIdea(event)" class="px-5 py-2 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-slate-950 text-xs sm:text-sm font-bold rounded-lg shadow-sm flex items-center gap-1.5 cursor-pointer active:scale-95">
-            <i data-lucide="check-circle" class="w-4 h-4 text-slate-950"></i>
-            <span>아이디어 수정 완료</span>
+          <button type="button" id="btnSubmitEditIdea" onclick="window.submitEditIdea(event)" class="px-5 py-2 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-slate-950 text-xs sm:text-sm font-bold rounded-lg shadow-sm flex items-center gap-1.5 cursor-pointer active:scale-95 whitespace-nowrap tracking-tight break-keep">
+            <i data-lucide="check-circle" class="w-4 h-4 text-slate-950 shrink-0"></i>
+            <span class="whitespace-nowrap tracking-tight break-keep">아이디어 수정 완료</span>
           </button>
         </div>
       </form>
@@ -2706,6 +2714,7 @@
     let cheeredIdeas = [];
     let activeDeletingIdeaId = null;
     let activeEditingIdeaId = null;
+    let activeEditingComment = null;
     let selectedIdeaCategory = "";
     let deletedIdeaIds = new Set();
     let deletedFeedbackIds = new Set();
@@ -2799,6 +2808,57 @@
     }
 
     // ----------------------------------------------------
+    // Idea Collection Deduplication (아이디어 중복 등록 방지 및 기존 중복 제거)
+    // ----------------------------------------------------
+    function deduplicateIdeas(list) {
+      if (!Array.isArray(list)) return [];
+      const seenIds = new Set();
+      const seenSignatures = new Map();
+      const result = [];
+      const duplicateIdsToRemove = [];
+
+      for (const item of list) {
+        if (!item || !item.id || !item.title) continue;
+        const strId = String(item.id);
+        if (seenIds.has(strId)) continue;
+        seenIds.add(strId);
+
+        const teacher = (item.teacherName || "").trim();
+        const title = (item.title || "").trim();
+        const category = (item.category || "").trim();
+        const sig = `${teacher}:::${title}:::${category}`;
+
+        if (seenSignatures.has(sig)) {
+          const prev = seenSignatures.get(sig);
+          const prevTime = prev.createdAt ? new Date(prev.createdAt).getTime() : 0;
+          const currTime = item.createdAt ? new Date(item.createdAt).getTime() : 0;
+          const isTimeClose = Math.abs(currTime - prevTime) < 300000; // 5분 이내 중복 등록
+          const isContentIdentical = (prev.painPoint || "").trim() === (item.painPoint || "").trim() && (prev.lectureIdea || "").trim() === (item.lectureIdea || "").trim();
+
+          if (isTimeClose || isContentIdentical) {
+            duplicateIdsToRemove.push(strId);
+            continue;
+          }
+        }
+        seenSignatures.set(sig, item);
+        result.push(item);
+      }
+
+      if (duplicateIdsToRemove.length > 0) {
+        duplicateIdsToRemove.forEach((dupId) => {
+          deletedIdeaIds.add(dupId);
+          if (typeof db !== "undefined" && db && isFirebaseActive) {
+            try {
+              db.collection("lecture_ideas").doc(dupId).delete().catch(() => {});
+            } catch (e) {}
+          }
+        });
+      }
+
+      return result;
+    }
+
+    // ----------------------------------------------------
     // Safe Helper Functions
     // ----------------------------------------------------
     function safeRenderIcons() {
@@ -2861,6 +2921,16 @@
       safe = safe.replace(/&lt;strong&gt;([\s\S]+?)&lt;\/strong&gt;/gi, '<strong class="font-extrabold text-slate-950 bg-amber-200/60 px-1 py-0.5 rounded shadow-2xs">$1</strong>');
       return safe;
     }
+
+    // Helper: Auto-expand textarea to fit content so long comments are fully visible
+    window.autoExpandTextarea = function (el) {
+      if (!el) return;
+      el.style.height = "auto";
+      const scrollH = el.scrollHeight;
+      // Allow it to grow smoothly up to 360px without cutting off, with minimum 64px
+      const newHeight = Math.max(Math.min(scrollH + 4, 360), 64);
+      el.style.height = newHeight + "px";
+    };
 
     // Helper: Apply or toggle bold markdown formatting (**text**)
     window.applyBoldToField = function (fieldOrId) {
@@ -3093,9 +3163,9 @@
       } else {
         ideasData = [];
       }
-      ideasData = ideasData.filter(
+      ideasData = deduplicateIdeas(ideasData.filter(
         (i) => i && typeof i === "object" && i.title && String(i.title).trim().length > 0 && !deletedIdeaIds.has(String(i.id))
-      );
+      ));
       ideasData.forEach((i) => {
         if (!Array.isArray(i.comments)) i.comments = [];
       });
@@ -3467,7 +3537,7 @@
             }
             const list = Array.from(listMap.values()).filter((i) => i && !deletedIdeaIds.has(String(i.id)) && !i._deleted && !i.deleted);
             list.sort((a, b) => (b.createdAt || "").localeCompare(a.createdAt || ""));
-            ideasData = list;
+            ideasData = deduplicateIdeas(list);
             saveLocalData();
             renderIdeaView();
           },
@@ -3981,6 +4051,7 @@
       } else {
         ideasData.unshift(record);
       }
+      ideasData = deduplicateIdeas(ideasData);
       ideasData.sort((a, b) => (b.createdAt || "").localeCompare(a.createdAt || ""));
       saveLocalData();
       renderIdeaView();
@@ -4427,8 +4498,12 @@
       if (monthLectures.length === 0 && monthEvents.length === 0) {
         container.innerHTML = `
           <div class="col-span-full py-12 text-center text-slate-400">
-            <i data-lucide="inbox" class="w-10 h-10 mx-auto mb-2 stroke-1"></i>
-            <p class="text-sm font-medium">선택된 달에 등록된 강의 및 공식 행사가 없습니다.</p>
+            <i data-lucide="inbox" class="w-10 h-10 mx-auto mb-2 stroke-1 text-slate-300"></i>
+            <p class="text-sm font-medium mb-3 text-slate-600">선택된 달에 등록된 강의 및 공식 행사가 없습니다.</p>
+            <button type="button" onclick="window.openRegisterModal()" class="inline-flex items-center gap-1.5 px-3.5 sm:px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs sm:text-sm font-bold rounded-xl shadow-xs transition cursor-pointer active:scale-95 whitespace-nowrap tracking-tighter sm:tracking-tight break-keep">
+              <i data-lucide="plus-circle" class="w-4 h-4 shrink-0"></i>
+              <span class="whitespace-nowrap tracking-tighter sm:tracking-tight break-keep">이달의 첫 강의 등록하기</span>
+            </button>
           </div>
         `;
         safeRenderIcons();
@@ -4483,14 +4558,14 @@
                         </p>
                       ` : ''}
                     </div>
-                    <div class="flex items-center gap-1.5 pt-2 border-t border-purple-100">
-                      <button type="button" onclick="window.openEventDetailModal('${escapeHtml(ev.id)}')" class="flex-1 py-1.5 bg-purple-50 hover:bg-purple-100 text-purple-700 text-xs font-bold rounded-lg transition text-center cursor-pointer">
+                    <div class="flex items-center gap-1.5 pt-2 border-t border-purple-100 flex-nowrap">
+                      <button type="button" onclick="window.openEventDetailModal('${escapeHtml(ev.id)}')" class="flex-1 py-1.5 bg-purple-50 hover:bg-purple-100 text-purple-700 text-xs font-bold rounded-lg transition text-center cursor-pointer whitespace-nowrap tracking-tighter sm:tracking-tight break-keep">
                         상세보기
                       </button>
-                      <button type="button" onclick="window.openCalendarEventModal('${escapeHtml(ev.id)}')" class="px-2.5 py-1.5 text-xs text-slate-600 hover:text-purple-700 hover:bg-purple-50 border border-slate-200 hover:border-purple-200 rounded-lg font-medium transition cursor-pointer" title="행사 수정">
+                      <button type="button" onclick="window.openCalendarEventModal('${escapeHtml(ev.id)}')" class="px-2 sm:px-2.5 py-1.5 text-xs text-slate-600 hover:text-purple-700 hover:bg-purple-50 border border-slate-200 hover:border-purple-200 rounded-lg font-medium transition cursor-pointer whitespace-nowrap shrink-0 tracking-tighter sm:tracking-tight break-keep" title="행사 수정">
                         수정
                       </button>
-                      <button type="button" onclick="window.deleteCalendarEventDirect('${escapeHtml(ev.id)}')" class="px-2 py-1.5 text-xs text-rose-600 hover:text-rose-800 hover:bg-rose-50 border border-slate-200 hover:border-rose-200 rounded-lg font-medium transition cursor-pointer" title="행사 삭제">
+                      <button type="button" onclick="window.deleteCalendarEventDirect('${escapeHtml(ev.id)}')" class="px-2 sm:px-2.5 py-1.5 text-xs text-rose-600 hover:text-rose-800 hover:bg-rose-50 border border-slate-200 hover:border-rose-200 rounded-lg font-medium transition cursor-pointer whitespace-nowrap shrink-0 tracking-tighter sm:tracking-tight break-keep" title="행사 삭제">
                         삭제
                       </button>
                     </div>
@@ -4522,15 +4597,15 @@
                 <span>${escapeHtml(lec.date)} (${escapeHtml(lec.time)})</span>
               </p>
             </div>
-            <div class="flex items-center gap-1.5 pt-2 border-t border-slate-100">
-              <button type="button" onclick="window.viewLectureDetail('${escapeHtml(lec.id)}')" class="flex-1 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 text-xs font-bold rounded-lg transition text-center cursor-pointer">
+            <div class="flex items-center gap-1.5 pt-2 border-t border-slate-100 flex-nowrap">
+              <button type="button" onclick="window.viewLectureDetail('${escapeHtml(lec.id)}')" class="flex-1 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 text-xs font-bold rounded-lg transition text-center cursor-pointer whitespace-nowrap tracking-tighter sm:tracking-tight break-keep">
                 상세 &amp; 신청
               </button>
-              <button type="button" onclick="window.openDeleteModal('${escapeHtml(lec.id)}')" class="px-2.5 py-1.5 text-xs text-rose-600 hover:text-rose-800 hover:bg-rose-50 border border-slate-200 hover:border-rose-200 rounded-lg font-medium transition cursor-pointer flex items-center gap-1" title="강의 삭제">
-                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
-                <span>삭제</span>
+              <button type="button" onclick="window.openDeleteModal('${escapeHtml(lec.id)}')" class="px-2 sm:px-2.5 py-1.5 text-xs text-rose-600 hover:text-rose-800 hover:bg-rose-50 border border-slate-200 hover:border-rose-200 rounded-lg font-medium transition cursor-pointer flex items-center gap-1 shrink-0 whitespace-nowrap tracking-tighter sm:tracking-tight break-keep" title="강의 삭제">
+                <i data-lucide="trash-2" class="w-3.5 h-3.5 shrink-0"></i>
+                <span class="whitespace-nowrap tracking-tighter sm:tracking-tight break-keep">삭제</span>
               </button>
-              ${lec.url ? `<a href="${escapeHtml(lec.url)}" target="_blank" rel="noopener noreferrer" class="p-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs" title="지식샘터 바로가기"><i data-lucide="external-link" class="w-4 h-4"></i></a>` : ''}
+              ${lec.url ? `<a href="${escapeHtml(lec.url)}" target="_blank" rel="noopener noreferrer" class="p-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs shrink-0" title="지식샘터 바로가기"><i data-lucide="external-link" class="w-4 h-4"></i></a>` : ''}
             </div>
           </div>
         `;
@@ -5099,10 +5174,10 @@
                 </p>
               ` : ""}
             </div>
-            <div class="flex items-center gap-2 shrink-0 self-end sm:self-center">
-              <button type="button" onclick="window.openDeleteAttendedModal('${escapeHtml(item.id)}')" class="px-2.5 py-1.5 text-xs text-rose-600 hover:bg-rose-50 border border-rose-200 rounded-lg font-medium flex items-center gap-1 transition cursor-pointer" title="수강 기록 삭제">
-                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
-                <span>삭제</span>
+            <div class="flex items-center gap-1.5 shrink-0 self-end sm:self-center">
+              <button type="button" onclick="window.openDeleteAttendedModal('${escapeHtml(item.id)}')" class="px-2 sm:px-2.5 py-1.5 text-[11px] sm:text-xs text-rose-600 hover:bg-rose-50 border border-rose-200 rounded-lg font-medium flex items-center gap-1 transition cursor-pointer whitespace-nowrap tracking-tighter sm:tracking-tight break-keep" title="수강 기록 삭제">
+                <i data-lucide="trash-2" class="w-3.5 h-3.5 shrink-0"></i>
+                <span class="whitespace-nowrap tracking-tighter sm:tracking-tight break-keep">삭제</span>
               </button>
             </div>
           </div>
@@ -5368,31 +5443,31 @@
               ` : ""}
             </div>
 
-            <!-- Footer Action Controls: Heart ("도움됐어요"), Copy, Delete -->
-            <div class="pt-3.5 border-t border-slate-100 flex items-center justify-between gap-2">
+            <!-- Footer Action Controls: Heart ("도움됐어요"), Copy, Edit, Delete (Single line on mobile & PC) -->
+            <div class="pt-3 border-t border-slate-100 flex items-center justify-between gap-1 sm:gap-2 flex-nowrap">
               <!-- Heart "도움됐어요" button -->
-              <button type="button" onclick="window.toggleFeedbackHeart('${escapeHtml(item.id)}')" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold transition cursor-pointer active:scale-95 ${isLiked ? 'bg-rose-50 text-rose-600 border border-rose-200 shadow-2xs ring-2 ring-rose-200/50' : 'bg-slate-100 text-slate-700 hover:bg-rose-50 hover:text-rose-600 border border-slate-200'}">
-                <i data-lucide="heart" class="w-4 h-4 transition ${isLiked ? 'fill-rose-500 text-rose-500 scale-110' : 'text-slate-400'}"></i>
-                <span>도움됐어요</span>
-                <span class="px-1.5 py-0.2 rounded-full text-xs font-black ${isLiked ? 'bg-rose-500 text-white' : 'bg-slate-200 text-slate-700'}">${item.helpfulCount || 0}</span>
+              <button type="button" onclick="window.toggleFeedbackHeart('${escapeHtml(item.id)}')" class="inline-flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1.5 rounded-lg sm:rounded-xl text-[11px] sm:text-xs font-bold transition cursor-pointer active:scale-95 whitespace-nowrap shrink-0 tracking-tighter sm:tracking-tight break-keep ${isLiked ? 'bg-rose-50 text-rose-600 border border-rose-200 shadow-2xs ring-1 ring-rose-200/50' : 'bg-slate-100 text-slate-700 hover:bg-rose-50 hover:text-rose-600 border border-slate-200'}">
+                <i data-lucide="heart" class="w-3.5 h-3.5 shrink-0 transition ${isLiked ? 'fill-rose-500 text-rose-500 scale-105' : 'text-slate-400'}"></i>
+                <span class="whitespace-nowrap tracking-tighter sm:tracking-tight break-keep">도움됐어요</span>
+                <span class="px-1.5 py-0.2 rounded-full text-[10px] font-black shrink-0 whitespace-nowrap ${isLiked ? 'bg-rose-500 text-white' : 'bg-slate-200 text-slate-700'}">${item.helpfulCount || 0}</span>
               </button>
 
-              <div class="flex items-center gap-1.5">
+              <div class="flex items-center gap-1 sm:gap-1.5 shrink-0 flex-nowrap">
                 <!-- Copy Tip -->
-                <button type="button" onclick="window.copyFeedbackTip('${escapeHtml(item.id)}')" class="p-2 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-lg text-xs sm:text-sm transition cursor-pointer" title="개선 꿀팁 내용 복사">
-                  <i data-lucide="copy" class="w-4 h-4"></i>
+                <button type="button" onclick="window.copyFeedbackTip('${escapeHtml(item.id)}')" class="p-1.5 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-lg text-xs transition cursor-pointer shrink-0" title="개선 꿀팁 내용 복사">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
                 </button>
 
                 <!-- Edit Post (수정 버튼) -->
-                <button type="button" onclick="window.openEditFeedbackModal('${escapeHtml(item.id)}')" class="inline-flex items-center gap-1 px-3 py-1.5 text-slate-600 hover:text-amber-700 hover:bg-amber-50 border border-slate-200 hover:border-amber-200 rounded-lg text-xs sm:text-sm font-semibold transition cursor-pointer active:scale-95" title="피드백 수정">
-                  <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
-                  <span>수정</span>
+                <button type="button" onclick="window.openEditFeedbackModal('${escapeHtml(item.id)}')" class="inline-flex items-center gap-0.5 sm:gap-1 px-2 sm:px-2.5 py-1.5 text-slate-600 hover:text-amber-700 hover:bg-amber-50 border border-slate-200 hover:border-amber-200 rounded-lg text-[11px] sm:text-xs font-semibold transition cursor-pointer active:scale-95 whitespace-nowrap shrink-0 tracking-tighter sm:tracking-tight break-keep" title="피드백 수정">
+                  <i data-lucide="edit-3" class="w-3.5 h-3.5 shrink-0"></i>
+                  <span class="whitespace-nowrap tracking-tighter sm:tracking-tight break-keep">수정</span>
                 </button>
 
                 <!-- Delete Post (활성화된 삭제 버튼) -->
-                <button type="button" onclick="window.openDeleteFeedbackModal('${escapeHtml(item.id)}')" class="inline-flex items-center gap-1 px-3 py-1.5 text-slate-600 hover:text-rose-600 hover:bg-rose-50 border border-slate-200 hover:border-rose-200 rounded-lg text-xs sm:text-sm font-semibold transition cursor-pointer active:scale-95" title="피드백 삭제">
-                  <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
-                  <span>삭제</span>
+                <button type="button" onclick="window.openDeleteFeedbackModal('${escapeHtml(item.id)}')" class="inline-flex items-center gap-0.5 sm:gap-1 px-2 sm:px-2.5 py-1.5 text-slate-600 hover:text-rose-600 hover:bg-rose-50 border border-slate-200 hover:border-rose-200 rounded-lg text-[11px] sm:text-xs font-semibold transition cursor-pointer active:scale-95 whitespace-nowrap shrink-0 tracking-tighter sm:tracking-tight break-keep" title="피드백 삭제">
+                  <i data-lucide="trash-2" class="w-3.5 h-3.5 shrink-0"></i>
+                  <span class="whitespace-nowrap tracking-tighter sm:tracking-tight break-keep">삭제</span>
                 </button>
               </div>
             </div>
@@ -5570,14 +5645,20 @@
               </div>
 
               <!-- Title (Larger & supports bold) -->
-              <div>
-                <h3 class="text-base sm:text-lg font-bold text-slate-900 group-hover:text-emerald-700 transition leading-snug">
-                  ${formatRichContent(item.title)}
-                </h3>
-                <div class="flex items-center gap-1.5 mt-1.5 text-sm text-slate-600">
-                  <span class="font-bold text-slate-800">${escapeHtml(item.teacherName)} 선생님</span>
-                  <span>제안</span>
+              <div class="flex items-start justify-between gap-2.5">
+                <div class="flex-1 min-w-0">
+                  <h3 class="text-base sm:text-lg font-bold text-slate-900 group-hover:text-emerald-700 transition leading-snug">
+                    ${formatRichContent(item.title)}
+                  </h3>
+                  <div class="flex items-center gap-1.5 mt-1.5 text-sm text-slate-600">
+                    <span class="font-bold text-slate-800">${escapeHtml(item.teacherName)} 선생님</span>
+                    <span>제안</span>
+                  </div>
                 </div>
+                <button type="button" onclick="window.convertIdeaToLecture('${escapeHtml(item.id)}')" class="inline-flex items-center gap-1 px-2.5 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 rounded-lg text-xs font-bold transition cursor-pointer active:scale-95 whitespace-nowrap shrink-0 tracking-tighter sm:tracking-tight break-keep shadow-2xs" title="이 아이디어 내용으로 새 지식샘터 강의 등록하기">
+                  <i data-lucide="plus-circle" class="w-3.5 h-3.5 text-emerald-600 shrink-0"></i>
+                  <span>강의 개설하기</span>
+                </button>
               </div>
 
               <!-- Pain Point Box (Larger font & Bold formatting) -->
@@ -5618,67 +5699,126 @@
                 <span class="text-xs text-slate-400">자유롭게 의견을 나눠보세요</span>
               </div>
 
-              <!-- Existing Comments List (Larger font & Bold formatting) -->
-              <div class="space-y-2 max-h-48 overflow-y-auto pr-1">
-                ${(item.comments && item.comments.length > 0) ? item.comments.map((cmt) => `
-                  <div class="bg-slate-50 hover:bg-slate-100/90 p-2.5 sm:p-3 rounded-xl border border-slate-200/80 transition group/cmt flex items-start justify-between gap-2.5">
-                    <div class="space-y-1 min-w-0">
-                      <div class="flex items-center gap-2">
-                        <span class="font-bold text-slate-900 text-xs sm:text-sm">${escapeHtml(cmt.authorName)} 선생님</span>
-                        <span class="text-xs text-slate-400">${cmt.createdAt ? escapeHtml(cmt.createdAt.substring(0, 10)) : ""}</span>
+              <!-- Existing Comments List (Larger font, Bold formatting, Multiline support & Edit feature) -->
+              <div class="space-y-2 max-h-72 sm:max-h-96 overflow-y-auto pr-1">
+                ${(item.comments && item.comments.length > 0) ? item.comments.map((cmt) => {
+                  const isEditingThis = activeEditingComment && String(activeEditingComment.ideaId) === String(item.id) && String(activeEditingComment.commentId) === String(cmt.id);
+
+                  if (isEditingThis) {
+                    return `
+                      <div class="bg-emerald-50/80 p-3 rounded-xl border-2 border-emerald-400 space-y-2 shadow-xs">
+                        <div class="flex items-center justify-between text-xs">
+                          <div class="flex items-center gap-1.5 font-bold text-emerald-950">
+                            <i data-lucide="edit-3" class="w-3.5 h-3.5 text-emerald-600"></i>
+                            <span>댓글 수정 (${escapeHtml(cmt.authorName)} 선생님)</span>
+                          </div>
+                          <button type="button" onclick="window.applyBoldToField('editCommentInput_${escapeHtml(item.id)}_${escapeHtml(cmt.id)}')" class="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 bg-white hover:bg-emerald-100 text-emerald-800 rounded border border-emerald-300 transition cursor-pointer" title="선택한 텍스트 굵게 (**강조**)">
+                            <i data-lucide="bold" class="w-3 h-3"></i>
+                            <span>굵게 B</span>
+                          </button>
+                        </div>
+                        <textarea id="editCommentInput_${escapeHtml(item.id)}_${escapeHtml(cmt.id)}" rows="3" class="w-full text-xs sm:text-sm p-2.5 border border-emerald-300 rounded-lg bg-white focus:ring-2 focus:ring-emerald-500 focus:outline-none resize-y min-h-[64px] max-h-[360px] leading-relaxed break-words whitespace-pre-wrap [overflow-wrap:anywhere]" placeholder="댓글 내용을 입력하세요... (줄바꿈 가능, **굵은글씨** 지원)" oninput="window.autoExpandTextarea(this)" onkeydown="if((event.ctrlKey||event.metaKey)&&event.key==='Enter'){event.preventDefault();window.saveEditIdeaComment('${escapeHtml(item.id)}', '${escapeHtml(cmt.id)}');}else if(event.key==='Escape'){event.preventDefault();window.cancelEditIdeaComment();}">${escapeHtml(cmt.content || "")}</textarea>
+                        <div class="flex items-center justify-between text-[11px] text-slate-500 pt-0.5">
+                          <span>Enter: 줄바꿈 / Ctrl+Enter: 저장</span>
+                          <div class="flex items-center gap-1.5">
+                            <button type="button" onclick="window.cancelEditIdeaComment()" class="px-2.5 py-1 text-[11px] sm:text-xs text-slate-600 hover:bg-slate-200/80 rounded-lg font-medium transition cursor-pointer whitespace-nowrap tracking-tighter break-keep">
+                              취소
+                            </button>
+                            <button type="button" onclick="window.saveEditIdeaComment('${escapeHtml(item.id)}', '${escapeHtml(cmt.id)}')" class="px-3 py-1 bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] sm:text-xs font-bold rounded-lg shadow-2xs flex items-center gap-1 transition cursor-pointer active:scale-95 whitespace-nowrap tracking-tighter break-keep">
+                              <i data-lucide="check" class="w-3.5 h-3.5"></i>
+                              <span>수정 완료</span>
+                            </button>
+                          </div>
+                        </div>
                       </div>
-                      <p class="text-slate-800 leading-relaxed font-normal text-xs sm:text-sm break-words">${formatRichContent(cmt.content)}</p>
+                    `;
+                  }
+
+                  return `
+                    <div class="bg-slate-50 hover:bg-slate-100/90 p-2.5 sm:p-3 rounded-xl border border-slate-200/80 transition group/cmt flex items-start justify-between gap-2.5">
+                      <div class="space-y-1 min-w-0 flex-1">
+                        <div class="flex items-center gap-2 flex-wrap">
+                          <span class="font-bold text-slate-900 text-xs sm:text-sm">${escapeHtml(cmt.authorName)} 선생님</span>
+                          <span class="text-xs text-slate-400">
+                            ${cmt.createdAt ? escapeHtml(cmt.createdAt.substring(0, 10)) : ""}
+                            ${cmt.updatedAt ? '<span class="text-[10px] text-emerald-700 font-semibold ml-1 bg-emerald-100/70 px-1 py-0.5 rounded border border-emerald-300">수정됨</span>' : ""}
+                          </span>
+                        </div>
+                        <p class="text-slate-800 leading-relaxed font-normal text-xs sm:text-sm break-words whitespace-pre-wrap [overflow-wrap:anywhere]">${formatRichContent(cmt.content)}</p>
+                      </div>
+                      <div class="flex items-center gap-1 shrink-0 pt-0.5">
+                        <button type="button" onclick="window.openEditIdeaComment('${escapeHtml(item.id)}', '${escapeHtml(cmt.id)}')" class="inline-flex items-center gap-0.5 px-2 py-1 text-[11px] text-slate-500 hover:text-emerald-700 hover:bg-white border border-slate-200/70 rounded-md transition cursor-pointer whitespace-nowrap tracking-tighter break-keep" title="댓글 수정">
+                          <i data-lucide="edit-3" class="w-3 h-3 shrink-0"></i>
+                          <span class="whitespace-nowrap tracking-tighter break-keep">수정</span>
+                        </button>
+                        <button type="button" onclick="window.deleteIdeaComment('${escapeHtml(item.id)}', '${escapeHtml(cmt.id)}')" class="inline-flex items-center gap-0.5 px-2 py-1 text-[11px] text-slate-500 hover:text-rose-600 hover:bg-white border border-slate-200/70 rounded-md transition cursor-pointer whitespace-nowrap tracking-tighter break-keep" title="댓글 삭제">
+                          <i data-lucide="trash-2" class="w-3 h-3 shrink-0"></i>
+                          <span class="whitespace-nowrap tracking-tighter break-keep">삭제</span>
+                        </button>
+                      </div>
                     </div>
-                    <button type="button" onclick="window.deleteIdeaComment('${escapeHtml(item.id)}', '${escapeHtml(cmt.id)}')" class="opacity-0 group-hover/cmt:opacity-100 text-slate-400 hover:text-rose-600 p-1 transition cursor-pointer shrink-0" title="댓글 삭제">
-                      <i data-lucide="x" class="w-3.5 h-3.5"></i>
-                    </button>
-                  </div>
-                `).join("") : `
+                  `;
+                }).join("") : `
                   <p class="text-xs text-slate-400 italic py-1.5 px-1">아직 등록된 댓글이 없습니다. 첫 번째 피드백이나 기대평을 남겨보세요!</p>
                 `}
               </div>
 
-              <!-- Add Comment Input Box -->
-              <div class="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
-                <div class="flex items-center gap-1.5 shrink-0">
-                  <select id="commentAuthor_${escapeHtml(item.id)}" onchange="window.toggleCommentCustomAuthor('${escapeHtml(item.id)}')" class="text-xs sm:text-sm px-2.5 py-1.5 border border-slate-300 rounded-lg bg-white text-slate-700 focus:ring-1 focus:ring-emerald-500 focus:outline-none">
-                    ${allTeachers.map((t) => `<option value="${escapeHtml(t)}">${escapeHtml(t)}</option>`).join("")}
-                    <option value="__custom__">➕ 직접 입력</option>
-                  </select>
-                  <input type="text" id="commentAuthorCustom_${escapeHtml(item.id)}" placeholder="작성자명" class="hidden text-xs sm:text-sm px-2.5 py-1.5 w-24 border border-dashed border-emerald-400 rounded-lg bg-emerald-50/50 focus:ring-1 focus:ring-emerald-500 focus:outline-none" />
+              <!-- Add Comment Input Box (Multiline textarea with auto-wrap, line breaks & bold) -->
+              <div class="pt-2.5 space-y-2 border-t border-slate-100">
+                <div class="flex items-center justify-between gap-2 flex-wrap">
+                  <div class="flex items-center gap-1.5 shrink-0">
+                    <label class="text-xs font-bold text-slate-700">작성자:</label>
+                    <select id="commentAuthor_${escapeHtml(item.id)}" onchange="window.toggleCommentCustomAuthor('${escapeHtml(item.id)}')" class="text-xs sm:text-sm px-2.5 py-1 border border-slate-300 rounded-lg bg-white text-slate-700 focus:ring-1 focus:ring-emerald-500 focus:outline-none">
+                      ${allTeachers.map((t) => `<option value="${escapeHtml(t)}">${escapeHtml(t)}</option>`).join("")}
+                      <option value="__custom__">➕ 직접 입력</option>
+                    </select>
+                    <input type="text" id="commentAuthorCustom_${escapeHtml(item.id)}" placeholder="작성자명 입력" class="hidden text-xs sm:text-sm px-2.5 py-1 w-28 border border-dashed border-emerald-400 rounded-lg bg-emerald-50/50 focus:ring-1 focus:ring-emerald-500 focus:outline-none" />
+                  </div>
+                  <div class="flex items-center gap-1.5">
+                    <button type="button" onclick="window.applyBoldToField('commentInput_${escapeHtml(item.id)}')" class="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 rounded border border-emerald-200 transition cursor-pointer" title="선택한 텍스트 굵게 강조 (**강조**)">
+                      <i data-lucide="bold" class="w-3 h-3"></i>
+                      <span>굵게 B</span>
+                    </button>
+                    <span class="text-[11px] text-slate-400 hidden sm:inline">Enter: 줄바꿈 / Ctrl+Enter: 등록</span>
+                  </div>
                 </div>
-                <div class="flex-1 flex items-center gap-1.5">
-                  <input type="text" id="commentInput_${escapeHtml(item.id)}" placeholder="아이디어 피드백이나 기대평 남기기... (**굵은글씨** 지원)" class="flex-1 min-w-0 text-xs sm:text-sm px-3 py-1.5 border border-slate-300 rounded-lg bg-white focus:ring-2 focus:ring-emerald-500 focus:outline-none transition" onkeydown="if(event.key==='Enter'){event.preventDefault();window.submitIdeaComment('${escapeHtml(item.id)}');}" />
-                  <button type="button" onclick="window.submitIdeaComment('${escapeHtml(item.id)}')" class="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs sm:text-sm font-bold rounded-lg shadow-2xs flex items-center gap-1 transition cursor-pointer active:scale-95 shrink-0">
+
+                <div class="relative">
+                  <textarea id="commentInput_${escapeHtml(item.id)}" rows="2" placeholder="아이디어 피드백이나 기대평을 자유롭게 남겨보세요... (길게 써도 전체 내용 확인 및 자동 줄바꿈, **굵은글씨** 지원)" class="w-full text-xs sm:text-sm p-3 border border-slate-300 rounded-xl bg-white focus:ring-2 focus:ring-emerald-500 focus:outline-none transition resize-y min-h-[64px] max-h-[360px] leading-relaxed break-words whitespace-pre-wrap [overflow-wrap:anywhere]" oninput="window.autoExpandTextarea(this)" onkeydown="if((event.ctrlKey||event.metaKey)&&event.key==='Enter'){event.preventDefault();window.submitIdeaComment('${escapeHtml(item.id)}');}"></textarea>
+                </div>
+
+                <div class="flex items-center justify-between">
+                  <span class="text-[11px] text-slate-400 sm:hidden">Enter: 줄바꿈 / Ctrl+Enter: 등록</span>
+                  <button type="button" onclick="window.submitIdeaComment('${escapeHtml(item.id)}')" class="ml-auto px-3.5 sm:px-4 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs sm:text-sm font-bold rounded-lg shadow-2xs flex items-center gap-1.5 transition cursor-pointer active:scale-95 whitespace-nowrap tracking-tighter sm:tracking-tight break-keep">
                     <i data-lucide="send" class="w-3.5 h-3.5"></i>
-                    <span>등록</span>
+                    <span>댓글 등록</span>
                   </button>
                 </div>
               </div>
             </div>
 
-            <!-- Bottom Actions -->
-            <div class="pt-3.5 border-t border-slate-100 flex items-center justify-between gap-2">
-              <div class="flex items-center gap-1.5">
+            <!-- Bottom Actions (Single line on mobile & PC) -->
+            <div class="pt-3 border-t border-slate-100 flex items-center justify-between gap-1 sm:gap-2 flex-nowrap">
+              <div class="flex items-center gap-1 shrink-0">
                 <!-- Cheer / Vote Button -->
-                <button type="button" onclick="window.toggleIdeaCheer('${escapeHtml(item.id)}')" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold transition cursor-pointer active:scale-95 ${isCheered ? 'bg-emerald-600 text-white shadow-xs' : 'bg-slate-100 hover:bg-emerald-50 text-slate-700 hover:text-emerald-700 border border-slate-200 hover:border-emerald-200'}" title="강의 개설 응원하기">
-                  <i data-lucide="lightbulb" class="w-4 h-4 ${isCheered ? 'fill-white text-white' : 'text-emerald-500'}"></i>
-                  <span>강의 개설 원해요</span>
-                  <span class="px-2 py-0.2 rounded-full text-xs font-black ${isCheered ? 'bg-emerald-700 text-white' : 'bg-slate-200 text-slate-700'}">${cheers}</span>
+                <button type="button" onclick="window.toggleIdeaCheer('${escapeHtml(item.id)}')" class="inline-flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1.5 rounded-lg sm:rounded-xl text-[11px] sm:text-xs font-bold transition cursor-pointer active:scale-95 whitespace-nowrap shrink-0 tracking-tighter sm:tracking-tight break-keep ${isCheered ? 'bg-emerald-600 text-white shadow-xs' : 'bg-slate-100 hover:bg-emerald-50 text-slate-700 hover:text-emerald-700 border border-slate-200 hover:border-emerald-200'}" title="강의 개설 응원하기">
+                  <i data-lucide="lightbulb" class="w-3.5 h-3.5 shrink-0 ${isCheered ? 'fill-white text-white' : 'text-emerald-500'}"></i>
+                  <span class="whitespace-nowrap tracking-tighter sm:tracking-tight break-keep">강의 개설 원해요</span>
+                  <span class="px-1.5 py-0.2 rounded-full text-[10px] font-black shrink-0 whitespace-nowrap ${isCheered ? 'bg-emerald-700 text-white' : 'bg-slate-200 text-slate-700'}">${cheers}</span>
                 </button>
               </div>
 
-              <div class="flex items-center gap-1.5">
+              <div class="flex items-center gap-1 sm:gap-1.5 shrink-0 flex-nowrap">
                 <!-- Edit Button (수정 버튼) -->
-                <button type="button" onclick="window.openEditIdeaModal('${escapeHtml(item.id)}')" class="inline-flex items-center gap-1 px-3 py-1.5 text-slate-600 hover:text-emerald-700 hover:bg-emerald-50 border border-slate-200 hover:border-emerald-200 rounded-lg text-xs sm:text-sm font-semibold transition cursor-pointer active:scale-95" title="아이디어 수정">
-                  <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
-                  <span>수정</span>
+                <button type="button" onclick="window.openEditIdeaModal('${escapeHtml(item.id)}')" class="inline-flex items-center gap-0.5 sm:gap-1 px-2 sm:px-2.5 py-1.5 text-slate-600 hover:text-emerald-700 hover:bg-emerald-50 border border-slate-200 hover:border-emerald-200 rounded-lg text-[11px] sm:text-xs font-semibold transition cursor-pointer active:scale-95 whitespace-nowrap shrink-0 tracking-tighter sm:tracking-tight break-keep" title="아이디어 수정">
+                  <i data-lucide="edit-3" class="w-3.5 h-3.5 shrink-0"></i>
+                  <span class="whitespace-nowrap tracking-tighter sm:tracking-tight break-keep">수정</span>
                 </button>
 
                 <!-- Delete Button (삭제 버튼) -->
-                <button type="button" onclick="window.openDeleteIdeaModal('${escapeHtml(item.id)}')" class="inline-flex items-center gap-1 px-3 py-1.5 text-slate-600 hover:text-rose-600 hover:bg-rose-50 border border-slate-200 hover:border-rose-200 rounded-lg text-xs sm:text-sm font-semibold transition cursor-pointer active:scale-95" title="아이디어 삭제">
-                  <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
-                  <span>삭제</span>
+                <button type="button" onclick="window.openDeleteIdeaModal('${escapeHtml(item.id)}')" class="inline-flex items-center gap-0.5 sm:gap-1 px-2 sm:px-2.5 py-1.5 text-slate-600 hover:text-rose-600 hover:bg-rose-50 border border-slate-200 hover:border-rose-200 rounded-lg text-[11px] sm:text-xs font-semibold transition cursor-pointer active:scale-95 whitespace-nowrap shrink-0 tracking-tighter sm:tracking-tight break-keep" title="아이디어 삭제">
+                  <i data-lucide="trash-2" class="w-3.5 h-3.5 shrink-0"></i>
+                  <span class="whitespace-nowrap tracking-tighter sm:tracking-tight break-keep">삭제</span>
                 </button>
               </div>
             </div>
@@ -5834,10 +5974,19 @@
       safeRenderIcons();
     };
 
+    let isSubmittingLecture = false;
+    let lastLectureSubmitTime = 0;
+    let lastLectureSubmitSignature = "";
+
     window.submitRegisterLecture = async function (e) {
       if (e && typeof e.preventDefault === "function") {
         e.preventDefault();
       }
+
+      if (isSubmittingLecture) {
+        return;
+      }
+
       const title = document.getElementById("regTitle")?.value.trim() || "";
       const presenterSelect = document.getElementById("regPresenterSelect");
       const presenterCustom = document.getElementById("regPresenterCustom");
@@ -5872,50 +6021,76 @@
         return;
       }
 
-      const month = date.substring(0, 7);
-      const newLec = {
-        id: `lec-${Date.now()}`,
-        title,
-        presenter,
-        maxCount,
-        currentCount: 0,
-        enrolledCount: 0,
-        date,
-        time,
-        url,
-        password,
-        month
-      };
-
-      if (!memberList.includes(presenter)) {
-        memberList.push(presenter);
-        await saveMembersToDb(memberList);
+      const currentSignature = `${presenter}:::${title}:::${date}:::${time}`;
+      if (currentSignature === lastLectureSubmitSignature && Date.now() - lastLectureSubmitTime < 4000) {
+        return;
       }
 
-      if (password) {
-        teacherPasswords[presenter] = password;
-        localStorage.setItem("kyosa_teacher_passwords", JSON.stringify(teacherPasswords));
-        if (db && isFirebaseActive) {
-          try {
-            await db.collection("settings").doc("teacher_passwords").set({
-              passwords: teacherPasswords,
-              updatedAt: new Date().toISOString()
-            }, { merge: true });
-          } catch (err) {}
+      isSubmittingLecture = true;
+      lastLectureSubmitSignature = currentSignature;
+      lastLectureSubmitTime = Date.now();
+
+      const btnSubmit = document.getElementById("btnSubmitRegister");
+      if (btnSubmit) {
+        btnSubmit.disabled = true;
+        btnSubmit.classList.add("opacity-50", "pointer-events-none");
+      }
+
+      try {
+        const month = date.substring(0, 7);
+        const newLec = {
+          id: `lec-${Date.now()}`,
+          title,
+          presenter,
+          maxCount,
+          currentCount: 0,
+          enrolledCount: 0,
+          date,
+          time,
+          url,
+          password,
+          month
+        };
+
+        if (!memberList.includes(presenter)) {
+          memberList.push(presenter);
+          await saveMembersToDb(memberList);
+        }
+
+        if (password) {
+          teacherPasswords[presenter] = password;
+          localStorage.setItem("kyosa_teacher_passwords", JSON.stringify(teacherPasswords));
+          if (db && isFirebaseActive) {
+            try {
+              await db.collection("settings").doc("teacher_passwords").set({
+                passwords: teacherPasswords,
+                updatedAt: new Date().toISOString()
+              }, { merge: true });
+            } catch (err) {}
+          }
+        }
+
+        await saveLectureToDb(newLec);
+        closeModal("modalRegister");
+        const form = document.getElementById("formRegisterLecture");
+        if (form) form.reset();
+        if (presenterCustom) presenterCustom.value = "";
+        updatePresenterDropdown();
+
+        if (typeof confetti === "function") {
+          confetti({ particleCount: 50, spread: 60, origin: { y: 0.7 } });
+        }
+        showToast("강의가 성공적으로 등록 및 동기화되었습니다!");
+      } catch (err) {
+        console.error("강의 등록 중 오류:", err);
+        showToast("강의 등록 중 오류가 발생했습니다.", "error");
+      } finally {
+        isSubmittingLecture = false;
+        if (btnSubmit) {
+          btnSubmit.disabled = false;
+          btnSubmit.classList.remove("opacity-50", "pointer-events-none");
         }
       }
-
-      await saveLectureToDb(newLec);
-      closeModal("modalRegister");
-      const form = document.getElementById("formRegisterLecture");
-      if (form) form.reset();
-      if (presenterCustom) presenterCustom.value = "";
-      updatePresenterDropdown();
-
-      if (typeof confetti === "function") {
-        confetti({ particleCount: 50, spread: 60, origin: { y: 0.7 } });
-      }
-      showToast("강의가 성공적으로 등록 및 동기화되었습니다!");
     };
 
     window.openDeleteModal = function (lectureId) {
@@ -5958,9 +6133,17 @@
       showToast("강의가 성공적으로 삭제되었습니다.", "info");
     };
 
+    let isSubmittingAttended = false;
+    let lastAttendedSubmitTime = 0;
+    let lastAttendedSubmitSignature = "";
+
     window.submitAttendedRecord = async function (e) {
       if (e && typeof e.preventDefault === "function") {
         e.preventDefault();
+      }
+
+      if (isSubmittingAttended) {
+        return;
       }
 
       const selectEl = document.getElementById("recordStudentSelect");
@@ -5994,37 +6177,63 @@
         return;
       }
 
-      const record = {
-        id: `att-${Date.now()}`,
-        studentName,
-        title,
-        date,
-        presenter,
-        memo,
-        password,
-        createdAt: new Date().toISOString()
-      };
-
-      if (!memberList.includes(studentName)) {
-        memberList.push(studentName);
-        await saveMembersToDb(memberList);
+      const currentSignature = `${studentName}:::${title}:::${date}:::${presenter}`;
+      if (currentSignature === lastAttendedSubmitSignature && Date.now() - lastAttendedSubmitTime < 4000) {
+        return;
       }
 
-      await saveAttendedCourseToDb(record);
+      isSubmittingAttended = true;
+      lastAttendedSubmitSignature = currentSignature;
+      lastAttendedSubmitTime = Date.now();
 
-      document.getElementById("recordCourseTitle").value = "";
-      document.getElementById("recordCoursePresenter").value = "";
-      document.getElementById("recordCourseMemo").value = "";
-      if (customInput) customInput.value = "";
-      if (selectEl) selectEl.value = "";
-      document.getElementById("wrapRecordStudentCustom")?.classList.add("hidden");
-
-      updateRecordStudentDropdown();
-
-      if (typeof confetti === "function") {
-        confetti({ particleCount: 45, spread: 60, origin: { y: 0.7 } });
+      const btnSubmit = document.getElementById("btnSubmitAttendedRecord") || document.getElementById("btnSubmitRecordAttended");
+      if (btnSubmit) {
+        btnSubmit.disabled = true;
+        btnSubmit.classList.add("opacity-50", "pointer-events-none");
       }
-      showToast(`${studentName} 선생님의 수강 완료 기록이 성공적으로 등록되었습니다!`);
+
+      try {
+        const record = {
+          id: `att-${Date.now()}`,
+          studentName,
+          title,
+          date,
+          presenter,
+          memo,
+          password,
+          createdAt: new Date().toISOString()
+        };
+
+        if (!memberList.includes(studentName)) {
+          memberList.push(studentName);
+          await saveMembersToDb(memberList);
+        }
+
+        await saveAttendedCourseToDb(record);
+
+        document.getElementById("recordCourseTitle").value = "";
+        document.getElementById("recordCoursePresenter").value = "";
+        document.getElementById("recordCourseMemo").value = "";
+        if (customInput) customInput.value = "";
+        if (selectEl) selectEl.value = "";
+        document.getElementById("wrapRecordStudentCustom")?.classList.add("hidden");
+
+        updateRecordStudentDropdown();
+
+        if (typeof confetti === "function") {
+          confetti({ particleCount: 45, spread: 60, origin: { y: 0.7 } });
+        }
+        showToast(`${studentName} 선생님의 수강 완료 기록이 성공적으로 등록되었습니다!`);
+      } catch (err) {
+        console.error("수강 기록 등록 중 오류:", err);
+        showToast("수강 기록 등록 중 오류가 발생했습니다.", "error");
+      } finally {
+        isSubmittingAttended = false;
+        if (btnSubmit) {
+          btnSubmit.disabled = false;
+          btnSubmit.classList.remove("opacity-50", "pointer-events-none");
+        }
+      }
     };
 
     window.confirmDeleteAttended = async function () {
@@ -6052,9 +6261,17 @@
       showToast("수강 기록이 성공적으로 삭제되었습니다.", "info");
     };
 
+    let isSubmittingFeedback = false;
+    let lastFeedbackSubmitTime = 0;
+    let lastFeedbackSubmitSignature = "";
+
     window.submitFeedback = async function (e) {
       if (e && typeof e.preventDefault === "function") {
         e.preventDefault();
+      }
+
+      if (isSubmittingFeedback) {
+        return;
       }
 
       const teacherSelect = document.getElementById("regFeedbackTeacherSelect");
@@ -6104,45 +6321,71 @@
         return;
       }
 
-      const finalPhotoUrl = currentFeedbackImageDataUrl || (category === "교안 수정" ? PRESET_FEEDBACK_PHOTOS.curriculum : PRESET_FEEDBACK_PHOTOS.ai);
-
-      const newFeedback = {
-        id: `fb-${Date.now()}`,
-        teacherName,
-        title,
-        date,
-        category,
-        imageUrl: finalPhotoUrl,
-        beforeIssue,
-        improvementNote,
-        teacherTip,
-        helpfulCount: 0,
-        password,
-        createdAt: new Date().toISOString()
-      };
-
-      await saveFeedbackToDb(newFeedback);
-
-      if (teacherName && !memberList.includes(teacherName)) {
-        memberList.push(teacherName);
-        await saveMembersToDb(memberList);
+      const currentSignature = `${teacherName}:::${title}:::${category}:::${date}`;
+      if (currentSignature === lastFeedbackSubmitSignature && Date.now() - lastFeedbackSubmitTime < 4000) {
+        return;
       }
 
-      const formRegisterFeedback = document.getElementById("formRegisterFeedback");
-      if (formRegisterFeedback) formRegisterFeedback.reset();
-      currentFeedbackImageDataUrl = "";
-      const previewContainer = document.getElementById("fbImagePreviewContainer");
-      if (previewContainer) previewContainer.classList.add("hidden");
-      const fileInput = document.getElementById("regFeedbackFileInput");
-      if (fileInput) fileInput.value = "";
-      document.getElementById("wrapFeedbackTeacherCustom")?.classList.add("hidden");
+      isSubmittingFeedback = true;
+      lastFeedbackSubmitSignature = currentSignature;
+      lastFeedbackSubmitTime = Date.now();
 
-      closeModal("modalRegisterFeedback");
-
-      if (typeof confetti === "function") {
-        confetti({ particleCount: 50, spread: 65, origin: { y: 0.6 } });
+      const btnSubmit = document.getElementById("btnSubmitFeedback");
+      if (btnSubmit) {
+        btnSubmit.disabled = true;
+        btnSubmit.classList.add("opacity-50", "pointer-events-none");
       }
-      showToast(`${teacherName} 강사님의 개선 피드백이 성공적으로 등록되었습니다!`);
+
+      try {
+        const finalPhotoUrl = currentFeedbackImageDataUrl || (category === "교안 수정" ? PRESET_FEEDBACK_PHOTOS.curriculum : PRESET_FEEDBACK_PHOTOS.ai);
+
+        const newFeedback = {
+          id: `fb-${Date.now()}`,
+          teacherName,
+          title,
+          date,
+          category,
+          imageUrl: finalPhotoUrl,
+          beforeIssue,
+          improvementNote,
+          teacherTip,
+          helpfulCount: 0,
+          password,
+          createdAt: new Date().toISOString()
+        };
+
+        await saveFeedbackToDb(newFeedback);
+
+        if (teacherName && !memberList.includes(teacherName)) {
+          memberList.push(teacherName);
+          await saveMembersToDb(memberList);
+        }
+
+        const formRegisterFeedback = document.getElementById("formRegisterFeedback");
+        if (formRegisterFeedback) formRegisterFeedback.reset();
+        currentFeedbackImageDataUrl = "";
+        const previewContainer = document.getElementById("fbImagePreviewContainer");
+        if (previewContainer) previewContainer.classList.add("hidden");
+        const fileInput = document.getElementById("regFeedbackFileInput");
+        if (fileInput) fileInput.value = "";
+        document.getElementById("wrapFeedbackTeacherCustom")?.classList.add("hidden");
+
+        closeModal("modalRegisterFeedback");
+
+        if (typeof confetti === "function") {
+          confetti({ particleCount: 50, spread: 65, origin: { y: 0.6 } });
+        }
+        showToast(`${teacherName} 강사님의 개선 피드백이 성공적으로 등록되었습니다!`);
+      } catch (err) {
+        console.error("피드백 등록 중 오류:", err);
+        showToast("피드백 등록 중 오류가 발생했습니다.", "error");
+      } finally {
+        isSubmittingFeedback = false;
+        if (btnSubmit) {
+          btnSubmit.disabled = false;
+          btnSubmit.classList.remove("opacity-50", "pointer-events-none");
+        }
+      }
     };
 
     window.confirmDeleteFeedback = async function () {
@@ -6333,9 +6576,17 @@
       safeRenderIcons();
     };
 
+    let isSubmittingIdea = false;
+    let lastIdeaSubmitTime = 0;
+    let lastIdeaSubmitSignature = "";
+
     window.submitIdea = async function (e) {
       if (e && typeof e.preventDefault === "function") {
         e.preventDefault();
+      }
+
+      if (isSubmittingIdea) {
+        return;
       }
 
       const teacherSelect = document.getElementById("regIdeaTeacherSelect");
@@ -6372,29 +6623,56 @@
         return;
       }
 
-      const newIdea = {
-        id: `idea-${Date.now()}`,
-        teacherName,
-        title,
-        category,
-        painPoint,
-        lectureIdea,
-        cheerCount: 0,
-        password,
-        createdAt: new Date().toISOString()
-      };
-
-      await saveIdeaToDb(newIdea);
-
-      const formRegisterIdea = document.getElementById("formRegisterIdea");
-      if (formRegisterIdea) formRegisterIdea.reset();
-
-      closeModal("modalRegisterIdea");
-
-      if (typeof confetti === "function") {
-        confetti({ particleCount: 50, spread: 65, origin: { y: 0.6 } });
+      // Fast double-submission guard (same teacher, title, category within 4 seconds)
+      const currentSignature = `${teacherName}:::${title}:::${category}`;
+      if (currentSignature === lastIdeaSubmitSignature && Date.now() - lastIdeaSubmitTime < 4000) {
+        return;
       }
-      showToast(`${teacherName} 선생님의 강의 아이디어가 성공적으로 등록되었습니다! 🎉`);
+
+      isSubmittingIdea = true;
+      lastIdeaSubmitSignature = currentSignature;
+      lastIdeaSubmitTime = Date.now();
+
+      const btnSubmit = document.getElementById("btnSubmitIdea");
+      if (btnSubmit) {
+        btnSubmit.disabled = true;
+        btnSubmit.classList.add("opacity-50", "pointer-events-none");
+      }
+
+      try {
+        const newIdea = {
+          id: `idea-${Date.now()}`,
+          teacherName,
+          title,
+          category,
+          painPoint,
+          lectureIdea,
+          cheerCount: 0,
+          password,
+          createdAt: new Date().toISOString()
+        };
+
+        await saveIdeaToDb(newIdea);
+
+        const formRegisterIdea = document.getElementById("formRegisterIdea");
+        if (formRegisterIdea) formRegisterIdea.reset();
+
+        closeModal("modalRegisterIdea");
+
+        if (typeof confetti === "function") {
+          confetti({ particleCount: 50, spread: 65, origin: { y: 0.6 } });
+        }
+        showToast(`${teacherName} 선생님의 강의 아이디어가 성공적으로 등록되었습니다! 🎉`);
+      } catch (err) {
+        console.error("아이디어 등록 중 오류:", err);
+        showToast("아이디어 등록 중 오류가 발생했습니다.", "error");
+      } finally {
+        isSubmittingIdea = false;
+        if (btnSubmit) {
+          btnSubmit.disabled = false;
+          btnSubmit.classList.remove("opacity-50", "pointer-events-none");
+        }
+      }
     };
 
     window.openDeleteIdeaModal = function (recordId) {
@@ -6477,10 +6755,14 @@
       safeRenderIcons();
     };
 
+    let isSubmittingEditIdea = false;
+
     window.submitEditIdea = async function (e) {
       if (e && typeof e.preventDefault === "function") {
         e.preventDefault();
       }
+
+      if (isSubmittingEditIdea) return;
 
       if (!activeEditingIdeaId) {
         closeModal("modalEditIdea");
@@ -6529,25 +6811,43 @@
         return;
       }
 
-      targetRecord.teacherName = teacherName;
-      targetRecord.title = title;
-      targetRecord.category = category;
-      targetRecord.painPoint = painPoint;
-      targetRecord.lectureIdea = lectureIdea;
-      if (enteredPw) {
-        targetRecord.password = enteredPw;
+      isSubmittingEditIdea = true;
+      const btnSubmit = document.getElementById("btnSubmitEditIdea");
+      if (btnSubmit) {
+        btnSubmit.disabled = true;
+        btnSubmit.classList.add("opacity-50", "pointer-events-none");
       }
-      targetRecord.updatedAt = new Date().toISOString();
 
-      await saveIdeaToDb(targetRecord);
+      try {
+        targetRecord.teacherName = teacherName;
+        targetRecord.title = title;
+        targetRecord.category = category;
+        targetRecord.painPoint = painPoint;
+        targetRecord.lectureIdea = lectureIdea;
+        if (enteredPw) {
+          targetRecord.password = enteredPw;
+        }
+        targetRecord.updatedAt = new Date().toISOString();
 
-      closeModal("modalEditIdea");
-      activeEditingIdeaId = null;
+        await saveIdeaToDb(targetRecord);
 
-      if (typeof confetti === "function") {
-        confetti({ particleCount: 50, spread: 65, origin: { y: 0.6 } });
+        closeModal("modalEditIdea");
+        activeEditingIdeaId = null;
+
+        if (typeof confetti === "function") {
+          confetti({ particleCount: 50, spread: 65, origin: { y: 0.6 } });
+        }
+        showToast(`${teacherName} 선생님의 강의 아이디어가 성공적으로 수정되었습니다! 🎉`);
+      } catch (err) {
+        console.error("아이디어 수정 오류:", err);
+        showToast("아이디어 수정 중 오류가 발생했습니다.", "error");
+      } finally {
+        isSubmittingEditIdea = false;
+        if (btnSubmit) {
+          btnSubmit.disabled = false;
+          btnSubmit.classList.remove("opacity-50", "pointer-events-none");
+        }
       }
-      showToast(`${teacherName} 선생님의 강의 아이디어가 성공적으로 수정되었습니다! 🎉`);
     };
 
     window.toggleIdeaCheer = async function (recordId) {
@@ -6567,7 +6867,11 @@
       }
     };
 
+    const submittingCommentIds = new Set();
+
     window.submitIdeaComment = async function (ideaId) {
+      if (submittingCommentIds.has(String(ideaId))) return;
+
       const selectEl = document.getElementById(`commentAuthor_${ideaId}`);
       const customInput = document.getElementById(`commentAuthorCustom_${ideaId}`);
       const textInput = document.getElementById(`commentInput_${ideaId}`);
@@ -6595,34 +6899,99 @@
       const idea = ideasData.find((i) => String(i.id) === String(ideaId));
       if (!idea) return;
 
-      if (!Array.isArray(idea.comments)) {
-        idea.comments = [];
+      submittingCommentIds.add(String(ideaId));
+
+      try {
+        if (!Array.isArray(idea.comments)) {
+          idea.comments = [];
+        }
+
+        const newComment = {
+          id: `cmt-${Date.now()}`,
+          authorName,
+          content,
+          createdAt: new Date().toISOString()
+        };
+
+        idea.comments.push(newComment);
+
+        if (textInput) {
+          textInput.value = "";
+          textInput.style.height = "auto";
+        }
+
+        await saveIdeaToDb(idea);
+
+        if (typeof confetti === "function") {
+          confetti({ particleCount: 25, spread: 45, origin: { y: 0.8 } });
+        }
+        showToast(`${authorName} 선생님의 댓글이 등록되었습니다! 💬`);
+      } catch (err) {
+        console.error("댓글 등록 오류:", err);
+      } finally {
+        submittingCommentIds.delete(String(ideaId));
       }
-
-      const newComment = {
-        id: `cmt-${Date.now()}`,
-        authorName,
-        content,
-        createdAt: new Date().toISOString()
-      };
-
-      idea.comments.push(newComment);
-
-      await saveIdeaToDb(idea);
-
-      if (typeof confetti === "function") {
-        confetti({ particleCount: 25, spread: 45, origin: { y: 0.8 } });
-      }
-      showToast(`${authorName} 선생님의 댓글이 등록되었습니다! 💬`);
     };
 
     window.deleteIdeaComment = async function (ideaId, commentId) {
       const idea = ideasData.find((i) => String(i.id) === String(ideaId));
       if (!idea || !Array.isArray(idea.comments)) return;
 
+      if (activeEditingComment && activeEditingComment.commentId === String(commentId)) {
+        activeEditingComment = null;
+      }
+
       idea.comments = idea.comments.filter((c) => String(c.id) !== String(commentId));
       await saveIdeaToDb(idea);
       showToast("댓글이 삭제되었습니다.", "info");
+    };
+
+    window.openEditIdeaComment = function (ideaId, commentId) {
+      activeEditingComment = { ideaId: String(ideaId), commentId: String(commentId) };
+      renderIdeaView();
+      setTimeout(() => {
+        const input = document.getElementById(`editCommentInput_${ideaId}_${commentId}`);
+        if (input) {
+          input.focus();
+          const len = input.value.length;
+          input.setSelectionRange(len, len);
+          window.autoExpandTextarea(input);
+        }
+      }, 60);
+    };
+
+    window.cancelEditIdeaComment = function () {
+      activeEditingComment = null;
+      renderIdeaView();
+    };
+
+    window.saveEditIdeaComment = async function (ideaId, commentId) {
+      const input = document.getElementById(`editCommentInput_${ideaId}_${commentId}`);
+      const newContent = input ? input.value.trim() : "";
+      if (!newContent) {
+        showToast("수정할 댓글 내용을 입력해주세요.", "error");
+        input?.focus();
+        return;
+      }
+
+      const idea = ideasData.find((i) => String(i.id) === String(ideaId));
+      if (!idea || !Array.isArray(idea.comments)) {
+        showToast("해당 강의 아이디어를 찾을 수 없습니다.", "error");
+        return;
+      }
+
+      const cmt = idea.comments.find((c) => String(c.id) === String(commentId));
+      if (!cmt) {
+        showToast("수정할 댓글을 찾을 수 없습니다.", "error");
+        return;
+      }
+
+      cmt.content = newContent;
+      cmt.updatedAt = new Date().toISOString();
+      activeEditingComment = null;
+
+      await saveIdeaToDb(idea);
+      showToast("댓글이 성공적으로 수정되었습니다! ✏️");
     };
 
     window.convertIdeaToLecture = function (recordId) {
@@ -7717,87 +8086,8 @@
         }
       });
 
-      document.getElementById("formRegisterLecture")?.addEventListener("submit", async (e) => {
-        e.preventDefault();
-        const title = document.getElementById("regTitle").value.trim();
-        const presenterSelect = document.getElementById("regPresenterSelect");
-        const presenterCustom = document.getElementById("regPresenterCustom");
-        let presenter = "";
-        if (presenterSelect && presenterSelect.value === "__custom__") {
-          presenter = presenterCustom ? presenterCustom.value.trim() : "";
-        } else if (presenterSelect && presenterSelect.value) {
-          presenter = presenterSelect.value.trim();
-        } else if (presenterCustom && presenterCustom.value.trim()) {
-          presenter = presenterCustom.value.trim();
-        }
-
-        const maxCount = parseInt(document.getElementById("regMaxCount").value, 10) || 10;
-        const dateInput = document.getElementById("regDate");
-        const date = (dateInput && dateInput.value) ? dateInput.value : getTodayDateInfo().dateStr;
-        const time = document.getElementById("regTime")?.value.trim() || "19:00 - 21:00";
-        const url = normalizeUrl(document.getElementById("regUrl")?.value.trim() || "");
-        const password = document.getElementById("regPassword")?.value.trim() || "1234";
-
-        if (!title || !presenter || !date) {
-          if (!presenter) {
-            showToast("강사 닉네임을 선택하거나 직접 입력해주세요.", "error");
-            if (presenterSelect?.value === "__custom__") {
-              presenterCustom?.focus();
-            } else {
-              presenterSelect?.focus();
-            }
-          } else {
-            showToast("강의명과 강의 날짜를 모두 입력해주세요.", "error");
-            document.getElementById("regTitle")?.focus();
-          }
-          return;
-        }
-
-        const month = date.substring(0, 7);
-        const newLec = {
-          id: `lec-${Date.now()}`,
-          title,
-          presenter,
-          maxCount,
-          currentCount: 0,
-          enrolledCount: 0,
-          date,
-          time,
-          url,
-          password,
-          month
-        };
-
-        // Add to member list if new and save to Firestore & LocalStorage
-        if (!memberList.includes(presenter)) {
-          memberList.push(presenter);
-          await saveMembersToDb(memberList);
-        }
-
-        // Save presenter password
-        if (password) {
-          teacherPasswords[presenter] = password;
-          localStorage.setItem("kyosa_teacher_passwords", JSON.stringify(teacherPasswords));
-          if (db && isFirebaseActive) {
-            try {
-              await db.collection("settings").doc("teacher_passwords").set({
-                passwords: teacherPasswords,
-                updatedAt: new Date().toISOString()
-              }, { merge: true });
-            } catch (err) {}
-          }
-        }
-
-        await saveLectureToDb(newLec);
-        closeModal("modalRegister");
-        e.target.reset();
-        if (presenterCustom) presenterCustom.value = "";
-        updatePresenterDropdown();
-
-        if (typeof confetti === "function") {
-          confetti({ particleCount: 50, spread: 60, origin: { y: 0.7 } });
-        }
-        showToast("강의가 성공적으로 등록 및 동기화되었습니다!");
+      document.getElementById("formRegisterLecture")?.addEventListener("submit", (e) => {
+        window.submitRegisterLecture(e);
       });
 
       // 7. Enrollment Dropdown Change & Submission (+1)
@@ -8359,69 +8649,6 @@
         }
       });
 
-      document.getElementById("formRecordAttendedCourse")?.addEventListener("submit", async (e) => {
-        e.preventDefault();
-
-        const selectEl = document.getElementById("recordStudentSelect");
-        const customInput = document.getElementById("recordStudentCustom");
-        let studentName = "";
-
-        if (selectEl && selectEl.value === "__custom__") {
-          studentName = customInput ? customInput.value.trim() : "";
-        } else if (selectEl && selectEl.value) {
-          studentName = selectEl.value.trim();
-        }
-
-        const title = document.getElementById("recordCourseTitle").value.trim();
-        const date = document.getElementById("recordCourseDate").value;
-        const presenter = document.getElementById("recordCoursePresenter").value.trim();
-        const memo = document.getElementById("recordCourseMemo").value.trim();
-        const password = document.getElementById("recordCoursePassword").value.trim() || "1234";
-
-        if (!studentName || !title || !date) {
-          if (!studentName) {
-            showToast("수강 교사 닉네임을 선택하거나 직접 입력해주세요.", "error");
-          } else {
-            showToast("강의 제목과 수강 날짜를 모두 입력해주세요.", "error");
-          }
-          return;
-        }
-
-        const record = {
-          id: `att-${Date.now()}`,
-          studentName,
-          title,
-          date,
-          presenter,
-          memo,
-          password,
-          createdAt: new Date().toISOString()
-        };
-
-        // Add to members if new
-        if (!memberList.includes(studentName)) {
-          memberList.push(studentName);
-          await saveMembersToDb(memberList);
-        }
-
-        await saveAttendedCourseToDb(record);
-
-        // Reset form except date (keep today's date)
-        document.getElementById("recordCourseTitle").value = "";
-        document.getElementById("recordCoursePresenter").value = "";
-        document.getElementById("recordCourseMemo").value = "";
-        if (customInput) customInput.value = "";
-        if (selectEl) selectEl.value = "";
-        document.getElementById("wrapRecordStudentCustom")?.classList.add("hidden");
-
-        updateRecordStudentDropdown();
-
-        if (typeof confetti === "function") {
-          confetti({ particleCount: 45, spread: 60, origin: { y: 0.7 } });
-        }
-        showToast(`${studentName} 선생님의 수강 완료 기록이 성공적으로 등록되었습니다!`);
-      });
-
       document.getElementById("filterAttendedTeacher")?.addEventListener("change", () => {
         renderAttendedCoursesView();
       });
@@ -8584,106 +8811,8 @@
 
       // Feedback Form Submit Handler
       const formRegisterFeedback = document.getElementById("formRegisterFeedback");
-      formRegisterFeedback?.addEventListener("submit", async (e) => {
-        e.preventDefault();
-
-        const teacherSelect = document.getElementById("regFeedbackTeacherSelect");
-        const teacherCustom = document.getElementById("regFeedbackTeacherCustom");
-        let teacherName = "";
-
-        if (teacherSelect?.value === "__custom__") {
-          teacherName = teacherCustom ? teacherCustom.value.trim() : "";
-        } else if (teacherSelect && teacherSelect.value) {
-          teacherName = teacherSelect.value.trim();
-        } else if (teacherCustom && teacherCustom.value.trim()) {
-          teacherName = teacherCustom.value.trim();
-        }
-
-        if (!teacherName) {
-          if (memberList.length > 0) {
-            teacherName = memberList[0];
-          } else {
-            showToast("작성 강사 닉네임을 입력하거나 선택해주세요.", "error");
-            if (teacherSelect?.value === "__custom__") {
-              teacherCustom?.focus();
-            } else {
-              teacherSelect?.focus();
-            }
-            return;
-          }
-        }
-
-        const title = document.getElementById("regFeedbackTitle")?.value.trim() || "";
-        const dateInput = document.getElementById("regFeedbackDate");
-        const date = (dateInput && dateInput.value) ? dateInput.value : getTodayDateInfo().dateStr;
-        const category = document.getElementById("regFeedbackCategory")?.value || "교안 수정";
-        const beforeIssue = document.getElementById("regFeedbackBefore")?.value.trim() || "";
-        const improvementNote = document.getElementById("regFeedbackImprovement")?.value.trim() || "";
-        const teacherTip = document.getElementById("regFeedbackTip")?.value.trim() || "";
-        const password = document.getElementById("regFeedbackPassword")?.value.trim() || "1234";
-
-        if (!title) {
-          showToast("강의명 / 수업 주제를 입력해주세요.", "error");
-          document.getElementById("regFeedbackTitle")?.focus();
-          return;
-        }
-
-        if (!improvementNote) {
-          showToast("개선 방향 및 실천 내용을 입력해주세요.", "error");
-          document.getElementById("regFeedbackImprovement")?.focus();
-          return;
-        }
-
-        // If no photo was uploaded or selected, provide preset default
-        const finalPhotoUrl = currentFeedbackImageDataUrl || (category === "교안 수정" ? PRESET_FEEDBACK_PHOTOS.curriculum : PRESET_FEEDBACK_PHOTOS.ai);
-
-        const newFeedback = {
-          id: `fb-${Date.now()}`,
-          teacherName,
-          title,
-          date,
-          category,
-          imageUrl: finalPhotoUrl,
-          beforeIssue,
-          improvementNote,
-          teacherTip,
-          helpfulCount: 0,
-          password,
-          createdAt: new Date().toISOString()
-        };
-
-        await saveFeedbackToDb(newFeedback);
-
-        // Add custom teacher to memberList if not already present
-        if (teacherName && !memberList.includes(teacherName)) {
-          memberList.push(teacherName);
-          await saveMembersToDb(memberList);
-        }
-
-        // Reset form
-        formRegisterFeedback.reset();
-        currentFeedbackImageDataUrl = "";
-        const previewContainer = document.getElementById("fbImagePreviewContainer");
-        if (previewContainer) previewContainer.classList.add("hidden");
-        const fileInput = document.getElementById("regFeedbackFileInput");
-        if (fileInput) fileInput.value = "";
-        document.getElementById("wrapFeedbackTeacherCustom")?.classList.add("hidden");
-
-        closeModal("modalRegisterFeedback");
-
-        if (typeof confetti === "function") {
-          confetti({ particleCount: 50, spread: 65, origin: { y: 0.6 } });
-        }
-        showToast(`${teacherName} 강사님의 개선 피드백이 성공적으로 등록되었습니다!`);
-      });
-
-      // Submit button explicit trigger (safe guard)
-      document.getElementById("btnSubmitFeedback")?.addEventListener("click", (e) => {
-        if (formRegisterFeedback) {
-          if (!formRegisterFeedback.checkValidity()) {
-            formRegisterFeedback.reportValidity();
-          }
-        }
+      formRegisterFeedback?.addEventListener("submit", (e) => {
+        window.submitFeedback(e);
       });
 
       // Category filter buttons
@@ -8830,10 +8959,6 @@
         window.submitEditFeedback(e);
       });
 
-      document.getElementById("btnSubmitEditFeedback")?.addEventListener("click", (e) => {
-        window.submitEditFeedback(e);
-      });
-
       // ====================================================
       // 11. Idea Collection Tab Event Listeners
       // ====================================================
@@ -8844,10 +8969,6 @@
 
       const formRegisterIdea = document.getElementById("formRegisterIdea");
       formRegisterIdea?.addEventListener("submit", (e) => {
-        window.submitIdea(e);
-      });
-
-      document.getElementById("btnSubmitIdea")?.addEventListener("click", (e) => {
         window.submitIdea(e);
       });
 
@@ -8900,10 +9021,6 @@
       // Idea Edit Modal Listeners
       const formEditIdea = document.getElementById("formEditIdea");
       formEditIdea?.addEventListener("submit", (e) => {
-        window.submitEditIdea(e);
-      });
-
-      document.getElementById("btnSubmitEditIdea")?.addEventListener("click", (e) => {
         window.submitEditIdea(e);
       });
 
