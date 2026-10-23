@@ -121,29 +121,38 @@
 
       <!-- Navigation Tabs -->
       <div class="flex items-center border-t border-slate-100 -mb-px overflow-x-auto scrollbar-none">
-        <button id="tabBtnCalendar" class="flex items-center gap-2 py-2.5 px-4 text-xs sm:text-sm font-semibold border-b-2 border-blue-600 text-blue-600 transition cursor-pointer shrink-0">
-          <i data-lucide="calendar" class="w-4 h-4"></i>
-          <span>강의 캘린더</span>
-        </button>
-        <button id="tabBtnAttendedCourses" class="flex items-center gap-2 py-2.5 px-4 text-xs sm:text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-800 transition cursor-pointer shrink-0">
-          <i data-lucide="award" class="w-4 h-4"></i>
-          <span>수강한 강의 목록</span>
-          <span id="tabAttendedCountBadge" class="px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-blue-100 text-blue-700">0</span>
-        </button>
-        <button id="tabBtnNotice" class="flex items-center gap-2 py-2.5 px-4 text-xs sm:text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-800 transition cursor-pointer shrink-0">
+        <!-- 1. 이번주 공지사항 -->
+        <button id="tabBtnNotice" class="flex items-center gap-2 py-2.5 px-4 text-xs sm:text-sm font-semibold border-b-2 border-indigo-600 text-indigo-600 transition cursor-pointer shrink-0">
           <i data-lucide="bell" class="w-4 h-4"></i>
           <span>이번 주 공지사항</span>
           <span id="noticeBadgeDot" class="w-2 h-2 rounded-full bg-rose-500"></span>
         </button>
-        <button id="tabBtnFeedback" class="flex items-center gap-2 py-2.5 px-4 text-xs sm:text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-800 transition cursor-pointer shrink-0">
-          <i data-lucide="sparkles" class="w-4 h-4 text-amber-500"></i>
-          <span>피드백 및 개선방향</span>
-          <span id="tabFeedbackCountBadge" class="px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800">0</span>
+
+        <!-- 2. 강의 캘린더 -->
+        <button id="tabBtnCalendar" class="flex items-center gap-2 py-2.5 px-4 text-xs sm:text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-800 transition cursor-pointer shrink-0">
+          <i data-lucide="calendar" class="w-4 h-4"></i>
+          <span>강의 캘린더</span>
         </button>
+
+        <!-- 3. 아이디어 수집 -->
         <button id="tabBtnIdea" class="flex items-center gap-2 py-2.5 px-4 text-xs sm:text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-800 transition cursor-pointer shrink-0">
           <i data-lucide="lightbulb" class="w-4 h-4 text-emerald-500"></i>
           <span>아이디어 수집</span>
           <span id="tabIdeaCountBadge" class="px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800">0</span>
+        </button>
+
+        <!-- 4. 강의 개발 현황 -->
+        <button id="tabBtnDevStatus" class="flex items-center gap-2 py-2.5 px-4 text-xs sm:text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-800 transition cursor-pointer shrink-0">
+          <i data-lucide="layers" class="w-4 h-4 text-indigo-500"></i>
+          <span>강의 개발 현황</span>
+          <span id="tabDevStatusCountBadge" class="px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-indigo-100 text-indigo-800">0</span>
+        </button>
+
+        <!-- 5. 피드백 및 개선방향 -->
+        <button id="tabBtnFeedback" class="flex items-center gap-2 py-2.5 px-4 text-xs sm:text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-800 transition cursor-pointer shrink-0">
+          <i data-lucide="sparkles" class="w-4 h-4 text-amber-500"></i>
+          <span>피드백 및 개선방향</span>
+          <span id="tabFeedbackCountBadge" class="px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800">0</span>
         </button>
       </div>
     </div>
@@ -221,8 +230,57 @@
       </button>
     </div>
 
-    <!-- TAB 1: CALENDAR & LECTURES VIEW -->
-    <section id="tabContentCalendar" class="space-y-6">
+    <!-- 1. 이번 주 공지사항 탭 -->
+    <section id="tabContentNotice" class="space-y-6">
+      <div class="bg-white rounded-xl border border-slate-200 shadow-2xs overflow-hidden">
+        
+        <!-- Notice Header -->
+        <div class="p-6 bg-slate-900 text-white flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div>
+            <div class="flex items-center gap-2 mb-1">
+              <span id="noticeBadge" class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-blue-500 text-white">이번 주 필독</span>
+              <span id="noticeDateRange" class="text-xs text-slate-300">2026. 09. 07 ~ 2026. 09. 13</span>
+            </div>
+            <h2 id="noticeTitleDisplay" class="text-xl sm:text-2xl font-bold text-white">지식샘터 9월 강의 품앗이 수강 신청 안내</h2>
+          </div>
+          <button id="btnEditNoticeModal" class="px-3.5 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs sm:text-sm font-semibold rounded-lg flex items-center gap-1.5 shadow-sm transition">
+            <i data-lucide="edit-3" class="w-4 h-4"></i>
+            <span>공지사항 수정</span>
+          </button>
+        </div>
+
+        <!-- Notice Content Body -->
+        <div class="p-6 space-y-6">
+          <div class="prose max-w-none text-slate-700 leading-relaxed text-sm sm:text-base space-y-4" id="noticeBodyDisplay">
+            <p>선생님 여러분 안녕하세요! 9월 지식샘터 강의 등록 및 수강 신청 안내드립니다.</p>
+            <div class="bg-blue-50 border-l-4 border-blue-600 p-4 rounded-r-lg">
+              <h4 class="font-bold text-blue-900 mb-1">💡 이번 주 핵심 실천사항</h4>
+              <p class="text-blue-800 text-sm">1. 개설하신 강좌는 지식샘터 링크 및 정원(기본 10명)과 함께 등록해주세요.<br/>2. 동료 선생님의 강의를 최소 1개 이상 수강 신청하여 품앗이를 완성합시다.</p>
+            </div>
+          </div>
+
+          <!-- Notice Action Link -->
+          <div id="noticeLinkContainer" class="pt-4 border-t border-slate-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+            <div class="flex items-center gap-2.5 flex-wrap">
+              <a id="noticeLinkBtn" href="https://educourse.keris.or.kr" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white text-xs sm:text-sm font-bold rounded-lg transition shadow-xs">
+                <span id="noticeLinkText">지식샘터 공식 포털 바로가기</span>
+                <i data-lucide="external-link" class="w-4 h-4"></i>
+              </a>
+              <a id="noticeRefLinkBtn" href="https://www.keris.or.kr" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs sm:text-sm font-bold rounded-lg transition shadow-xs">
+                <i data-lucide="globe" class="w-4 h-4"></i>
+                <span id="noticeRefLinkText">참고 사이트</span>
+                <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+              </a>
+            </div>
+            <span class="text-xs text-slate-400">최종 업데이트: <span id="noticeUpdatedAt">실시간 동기화됨</span></span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 2. 강의 캘린더 탭 -->
+    <section id="tabContentCalendar" class="hidden space-y-6">
       
       <!-- Calendar View Control Bar -->
       <div class="bg-white rounded-xl border border-slate-200 p-4 shadow-2xs">
@@ -323,316 +381,7 @@
       </div>
     </section>
 
-    <!-- TAB 2: ATTENDED COURSES (수강한 강의 목록 & 누가 기록) -->
-    <section id="tabContentAttendedCourses" class="hidden space-y-6">
-      
-      <!-- 1. Course Attendance Recording Card -->
-      <div class="bg-white rounded-2xl border border-slate-200 p-5 sm:p-6 shadow-2xs">
-        <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-4">
-          <div>
-            <h2 class="text-base sm:text-lg font-bold text-slate-900 flex items-center gap-2">
-              <i data-lucide="pen-tool" class="w-5 h-5 text-blue-600"></i>
-              <span>내가 수강한 강의 기록하기</span>
-            </h2>
-            <p class="text-xs text-slate-500 mt-0.5">회원 교사가 수강한 강의 제목과 수강 날짜를 등록하면 전체 회원에게 실시간 누가(누적) 기록으로 노출 및 공유됩니다.</p>
-          </div>
-          <span class="hidden sm:inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-blue-50 text-blue-700 border border-blue-200">
-            <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> 실시간 누가 기록
-          </span>
-        </div>
-
-        <form id="formRecordAttendedCourse" onsubmit="window.submitAttendedRecord(event); return false;" class="space-y-4">
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <!-- 수강 교사 선택 -->
-            <div>
-              <label class="block text-xs font-bold text-slate-700 mb-1 flex items-center justify-between">
-                <span>수강 교사 닉네임 *</span>
-                <span class="text-[11px] text-blue-600 font-normal">회원 드롭다운 선택</span>
-              </label>
-              <div class="space-y-1.5">
-                <select id="recordStudentSelect" class="w-full text-xs sm:text-sm px-3 py-2 bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none cursor-pointer">
-                  <option value="">-- 수강 교사(회원) 선택 --</option>
-                </select>
-                <div id="wrapRecordStudentCustom" class="hidden">
-                  <input type="text" id="recordStudentCustom" placeholder="새 교사 닉네임 직접 입력" class="w-full text-xs sm:text-sm px-3 py-1.5 border border-dashed border-blue-400 bg-blue-50/50 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none" />
-                </div>
-              </div>
-            </div>
-
-            <!-- 수강 날짜 -->
-            <div>
-              <label class="block text-xs font-bold text-slate-700 mb-1">강의 수강 날짜 *</label>
-              <input type="date" id="recordCourseDate" class="w-full text-xs sm:text-sm px-3 py-2 bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none" />
-            </div>
-          </div>
-
-          <!-- 강의 제목 -->
-          <div>
-            <label class="block text-xs font-bold text-slate-700 mb-1">강의 제목 *</label>
-            <input type="text" id="recordCourseTitle" placeholder="예: [초등] 생성형 AI를 활용한 학급경영 및 수업 설계" class="w-full text-xs sm:text-sm px-3 py-2 bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none" />
-          </div>
-
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <!-- 개설 강사 / 교육기관 (선택) -->
-            <div>
-              <label class="block text-xs font-bold text-slate-700 mb-1">개설 강사 / 교육기관 (선택)</label>
-              <input type="text" id="recordCoursePresenter" placeholder="예: 박에듀 강사님, KERIS, 지식샘터" class="w-full text-xs sm:text-sm px-3 py-2 bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none" />
-            </div>
-
-            <!-- 수정/삭제용 비밀번호 (선택) -->
-            <div>
-              <label class="block text-xs font-bold text-slate-700 mb-1">확인 비밀번호 (삭제 시 본인 인증)</label>
-              <input type="password" id="recordCoursePassword" value="1234" placeholder="4자리 비밀번호 (기본: 1234)" class="w-full text-xs sm:text-sm px-3 py-2 bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none" />
-            </div>
-          </div>
-
-          <!-- 수강 소감 / 한줄 메모 (선택) -->
-          <div>
-            <label class="block text-xs font-bold text-slate-700 mb-1">한줄 수강 소감 / 메모 (선택)</label>
-            <input type="text" id="recordCourseMemo" placeholder="예: 학생 맞춤형 피드백 도구 활용법을 바로 수업에 적용해볼 수 있었음" class="w-full text-xs sm:text-sm px-3 py-2 bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none" />
-          </div>
-
-          <div class="flex justify-end pt-1">
-            <button type="button" id="btnSubmitAttendedRecord" onclick="window.submitAttendedRecord(event)" class="w-full sm:w-auto px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-xs sm:text-sm font-bold rounded-lg shadow-sm flex items-center justify-center gap-1.5 transition cursor-pointer active:scale-95">
-              <i data-lucide="check-circle" class="w-4 h-4"></i>
-              <span>수강한 강의 누가 기록 등록하기</span>
-            </button>
-          </div>
-        </form>
-      </div>
-
-      <!-- 2. Attended Courses List & Filter Section -->
-      <div class="bg-white rounded-2xl border border-slate-200 p-5 sm:p-6 shadow-2xs space-y-4">
-        
-        <!-- Summary Counters & Header -->
-        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-slate-100">
-          <div>
-            <div class="flex items-center gap-2">
-              <h3 class="text-base sm:text-lg font-bold text-slate-900 flex items-center gap-2">
-                <i data-lucide="book-check" class="w-5 h-5 text-emerald-600"></i>
-                <span>전체 교사 수강 완료 누가 기록 목록</span>
-              </h3>
-              <span id="attendedTotalBadge" class="text-xs px-2.5 py-0.5 rounded-full font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">총 0건</span>
-            </div>
-            <p class="text-xs text-slate-500 mt-1">회원들이 수강하고 기록한 강의 제목과 수강 날짜가 실시간으로 누가 기록되어 노출됩니다.</p>
-          </div>
-
-          <!-- Quick Stats Pill -->
-          <div class="flex items-center gap-2 flex-wrap">
-            <div class="px-3 py-1.5 bg-slate-50 rounded-lg border border-slate-200 text-xs text-slate-600 font-medium flex items-center gap-1.5">
-              <i data-lucide="users" class="w-3.5 h-3.5 text-blue-600"></i>
-              <span>참여 교사: <strong id="attendedUniqueTeachersCount" class="text-slate-900">0</strong>명</span>
-            </div>
-            <div class="px-3 py-1.5 bg-slate-50 rounded-lg border border-slate-200 text-xs text-slate-600 font-medium flex items-center gap-1.5">
-              <i data-lucide="calendar" class="w-3.5 h-3.5 text-emerald-600"></i>
-              <span>이번 달 기록: <strong id="attendedThisMonthCount" class="text-slate-900">0</strong>건</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Filter & Search Bar -->
-        <div class="flex flex-col sm:flex-row gap-2.5">
-          <div class="sm:w-56 shrink-0">
-            <select id="filterAttendedTeacher" class="w-full text-xs px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg font-medium focus:ring-2 focus:ring-blue-500 focus:outline-none cursor-pointer">
-              <option value="">전체 교사 보기</option>
-            </select>
-          </div>
-          <div class="relative flex-1">
-            <i data-lucide="search" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
-            <input type="text" id="searchAttendedCourses" placeholder="강의 제목, 수강 교사, 강사명으로 검색" class="w-full text-xs pl-9 pr-8 py-2 bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none" />
-            <button type="button" id="btnClearAttendedSearch" class="hidden absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
-              <i data-lucide="x" class="w-3.5 h-3.5"></i>
-            </button>
-          </div>
-        </div>
-
-        <!-- Attended Courses Dynamic List -->
-        <div id="attendedCoursesListContainer" class="space-y-3 pt-1">
-          <!-- Dynamically populated records -->
-        </div>
-
-      </div>
-
-    </section>
-
-    <!-- TAB 3: WEEKLY NOTICE -->
-    <section id="tabContentNotice" class="hidden space-y-6">
-      <div class="bg-white rounded-xl border border-slate-200 shadow-2xs overflow-hidden">
-        
-        <!-- Notice Header -->
-        <div class="p-6 bg-slate-900 text-white flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <div>
-            <div class="flex items-center gap-2 mb-1">
-              <span id="noticeBadge" class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-blue-500 text-white">이번 주 필독</span>
-              <span id="noticeDateRange" class="text-xs text-slate-300">2026. 09. 07 ~ 2026. 09. 13</span>
-            </div>
-            <h2 id="noticeTitleDisplay" class="text-xl sm:text-2xl font-bold text-white">지식샘터 9월 강의 품앗이 수강 신청 안내</h2>
-          </div>
-          <button id="btnEditNoticeModal" class="px-3.5 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs sm:text-sm font-semibold rounded-lg flex items-center gap-1.5 shadow-sm transition">
-            <i data-lucide="edit-3" class="w-4 h-4"></i>
-            <span>공지사항 수정</span>
-          </button>
-        </div>
-
-        <!-- Notice Content Body -->
-        <div class="p-6 space-y-6">
-          <div class="prose max-w-none text-slate-700 leading-relaxed text-sm sm:text-base space-y-4" id="noticeBodyDisplay">
-            <p>선생님 여러분 안녕하세요! 9월 지식샘터 강의 등록 및 수강 신청 안내드립니다.</p>
-            <div class="bg-blue-50 border-l-4 border-blue-600 p-4 rounded-r-lg">
-              <h4 class="font-bold text-blue-900 mb-1">💡 이번 주 핵심 실천사항</h4>
-              <p class="text-blue-800 text-sm">1. 개설하신 강좌는 지식샘터 링크 및 정원(기본 10명)과 함께 등록해주세요.<br/>2. 동료 선생님의 강의를 최소 1개 이상 수강 신청하여 품앗이를 완성합시다.</p>
-            </div>
-          </div>
-
-          <!-- Notice Action Link -->
-          <div id="noticeLinkContainer" class="pt-4 border-t border-slate-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-            <div class="flex items-center gap-2.5 flex-wrap">
-              <a id="noticeLinkBtn" href="https://educourse.keris.or.kr" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white text-xs sm:text-sm font-bold rounded-lg transition shadow-xs">
-                <span id="noticeLinkText">지식샘터 공식 포털 바로가기</span>
-                <i data-lucide="external-link" class="w-4 h-4"></i>
-              </a>
-              <a id="noticeRefLinkBtn" href="https://www.keris.or.kr" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs sm:text-sm font-bold rounded-lg transition shadow-xs">
-                <i data-lucide="globe" class="w-4 h-4"></i>
-                <span id="noticeRefLinkText">참고 사이트</span>
-                <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
-              </a>
-            </div>
-            <span class="text-xs text-slate-400">최종 업데이트: <span id="noticeUpdatedAt">실시간 동기화됨</span></span>
-          </div>
-        </div>
-
-      </div>
-    </section>
-
-    <!-- TAB 4: FEEDBACK & IMPROVEMENTS -->
-    <section id="tabContentFeedback" class="hidden space-y-6">
-      <!-- Feedback Banner & Header -->
-      <div class="bg-gradient-to-r from-amber-900 via-slate-900 to-indigo-950 rounded-2xl p-6 sm:p-7 text-white shadow-md relative overflow-hidden">
-        <div class="absolute -right-10 -bottom-10 w-48 h-48 bg-amber-500/10 rounded-full blur-2xl pointer-events-none"></div>
-        <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-5">
-          <div class="space-y-2 max-w-2xl">
-            <div class="flex items-center gap-2">
-              <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-500 text-slate-950 flex items-center gap-1">
-                <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
-                <span>강사 지식 나눔</span>
-              </span>
-              <span class="text-xs text-amber-200/80">동료 강사와 함께 배우는 수업 개선 아카이브</span>
-            </div>
-            <h2 class="text-xl sm:text-2xl font-bold tracking-tight text-white flex items-center gap-2">
-              <span>피드백 및 개선방향</span>
-            </h2>
-            <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
-              강의를 진행하며 겪은 시행착오, 실제 현장 사진, 그리고 구체적인 개선 노하우를 공유하는 공간입니다. 다른 강사들의 수업 팁을 보고 배우며, 유익한 글에는 <span class="text-rose-400 font-semibold">'❤️ 도움됐어요'</span>를 눌러 응원해주세요!
-            </p>
-          </div>
-          
-          <button id="btnOpenRegisterFeedback" type="button" onclick="window.openRegisterFeedbackModal()" class="self-start md:self-center shrink-0 px-4 py-2.5 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-950 font-bold text-xs sm:text-sm rounded-xl shadow-lg hover:shadow-xl transition flex items-center gap-2 cursor-pointer active:scale-95">
-            <i data-lucide="camera" class="w-4 h-4 text-slate-950"></i>
-            <span>피드백 및 개선방향 등록</span>
-          </button>
-        </div>
-      </div>
-
-      <!-- Feedback Summary Statistics -->
-      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-2xs flex items-center gap-3">
-          <div class="w-10 h-10 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center shrink-0">
-            <i data-lucide="message-square-text" class="w-5 h-5"></i>
-          </div>
-          <div>
-            <p class="text-xs text-slate-500 font-medium">등록된 개선 사례</p>
-            <p id="statFeedbackCount" class="text-lg sm:text-xl font-bold text-slate-900">0</p>
-          </div>
-        </div>
-
-        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-2xs flex items-center gap-3">
-          <div class="w-10 h-10 rounded-lg bg-rose-50 text-rose-500 flex items-center justify-center shrink-0">
-            <i data-lucide="heart" class="w-5 h-5 fill-rose-500 text-rose-500"></i>
-          </div>
-          <div>
-            <p class="text-xs text-slate-500 font-medium">누적 '도움됐어요'</p>
-            <p id="statFeedbackHearts" class="text-lg sm:text-xl font-bold text-slate-900">0</p>
-          </div>
-        </div>
-
-        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-2xs flex items-center gap-3">
-          <div class="w-10 h-10 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
-            <i data-lucide="users" class="w-5 h-5"></i>
-          </div>
-          <div>
-            <p class="text-xs text-slate-500 font-medium">참여 강사 수</p>
-            <p id="statFeedbackTeachers" class="text-lg sm:text-xl font-bold text-slate-900">0</p>
-          </div>
-        </div>
-
-        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-2xs flex items-center gap-3">
-          <div class="w-10 h-10 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
-            <i data-lucide="image" class="w-5 h-5"></i>
-          </div>
-          <div>
-            <p class="text-xs text-slate-500 font-medium">수업 현장 사진</p>
-            <p id="statFeedbackPhotos" class="text-lg sm:text-xl font-bold text-slate-900">0</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Feedback Search & Filter Toolbar -->
-      <div class="bg-white rounded-xl border border-slate-200 p-4 shadow-2xs space-y-3">
-        <div class="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
-          <!-- Category Filter Pills -->
-          <div id="feedbackCategoryFilterGroup" class="flex items-center gap-1.5 overflow-x-auto scrollbar-none pb-1 md:pb-0">
-            <button type="button" data-cat="" class="fbCatBtn active px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-900 text-white cursor-pointer transition shrink-0">
-              전체
-            </button>
-            <button type="button" data-cat="수업 운영·시간 관리" class="fbCatBtn px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-100 text-slate-700 hover:bg-slate-200 cursor-pointer transition shrink-0">
-              ⏱️ 수업 운영·시간
-            </button>
-            <button type="button" data-cat="학생 참여·상호작용" class="fbCatBtn px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-100 text-slate-700 hover:bg-slate-200 cursor-pointer transition shrink-0">
-              💬 학생 참여·소통
-            </button>
-            <button type="button" data-cat="AI·에듀테크 도구" class="fbCatBtn px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-100 text-slate-700 hover:bg-slate-200 cursor-pointer transition shrink-0">
-              🤖 AI·에듀테크
-            </button>
-            <button type="button" data-cat="교안 수정" class="fbCatBtn px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-100 text-slate-700 hover:bg-slate-200 cursor-pointer transition shrink-0">
-              📖 교안 수정
-            </button>
-            <button type="button" data-cat="강의 자료·실습" class="fbCatBtn px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-100 text-slate-700 hover:bg-slate-200 cursor-pointer transition shrink-0">
-              📑 자료·실습템플릿
-            </button>
-            <button type="button" data-cat="돌발상황·대처팁" class="fbCatBtn px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-100 text-slate-700 hover:bg-slate-200 cursor-pointer transition shrink-0">
-              ⚡ 돌발대처 노하우
-            </button>
-          </div>
-
-          <!-- Secondary Filters: Teacher dropdown & Sort -->
-          <div class="flex items-center gap-2 shrink-0">
-            <select id="filterFeedbackTeacher" class="text-xs px-2.5 py-1.5 border border-slate-300 rounded-lg bg-white text-slate-700 focus:ring-2 focus:ring-amber-500 focus:outline-none">
-              <option value="">모든 강사 보기</option>
-            </select>
-            <select id="sortFeedbackOrder" class="text-xs px-2.5 py-1.5 border border-slate-300 rounded-lg bg-white text-slate-700 focus:ring-2 focus:ring-amber-500 focus:outline-none font-medium">
-              <option value="latest">최신 등록순</option>
-              <option value="hearts">❤️ 도움됐어요 많은순</option>
-            </select>
-          </div>
-        </div>
-
-        <!-- Search Bar -->
-        <div class="relative">
-          <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
-          <input type="text" id="searchFeedbackQuery" placeholder="강의명, 개선 내용, 꿀팁 키워드로 검색 (예: 프롬프트, 줌, 실습 시간, 슬라이도...)" class="w-full text-xs sm:text-sm pl-9 pr-8 py-2 border border-slate-200 rounded-lg bg-slate-50 focus:bg-white focus:ring-2 focus:ring-amber-500 focus:outline-none transition" />
-          <button type="button" id="btnClearFeedbackSearch" class="hidden absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-0.5">
-            <i data-lucide="x" class="w-3.5 h-3.5"></i>
-          </button>
-        </div>
-      </div>
-
-      <!-- Feedback Cards Grid Container -->
-      <div id="feedbackCardsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-        <!-- Dynamically rendered feedback cards -->
-      </div>
-    </section>
-
-    <!-- TAB 5: IDEA COLLECTION (아이디어 수집) -->
+    <!-- 3. 아이디어 수집 탭 -->
     <section id="tabContentIdea" class="hidden space-y-6">
       <!-- Idea Banner & Header -->
       <div class="bg-gradient-to-r from-emerald-950 via-slate-900 to-teal-950 rounded-2xl p-6 sm:p-7 text-white shadow-md relative overflow-hidden">
@@ -757,6 +506,285 @@
       <!-- Ideas Cards Grid Container -->
       <div id="ideaCardsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
         <!-- Dynamically rendered idea cards -->
+      </div>
+    </section>
+
+    <!-- 4. 강의 개발 현황 탭 -->
+    <section id="tabContentDevStatus" class="hidden space-y-6">
+      <!-- Hero Banner -->
+      <div class="bg-gradient-to-r from-indigo-700 via-indigo-600 to-purple-600 rounded-2xl p-6 sm:p-8 text-white shadow-md relative overflow-hidden">
+        <div class="absolute -right-8 -bottom-8 opacity-10 pointer-events-none">
+          <i data-lucide="layers" class="w-64 h-64"></i>
+        </div>
+        <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div class="space-y-2">
+            <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-indigo-500/30 border border-indigo-400/40 text-indigo-100 text-xs font-semibold backdrop-blur-xs">
+              <i data-lucide="sparkles" class="w-3.5 h-3.5 text-amber-300"></i>
+              <span>지식샘터 강의 준비 로드맵</span>
+            </div>
+            <h2 class="text-xl sm:text-2xl lg:text-3xl font-extrabold tracking-tight">강의 개발 현황</h2>
+            <p class="text-indigo-100 text-xs sm:text-sm max-w-2xl leading-relaxed">
+              교사유니버스 강사님들의 <strong>주제 선정 &rarr; 수업 사례 수집 &rarr; 교안 작성 &rarr; 최종 피드백</strong> 4단계 진도 현황과 수업 준비 중 겪는 고민을 공유하고 서로 돕는 공간입니다.
+            </p>
+          </div>
+          <button type="button" id="btnOpenRegisterDevStatus" onclick="window.openRegisterDevStatusModal()" class="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-white hover:bg-indigo-50 text-indigo-700 text-xs sm:text-sm font-bold rounded-xl shadow-md transition cursor-pointer active:scale-95 shrink-0 whitespace-nowrap tracking-tight break-keep">
+            <i data-lucide="plus-circle" class="w-4 h-4 text-indigo-600 shrink-0"></i>
+            <span>내 강의 개발 현황 등록하기</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Development Pipeline 4-Stage KPI Summary -->
+      <div class="grid grid-cols-2 lg:grid-cols-5 gap-3">
+        <div class="col-span-2 lg:col-span-1 bg-white p-4 rounded-xl border border-slate-200 shadow-2xs flex items-center justify-between">
+          <div>
+            <p class="text-xs text-slate-500 font-medium">전체 개발 강좌</p>
+            <p id="statDevTotalCount" class="text-xl sm:text-2xl font-black text-slate-900 mt-0.5">0</p>
+          </div>
+          <div class="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
+            <i data-lucide="layers" class="w-5 h-5"></i>
+          </div>
+        </div>
+        <div class="bg-white p-3.5 sm:p-4 rounded-xl border border-sky-200 bg-sky-50/20 shadow-2xs flex items-center justify-between">
+          <div>
+            <div class="flex items-center gap-1 text-[11px] font-bold text-sky-700">
+              <span class="w-2 h-2 rounded-full bg-sky-500"></span>
+              <span>1. 주제 선정</span>
+            </div>
+            <p id="statDevStage1Count" class="text-lg sm:text-xl font-black text-slate-900 mt-1">0명</p>
+          </div>
+          <div class="w-9 h-9 rounded-lg bg-sky-100 text-sky-700 flex items-center justify-center">
+            <i data-lucide="target" class="w-4 h-4"></i>
+          </div>
+        </div>
+        <div class="bg-white p-3.5 sm:p-4 rounded-xl border border-teal-200 bg-teal-50/20 shadow-2xs flex items-center justify-between">
+          <div>
+            <div class="flex items-center gap-1 text-[11px] font-bold text-teal-700">
+              <span class="w-2 h-2 rounded-full bg-teal-500"></span>
+              <span>2. 사례 수집</span>
+            </div>
+            <p id="statDevStage2Count" class="text-lg sm:text-xl font-black text-slate-900 mt-1">0명</p>
+          </div>
+          <div class="w-9 h-9 rounded-lg bg-teal-100 text-teal-700 flex items-center justify-center">
+            <i data-lucide="folder-search" class="w-4 h-4"></i>
+          </div>
+        </div>
+        <div class="bg-white p-3.5 sm:p-4 rounded-xl border border-indigo-200 bg-indigo-50/20 shadow-2xs flex items-center justify-between">
+          <div>
+            <div class="flex items-center gap-1 text-[11px] font-bold text-indigo-700">
+              <span class="w-2 h-2 rounded-full bg-indigo-500"></span>
+              <span>3. 교안 작성</span>
+            </div>
+            <p id="statDevStage3Count" class="text-lg sm:text-xl font-black text-slate-900 mt-1">0명</p>
+          </div>
+          <div class="w-9 h-9 rounded-lg bg-indigo-100 text-indigo-700 flex items-center justify-center">
+            <i data-lucide="file-edit" class="w-4 h-4"></i>
+          </div>
+        </div>
+        <div class="bg-white p-3.5 sm:p-4 rounded-xl border border-amber-200 bg-amber-50/20 shadow-2xs flex items-center justify-between">
+          <div>
+            <div class="flex items-center gap-1 text-[11px] font-bold text-amber-800">
+              <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+              <span>4. 피드백</span>
+            </div>
+            <p id="statDevStage4Count" class="text-lg sm:text-xl font-black text-slate-900 mt-1">0명</p>
+          </div>
+          <div class="w-9 h-9 rounded-lg bg-amber-100 text-amber-800 flex items-center justify-center">
+            <i data-lucide="sparkles" class="w-4 h-4"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- Controls & Filter Card -->
+      <div class="bg-white rounded-2xl border border-slate-200 p-4 sm:p-5 shadow-2xs space-y-4">
+        <!-- Top Toolbar: Expand All button & Stage Filter Pills ("단계만 모아보기") -->
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 pb-3 border-b border-slate-100">
+          <!-- Stage Filter Pills -->
+          <div class="flex items-center gap-1.5 overflow-x-auto scrollbar-none py-0.5">
+            <span class="text-xs font-bold text-slate-500 mr-1 hidden sm:inline whitespace-nowrap">단계만 모아보기:</span>
+            <button type="button" class="devStageBtn active px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-900 text-white cursor-pointer transition shrink-0 shadow-2xs" data-stage="">
+              전체 단계 모아보기
+            </button>
+            <button type="button" class="devStageBtn px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-100 text-slate-700 hover:bg-slate-200 cursor-pointer transition shrink-0" data-stage="주제 선정">
+              🎯 1. 주제 선정
+            </button>
+            <button type="button" class="devStageBtn px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-100 text-slate-700 hover:bg-slate-200 cursor-pointer transition shrink-0" data-stage="수업 사례 수집">
+              📁 2. 수업 사례 수집
+            </button>
+            <button type="button" class="devStageBtn px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-100 text-slate-700 hover:bg-slate-200 cursor-pointer transition shrink-0" data-stage="교안 작성">
+              📝 3. 교안 작성
+            </button>
+            <button type="button" class="devStageBtn px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-100 text-slate-700 hover:bg-slate-200 cursor-pointer transition shrink-0" data-stage="피드백">
+              ✨ 4. 피드백
+            </button>
+          </div>
+
+          <!-- Expand All / Collapse All Toggle Button -->
+          <div class="flex items-center gap-2 shrink-0 self-end md:self-center">
+            <button type="button" id="btnToggleAllDevCards" onclick="window.toggleAllDevCards()" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 rounded-lg text-xs font-bold transition cursor-pointer active:scale-95 whitespace-nowrap tracking-tight break-keep shadow-2xs" title="모든 강사의 강의 개발 상세 내용을 한번에 펼치거나 접습니다">
+              <i data-lucide="chevrons-down" id="iconToggleAllDev" class="w-4 h-4 text-indigo-600"></i>
+              <span id="labelToggleAllDev">한번에 펼치기</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Filter & Search Row -->
+        <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+          <!-- Search Bar -->
+          <div class="relative flex-1">
+            <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
+            <input type="text" id="searchDevQuery" placeholder="강사 이름, 강의 주제, 진행 내용, 고민 키워드로 검색 (예: 김교사, 노션, 실습, 템플릿...)" class="w-full text-xs sm:text-sm pl-9 pr-8 py-2 border border-slate-200 rounded-lg bg-slate-50 focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:outline-none transition" />
+            <button type="button" id="btnClearDevSearch" class="hidden absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-0.5">
+              <i data-lucide="x" class="w-3.5 h-3.5"></i>
+            </button>
+          </div>
+
+          <!-- Filters: Teacher Select & Sort Order -->
+          <div class="flex items-center gap-2 shrink-0">
+            <select id="filterDevTeacher" class="text-xs px-2.5 py-2 border border-slate-300 rounded-lg bg-white text-slate-700 focus:ring-2 focus:ring-indigo-500 focus:outline-none font-medium">
+              <option value="">모든 강사 보기</option>
+            </select>
+            <select id="sortDevOrder" class="text-xs px-2.5 py-2 border border-slate-300 rounded-lg bg-white text-slate-700 focus:ring-2 focus:ring-indigo-500 focus:outline-none font-medium">
+              <option value="latest">최신 업데이트순</option>
+              <option value="stageAsc">단계 순차순 (1&rarr;4단계)</option>
+              <option value="stageDesc">단계 완성순 (4&rarr;1단계)</option>
+              <option value="name">강사 이름순</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Developer Status Cards List Container -->
+      <div id="devStatusCardsContainer" class="space-y-3.5">
+        <!-- Dynamically rendered instructor development status cards -->
+      </div>
+    </section>
+
+    <!-- 5. 피드백 및 개선방향 탭 -->
+    <section id="tabContentFeedback" class="hidden space-y-6">
+      <!-- Feedback Banner & Header -->
+      <div class="bg-gradient-to-r from-amber-900 via-slate-900 to-indigo-950 rounded-2xl p-6 sm:p-7 text-white shadow-md relative overflow-hidden">
+        <div class="absolute -right-10 -bottom-10 w-48 h-48 bg-amber-500/10 rounded-full blur-2xl pointer-events-none"></div>
+        <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-5">
+          <div class="space-y-2 max-w-2xl">
+            <div class="flex items-center gap-2">
+              <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-500 text-slate-950 flex items-center gap-1">
+                <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+                <span>강사 지식 나눔</span>
+              </span>
+              <span class="text-xs text-amber-200/80">동료 강사와 함께 배우는 수업 개선 아카이브</span>
+            </div>
+            <h2 class="text-xl sm:text-2xl font-bold tracking-tight text-white flex items-center gap-2">
+              <span>피드백 및 개선방향</span>
+            </h2>
+            <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+              강의를 진행하며 겪은 시행착오, 실제 현장 사진, 그리고 구체적인 개선 노하우를 공유하는 공간입니다. 다른 강사들의 수업 팁을 보고 배우며, 유익한 글에는 <span class="text-rose-400 font-semibold">'❤️ 도움됐어요'</span>를 눌러 응원해주세요!
+            </p>
+          </div>
+          
+          <button id="btnOpenRegisterFeedback" type="button" onclick="window.openRegisterFeedbackModal()" class="self-start md:self-center shrink-0 px-4 py-2.5 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-950 font-bold text-xs sm:text-sm rounded-xl shadow-lg hover:shadow-xl transition flex items-center gap-2 cursor-pointer active:scale-95">
+            <i data-lucide="camera" class="w-4 h-4 text-slate-950"></i>
+            <span>피드백 및 개선방향 등록</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Feedback Summary Statistics -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-2xs flex items-center gap-3">
+          <div class="w-10 h-10 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center shrink-0">
+            <i data-lucide="message-square-text" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <p class="text-xs text-slate-500 font-medium">등록된 개선 사례</p>
+            <p id="statFeedbackCount" class="text-lg sm:text-xl font-bold text-slate-900">0</p>
+          </div>
+        </div>
+
+        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-2xs flex items-center gap-3">
+          <div class="w-10 h-10 rounded-lg bg-rose-50 text-rose-500 flex items-center justify-center shrink-0">
+            <i data-lucide="heart" class="w-5 h-5 fill-rose-500 text-rose-500"></i>
+          </div>
+          <div>
+            <p class="text-xs text-slate-500 font-medium">누적 '도움됐어요'</p>
+            <p id="statFeedbackHearts" class="text-lg sm:text-xl font-bold text-slate-900">0</p>
+          </div>
+        </div>
+
+        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-2xs flex items-center gap-3">
+          <div class="w-10 h-10 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
+            <i data-lucide="users" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <p class="text-xs text-slate-500 font-medium">참여 강사 수</p>
+            <p id="statFeedbackTeachers" class="text-lg sm:text-xl font-bold text-slate-900">0</p>
+          </div>
+        </div>
+
+        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-2xs flex items-center gap-3">
+          <div class="w-10 h-10 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
+            <i data-lucide="image" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <p class="text-xs text-slate-500 font-medium">수업 현장 사진</p>
+            <p id="statFeedbackPhotos" class="text-lg sm:text-xl font-bold text-slate-900">0</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Feedback Search & Filter Toolbar -->
+      <div class="bg-white rounded-xl border border-slate-200 p-4 shadow-2xs space-y-3">
+        <div class="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
+          <!-- Category Filter Pills -->
+          <div id="feedbackCategoryFilterGroup" class="flex items-center gap-1.5 overflow-x-auto scrollbar-none pb-1 md:pb-0">
+            <button type="button" data-cat="" class="fbCatBtn active px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-900 text-white cursor-pointer transition shrink-0">
+              전체
+            </button>
+            <button type="button" data-cat="수업 운영·시간 관리" class="fbCatBtn px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-100 text-slate-700 hover:bg-slate-200 cursor-pointer transition shrink-0">
+              ⏱️ 수업 운영·시간
+            </button>
+            <button type="button" data-cat="학생 참여·상호작용" class="fbCatBtn px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-100 text-slate-700 hover:bg-slate-200 cursor-pointer transition shrink-0">
+              💬 학생 참여·소통
+            </button>
+            <button type="button" data-cat="AI·에듀테크 도구" class="fbCatBtn px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-100 text-slate-700 hover:bg-slate-200 cursor-pointer transition shrink-0">
+              🤖 AI·에듀테크
+            </button>
+            <button type="button" data-cat="교안 수정" class="fbCatBtn px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-100 text-slate-700 hover:bg-slate-200 cursor-pointer transition shrink-0">
+              📖 교안 수정
+            </button>
+            <button type="button" data-cat="강의 자료·실습" class="fbCatBtn px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-100 text-slate-700 hover:bg-slate-200 cursor-pointer transition shrink-0">
+              📑 자료·실습템플릿
+            </button>
+            <button type="button" data-cat="돌발상황·대처팁" class="fbCatBtn px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-100 text-slate-700 hover:bg-slate-200 cursor-pointer transition shrink-0">
+              ⚡ 돌발대처 노하우
+            </button>
+          </div>
+
+          <!-- Secondary Filters: Teacher dropdown & Sort -->
+          <div class="flex items-center gap-2 shrink-0">
+            <select id="filterFeedbackTeacher" class="text-xs px-2.5 py-1.5 border border-slate-300 rounded-lg bg-white text-slate-700 focus:ring-2 focus:ring-amber-500 focus:outline-none">
+              <option value="">모든 강사 보기</option>
+            </select>
+            <select id="sortFeedbackOrder" class="text-xs px-2.5 py-1.5 border border-slate-300 rounded-lg bg-white text-slate-700 focus:ring-2 focus:ring-amber-500 focus:outline-none font-medium">
+              <option value="latest">최신 등록순</option>
+              <option value="hearts">❤️ 도움됐어요 많은순</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Search Bar -->
+        <div class="relative">
+          <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
+          <input type="text" id="searchFeedbackQuery" placeholder="강의명, 개선 내용, 꿀팁 키워드로 검색 (예: 프롬프트, 줌, 실습 시간, 슬라이도...)" class="w-full text-xs sm:text-sm pl-9 pr-8 py-2 border border-slate-200 rounded-lg bg-slate-50 focus:bg-white focus:ring-2 focus:ring-amber-500 focus:outline-none transition" />
+          <button type="button" id="btnClearFeedbackSearch" class="hidden absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-0.5">
+            <i data-lucide="x" class="w-3.5 h-3.5"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Feedback Cards Grid Container -->
+      <div id="feedbackCardsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        <!-- Dynamically rendered feedback cards -->
       </div>
     </section>
 
@@ -2281,6 +2309,51 @@
           </div>
         </div>
 
+        <!-- 3. 수업/아이디어 참고 사진 첨부 (선택) -->
+        <div class="bg-slate-50/80 p-3.5 rounded-xl border border-slate-200 space-y-2.5">
+          <div class="flex items-center justify-between">
+            <label class="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+              <i data-lucide="image" class="w-4 h-4 text-emerald-600"></i>
+              <span>수업/아이디어 참고 사진 첨부 (선택)</span>
+            </label>
+            <span class="text-[11px] text-slate-500">내 사진 파일 또는 아래 추천 사진 선택</span>
+          </div>
+
+          <!-- File Input & Quick Preset Buttons -->
+          <div class="flex flex-col sm:flex-row items-center gap-2">
+            <label class="w-full sm:w-auto shrink-0 inline-flex items-center justify-center gap-1.5 px-3 py-2 bg-white hover:bg-slate-100 border border-slate-300 text-slate-700 text-xs font-bold rounded-lg cursor-pointer shadow-2xs transition">
+              <i data-lucide="upload" class="w-4 h-4 text-emerald-600"></i>
+              <span>내 사진 파일 선택 (JPG, PNG)</span>
+              <input type="file" id="regIdeaFileInput" accept="image/*" class="hidden" />
+            </label>
+            <span class="text-xs text-slate-400">또는</span>
+            <!-- Quick Preset Photos -->
+            <div class="flex items-center gap-1.5 flex-wrap">
+              <button type="button" class="btnIdeaPresetPhoto text-[11px] px-2 py-1 bg-white hover:bg-emerald-50 border border-slate-200 hover:border-emerald-300 rounded-md text-slate-600 font-medium transition cursor-pointer" data-preset="plan">
+                💡 구상·노트
+              </button>
+              <button type="button" class="btnIdeaPresetPhoto text-[11px] px-2 py-1 bg-white hover:bg-emerald-50 border border-slate-200 hover:border-emerald-300 rounded-md text-slate-600 font-medium transition cursor-pointer" data-preset="curriculum">
+                📝 수업설계
+              </button>
+              <button type="button" class="btnIdeaPresetPhoto text-[11px] px-2 py-1 bg-white hover:bg-emerald-50 border border-slate-200 hover:border-emerald-300 rounded-md text-slate-600 font-medium transition cursor-pointer" data-preset="ai">
+                🤖 에듀테크
+              </button>
+              <button type="button" class="btnIdeaPresetPhoto text-[11px] px-2 py-1 bg-white hover:bg-emerald-50 border border-slate-200 hover:border-emerald-300 rounded-md text-slate-600 font-medium transition cursor-pointer" data-preset="classroom">
+                🎒 교실활동
+              </button>
+            </div>
+          </div>
+
+          <!-- Image Preview Area -->
+          <div id="ideaImagePreviewContainer" class="hidden relative rounded-lg overflow-hidden border border-slate-200 bg-slate-900/5 max-h-48 flex items-center justify-center">
+            <img id="ideaImagePreviewEl" src="" alt="아이디어 사진 미리보기" class="max-h-48 w-full object-contain" />
+            <button type="button" id="btnRemoveIdeaImage" class="absolute top-2 right-2 bg-rose-600/90 hover:bg-rose-700 text-white p-1 rounded-full shadow-md cursor-pointer transition" title="사진 삭제">
+              <i data-lucide="x" class="w-3.5 h-3.5"></i>
+            </button>
+          </div>
+          <p class="text-[11px] text-slate-500">※ 등록된 사진은 자동 최적화되어 실시간 동기화됩니다.</p>
+        </div>
+
         <div class="flex justify-end gap-2 pt-3 border-t border-slate-100">
           <button type="button" class="btnModalClose px-4 py-2 text-xs sm:text-sm text-slate-600 hover:bg-slate-100 rounded-lg font-medium cursor-pointer">
             취소
@@ -2428,6 +2501,51 @@
           </p>
         </div>
 
+        <!-- 3. 수업/아이디어 참고 사진 첨부 및 수정 (선택) -->
+        <div class="bg-slate-50/80 p-3.5 rounded-xl border border-slate-200 space-y-2.5">
+          <div class="flex items-center justify-between">
+            <label class="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+              <i data-lucide="image" class="w-4 h-4 text-emerald-600"></i>
+              <span>수업/아이디어 참고 사진 (선택)</span>
+            </label>
+            <span class="text-[11px] text-slate-500">사진 변경 또는 삭제 가능</span>
+          </div>
+
+          <!-- File Input & Quick Preset Buttons -->
+          <div class="flex flex-col sm:flex-row items-center gap-2">
+            <label class="w-full sm:w-auto shrink-0 inline-flex items-center justify-center gap-1.5 px-3 py-2 bg-white hover:bg-slate-100 border border-slate-300 text-slate-700 text-xs font-bold rounded-lg cursor-pointer shadow-2xs transition">
+              <i data-lucide="upload" class="w-4 h-4 text-emerald-600"></i>
+              <span>내 사진 파일 선택 (JPG, PNG)</span>
+              <input type="file" id="editIdeaFileInput" accept="image/*" class="hidden" />
+            </label>
+            <span class="text-xs text-slate-400">또는</span>
+            <!-- Quick Preset Photos -->
+            <div class="flex items-center gap-1.5 flex-wrap">
+              <button type="button" class="btnEditIdeaPresetPhoto text-[11px] px-2 py-1 bg-white hover:bg-emerald-50 border border-slate-200 hover:border-emerald-300 rounded-md text-slate-600 font-medium transition cursor-pointer" data-preset="plan">
+                💡 구상·노트
+              </button>
+              <button type="button" class="btnEditIdeaPresetPhoto text-[11px] px-2 py-1 bg-white hover:bg-emerald-50 border border-slate-200 hover:border-emerald-300 rounded-md text-slate-600 font-medium transition cursor-pointer" data-preset="curriculum">
+                📝 수업설계
+              </button>
+              <button type="button" class="btnEditIdeaPresetPhoto text-[11px] px-2 py-1 bg-white hover:bg-emerald-50 border border-slate-200 hover:border-emerald-300 rounded-md text-slate-600 font-medium transition cursor-pointer" data-preset="ai">
+                🤖 에듀테크
+              </button>
+              <button type="button" class="btnEditIdeaPresetPhoto text-[11px] px-2 py-1 bg-white hover:bg-emerald-50 border border-slate-200 hover:border-emerald-300 rounded-md text-slate-600 font-medium transition cursor-pointer" data-preset="classroom">
+                🎒 교실활동
+              </button>
+            </div>
+          </div>
+
+          <!-- Image Preview Area -->
+          <div id="editIdeaImagePreviewContainer" class="hidden relative rounded-lg overflow-hidden border border-slate-200 bg-slate-900/5 max-h-48 flex items-center justify-center">
+            <img id="editIdeaImagePreviewEl" src="" alt="아이디어 사진 미리보기" class="max-h-48 w-full object-contain" />
+            <button type="button" id="btnRemoveEditIdeaImage" class="absolute top-2 right-2 bg-rose-600/90 hover:bg-rose-700 text-white p-1 rounded-full shadow-md cursor-pointer transition" title="사진 삭제">
+              <i data-lucide="x" class="w-3.5 h-3.5"></i>
+            </button>
+          </div>
+          <p class="text-[11px] text-slate-500">※ 등록된 사진은 자동 최적화되어 실시간 동기화됩니다.</p>
+        </div>
+
         <div class="flex justify-end gap-2 pt-3 border-t border-slate-100">
           <button type="button" class="btnModalClose px-4 py-2 text-xs sm:text-sm text-slate-600 hover:bg-slate-100 rounded-lg font-medium cursor-pointer whitespace-nowrap">
             취소
@@ -2438,6 +2556,371 @@
           </button>
         </div>
       </form>
+    </div>
+  </div>
+
+  <!-- 14. 강의 개발 현황 등록 모달 -->
+  <div id="modalRegisterDevStatus" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-xl w-full p-6 shadow-2xl border border-slate-200 relative animate-in fade-in zoom-in duration-150 max-h-[92vh] overflow-y-auto">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-3 sticky top-0 bg-white z-10">
+        <h3 class="text-base sm:text-lg font-bold text-slate-900 flex items-center gap-2">
+          <i data-lucide="layers" class="w-5 h-5 text-indigo-600"></i>
+          <span>내 강의 개발 현황 등록</span>
+        </h3>
+        <button type="button" class="btnModalClose text-slate-400 hover:text-slate-600 p-1 cursor-pointer">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <!-- 안내 배너 -->
+      <div class="mb-3.5 p-3 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl border border-indigo-200 text-xs text-indigo-950 flex items-start gap-2.5">
+        <i data-lucide="sparkles" class="w-4 h-4 text-indigo-600 shrink-0 mt-0.5"></i>
+        <div class="leading-relaxed">
+          <p class="font-bold text-indigo-900">선생님의 강의 개발 현황과 고민을 동료 강사님들과 나누어보세요!</p>
+          <p class="text-indigo-800 text-[11px] mt-0.5">※ 4단계(주제 선정 &rarr; 수업 사례 수집 &rarr; 교안 작성 &rarr; 피드백) 중 현재 단계를 선택하고, 진도와 어려움을 기록하면 서로 피드백을 주고받을 수 있습니다.</p>
+        </div>
+      </div>
+
+      <form id="formRegisterDevStatus" onsubmit="window.submitRegisterDevStatus(event); return false;" class="space-y-4">
+        <!-- Teacher name & Password -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1 flex items-center justify-between">
+              <span>강사 닉네임 *</span>
+              <span class="text-[11px] text-indigo-600 font-normal">회원 명단 선택</span>
+            </label>
+            <select id="regDevTeacherSelect" required class="w-full text-xs sm:text-sm px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-white">
+              <option value="">강사를 선택하세요</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">비밀번호 (수정/삭제용) *</label>
+            <div class="relative">
+              <input type="password" id="regDevPassword" required value="1234" maxlength="12" placeholder="4자리 이상 (기본: 1234)" class="w-full text-xs sm:text-sm pl-3 pr-9 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none" />
+              <button type="button" class="btnTogglePassword absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 focus:outline-none cursor-pointer" data-target="regDevPassword" title="비밀번호 보기/숨기기">
+                <i data-lucide="eye" class="w-4 h-4"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Course Title & Category -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div class="sm:col-span-2">
+            <label class="block text-xs font-bold text-slate-700 mb-1">개발 중인 강의 주제 / 가제 *</label>
+            <input type="text" id="regDevCourseTitle" required placeholder="예: [초등] 노션으로 학급 체크리스트 및 상담일지 자동화하기" class="w-full text-xs sm:text-sm px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none" />
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">분야 / 학교급 *</label>
+            <select id="regDevCategory" required class="w-full text-xs sm:text-sm px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-white">
+              <option value="초등">🎒 초등</option>
+              <option value="중등">📐 중등</option>
+              <option value="고등">🏛️ 고등</option>
+              <option value="AI·에듀테크">🤖 AI·에듀테크</option>
+              <option value="학급경영·소통">🌱 학급경영·소통</option>
+              <option value="수업설계·평가">📊 수업설계·평가</option>
+              <option value="기타">💡 기타</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Development Stage Selection (4 Stages Required by User) -->
+        <div class="bg-indigo-50/60 p-3.5 rounded-xl border border-indigo-200 space-y-2">
+          <label class="block text-xs font-bold text-indigo-950 flex items-center justify-between">
+            <span class="flex items-center gap-1.5">
+              <i data-lucide="git-branch" class="w-4 h-4 text-indigo-600"></i>
+              <span>현재 개발 단계 선택 (4단계 중 택 1) *</span>
+            </span>
+            <span class="text-[11px] text-indigo-700 font-medium">진행 중 언제든 다음 단계로 변경 가능</span>
+          </label>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+            <label class="cursor-pointer">
+              <input type="radio" name="regDevStage" value="주제 선정" checked class="peer sr-only" />
+              <div class="p-2.5 rounded-lg border border-slate-200 bg-white text-center peer-checked:border-sky-500 peer-checked:bg-sky-50 peer-checked:text-sky-900 transition hover:bg-slate-50 shadow-2xs">
+                <div class="text-xs font-bold">🎯 1. 주제 선정</div>
+                <div class="text-[10px] text-slate-500 mt-0.5 peer-checked:text-sky-700">방향성 및 목차 기획</div>
+              </div>
+            </label>
+            <label class="cursor-pointer">
+              <input type="radio" name="regDevStage" value="수업 사례 수집" class="peer sr-only" />
+              <div class="p-2.5 rounded-lg border border-slate-200 bg-white text-center peer-checked:border-teal-500 peer-checked:bg-teal-50 peer-checked:text-teal-900 transition hover:bg-slate-50 shadow-2xs">
+                <div class="text-xs font-bold">📁 2. 사례 수집</div>
+                <div class="text-[10px] text-slate-500 mt-0.5 peer-checked:text-teal-700">실습 및 활동자료 모음</div>
+              </div>
+            </label>
+            <label class="cursor-pointer">
+              <input type="radio" name="regDevStage" value="교안 작성" class="peer sr-only" />
+              <div class="p-2.5 rounded-lg border border-slate-200 bg-white text-center peer-checked:border-indigo-500 peer-checked:bg-indigo-50 peer-checked:text-indigo-900 transition hover:bg-slate-50 shadow-2xs">
+                <div class="text-xs font-bold">📝 3. 교안 작성</div>
+                <div class="text-[10px] text-slate-500 mt-0.5 peer-checked:text-indigo-700">슬라이드·원고 집필</div>
+              </div>
+            </label>
+            <label class="cursor-pointer">
+              <input type="radio" name="regDevStage" value="피드백" class="peer sr-only" />
+              <div class="p-2.5 rounded-lg border border-slate-200 bg-white text-center peer-checked:border-amber-500 peer-checked:bg-amber-50 peer-checked:text-amber-900 transition hover:bg-slate-50 shadow-2xs">
+                <div class="text-xs font-bold">✨ 4. 피드백</div>
+                <div class="text-[10px] text-slate-500 mt-0.5 peer-checked:text-amber-700">사전 검토 및 최종 보완</div>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <!-- 기존 개설 강의 작성칸 -->
+        <div class="bg-emerald-50/70 p-3.5 rounded-xl border border-emerald-200 space-y-1.5">
+          <div class="flex items-center justify-between">
+            <label class="block text-xs font-bold text-emerald-900 flex items-center gap-1.5">
+              <i data-lucide="book-open" class="w-4 h-4 text-emerald-600"></i>
+              <span>기존 개설 강의 (강사 이력 및 기존 운영 강좌)</span>
+            </label>
+            <div class="flex items-center gap-1.5">
+              <button type="button" onclick="window.applyBoldToField('regDevPastCourses')" class="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 bg-emerald-100 hover:bg-emerald-200 text-emerald-900 rounded border border-emerald-300 transition cursor-pointer" title="선택한 텍스트 굵게 강조 (**강조**)">
+                <i data-lucide="bold" class="w-3 h-3"></i>
+                <span>굵게 B</span>
+              </button>
+              <span class="text-[11px] text-emerald-800 font-medium">선택 작성</span>
+            </div>
+          </div>
+          <textarea id="regDevPastCourses" rows="2" placeholder="예: [초등] 노션으로 끝내는 학급 경영 기본편, 생성형 AI를 활용한 학생 맞춤형 평가 설계 워크숍 등 기존에 진행했던 강의 목록을 적어주세요." class="w-full text-xs sm:text-sm px-3 py-2 border border-emerald-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none bg-white"></textarea>
+        </div>
+
+        <!-- 1. 내용 작성칸 (어느 정도 진행됐는지 기입) -->
+        <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200 space-y-1.5">
+          <div class="flex items-center justify-between">
+            <label class="block text-xs font-bold text-slate-800 flex items-center gap-1.5">
+              <i data-lucide="file-text" class="w-4 h-4 text-indigo-600"></i>
+              <span>진행 내용 (어느 정도 진행됐는지 상세 기입) *</span>
+            </label>
+            <button type="button" onclick="window.applyBoldToField('regDevContent')" class="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 bg-slate-200 hover:bg-slate-300 text-slate-800 rounded border border-slate-300 transition cursor-pointer" title="선택한 텍스트 굵게 강조 (**강조**)">
+              <i data-lucide="bold" class="w-3 h-3"></i>
+              <span>굵게 B</span>
+            </button>
+          </div>
+          <textarea id="regDevContent" required rows="3" placeholder="예: 단원별 핵심 활동 3가지를 정리 완료하고 교사용 지도서와 활동지 초안을 70% 완성했습니다. 다음 주까지 실습 슬라이드 마무리 예정입니다." class="w-full text-xs sm:text-sm px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-white"></textarea>
+        </div>
+
+        <!-- 2. 하단: 어려움을 느끼는 부분이 무엇인지 기록하는 칸 -->
+        <div class="bg-amber-50/70 p-3.5 rounded-xl border border-amber-200 space-y-1.5">
+          <div class="flex items-center justify-between">
+            <label class="block text-xs font-bold text-amber-900 flex items-center gap-1.5">
+              <i data-lucide="help-circle" class="w-4 h-4 text-amber-600"></i>
+              <span>하단: 어려움을 느끼는 부분 (고민 및 동료 피드백 요청)</span>
+            </label>
+            <div class="flex items-center gap-1.5">
+              <button type="button" onclick="window.applyBoldToField('regDevDifficulties')" class="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 bg-amber-100 hover:bg-amber-200 text-amber-900 rounded border border-amber-300 transition cursor-pointer" title="선택한 텍스트 굵게 강조 (**강조**)">
+                <i data-lucide="bold" class="w-3 h-3"></i>
+                <span>굵게 B</span>
+              </button>
+              <span class="text-[11px] text-amber-800 font-medium">선택 작성</span>
+            </div>
+          </div>
+          <textarea id="regDevDifficulties" rows="2" placeholder="예: 학생들이 태블릿으로 동시 접속할 때 계정 로그인 오류가 우려되어 오프라인 보조 매뉴얼 구성 방식에 대한 조언이 필요합니다." class="w-full text-xs sm:text-sm px-3 py-2 border border-amber-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:outline-none bg-white"></textarea>
+        </div>
+
+        <div class="flex justify-end gap-2 pt-3 border-t border-slate-100">
+          <button type="button" class="btnModalClose px-4 py-2 text-xs sm:text-sm text-slate-600 hover:bg-slate-100 rounded-lg font-medium cursor-pointer whitespace-nowrap">
+            취소
+          </button>
+          <button type="button" id="btnSubmitRegDevStatus" onclick="window.submitRegisterDevStatus(event)" class="px-5 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white text-xs sm:text-sm font-bold rounded-lg shadow-sm flex items-center gap-1.5 cursor-pointer active:scale-95 whitespace-nowrap tracking-tight break-keep">
+            <i data-lucide="check-circle" class="w-4 h-4 text-white shrink-0"></i>
+            <span class="whitespace-nowrap tracking-tight break-keep">개발 현황 등록 완료</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 15. 강의 개발 현황 수정 모달 -->
+  <div id="modalEditDevStatus" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-xl w-full p-6 shadow-2xl border border-slate-200 relative animate-in fade-in zoom-in duration-150 max-h-[92vh] overflow-y-auto">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-3 sticky top-0 bg-white z-10">
+        <h3 class="text-base sm:text-lg font-bold text-slate-900 flex items-center gap-2">
+          <i data-lucide="edit-3" class="w-5 h-5 text-indigo-600"></i>
+          <span>강의 개발 현황 수정</span>
+        </h3>
+        <button type="button" class="btnModalClose text-slate-400 hover:text-slate-600 p-1 cursor-pointer">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <form id="formEditDevStatus" onsubmit="window.submitEditDevStatus(event); return false;" class="space-y-4">
+        <!-- Teacher name & Password -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1 flex items-center justify-between">
+              <span>강사 닉네임 *</span>
+              <span class="text-[11px] text-indigo-600 font-normal">회원 명단 선택</span>
+            </label>
+            <select id="editDevTeacherSelect" required class="w-full text-xs sm:text-sm px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-white">
+              <option value="">강사를 선택하세요</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">비밀번호 확인 *</label>
+            <div class="relative">
+              <input type="password" id="editDevPassword" required maxlength="12" placeholder="등록 시 비밀번호 (기본: 1234)" class="w-full text-xs sm:text-sm pl-3 pr-9 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none" />
+              <button type="button" class="btnTogglePassword absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 focus:outline-none cursor-pointer" data-target="editDevPassword" title="비밀번호 보기/숨기기">
+                <i data-lucide="eye" class="w-4 h-4"></i>
+              </button>
+            </div>
+            <p class="text-[10px] text-slate-400 mt-0.5">※ 등록 시 설정한 비밀번호(기본: 1234)를 입력하세요.</p>
+          </div>
+        </div>
+
+        <!-- Course Title & Category -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div class="sm:col-span-2">
+            <label class="block text-xs font-bold text-slate-700 mb-1">개발 중인 강의 주제 / 가제 *</label>
+            <input type="text" id="editDevCourseTitle" required class="w-full text-xs sm:text-sm px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none" />
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">분야 / 학교급 *</label>
+            <select id="editDevCategory" required class="w-full text-xs sm:text-sm px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-white">
+              <option value="초등">🎒 초등</option>
+              <option value="중등">📐 중등</option>
+              <option value="고등">🏛️ 고등</option>
+              <option value="AI·에듀테크">🤖 AI·에듀테크</option>
+              <option value="학급경영·소통">🌱 학급경영·소통</option>
+              <option value="수업설계·평가">📊 수업설계·평가</option>
+              <option value="기타">💡 기타</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Development Stage Selection -->
+        <div class="bg-indigo-50/60 p-3.5 rounded-xl border border-indigo-200 space-y-2">
+          <label class="block text-xs font-bold text-indigo-950 flex items-center justify-between">
+            <span class="flex items-center gap-1.5">
+              <i data-lucide="git-branch" class="w-4 h-4 text-indigo-600"></i>
+              <span>현재 개발 단계 변경 (4단계 중 택 1) *</span>
+            </span>
+          </label>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+            <label class="cursor-pointer">
+              <input type="radio" name="editDevStage" value="주제 선정" class="peer sr-only" />
+              <div class="p-2.5 rounded-lg border border-slate-200 bg-white text-center peer-checked:border-sky-500 peer-checked:bg-sky-50 peer-checked:text-sky-900 transition hover:bg-slate-50 shadow-2xs">
+                <div class="text-xs font-bold">🎯 1. 주제 선정</div>
+                <div class="text-[10px] text-slate-500 mt-0.5 peer-checked:text-sky-700">방향성 및 목차 기획</div>
+              </div>
+            </label>
+            <label class="cursor-pointer">
+              <input type="radio" name="editDevStage" value="수업 사례 수집" class="peer sr-only" />
+              <div class="p-2.5 rounded-lg border border-slate-200 bg-white text-center peer-checked:border-teal-500 peer-checked:bg-teal-50 peer-checked:text-teal-900 transition hover:bg-slate-50 shadow-2xs">
+                <div class="text-xs font-bold">📁 2. 사례 수집</div>
+                <div class="text-[10px] text-slate-500 mt-0.5 peer-checked:text-teal-700">실습 및 활동자료 모음</div>
+              </div>
+            </label>
+            <label class="cursor-pointer">
+              <input type="radio" name="editDevStage" value="교안 작성" class="peer sr-only" />
+              <div class="p-2.5 rounded-lg border border-slate-200 bg-white text-center peer-checked:border-indigo-500 peer-checked:bg-indigo-50 peer-checked:text-indigo-900 transition hover:bg-slate-50 shadow-2xs">
+                <div class="text-xs font-bold">📝 3. 교안 작성</div>
+                <div class="text-[10px] text-slate-500 mt-0.5 peer-checked:text-indigo-700">슬라이드·원고 집필</div>
+              </div>
+            </label>
+            <label class="cursor-pointer">
+              <input type="radio" name="editDevStage" value="피드백" class="peer sr-only" />
+              <div class="p-2.5 rounded-lg border border-slate-200 bg-white text-center peer-checked:border-amber-500 peer-checked:bg-amber-50 peer-checked:text-amber-900 transition hover:bg-slate-50 shadow-2xs">
+                <div class="text-xs font-bold">✨ 4. 피드백</div>
+                <div class="text-[10px] text-slate-500 mt-0.5 peer-checked:text-amber-700">사전 검토 및 최종 보완</div>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <!-- 기존 개설 강의 작성칸 -->
+        <div class="bg-emerald-50/70 p-3.5 rounded-xl border border-emerald-200 space-y-1.5">
+          <div class="flex items-center justify-between">
+            <label class="block text-xs font-bold text-emerald-900 flex items-center gap-1.5">
+              <i data-lucide="book-open" class="w-4 h-4 text-emerald-600"></i>
+              <span>기존 개설 강의 (강사 이력 및 기존 운영 강좌)</span>
+            </label>
+            <div class="flex items-center gap-1.5">
+              <button type="button" onclick="window.applyBoldToField('editDevPastCourses')" class="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 bg-emerald-100 hover:bg-emerald-200 text-emerald-900 rounded border border-emerald-300 transition cursor-pointer" title="선택한 텍스트 굵게 강조 (**강조**)">
+                <i data-lucide="bold" class="w-3 h-3"></i>
+                <span>굵게 B</span>
+              </button>
+              <span class="text-[11px] text-emerald-800 font-medium">선택 작성</span>
+            </div>
+          </div>
+          <textarea id="editDevPastCourses" rows="2" placeholder="예: [초등] 노션으로 끝내는 학급 경영 기본편 등 기존에 진행했던 강의 목록을 적어주세요." class="w-full text-xs sm:text-sm px-3 py-2 border border-emerald-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none bg-white"></textarea>
+        </div>
+
+        <!-- 1. 내용 작성칸 -->
+        <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200 space-y-1.5">
+          <div class="flex items-center justify-between">
+            <label class="block text-xs font-bold text-slate-800 flex items-center gap-1.5">
+              <i data-lucide="file-text" class="w-4 h-4 text-indigo-600"></i>
+              <span>진행 내용 (어느 정도 진행됐는지 상세 기입) *</span>
+            </label>
+            <button type="button" onclick="window.applyBoldToField('editDevContent')" class="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 bg-slate-200 hover:bg-slate-300 text-slate-800 rounded border border-slate-300 transition cursor-pointer" title="선택한 텍스트 굵게 강조 (**강조**)">
+              <i data-lucide="bold" class="w-3 h-3"></i>
+              <span>굵게 B</span>
+            </button>
+          </div>
+          <textarea id="editDevContent" required rows="3" class="w-full text-xs sm:text-sm px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-white"></textarea>
+        </div>
+
+        <!-- 2. 하단: 어려움을 느끼는 부분 -->
+        <div class="bg-amber-50/70 p-3.5 rounded-xl border border-amber-200 space-y-1.5">
+          <div class="flex items-center justify-between">
+            <label class="block text-xs font-bold text-amber-900 flex items-center gap-1.5">
+              <i data-lucide="help-circle" class="w-4 h-4 text-amber-600"></i>
+              <span>하단: 어려움을 느끼는 부분 (고민 및 동료 피드백 요청)</span>
+            </label>
+            <button type="button" onclick="window.applyBoldToField('editDevDifficulties')" class="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 bg-amber-100 hover:bg-amber-200 text-amber-900 rounded border border-amber-300 transition cursor-pointer" title="선택한 텍스트 굵게 강조 (**강조**)">
+              <i data-lucide="bold" class="w-3 h-3"></i>
+              <span>굵게 B</span>
+            </button>
+          </div>
+          <textarea id="editDevDifficulties" rows="2" class="w-full text-xs sm:text-sm px-3 py-2 border border-amber-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:outline-none bg-white"></textarea>
+        </div>
+
+        <div class="flex justify-end gap-2 pt-3 border-t border-slate-100">
+          <button type="button" class="btnModalClose px-4 py-2 text-xs sm:text-sm text-slate-600 hover:bg-slate-100 rounded-lg font-medium cursor-pointer whitespace-nowrap">
+            취소
+          </button>
+          <button type="button" id="btnSubmitEditDevStatus" onclick="window.submitEditDevStatus(event)" class="px-5 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white text-xs sm:text-sm font-bold rounded-lg shadow-sm flex items-center gap-1.5 cursor-pointer active:scale-95 whitespace-nowrap tracking-tight break-keep">
+            <i data-lucide="check-circle" class="w-4 h-4 text-white shrink-0"></i>
+            <span class="whitespace-nowrap tracking-tight break-keep">개발 현황 수정 완료</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 16. 강의 개발 현황 삭제 모달 -->
+  <div id="modalDeleteDevStatus" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-2xl border border-slate-200 relative animate-in fade-in zoom-in duration-150">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-4">
+        <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+          <i data-lucide="trash-2" class="w-5 h-5 text-rose-600"></i>
+          <span>강의 개발 현황 삭제</span>
+        </h3>
+        <button type="button" class="btnModalClose text-slate-400 hover:text-slate-600 p-1 cursor-pointer">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <div class="space-y-4">
+        <p class="text-xs text-slate-600 leading-relaxed">
+          선택한 강의 개발 현황 기록을 정말 삭제하시겠습니까?<br>
+          <span class="text-slate-500 text-[11px]">삭제된 개발 현황은 복구할 수 없습니다.</span>
+        </p>
+
+        <div id="devDeletePwSection">
+          <label class="block text-xs font-bold text-slate-700 mb-1">등록 시 설정한 비밀번호</label>
+          <input type="password" id="deleteDevPasswordInput" maxlength="12" placeholder="비밀번호 입력 (기본: 1234)" class="w-full text-xs sm:text-sm px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:outline-none" />
+        </div>
+
+        <div class="flex justify-end gap-2 pt-2 border-t border-slate-100">
+          <button type="button" class="btnModalClose px-3 py-2 text-xs text-slate-600 hover:bg-slate-100 rounded-lg font-medium cursor-pointer">
+            취소
+          </button>
+          <button type="button" onclick="window.confirmDeleteDevStatus()" class="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold rounded-lg shadow-sm flex items-center gap-1 cursor-pointer active:scale-95">
+            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+            <span>삭제 확인</span>
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -2632,12 +3115,20 @@
     let currentEditFeedbackImageDataUrl = "";
     let selectedFeedbackCategory = "";
 
+    const PRESET_IDEA_PHOTOS = {
+      plan: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=800&q=80",
+      curriculum: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=800&q=80",
+      ai: "https://images.unsplash.com/photo-1531403009284-440f080d1e12?auto=format&fit=crop&w=800&q=80",
+      classroom: "https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&w=800&q=80"
+    };
+
     const DEFAULT_IDEAS = [
       {
         id: "idea-default-1",
         teacherName: "김교사",
         title: "[초등] 디지털 선도학교를 위한 노션(Notion) 학급일지 & 다면 상담 대시보드 구축",
         category: "학급경영·소통",
+        imageUrl: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=800&q=80",
         painPoint: "매 학기마다 출결, 학생 개별 상담 일지, 특기사항 기록이 한글(HWP) 파일과 종이 문서로 분산되어 있어 학기말 생기부 작성 때마다 자료를 취합하느라 수많은 야근이 발생합니다.",
         lectureIdea: "1) 강의 해결 구상: 노션 무료 계정으로 단 1개 페이지에서 출결 체크, 일일 관찰일지, 학생별 누적 상담 기록을 클릭 한 번으로 자동 연동하고 태그로 검색하는 학급경영 템플릿 제작 및 실습 강의를 제안합니다.\n\n2) 타 강의 벤치마킹할 점: 박교사 강사님의 '사전 복제 템플릿 배포' 방식을 벤치마킹하여 복잡한 DB 세팅 시간을 단축하고 실습 시간을 2배 확보하고자 합니다.",
         cheerCount: 14,
@@ -2663,6 +3154,7 @@
         teacherName: "박교사",
         title: "[중·고등] 생성형 AI(클로드·챗GPT)로 서·논술형 평가 채점 기준표(루브릭) 및 예시 피드백 3분 완성",
         category: "수업설계·평가",
+        imageUrl: "https://images.unsplash.com/photo-1531403009284-440f080d1e12?auto=format&fit=crop&w=800&q=80",
         painPoint: "2022 개정 교육과정 도입 이후 서·논술형 평가 비중이 커졌으나, 교과별 성취기준에 부합하는 정밀한 루브릭 채점표를 작성하고 학생 개별 서술형 답안에 피드백을 주는 데 과도한 시간이 소요됩니다.",
         lectureIdea: "1) 강의 해결 구상: 교육과정 성취기준 문장을 AI 프롬프트에 입력하여 상·중·하 수준별 평가 루브릭과 모범/오답 예시문을 3분 만에 생성하고, 실제 학생 글에 대한 맞춤형 첨삭 피드백 멘트를 안전하게 추출하는 실전 노하우 강의입니다.\n\n2) 타 강의 벤치마킹할 점: 김교사 강사님의 '4단계(역할-상황-질문-조건) 프롬프트 템플릿'을 벤치마킹해 서논술형 평가 설계에 최적화된 활동지를 제공하고자 합니다.",
         cheerCount: 21,
@@ -2682,6 +3174,7 @@
         teacherName: "최교사",
         title: "[공통] 수업 집중도를 높이는 캔바(Canva) 인터랙티브 인터뷰·퀴즈 활동지 제작 실습",
         category: "AI·에듀테크",
+        imageUrl: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=800&q=80",
         painPoint: "교과서 위주의 평면적인 활동지는 태블릿을 든 학생들의 집중력을 유지하기 어렵고, 비대면 쌍방향 수업이나 스마트 기기 수업 시 참여도가 떨어지는 문제가 있습니다.",
         lectureIdea: "1) 강의 해결 구상: 캔바의 교육용 무료 기능을 활용해 클릭하면 소리와 애니메이션이 나오는 반응형 퀴즈 활동지와 QR코드 기반 인터랙티브 모둠 활동지를 40분 만에 제작해 수업에 바로 적용하는 워크숍 강의입니다.\n\n2) 타 강의 벤치마킹할 점: 최교사 강사님의 '슬라이도·멘티미터 실시간 단어 구름 익명 투표' 아이스브레이킹 기법을 벤치마킹하여 캔바 퀴즈 시작 전 참여도를 95% 이상으로 끌어올릴 계획입니다.",
         cheerCount: 17,
@@ -2701,6 +3194,7 @@
         teacherName: "정교사",
         title: "[초등] 학급 규칙과 감정 카드로 학기 초 마찰 없는 평화로운 교실 만들기",
         category: "초등",
+        imageUrl: "https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&w=800&q=80",
         painPoint: "학기 초 학생 간 사소한 오해나 말다툼이 커져 교우관계 갈등으로 번지기 쉽고, 교사가 매번 개입해 중재하느라 수업과 행정에 차질이 생깁니다.",
         lectureIdea: "1) 강의 해결 구상: 회복적 생활교육 기반의 감정 단어 카드와 학급 회의 구조화 서식을 공유하고, 학생들이 갈등 상황에서 스스로 자신의 감정을 표현하고 합의된 규칙으로 해결하는 실전 사례 강의를 열어보고 싶습니다.\n\n2) 타 강의 벤치마킹할 점: 이교사 강사님의 '단계별 1분 셀프 체크리스트' 슬라이드 운영 팁을 벤치마킹하여 학생들이 회의 진도를 스스로 파악하도록 돕겠습니다.",
         cheerCount: 9,
@@ -2716,10 +3210,115 @@
     let activeEditingIdeaId = null;
     let activeEditingComment = null;
     let selectedIdeaCategory = "";
+    let currentIdeaImageDataUrl = "";
+    let currentEditIdeaImageDataUrl = "";
     let deletedIdeaIds = new Set();
     let deletedFeedbackIds = new Set();
     let deletedAttendedIds = new Set();
     let deletedEventIds = new Set();
+    let deletedDevStatusIds = new Set();
+
+    // Default Lecture Development Status Data (강의 개발 현황 4단계: 주제 선정, 수업 사례 수집, 교안 작성, 피드백)
+    const DEFAULT_DEV_STATUS = [
+      {
+        id: "dev-default-1",
+        teacherName: "김동욱",
+        courseTitle: "[초등] 학급 데이터 기반 생활지도 & 학생 상담 노션(Notion) 대시보드 구축",
+        category: "학급경영·소통",
+        stage: "주제 선정",
+        pastCourses: "[초등] 한눈에 보는 학급 다이어리 & 엑셀 출결 자동화 (2025)",
+        content: "1학기 상담 일지와 학생별 행동 특성 체크리스트를 바탕으로, 교사가 매일 5분 만에 입력할 수 있는 학급 데이터 대시보드 기획안을 수립 중입니다. 핵심 모듈(상담 기록, 태도 피드백, 학부모 상담 연계) 3가지의 목차를 도출하고 있습니다.",
+        difficulties: "학교 및 학년군별로 상담 기록 양식이 서로 달라, 모든 학교에서 범용적으로 호환될 수 있는 표준 데이터 필드를 구성하는 데 어려움을 느끼고 있습니다.",
+        password: "1234",
+        createdAt: "2026-10-18T10:30:00.000Z",
+        updatedAt: "2026-10-20T14:15:00.000Z"
+      },
+      {
+        id: "dev-default-2",
+        teacherName: "박혜진",
+        courseTitle: "[중등] 국어과 생성형 AI 글쓰기 첨삭 및 학생 비판적 사고 신장 수업 모델",
+        category: "AI·에듀테크",
+        stage: "수업 사례 수집",
+        pastCourses: "[중등] 중학교 국어과 한 학기 한 권 읽기 독서토론 교안 (2025)",
+        content: "중학교 2학년 2개 학급을 대상으로 뤼튼(Wrtn)과 챗GPT를 활용한 서술형 글쓰기 초안 첨삭 실습을 진행했습니다. 학생들의 사전-사후 글쓰기 비교 결과물 및 설문 응답 54건을 정리하여 분석 중입니다.",
+        difficulties: "학생들이 AI가 추천한 문장을 비판 없이 그대로 수용하는 경향이 나타나, 학생 자신의 생각을 지키며 AI를 보조 도구로만 활용하도록 이끄는 '질문 유도 발문' 설계가 어렵습니다.",
+        password: "1234",
+        createdAt: "2026-10-16T11:00:00.000Z",
+        updatedAt: "2026-10-19T16:20:00.000Z"
+      },
+      {
+        id: "dev-default-3",
+        teacherName: "이지은",
+        courseTitle: "[초등] 인터랙티브 캔바(Canva) 퀴즈와 구글 폼 연동 형성평가 시스템",
+        category: "수업설계·평가",
+        stage: "수업 사례 수집",
+        pastCourses: "[초등] 캔바(Canva)로 뚝딱 만드는 교실 환경판과 시각자료 10종 (2024~2025)",
+        content: "초등 전 학년군에서 활용 가능한 캔바 퀴즈 템플릿 8종과 구글 스프레드시트 자동 채점 연동 시트를 제작해 실제 3~4학년 수업에 시범 적용해보았습니다. 학생 참여도와 몰입도가 매우 높았습니다.",
+        difficulties: "저학년(1~2학년) 학생들의 경우 스마트기기 로그인과 브라우저 탭 전환이 원활하지 않아, 교실 환경에 맞는 초간편 진입용 QR코드 인터페이스 최적화가 고민입니다.",
+        password: "1234",
+        createdAt: "2026-10-15T14:00:00.000Z",
+        updatedAt: "2026-10-19T09:30:00.000Z"
+      },
+      {
+        id: "dev-default-4",
+        teacherName: "최성훈",
+        courseTitle: "[고등] 과학 탐구 보고서 작성을 위한 파이썬(Python) 데이터 시각화 교안",
+        category: "고등",
+        stage: "교안 작성",
+        pastCourses: "[고등] 정보·과학 융합 탐구를 위한 엔트리 & 아두이노 피지컬 컴퓨팅 기초 (2025)",
+        content: "총 4차시 분량의 실습 슬라이드(80장)와 구글 코랩(Google Colab) 기초 템플릿 코드 작성을 완료했습니다. 1~2차시는 데이터 전처리, 3~4차시는 차트 시각화 및 결론 도출 실습으로 알차게 구성했습니다.",
+        difficulties: "코딩을 처음 접하는 인문계 학생들을 위한 친절한 에러 대처 가이드와 노코드 도구와의 연계 포인트를 보완하는 데 시간이 많이 소요되고 있습니다.",
+        password: "1234",
+        createdAt: "2026-10-14T09:30:00.000Z",
+        updatedAt: "2026-10-20T11:00:00.000Z"
+      },
+      {
+        id: "dev-default-5",
+        teacherName: "정소연",
+        courseTitle: "[초중등] 관계 회복과 평화로운 학급 공동체를 위한 회복적 서클 대화 운영법",
+        category: "학급경영·소통",
+        stage: "교안 작성",
+        pastCourses: "[초중등] 평화로운 학급을 여는 3월 첫 주 관계형성 놀이 및 규칙 세우기 (2024)",
+        content: "회복적 정의 기반 서클 대화 4단계 질문지 카드와 교사용 롤플레잉 시나리오 교안을 75% 집필 완료했습니다. 학급 회의 및 갈등 발생 시 즉시 적용할 수 있는 워크시트도 함께 제작 중입니다.",
+        difficulties: "실제 학교 현장에서 발생했던 민감한 교우 갈등 사례를 교육용 예시로 변환할 때, 개인정보 보호와 익명성 유지 기준을 어디까지 적용해야 할지 고민입니다.",
+        password: "1234",
+        createdAt: "2026-10-12T13:20:00.000Z",
+        updatedAt: "2026-10-18T17:40:00.000Z"
+      },
+      {
+        id: "dev-default-6",
+        teacherName: "한민우",
+        courseTitle: "[중고등] 2022 개정 교육과정 반영 과정중심 수행평가 루브릭 자동화 템플릿",
+        category: "수업설계·평가",
+        stage: "피드백",
+        pastCourses: "[중고등] 구글 스프레드시트로 수행평가 점수 산출 및 성적 통지표 자동화 (2025)",
+        content: "교안 슬라이드와 평가 루브릭 엑셀 매크로, 프롬프트 가이드북 완성을 마쳤으며, 동료 교사 4분께 1차 시범 공유를 진행하여 피드백 설문을 취합했습니다.",
+        difficulties: "교과별 성취기준에 맞춤화된 평가 척도 진술문 표현을 다듬는 작업과, 교육청 권장 서식에 맞게 출력 레이아웃을 다듬는 작업이 까다롭게 느껴집니다.",
+        password: "1234",
+        createdAt: "2026-10-10T15:00:00.000Z",
+        updatedAt: "2026-10-20T15:30:00.000Z"
+      },
+      {
+        id: "dev-default-7",
+        teacherName: "윤서영",
+        courseTitle: "[초등] 온작품 읽기 연계 캡컷(CapCut) & AI 보이스 북트레일러 영상 제작 프로젝트",
+        category: "초등",
+        stage: "피드백",
+        pastCourses: "[초등] 학생 스마트폰·태블릿을 활용한 5분 스톱모션 애니메이션 제작 (2024)",
+        content: "학생들이 제작한 1분 북트레일러 우수작 6편 샘플과 6차시 프로젝트형 수업 교안을 최종 점검하고 있습니다. 지식샘터 강사진 워크숍에서 동료 강사님들께 사전 피드백을 받는 단계입니다.",
+        difficulties: "무료 AI 더빙 툴의 월간 무료 글자 수 제한이 학교마다 달라서, 학교 예산 없이도 전교생이 안전하게 실습할 수 있는 무료 대체재 조합을 추천하는 데 고민이 있습니다.",
+        password: "1234",
+        createdAt: "2026-10-09T10:00:00.000Z",
+        updatedAt: "2026-10-20T16:00:00.000Z"
+      }
+    ];
+
+    let devStatusData = [...DEFAULT_DEV_STATUS];
+    let activeDeletingDevStatusId = null;
+    let activeEditingDevStatusId = null;
+    let selectedDevStage = "";
+    let expandedDevCardIds = new Set();
+    let isAllDevCardsExpanded = false;
 
     // Default Calendar Events (행사 및 공식 일정)
     const DEFAULT_CALENDAR_EVENTS = [
@@ -2850,6 +3449,64 @@
           if (typeof db !== "undefined" && db && isFirebaseActive) {
             try {
               db.collection("lecture_ideas").doc(dupId).delete().catch(() => {});
+            } catch (e) {}
+          }
+        });
+      }
+
+      return result;
+    }
+
+    // ----------------------------------------------------
+    // Lecture Dev Status Deduplication (강의 개발 현황 중복 방지 및 1인 1개발현황 보장)
+    // ----------------------------------------------------
+    function deduplicateDevStatus(list) {
+      if (!Array.isArray(list)) return [];
+      const seenIds = new Set();
+      const seenTeachers = new Map();
+      const seenTitles = new Map();
+      const result = [];
+      const duplicateIdsToRemove = [];
+
+      // Sort by updatedAt/createdAt descending so the most recent status is always preserved
+      const sorted = [...list].filter((d) => d && d.id && !deletedDevStatusIds.has(String(d.id)) && !d._deleted && !d.deleted);
+      sorted.sort((a, b) => (b.updatedAt || b.createdAt || "").localeCompare(a.updatedAt || a.createdAt || ""));
+
+      for (const item of sorted) {
+        if (!item || !item.id || !item.courseTitle) continue;
+        const strId = String(item.id);
+        if (seenIds.has(strId)) {
+          duplicateIdsToRemove.push(strId);
+          continue;
+        }
+        seenIds.add(strId);
+
+        const teacher = (item.teacherName || "").trim();
+        const title = (item.courseTitle || "").trim();
+
+        // 1. Enforce 1 development status card per instructor
+        if (teacher && seenTeachers.has(teacher)) {
+          duplicateIdsToRemove.push(strId);
+          continue;
+        }
+
+        // 2. Also guard against duplicate course title
+        if (title && seenTitles.has(title)) {
+          duplicateIdsToRemove.push(strId);
+          continue;
+        }
+
+        if (teacher) seenTeachers.set(teacher, item);
+        if (title) seenTitles.set(title, item);
+        result.push(item);
+      }
+
+      if (duplicateIdsToRemove.length > 0) {
+        duplicateIdsToRemove.forEach((dupId) => {
+          deletedDevStatusIds.add(dupId);
+          if (typeof db !== "undefined" && db && isFirebaseActive) {
+            try {
+              db.collection("lecture_dev_status").doc(dupId).delete().catch(() => {});
             } catch (e) {}
           }
         });
@@ -3205,6 +3862,33 @@
       } else {
         likedFeedbacks = [];
       }
+
+      const storedDeletedDev = localStorage.getItem("kyosa_deleted_dev_status");
+      if (storedDeletedDev) {
+        try {
+          const arr = JSON.parse(storedDeletedDev);
+          if (Array.isArray(arr)) deletedDevStatusIds = new Set(arr);
+        } catch (e) {}
+      }
+
+      const storedDevStatus = localStorage.getItem("kyosa_dev_status");
+      const hasInitDevStatus = localStorage.getItem("kyosa_dev_status_initialized");
+      if (storedDevStatus !== null) {
+        try {
+          const parsed = JSON.parse(storedDevStatus);
+          devStatusData = Array.isArray(parsed) ? parsed : [];
+        } catch (e) {
+          devStatusData = [];
+        }
+      } else if (!hasInitDevStatus) {
+        devStatusData = [...DEFAULT_DEV_STATUS];
+        localStorage.setItem("kyosa_dev_status_initialized", "true");
+      } else {
+        devStatusData = [];
+      }
+      devStatusData = deduplicateDevStatus(
+        devStatusData.filter((d) => d && typeof d === "object" && d.courseTitle && !deletedDevStatusIds.has(String(d.id)) && !d._deleted && !d.deleted)
+      );
     }
 
     function saveLocalData() {
@@ -3236,6 +3920,9 @@
         localStorage.setItem("kyosa_lecture_ideas", JSON.stringify(ideasData));
         localStorage.setItem("kyosa_cheered_ideas", JSON.stringify(cheeredIdeas));
         localStorage.setItem("kyosa_deleted_ideas", JSON.stringify(Array.from(deletedIdeaIds)));
+        localStorage.setItem("kyosa_dev_status", JSON.stringify(devStatusData));
+        localStorage.setItem("kyosa_deleted_dev_status", JSON.stringify(Array.from(deletedDevStatusIds)));
+        localStorage.setItem("kyosa_dev_status_initialized", "true");
       } catch (err) {
         console.warn("saveLocalData safe fallback:", err);
       }
@@ -3291,15 +3978,25 @@
                   }
                 });
               }
+              if (Array.isArray(data.devStatusIds)) {
+                data.devStatusIds.forEach((id) => {
+                  if (!deletedDevStatusIds.has(String(id))) {
+                    deletedDevStatusIds.add(String(id));
+                    changed = true;
+                  }
+                });
+              }
               if (changed) {
                 feedbacksData = feedbacksData.filter((f) => f && !deletedFeedbackIds.has(String(f.id)) && !f._deleted && !f.deleted);
                 ideasData = ideasData.filter((i) => i && !deletedIdeaIds.has(String(i.id)) && !i._deleted && !i.deleted);
                 attendedCoursesData = attendedCoursesData.filter((a) => a && !deletedAttendedIds.has(String(a.id)) && !a._deleted && !a.deleted);
                 calendarEventsData = calendarEventsData.filter((ev) => ev && !deletedEventIds.has(String(ev.id)) && !ev._deleted && !ev.deleted);
+                devStatusData = devStatusData.filter((d) => d && !deletedDevStatusIds.has(String(d.id)) && !d._deleted && !d.deleted);
                 saveLocalData();
                 renderFeedbackView();
                 renderIdeaView();
                 renderAttendedCoursesView();
+                renderDevStatusView();
                 updateCalendarEvents();
                 renderCardListView();
                 updateAdminEventCountBadge();
@@ -3595,6 +4292,52 @@
       } catch (e) {
         console.warn("Failed to attach calendar_events listener:", e);
       }
+
+      // 9. Listen to lecture_dev_status collection (강의 개발 현황 실시간 동기화)
+      try {
+        db.collection("lecture_dev_status").onSnapshot(
+          (snapshot) => {
+            const listMap = new Map();
+            const hasInitDev = localStorage.getItem("kyosa_dev_status_initialized");
+            DEFAULT_DEV_STATUS.forEach((d) => {
+              const isDeleted = deletedDevStatusIds.has(String(d.id));
+              const wasExplicitlyRemoved = hasInitDev && !devStatusData.some((existing) => String(existing.id) === String(d.id));
+              if (!isDeleted && !wasExplicitlyRemoved) {
+                listMap.set(String(d.id), { ...d });
+              }
+            });
+
+            if (!snapshot.empty) {
+              snapshot.forEach((doc) => {
+                const data = doc.data();
+                const docId = String(doc.id);
+                if (data && (data._deleted || data.deleted)) {
+                  deletedDevStatusIds.add(docId);
+                  listMap.delete(docId);
+                  return;
+                }
+                const hasValidTitle = (data && data.courseTitle && String(data.courseTitle).trim().length > 0) || listMap.has(docId);
+                if (!deletedDevStatusIds.has(docId) && hasValidTitle) {
+                  const existing = listMap.get(docId) || {};
+                  listMap.set(docId, { ...existing, id: docId, ...data });
+                } else {
+                  listMap.delete(docId);
+                }
+              });
+            }
+            const list = Array.from(listMap.values()).filter((d) => d && !deletedDevStatusIds.has(String(d.id)) && !d._deleted && !d.deleted);
+            list.sort((a, b) => (b.updatedAt || b.createdAt || "").localeCompare(a.updatedAt || a.createdAt || ""));
+            devStatusData = deduplicateDevStatus(list);
+            saveLocalData();
+            renderDevStatusView();
+          },
+          (err) => {
+            console.warn("Firestore lecture_dev_status onSnapshot error:", err);
+          }
+        );
+      } catch (e) {
+        console.warn("Failed to attach lecture_dev_status listener:", e);
+      }
     }
 
     // ----------------------------------------------------
@@ -3608,6 +4351,7 @@
           ideaIds: Array.from(deletedIdeaIds),
           attendedIds: Array.from(deletedAttendedIds),
           eventIds: Array.from(deletedEventIds),
+          devStatusIds: Array.from(deletedDevStatusIds),
           updatedAt: new Date().toISOString()
         }, { merge: true });
       } catch (e) {
@@ -3879,14 +4623,9 @@
       if (!activeViewingEventId) return;
       
       if (!isAdminLoggedIn) {
-        const inputPw = window.prompt("행사를 삭제하려면 관리자 비밀번호를 입력해주세요. (기본: admin1234)");
-        if (inputPw === null) return;
-        if (inputPw.trim() !== "admin1234") {
-          showToast("관리자 비밀번호가 올바르지 않습니다.", "error");
-          return;
-        }
-        isAdminLoggedIn = true;
-        if (typeof updateAdminUI === "function") updateAdminUI();
+        showToast("행사를 삭제하려면 관리자 권한이 필요합니다. 관리자 모드로 로그인해주세요.", "warning");
+        openModal("modalAdmin");
+        return;
       }
 
       const ev = calendarEventsData.find((e) => String(e.id) === String(activeViewingEventId));
@@ -3900,14 +4639,9 @@
     window.deleteCalendarEventDirect = async function (eventId) {
       if (!eventId) return;
       if (!isAdminLoggedIn) {
-        const inputPw = window.prompt("행사를 삭제하려면 관리자 비밀번호를 입력해주세요. (기본: admin1234)");
-        if (inputPw === null) return;
-        if (inputPw.trim() !== "admin1234") {
-          showToast("관리자 비밀번호가 올바르지 않습니다.", "error");
-          return;
-        }
-        isAdminLoggedIn = true;
-        if (typeof updateAdminUI === "function") updateAdminUI();
+        showToast("행사를 삭제하려면 관리자 권한이 필요합니다. 관리자 모드로 로그인해주세요.", "warning");
+        openModal("modalAdmin");
+        return;
       }
 
       const ev = calendarEventsData.find((e) => String(e.id) === String(eventId));
@@ -4123,6 +4857,85 @@
           console.warn("Firestore toggle cheer error:", err);
         }
       }
+    }
+
+    async function saveDevStatusToDb(record) {
+      deletedDevStatusIds.delete(String(record.id));
+
+      // Remove any existing duplicate entries for the same instructor under a different ID
+      const teacherName = (record.teacherName || "").trim();
+      if (teacherName) {
+        const otherDuplicates = devStatusData.filter(
+          (d) => String(d.id) !== String(record.id) && (d.teacherName || "").trim() === teacherName
+        );
+        otherDuplicates.forEach((dup) => {
+          const dupId = String(dup.id);
+          deletedDevStatusIds.add(dupId);
+          if (typeof db !== "undefined" && db && isFirebaseActive) {
+            try {
+              db.collection("lecture_dev_status").doc(dupId).delete().catch(() => {});
+            } catch (e) {}
+          }
+        });
+        devStatusData = devStatusData.filter(
+          (d) => String(d.id) === String(record.id) || (d.teacherName || "").trim() !== teacherName
+        );
+      }
+
+      const idx = devStatusData.findIndex((d) => String(d.id) === String(record.id));
+      if (idx >= 0) {
+        devStatusData[idx] = record;
+      } else {
+        devStatusData.unshift(record);
+      }
+      devStatusData = deduplicateDevStatus(devStatusData);
+      devStatusData.sort((a, b) => (b.updatedAt || b.createdAt || "").localeCompare(a.updatedAt || a.createdAt || ""));
+      saveLocalData();
+      renderDevStatusView();
+      syncDeletedDefaultsToFirestore();
+
+      if (db && isFirebaseActive) {
+        try {
+          await db.collection("lecture_dev_status").doc(String(record.id)).set({
+            ...record,
+            _deleted: false,
+            deleted: false,
+            updatedAt: new Date().toISOString()
+          }, { merge: true });
+        } catch (err) {
+          console.warn("Firestore save devStatus error:", err);
+        }
+      }
+    }
+
+    async function deleteDevStatusFromDb(recordId) {
+      deletedDevStatusIds.add(String(recordId));
+      devStatusData = devStatusData.filter((d) => String(d.id) !== String(recordId));
+      saveLocalData();
+      renderDevStatusView();
+      syncDeletedDefaultsToFirestore();
+
+      if (db && isFirebaseActive) {
+        try {
+          await db.collection("lecture_dev_status").doc(String(recordId)).set({
+            _deleted: true,
+            deleted: true,
+            id: String(recordId),
+            deletedAt: new Date().toISOString()
+          }, { merge: true });
+        } catch (err) {
+          console.warn("Firestore delete devStatus error:", err);
+        }
+      }
+    }
+
+    async function updateDevStatusStageDirect(recordId, newStage) {
+      const record = devStatusData.find((d) => String(d.id) === String(recordId));
+      if (!record) return;
+      record.stage = newStage;
+      record.updatedAt = new Date().toISOString();
+      await saveDevStatusToDb(record);
+      showToast(`'${record.teacherName}' 선생님의 단계가 [${newStage}]로 변경되었습니다! 🚀`);
     }
 
     async function saveMembersToDb(newMemberList) {
@@ -5444,11 +6257,11 @@
             </div>
 
             <!-- Footer Action Controls: Heart ("도움됐어요"), Copy, Edit, Delete (Single line on mobile & PC) -->
-            <div class="pt-3 border-t border-slate-100 flex items-center justify-between gap-1 sm:gap-2 flex-nowrap">
+            <div class="pt-3 border-t border-slate-100 flex items-center justify-between gap-1 sm:gap-2 flex-nowrap min-w-0">
               <!-- Heart "도움됐어요" button -->
-              <button type="button" onclick="window.toggleFeedbackHeart('${escapeHtml(item.id)}')" class="inline-flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1.5 rounded-lg sm:rounded-xl text-[11px] sm:text-xs font-bold transition cursor-pointer active:scale-95 whitespace-nowrap shrink-0 tracking-tighter sm:tracking-tight break-keep ${isLiked ? 'bg-rose-50 text-rose-600 border border-rose-200 shadow-2xs ring-1 ring-rose-200/50' : 'bg-slate-100 text-slate-700 hover:bg-rose-50 hover:text-rose-600 border border-slate-200'}">
+              <button type="button" onclick="window.toggleFeedbackHeart('${escapeHtml(item.id)}')" class="inline-flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1.5 rounded-lg sm:rounded-xl text-[11px] sm:text-xs font-bold transition cursor-pointer active:scale-95 whitespace-nowrap shrink-0 tracking-tighter break-keep ${isLiked ? 'bg-rose-50 text-rose-600 border border-rose-200 shadow-2xs ring-1 ring-rose-200/50' : 'bg-slate-100 text-slate-700 hover:bg-rose-50 hover:text-rose-600 border border-slate-200'}">
                 <i data-lucide="heart" class="w-3.5 h-3.5 shrink-0 transition ${isLiked ? 'fill-rose-500 text-rose-500 scale-105' : 'text-slate-400'}"></i>
-                <span class="whitespace-nowrap tracking-tighter sm:tracking-tight break-keep">도움됐어요</span>
+                <span class="whitespace-nowrap tracking-tighter break-keep">도움됐어요</span>
                 <span class="px-1.5 py-0.2 rounded-full text-[10px] font-black shrink-0 whitespace-nowrap ${isLiked ? 'bg-rose-500 text-white' : 'bg-slate-200 text-slate-700'}">${item.helpfulCount || 0}</span>
               </button>
 
@@ -5459,15 +6272,15 @@
                 </button>
 
                 <!-- Edit Post (수정 버튼) -->
-                <button type="button" onclick="window.openEditFeedbackModal('${escapeHtml(item.id)}')" class="inline-flex items-center gap-0.5 sm:gap-1 px-2 sm:px-2.5 py-1.5 text-slate-600 hover:text-amber-700 hover:bg-amber-50 border border-slate-200 hover:border-amber-200 rounded-lg text-[11px] sm:text-xs font-semibold transition cursor-pointer active:scale-95 whitespace-nowrap shrink-0 tracking-tighter sm:tracking-tight break-keep" title="피드백 수정">
+                <button type="button" onclick="window.openEditFeedbackModal('${escapeHtml(item.id)}')" class="inline-flex items-center gap-0.5 sm:gap-1 px-1.5 sm:px-2.5 py-1.5 text-slate-600 hover:text-amber-700 hover:bg-amber-50 border border-slate-200 hover:border-amber-200 rounded-lg text-[11px] sm:text-xs font-semibold transition cursor-pointer active:scale-95 whitespace-nowrap shrink-0 tracking-tighter break-keep" title="피드백 수정">
                   <i data-lucide="edit-3" class="w-3.5 h-3.5 shrink-0"></i>
-                  <span class="whitespace-nowrap tracking-tighter sm:tracking-tight break-keep">수정</span>
+                  <span class="whitespace-nowrap tracking-tighter break-keep">수정</span>
                 </button>
 
                 <!-- Delete Post (활성화된 삭제 버튼) -->
-                <button type="button" onclick="window.openDeleteFeedbackModal('${escapeHtml(item.id)}')" class="inline-flex items-center gap-0.5 sm:gap-1 px-2 sm:px-2.5 py-1.5 text-slate-600 hover:text-rose-600 hover:bg-rose-50 border border-slate-200 hover:border-rose-200 rounded-lg text-[11px] sm:text-xs font-semibold transition cursor-pointer active:scale-95 whitespace-nowrap shrink-0 tracking-tighter sm:tracking-tight break-keep" title="피드백 삭제">
+                <button type="button" onclick="window.openDeleteFeedbackModal('${escapeHtml(item.id)}')" class="inline-flex items-center gap-0.5 sm:gap-1 px-1.5 sm:px-2.5 py-1.5 text-slate-600 hover:text-rose-600 hover:bg-rose-50 border border-slate-200 hover:border-rose-200 rounded-lg text-[11px] sm:text-xs font-semibold transition cursor-pointer active:scale-95 whitespace-nowrap shrink-0 tracking-tighter break-keep" title="피드백 삭제">
                   <i data-lucide="trash-2" class="w-3.5 h-3.5 shrink-0"></i>
-                  <span class="whitespace-nowrap tracking-tighter sm:tracking-tight break-keep">삭제</span>
+                  <span class="whitespace-nowrap tracking-tighter break-keep">삭제</span>
                 </button>
               </div>
             </div>
@@ -5513,6 +6326,67 @@
         });
         filterTeacher.innerHTML = fOpts;
         if (curFilter && ideaTeachers.includes(curFilter)) {
+          filterTeacher.value = curFilter;
+        } else {
+          filterTeacher.value = "";
+        }
+      }
+    }
+
+    function updateDevStatusTeacherDropdown() {
+      // 관리자가 넣은 회원 명단만 사용
+      const adminMembers = Array.from(new Set(memberList)).filter(Boolean);
+
+      const regSelect = document.getElementById("regDevTeacherSelect");
+      if (regSelect) {
+        const curVal = regSelect.value;
+        if (adminMembers.length === 0) {
+          regSelect.innerHTML = '<option value="">(관리자가 등록한 회원 명단이 없습니다 - 관리자 메뉴에서 회원 등록 필요)</option>';
+        } else {
+          let opts = '<option value="">-- 개발 강사(관리자 등록 회원) 선택 --</option>';
+          adminMembers.forEach((t) => {
+            opts += `<option value="${escapeHtml(t)}">${escapeHtml(t)} 선생님</option>`;
+          });
+          regSelect.innerHTML = opts;
+          if (curVal && adminMembers.includes(curVal)) {
+            regSelect.value = curVal;
+          }
+        }
+      }
+
+      const editSelect = document.getElementById("editDevTeacherSelect");
+      if (editSelect) {
+        const curVal = editSelect.value;
+        const editMembers = Array.from(new Set([
+          ...adminMembers,
+          ...(curVal ? [curVal] : [])
+        ])).filter(Boolean);
+
+        if (editMembers.length === 0) {
+          editSelect.innerHTML = '<option value="">(관리자가 등록한 회원 명단이 없습니다)</option>';
+        } else {
+          let opts = '<option value="">-- 개발 강사 선택 --</option>';
+          editMembers.forEach((t) => {
+            opts += `<option value="${escapeHtml(t)}">${escapeHtml(t)} 선생님</option>`;
+          });
+          editSelect.innerHTML = opts;
+          if (curVal && editMembers.includes(curVal)) {
+            editSelect.value = curVal;
+          }
+        }
+      }
+
+      const filterTeacher = document.getElementById("filterDevTeacher");
+      if (filterTeacher) {
+        const curFilter = filterTeacher.value;
+        let fOpts = '<option value="">모든 강사 보기</option>';
+        const devTeachers = Array.from(new Set(devStatusData.map((d) => d.teacherName))).filter(Boolean);
+        devTeachers.forEach((t) => {
+          const count = devStatusData.filter((d) => d.teacherName === t).length;
+          fOpts += `<option value="${escapeHtml(t)}">${escapeHtml(t)} 선생님 (${count}개)</option>`;
+        });
+        filterTeacher.innerHTML = fOpts;
+        if (curFilter && devTeachers.includes(curFilter)) {
           filterTeacher.value = curFilter;
         } else {
           filterTeacher.value = "";
@@ -5661,6 +6535,20 @@
                 </button>
               </div>
 
+              <!-- Photo (with click to zoom lightbox) -->
+              ${item.imageUrl ? `
+                <div class="relative group cursor-pointer overflow-hidden rounded-xl bg-slate-950/5 border border-slate-200" onclick="window.openIdeaLightbox('${escapeHtml(item.id)}')">
+                  <img src="${escapeHtml(item.imageUrl)}" alt="${escapeHtml(item.title)}" class="w-full h-44 sm:h-52 object-cover group-hover:scale-105 transition duration-300" loading="lazy" />
+                  <div class="absolute inset-0 bg-slate-950/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center gap-1.5 text-white text-xs sm:text-sm font-bold backdrop-blur-2xs">
+                    <i data-lucide="zoom-in" class="w-4 h-4"></i>
+                    <span>사진 크게 보기</span>
+                  </div>
+                  <span class="absolute bottom-2 right-2 bg-slate-900/75 text-white text-xs font-medium px-2.5 py-0.5 rounded-full flex items-center gap-1 shadow-xs">
+                    <i data-lucide="image" class="w-3.5 h-3.5"></i> 참고 사진
+                  </span>
+                </div>
+              ` : ""}
+
               <!-- Pain Point Box (Larger font & Bold formatting) -->
               ${item.painPoint ? `
                 <div class="bg-amber-50/70 border-l-4 border-amber-400 p-3.5 sm:p-4 rounded-r-xl space-y-1.5">
@@ -5798,27 +6686,27 @@
             </div>
 
             <!-- Bottom Actions (Single line on mobile & PC) -->
-            <div class="pt-3 border-t border-slate-100 flex items-center justify-between gap-1 sm:gap-2 flex-nowrap">
+            <div class="pt-3 border-t border-slate-100 flex items-center justify-between gap-1 sm:gap-2 flex-nowrap min-w-0">
               <div class="flex items-center gap-1 shrink-0">
                 <!-- Cheer / Vote Button -->
-                <button type="button" onclick="window.toggleIdeaCheer('${escapeHtml(item.id)}')" class="inline-flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1.5 rounded-lg sm:rounded-xl text-[11px] sm:text-xs font-bold transition cursor-pointer active:scale-95 whitespace-nowrap shrink-0 tracking-tighter sm:tracking-tight break-keep ${isCheered ? 'bg-emerald-600 text-white shadow-xs' : 'bg-slate-100 hover:bg-emerald-50 text-slate-700 hover:text-emerald-700 border border-slate-200 hover:border-emerald-200'}" title="강의 개설 응원하기">
+                <button type="button" onclick="window.toggleIdeaCheer('${escapeHtml(item.id)}')" class="inline-flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1.5 rounded-lg sm:rounded-xl text-[11px] sm:text-xs font-bold transition cursor-pointer active:scale-95 whitespace-nowrap shrink-0 tracking-tighter break-keep ${isCheered ? 'bg-emerald-600 text-white shadow-xs' : 'bg-slate-100 hover:bg-emerald-50 text-slate-700 hover:text-emerald-700 border border-slate-200 hover:border-emerald-200'}" title="강의 개설 응원하기">
                   <i data-lucide="lightbulb" class="w-3.5 h-3.5 shrink-0 ${isCheered ? 'fill-white text-white' : 'text-emerald-500'}"></i>
-                  <span class="whitespace-nowrap tracking-tighter sm:tracking-tight break-keep">강의 개설 원해요</span>
+                  <span class="whitespace-nowrap tracking-tighter break-keep"><span class="hidden sm:inline">강의 </span>개설 원해요</span>
                   <span class="px-1.5 py-0.2 rounded-full text-[10px] font-black shrink-0 whitespace-nowrap ${isCheered ? 'bg-emerald-700 text-white' : 'bg-slate-200 text-slate-700'}">${cheers}</span>
                 </button>
               </div>
 
               <div class="flex items-center gap-1 sm:gap-1.5 shrink-0 flex-nowrap">
                 <!-- Edit Button (수정 버튼) -->
-                <button type="button" onclick="window.openEditIdeaModal('${escapeHtml(item.id)}')" class="inline-flex items-center gap-0.5 sm:gap-1 px-2 sm:px-2.5 py-1.5 text-slate-600 hover:text-emerald-700 hover:bg-emerald-50 border border-slate-200 hover:border-emerald-200 rounded-lg text-[11px] sm:text-xs font-semibold transition cursor-pointer active:scale-95 whitespace-nowrap shrink-0 tracking-tighter sm:tracking-tight break-keep" title="아이디어 수정">
+                <button type="button" onclick="window.openEditIdeaModal('${escapeHtml(item.id)}')" class="inline-flex items-center gap-0.5 sm:gap-1 px-1.5 sm:px-2.5 py-1 sm:py-1.5 text-slate-600 hover:text-emerald-700 hover:bg-emerald-50 border border-slate-200 hover:border-emerald-200 rounded-lg text-[11px] sm:text-xs font-semibold transition cursor-pointer active:scale-95 whitespace-nowrap shrink-0 tracking-tighter break-keep" title="아이디어 수정">
                   <i data-lucide="edit-3" class="w-3.5 h-3.5 shrink-0"></i>
-                  <span class="whitespace-nowrap tracking-tighter sm:tracking-tight break-keep">수정</span>
+                  <span class="whitespace-nowrap tracking-tighter break-keep">수정</span>
                 </button>
 
                 <!-- Delete Button (삭제 버튼) -->
-                <button type="button" onclick="window.openDeleteIdeaModal('${escapeHtml(item.id)}')" class="inline-flex items-center gap-0.5 sm:gap-1 px-2 sm:px-2.5 py-1.5 text-slate-600 hover:text-rose-600 hover:bg-rose-50 border border-slate-200 hover:border-rose-200 rounded-lg text-[11px] sm:text-xs font-semibold transition cursor-pointer active:scale-95 whitespace-nowrap shrink-0 tracking-tighter sm:tracking-tight break-keep" title="아이디어 삭제">
+                <button type="button" onclick="window.openDeleteIdeaModal('${escapeHtml(item.id)}')" class="inline-flex items-center gap-0.5 sm:gap-1 px-1.5 sm:px-2.5 py-1 sm:py-1.5 text-slate-600 hover:text-rose-600 hover:bg-rose-50 border border-slate-200 hover:border-rose-200 rounded-lg text-[11px] sm:text-xs font-semibold transition cursor-pointer active:scale-95 whitespace-nowrap shrink-0 tracking-tighter break-keep" title="아이디어 삭제">
                   <i data-lucide="trash-2" class="w-3.5 h-3.5 shrink-0"></i>
-                  <span class="whitespace-nowrap tracking-tighter sm:tracking-tight break-keep">삭제</span>
+                  <span class="whitespace-nowrap tracking-tighter break-keep">삭제</span>
                 </button>
               </div>
             </div>
@@ -5910,6 +6798,649 @@
       if (pwInput) pwInput.focus();
     };
 
+    // ----------------------------------------------------
+    // [강의 개발 현황 (Dev Status) 렌더링 및 액션 핸들러]
+    // 4단계: 주제 선정 -> 수업 사례 수집 -> 교안 작성 -> 피드백
+    // ----------------------------------------------------
+    const DEV_STAGE_META = {
+      "주제 선정": {
+        step: 1,
+        percent: 25,
+        colorClass: "bg-sky-50 text-sky-700 border-sky-200",
+        badgeBg: "bg-sky-100 text-sky-800",
+        barColor: "bg-sky-500",
+        icon: "target",
+        desc: "방향성 및 목차 기획",
+        emoji: "🎯"
+      },
+      "수업 사례 수집": {
+        step: 2,
+        percent: 50,
+        colorClass: "bg-teal-50 text-teal-700 border-teal-200",
+        badgeBg: "bg-teal-100 text-teal-800",
+        barColor: "bg-teal-500",
+        icon: "folder-search",
+        desc: "실습 및 활동자료 모음",
+        emoji: "📁"
+      },
+      "교안 작성": {
+        step: 3,
+        percent: 75,
+        colorClass: "bg-indigo-50 text-indigo-700 border-indigo-200",
+        badgeBg: "bg-indigo-100 text-indigo-800",
+        barColor: "bg-indigo-500",
+        icon: "file-edit",
+        desc: "슬라이드·원고 집필",
+        emoji: "📝"
+      },
+      "피드백": {
+        step: 4,
+        percent: 100,
+        colorClass: "bg-amber-50 text-amber-800 border-amber-200",
+        badgeBg: "bg-amber-100 text-amber-800",
+        barColor: "bg-amber-500",
+        icon: "sparkles",
+        desc: "사전 검토 및 최종 보완",
+        emoji: "✨"
+      }
+    };
+
+    function getFilteredDevStatusData() {
+      let filtered = [...devStatusData].filter(
+        (d) => d && typeof d === "object" && d.courseTitle && !deletedDevStatusIds.has(String(d.id)) && !d._deleted && !d.deleted
+      );
+
+      if (selectedDevStage) {
+        filtered = filtered.filter((d) => (d.stage || "") === selectedDevStage);
+      }
+
+      const teacherFilter = document.getElementById("filterDevTeacher")?.value || "";
+      if (teacherFilter) {
+        filtered = filtered.filter((d) => d.teacherName === teacherFilter);
+      }
+
+      const searchQuery = (document.getElementById("searchDevQuery")?.value || "").toLowerCase().trim();
+      if (searchQuery) {
+        filtered = filtered.filter((d) => {
+          const t = (d.courseTitle || "").toLowerCase();
+          const teacher = (d.teacherName || "").toLowerCase();
+          const c = (d.content || "").toLowerCase();
+          const diff = (d.difficulties || "").toLowerCase();
+          const stg = (d.stage || "").toLowerCase();
+          const cat = (d.category || "").toLowerCase();
+          return t.includes(searchQuery) || teacher.includes(searchQuery) || c.includes(searchQuery) || diff.includes(searchQuery) || stg.includes(searchQuery) || cat.includes(searchQuery);
+        });
+      }
+
+      const sortOrder = document.getElementById("sortDevOrder")?.value || "latest";
+      if (sortOrder === "stageAsc") {
+        filtered.sort((a, b) => {
+          const stepA = (DEV_STAGE_META[a.stage] || { step: 99 }).step;
+          const stepB = (DEV_STAGE_META[b.stage] || { step: 99 }).step;
+          return stepA - stepB || (b.updatedAt || b.createdAt || "").localeCompare(a.updatedAt || a.createdAt || "");
+        });
+      } else if (sortOrder === "stageDesc") {
+        filtered.sort((a, b) => {
+          const stepA = (DEV_STAGE_META[a.stage] || { step: 0 }).step;
+          const stepB = (DEV_STAGE_META[b.stage] || { step: 0 }).step;
+          return stepB - stepA || (b.updatedAt || b.createdAt || "").localeCompare(a.updatedAt || a.createdAt || "");
+        });
+      } else if (sortOrder === "name") {
+        filtered.sort((a, b) => (a.teacherName || "").localeCompare(b.teacherName || "", "ko"));
+      } else {
+        filtered.sort((a, b) => (b.updatedAt || b.createdAt || "").localeCompare(a.updatedAt || a.createdAt || ""));
+      }
+
+      return filtered;
+    }
+
+    function renderDevStatusView() {
+      // 1. Sanitize devStatusData
+      devStatusData = deduplicateDevStatus(
+        devStatusData.filter(
+          (d) => d && typeof d === "object" && d.courseTitle && !deletedDevStatusIds.has(String(d.id)) && !d._deleted && !d.deleted
+        )
+      );
+
+      // 2. Update Tab Count Badge
+      const tabBadge = document.getElementById("tabDevStatusCountBadge");
+      if (tabBadge) {
+        tabBadge.innerText = devStatusData.length;
+      }
+
+      // 3. Update Pipeline Summary KPIs
+      const statTotal = document.getElementById("statDevTotalCount");
+      const stat1 = document.getElementById("statDevStage1Count");
+      const stat2 = document.getElementById("statDevStage2Count");
+      const stat3 = document.getElementById("statDevStage3Count");
+      const stat4 = document.getElementById("statDevStage4Count");
+
+      if (statTotal) statTotal.innerText = `${devStatusData.length}개`;
+      if (stat1) stat1.innerText = `${devStatusData.filter((d) => d.stage === "주제 선정").length}명`;
+      if (stat2) stat2.innerText = `${devStatusData.filter((d) => d.stage === "수업 사례 수집").length}명`;
+      if (stat3) stat3.innerText = `${devStatusData.filter((d) => d.stage === "교안 작성").length}명`;
+      if (stat4) stat4.innerText = `${devStatusData.filter((d) => d.stage === "피드백").length}명`;
+
+      // 4. Update Stage Filter Pills ("단계만 모아보기")
+      document.querySelectorAll(".devStageBtn").forEach((btn) => {
+        const stage = btn.getAttribute("data-stage") || "";
+        if (stage === selectedDevStage) {
+          btn.className = "devStageBtn active px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-900 text-white cursor-pointer transition shrink-0 shadow-2xs";
+        } else {
+          btn.className = "devStageBtn px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-100 text-slate-700 hover:bg-slate-200 cursor-pointer transition shrink-0";
+        }
+      });
+
+      // 5. Update Expand All Button state
+      updateToggleAllDevButtonState();
+
+      // 6. Render Cards Container
+      const container = document.getElementById("devStatusCardsContainer");
+      if (!container) return;
+
+      const filtered = getFilteredDevStatusData();
+
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div class="py-16 text-center bg-white rounded-2xl border border-dashed border-slate-300 p-8 shadow-2xs">
+            <div class="w-14 h-14 mx-auto mb-3 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center shadow-xs">
+              <i data-lucide="layers" class="w-7 h-7"></i>
+            </div>
+            <h4 class="text-sm font-bold text-slate-800">해당 조건의 강의 개발 현황이 없습니다</h4>
+            <p class="text-xs text-slate-500 mt-1 max-w-sm mx-auto">선생님의 강의 개발 단계와 진행 내용, 어려움을 첫 번째로 등록해보세요!</p>
+            <button type="button" onclick="window.openRegisterDevStatusModal()" class="mt-4 inline-flex items-center gap-1.5 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded-lg shadow-sm transition cursor-pointer active:scale-95">
+              <i data-lucide="plus-circle" class="w-4 h-4"></i>
+              <span>내 강의 개발 현황 등록하기</span>
+            </button>
+          </div>
+        `;
+        safeRenderIcons();
+        return;
+      }
+
+      const avatarColors = [
+        "bg-blue-600", "bg-emerald-600", "bg-indigo-600", "bg-purple-600",
+        "bg-amber-600", "bg-teal-600", "bg-rose-600", "bg-sky-600"
+      ];
+
+      container.innerHTML = filtered.map((item) => {
+        const meta = DEV_STAGE_META[item.stage] || {
+          step: 1,
+          percent: 25,
+          colorClass: "bg-slate-100 text-slate-700 border-slate-200",
+          barColor: "bg-slate-400",
+          icon: "layers",
+          desc: "진행 중",
+          emoji: "📌"
+        };
+
+        const isExpanded = expandedDevCardIds.has(String(item.id));
+        const avatarBg = avatarColors[Math.abs(item.teacherName.split("").reduce((acc, c) => acc + c.charCodeAt(0), 0)) % avatarColors.length];
+        const dateStr = (item.updatedAt || item.createdAt || "").substring(0, 10);
+
+        return `
+          <div id="devCard-${escapeHtml(item.id)}" class="bg-white rounded-2xl border ${isExpanded ? 'border-indigo-300 ring-2 ring-indigo-100 shadow-sm' : 'border-slate-200 shadow-2xs'} hover:shadow-md transition-all duration-200 overflow-hidden group">
+            <!-- Card Header / Summary Row: CLICKABLE! Clicking expands/collapses the card -->
+            <div onclick="window.toggleDevCard('${escapeHtml(item.id)}')" class="p-4 sm:p-5 cursor-pointer select-none ${isExpanded ? 'bg-indigo-50/20' : 'hover:bg-slate-50/70'} transition flex flex-col md:flex-row md:items-center justify-between gap-3.5">
+              <!-- Left: Teacher Name with avatar, badge, and Course Title -->
+              <div class="flex items-center gap-3.5 min-w-0 flex-1">
+                <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl ${avatarBg} text-white font-extrabold text-sm sm:text-base flex items-center justify-center shrink-0 shadow-2xs">
+                  ${escapeHtml(item.teacherName.charAt(0))}
+                </div>
+                <div class="min-w-0 flex-1">
+                  <div class="flex items-center gap-2 flex-wrap">
+                    <span class="text-sm sm:text-base font-extrabold text-slate-900 group-hover:text-indigo-600 transition tracking-tight">
+                      ${escapeHtml(item.teacherName)}
+                    </span>
+                    <span class="text-[11px] px-2 py-0.5 rounded-md font-bold bg-indigo-50 text-indigo-700 border border-indigo-100">
+                      선생님
+                    </span>
+                    ${item.category ? `<span class="text-[10px] px-2 py-0.5 rounded-md font-medium bg-slate-100 text-slate-600 border border-slate-200">${escapeHtml(item.category)}</span>` : ""}
+                    <span class="text-[11px] text-slate-400 hidden sm:inline">
+                      최근 수정: ${dateStr}
+                    </span>
+                  </div>
+                  <h3 class="text-xs sm:text-sm font-bold text-slate-800 mt-1 truncate">
+                    ${escapeHtml(item.courseTitle)}
+                  </h3>
+                  ${!isExpanded && item.content ? `
+                    <p class="text-[11px] text-slate-500 line-clamp-1 mt-0.5">
+                      <span class="font-semibold text-slate-600">진도:</span> ${escapeHtml(item.content.substring(0, 80))}${item.content.length > 80 ? "..." : ""}
+                    </p>
+                  ` : ""}
+                </div>
+              </div>
+
+              <!-- Right: Stage Pill, 4-step Progress bar, and Expand Toggle Button -->
+              <div class="flex items-center gap-2.5 sm:gap-3 shrink-0 self-end md:self-center">
+                <!-- Stage Badge -->
+                <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border ${meta.colorClass} shadow-2xs font-extrabold text-xs">
+                  <i data-lucide="${meta.icon}" class="w-3.5 h-3.5"></i>
+                  <span>${meta.emoji} ${meta.step}단계: ${escapeHtml(item.stage)}</span>
+                </div>
+
+                <!-- Mini Progress Bar (4 steps) -->
+                <div class="hidden sm:flex items-center gap-1 bg-slate-100 p-1.5 rounded-lg border border-slate-200" title="개발 진도: ${meta.step}/4단계 (${meta.percent}%)">
+                  ${[1, 2, 3, 4].map(s => `
+                    <span class="w-3 h-2 rounded-xs ${s <= meta.step ? meta.barColor : 'bg-slate-300'}"></span>
+                  `).join('')}
+                </div>
+
+                <!-- Expand/Collapse Button indicator -->
+                <div class="flex items-center gap-1 text-xs font-bold ${isExpanded ? 'text-indigo-700 bg-indigo-50 border-indigo-300' : 'text-slate-600 bg-slate-100 hover:bg-slate-200 border-slate-200'} px-2.5 py-1.5 rounded-lg border transition">
+                  <span class="text-[11px] hidden sm:inline">${isExpanded ? '상세 접기' : '상세 열기'}</span>
+                  <i data-lucide="${isExpanded ? 'chevron-up' : 'chevron-down'}" class="w-4 h-4"></i>
+                </div>
+              </div>
+            </div>
+
+            <!-- Expanded Detail Section (Only when isExpanded is true!) -->
+            ${isExpanded ? `
+              <div class="border-t border-slate-100 bg-slate-50/50 p-4 sm:p-6 space-y-4 animate-in fade-in duration-200">
+                <!-- 4-Stage Interactive Pipeline Tracker -->
+                <div class="bg-white p-3.5 sm:p-4 rounded-xl border border-slate-200 shadow-2xs space-y-2.5">
+                  <div class="flex items-center justify-between text-xs font-bold text-slate-700">
+                    <span class="flex items-center gap-1.5">
+                      <i data-lucide="git-commit" class="w-4 h-4 text-indigo-600"></i>
+                      <span>4단계 강의 개발 파이프라인 (원클릭 단계 변경)</span>
+                    </span>
+                    <span class="text-[11px] text-indigo-600 font-bold bg-indigo-50 px-2 py-0.5 rounded border border-indigo-100">${meta.step} / 4단계 완료 (${meta.percent}%)</span>
+                  </div>
+
+                  <!-- Pipeline Steps Track -->
+                  <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                    ${["주제 선정", "수업 사례 수집", "교안 작성", "피드백"].map((stgName, sIdx) => {
+                      const stgMeta = DEV_STAGE_META[stgName];
+                      const isCurrent = item.stage === stgName;
+                      const isPassed = meta.step > (sIdx + 1);
+                      return `
+                        <button type="button" onclick="event.stopPropagation(); window.quickUpdateDevStage('${escapeHtml(item.id)}', '${stgName}')" class="p-2 sm:p-2.5 rounded-xl border text-left transition cursor-pointer active:scale-95 ${isCurrent ? 'border-indigo-500 bg-indigo-50 ring-2 ring-indigo-200 shadow-xs' : isPassed ? 'border-emerald-200 bg-emerald-50/40 hover:bg-emerald-50' : 'border-slate-200 bg-slate-50 hover:bg-white'}">
+                          <div class="flex items-center justify-between">
+                            <span class="text-[10px] font-bold ${isCurrent ? 'text-indigo-700' : isPassed ? 'text-emerald-700' : 'text-slate-400'}">STEP 0${sIdx + 1}</span>
+                            ${isPassed ? '<i data-lucide="check" class="w-3.5 h-3.5 text-emerald-600"></i>' : isCurrent ? '<span class="w-2 h-2 rounded-full bg-indigo-600 animate-pulse"></span>' : ''}
+                          </div>
+                          <div class="text-xs font-bold ${isCurrent ? 'text-indigo-950 font-black' : isPassed ? 'text-emerald-900' : 'text-slate-600'} mt-0.5">${stgMeta.emoji} ${stgName}</div>
+                          <div class="text-[10px] ${isCurrent ? 'text-indigo-700' : 'text-slate-500'} truncate">${stgMeta.desc}</div>
+                        </button>
+                      `;
+                    }).join('')}
+                  </div>
+                </div>
+
+                <!-- 기존 개설 강의 -->
+                <div class="bg-white p-4 sm:p-5 rounded-xl border border-slate-200 shadow-2xs space-y-2">
+                  <div class="flex items-center justify-between">
+                    <h4 class="text-xs font-extrabold text-slate-900 flex items-center gap-1.5">
+                      <i data-lucide="book-open" class="w-4 h-4 text-emerald-600"></i>
+                      <span>기존 개설 강의</span>
+                    </h4>
+                    <span class="text-[10px] px-2 py-0.5 rounded-full font-bold bg-emerald-50 text-emerald-700 border border-emerald-100">
+                      강사 개설 이력
+                    </span>
+                  </div>
+                  <div class="text-xs sm:text-sm text-slate-700 leading-relaxed whitespace-pre-line bg-slate-50/70 p-3.5 rounded-lg border border-slate-100">
+                    ${formatRichContent(item.pastCourses || item.existingCourses || "(등록된 기존 개설 강의가 없습니다)")}
+                  </div>
+                </div>
+
+                <!-- 1. 내용 작성칸 (어느 정도 진행됐는지 기입) -->
+                <div class="bg-white p-4 sm:p-5 rounded-xl border border-slate-200 shadow-2xs space-y-2">
+                  <div class="flex items-center justify-between">
+                    <h4 class="text-xs font-extrabold text-slate-900 flex items-center gap-1.5">
+                      <i data-lucide="file-text" class="w-4 h-4 text-indigo-600"></i>
+                      <span>현재 진행 내용 및 진도 상황</span>
+                    </h4>
+                    <span class="text-[10px] px-2 py-0.5 rounded-full font-bold bg-indigo-50 text-indigo-700 border border-indigo-100">
+                      어느 정도 진행됐는지 기입
+                    </span>
+                  </div>
+                  <div class="text-xs sm:text-sm text-slate-700 leading-relaxed whitespace-pre-line bg-slate-50/70 p-3.5 rounded-lg border border-slate-100">
+                    ${formatRichContent(item.content || "(진행 내용이 아직 입력되지 않았습니다)")}
+                  </div>
+                </div>
+
+                <!-- 2. 하단: 어려움을 느끼는 부분이 무엇인지 기록하는 칸 -->
+                <div class="bg-amber-50/70 p-4 sm:p-5 rounded-xl border border-amber-200/90 shadow-2xs space-y-2">
+                  <div class="flex items-center justify-between">
+                    <h4 class="text-xs font-extrabold text-amber-950 flex items-center gap-1.5">
+                      <i data-lucide="help-circle" class="w-4 h-4 text-amber-600"></i>
+                      <span>하단: 수업 준비 중 어려움을 느끼는 부분 (고민 & 지원 요청)</span>
+                    </h4>
+                    <span class="text-[10px] px-2 py-0.5 rounded-full font-bold bg-amber-100 text-amber-800 border border-amber-300">
+                      동료 교사 협력 포인트
+                    </span>
+                  </div>
+                  <div class="text-xs sm:text-sm text-amber-950 leading-relaxed whitespace-pre-line bg-white/90 p-3.5 rounded-lg border border-amber-200">
+                    ${formatRichContent(item.difficulties || "💡 특별한 어려움 없이 순조롭게 진행 중입니다. 동료 선생님들의 조언과 응원을 환영합니다!")}
+                  </div>
+                </div>
+
+                <!-- Bottom Action Bar -->
+                <div class="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-slate-200 text-xs text-slate-500">
+                  <div class="flex items-center gap-1 text-[11px] text-slate-400">
+                    <i data-lucide="clock" class="w-3.5 h-3.5"></i>
+                    <span>등록일: ${(item.createdAt || '').substring(0, 10)} | 최종 업데이트: ${(item.updatedAt || item.createdAt || '').substring(0, 16).replace('T', ' ')}</span>
+                  </div>
+                  <div class="flex items-center gap-1.5 shrink-0">
+                    <button type="button" onclick="window.openEditDevStatusModal('${escapeHtml(item.id)}')" class="px-3 py-1.5 text-slate-700 hover:text-indigo-600 bg-white hover:bg-slate-50 rounded-lg border border-slate-200 transition font-bold flex items-center gap-1 cursor-pointer active:scale-95 shadow-2xs">
+                      <i data-lucide="edit" class="w-3.5 h-3.5"></i>
+                      <span>수정</span>
+                    </button>
+                    <button type="button" onclick="window.openDeleteDevStatusModal('${escapeHtml(item.id)}')" class="px-3 py-1.5 text-rose-700 hover:text-rose-800 bg-white hover:bg-rose-50 rounded-lg border border-rose-200 transition font-bold flex items-center gap-1 cursor-pointer active:scale-95 shadow-2xs">
+                      <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                      <span>삭제</span>
+                    </button>
+                    <button type="button" onclick="window.toggleDevCard('${escapeHtml(item.id)}')" class="px-3 py-1.5 text-indigo-700 bg-indigo-50 hover:bg-indigo-100 rounded-lg border border-indigo-200 transition font-bold flex items-center gap-1 cursor-pointer active:scale-95 shadow-2xs">
+                      <i data-lucide="chevron-up" class="w-3.5 h-3.5"></i>
+                      <span>접기</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ` : ''}
+          </div>
+        `;
+      }).join('');
+
+      safeRenderIcons();
+    }
+
+    function updateToggleAllDevButtonState() {
+      const filtered = getFilteredDevStatusData();
+      const allIds = filtered.map((d) => String(d.id));
+      const allExpanded = allIds.length > 0 && allIds.every((id) => expandedDevCardIds.has(id));
+
+      const labelEl = document.getElementById("labelToggleAllDev");
+      const iconEl = document.getElementById("iconToggleAllDev");
+
+      if (labelEl) {
+        labelEl.innerText = allExpanded ? "한번에 접기" : "한번에 펼치기";
+      }
+      if (iconEl) {
+        iconEl.setAttribute("data-lucide", allExpanded ? "chevrons-up" : "chevrons-down");
+      }
+    }
+
+    window.toggleDevCard = function (cardId) {
+      const idStr = String(cardId);
+      if (expandedDevCardIds.has(idStr)) {
+        expandedDevCardIds.delete(idStr);
+      } else {
+        expandedDevCardIds.add(idStr);
+      }
+      renderDevStatusView();
+    };
+
+    window.toggleAllDevCards = function () {
+      const filtered = getFilteredDevStatusData();
+      const allIds = filtered.map((d) => String(d.id));
+      const allExpanded = allIds.length > 0 && allIds.every((id) => expandedDevCardIds.has(id));
+
+      if (allExpanded) {
+        allIds.forEach((id) => expandedDevCardIds.delete(id));
+      } else {
+        allIds.forEach((id) => expandedDevCardIds.add(id));
+      }
+      renderDevStatusView();
+    };
+
+    window.quickUpdateDevStage = async function (recordId, newStage) {
+      await updateDevStatusStageDirect(recordId, newStage);
+    };
+
+    window.openRegisterDevStatusModal = function () {
+      updateDevStatusTeacherDropdown();
+      const form = document.getElementById("formRegisterDevStatus");
+      if (form) form.reset();
+      const pwInput = document.getElementById("regDevPassword");
+      if (pwInput) pwInput.value = "1234";
+      openModal("modalRegisterDevStatus");
+      safeRenderIcons();
+    };
+
+    let isSubmittingDevStatus = false;
+    let lastDevSubmitTime = 0;
+    let lastDevSubmitSignature = "";
+
+    window.submitRegisterDevStatus = async function (e) {
+      if (e) {
+        if (typeof e.preventDefault === "function") e.preventDefault();
+        if (typeof e.stopPropagation === "function") e.stopPropagation();
+        if (typeof e.stopImmediatePropagation === "function") e.stopImmediatePropagation();
+      }
+
+      if (isSubmittingDevStatus) return;
+      isSubmittingDevStatus = true;
+
+      const teacher = document.getElementById("regDevTeacherSelect")?.value.trim();
+      const courseTitle = document.getElementById("regDevCourseTitle")?.value.trim();
+      const category = document.getElementById("regDevCategory")?.value || "초등";
+      const stageEl = document.querySelector('input[name="regDevStage"]:checked');
+      const stage = stageEl ? stageEl.value : "주제 선정";
+      const pastCourses = document.getElementById("regDevPastCourses")?.value.trim() || "";
+      const content = document.getElementById("regDevContent")?.value.trim();
+      const difficulties = document.getElementById("regDevDifficulties")?.value.trim() || "";
+      const password = document.getElementById("regDevPassword")?.value.trim() || "1234";
+
+      if (!teacher) {
+        isSubmittingDevStatus = false;
+        showToast("강사를 선택해주세요.", "error");
+        return;
+      }
+      if (!courseTitle) {
+        isSubmittingDevStatus = false;
+        showToast("강의 주제 또는 가제를 입력해주세요.", "error");
+        return;
+      }
+      if (!content) {
+        isSubmittingDevStatus = false;
+        showToast("진행 내용(어느 정도 진행됐는지)을 입력해주세요.", "error");
+        return;
+      }
+
+      // Fast double-submission guard (same teacher within 4 seconds)
+      const currentSignature = `${teacher}:::${courseTitle}`;
+      if (currentSignature === lastDevSubmitSignature && Date.now() - lastDevSubmitTime < 4000) {
+        isSubmittingDevStatus = false;
+        return;
+      }
+
+      lastDevSubmitSignature = currentSignature;
+      lastDevSubmitTime = Date.now();
+
+      const btnSubmit = document.getElementById("btnSubmitRegDevStatus");
+      if (btnSubmit) {
+        btnSubmit.disabled = true;
+        btnSubmit.classList.add("opacity-50", "pointer-events-none");
+      }
+
+      try {
+        // Find existing record for this teacher (including defaults or previously registered)
+        const existingRecord = devStatusData.find(
+          (d) => d && (d.teacherName || "").trim() === teacher
+        );
+
+        const targetId = existingRecord ? String(existingRecord.id) : `dev-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`;
+
+        const newRecord = {
+          id: targetId,
+          teacherName: teacher,
+          courseTitle: courseTitle,
+          category: category,
+          stage: stage,
+          pastCourses: pastCourses,
+          content: content,
+          difficulties: difficulties,
+          password: password || (existingRecord ? existingRecord.password : "1234"),
+          createdAt: existingRecord?.createdAt || new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        };
+
+        // Filter out any other records for this teacher to ensure exactly 1 record
+        devStatusData = devStatusData.filter(
+          (d) => String(d.id) === targetId || (d.teacherName || "").trim() !== teacher
+        );
+
+        // Expand the registered card so user sees it right away!
+        expandedDevCardIds.add(String(newRecord.id));
+
+        await saveDevStatusToDb(newRecord);
+
+        const form = document.getElementById("formRegisterDevStatus");
+        if (form) form.reset();
+        closeModal("modalRegisterDevStatus");
+        showToast(`'${teacher}' 선생님의 강의 개발 현황이 1건으로 등록 완료되었습니다! 🎉`);
+      } catch (err) {
+        console.warn("submitRegisterDevStatus error:", err);
+      } finally {
+        isSubmittingDevStatus = false;
+        if (btnSubmit) {
+          btnSubmit.disabled = false;
+          btnSubmit.classList.remove("opacity-50", "pointer-events-none");
+        }
+      }
+    };
+
+    window.openEditDevStatusModal = function (recordId) {
+      const record = devStatusData.find((d) => String(d.id) === String(recordId));
+      if (!record) return;
+
+      activeEditingDevStatusId = String(recordId);
+      updateDevStatusTeacherDropdown();
+
+      const teacherSelect = document.getElementById("editDevTeacherSelect");
+      if (teacherSelect) teacherSelect.value = record.teacherName;
+
+      const titleInput = document.getElementById("editDevCourseTitle");
+      if (titleInput) titleInput.value = record.courseTitle || "";
+
+      const categorySelect = document.getElementById("editDevCategory");
+      if (categorySelect) categorySelect.value = record.category || "초등";
+
+      const stageRadios = document.querySelectorAll('input[name="editDevStage"]');
+      stageRadios.forEach((r) => {
+        r.checked = (r.value === record.stage);
+      });
+
+      const pastCoursesInput = document.getElementById("editDevPastCourses");
+      if (pastCoursesInput) pastCoursesInput.value = record.pastCourses || record.existingCourses || "";
+
+      const contentInput = document.getElementById("editDevContent");
+      if (contentInput) contentInput.value = record.content || "";
+
+      const diffInput = document.getElementById("editDevDifficulties");
+      if (diffInput) diffInput.value = record.difficulties || "";
+
+      const pwInput = document.getElementById("editDevPassword");
+      if (pwInput) pwInput.value = "";
+
+      openModal("modalEditDevStatus");
+      safeRenderIcons();
+    };
+
+    let isSubmittingEditDevStatus = false;
+
+    window.submitEditDevStatus = async function (e) {
+      if (e && typeof e.preventDefault === "function") e.preventDefault();
+      if (!activeEditingDevStatusId) return;
+      if (isSubmittingEditDevStatus) return;
+
+      const record = devStatusData.find((d) => String(d.id) === String(activeEditingDevStatusId));
+      if (!record) return;
+
+      const inputPw = document.getElementById("editDevPassword")?.value.trim() || "";
+      const validPw = record.password || "1234";
+
+      if (!isAdminLoggedIn && inputPw !== validPw && inputPw !== "1234") {
+        showToast("비밀번호가 일치하지 않습니다.", "error");
+        return;
+      }
+
+      const teacher = document.getElementById("editDevTeacherSelect")?.value.trim();
+      const courseTitle = document.getElementById("editDevCourseTitle")?.value.trim();
+      const category = document.getElementById("editDevCategory")?.value || "초등";
+      const stageEl = document.querySelector('input[name="editDevStage"]:checked');
+      const stage = stageEl ? stageEl.value : record.stage;
+      const pastCourses = document.getElementById("editDevPastCourses")?.value.trim() || "";
+      const content = document.getElementById("editDevContent")?.value.trim();
+      const difficulties = document.getElementById("editDevDifficulties")?.value.trim() || "";
+
+      if (!teacher) {
+        showToast("강사를 선택해주세요.", "error");
+        return;
+      }
+      if (!courseTitle) {
+        showToast("강의 주제를 입력해주세요.", "error");
+        return;
+      }
+      if (!content) {
+        showToast("진행 내용을 입력해주세요.", "error");
+        return;
+      }
+
+      isSubmittingEditDevStatus = true;
+      const btnSubmit = document.getElementById("btnSubmitEditDevStatus");
+      if (btnSubmit) {
+        btnSubmit.disabled = true;
+        btnSubmit.classList.add("opacity-50", "pointer-events-none");
+      }
+
+      try {
+        record.teacherName = teacher;
+        record.courseTitle = courseTitle;
+        record.category = category;
+        record.stage = stage;
+        record.pastCourses = pastCourses;
+        record.content = content;
+        record.difficulties = difficulties;
+        record.updatedAt = new Date().toISOString();
+
+        await saveDevStatusToDb(record);
+        closeModal("modalEditDevStatus");
+        showToast("강의 개발 현황이 수정되었습니다! ✏️");
+      } catch (err) {
+        console.warn("submitEditDevStatus error:", err);
+      } finally {
+        isSubmittingEditDevStatus = false;
+        if (btnSubmit) {
+          btnSubmit.disabled = false;
+          btnSubmit.classList.remove("opacity-50", "pointer-events-none");
+        }
+      }
+    };
+
+    window.openDeleteDevStatusModal = function (recordId) {
+      activeDeletingDevStatusId = String(recordId);
+      const pwInput = document.getElementById("deleteDevPasswordInput");
+      if (pwInput) pwInput.value = "";
+      const pwSection = document.getElementById("devDeletePwSection");
+      if (pwSection) {
+        if (isAdminLoggedIn) pwSection.classList.add("hidden");
+        else pwSection.classList.remove("hidden");
+      }
+      openModal("modalDeleteDevStatus");
+      safeRenderIcons();
+    };
+
+    window.confirmDeleteDevStatus = async function () {
+      if (!activeDeletingDevStatusId) return;
+      const record = devStatusData.find((d) => String(d.id) === String(activeDeletingDevStatusId));
+      if (!record) return;
+
+      const inputPw = document.getElementById("deleteDevPasswordInput")?.value.trim() || "";
+      const validPw = record.password || "1234";
+
+      if (!isAdminLoggedIn && inputPw !== validPw && inputPw !== "1234") {
+        showToast("비밀번호가 일치하지 않습니다.", "error");
+        return;
+      }
+
+      expandedDevCardIds.delete(String(record.id));
+      await deleteDevStatusFromDb(activeDeletingDevStatusId);
+      closeModal("modalDeleteDevStatus");
+      showToast("강의 개발 현황이 삭제되었습니다.");
+    };
+
     function updateDatalists() {
       const datalist = document.getElementById("memberListDatalist");
       if (datalist) {
@@ -5928,6 +7459,7 @@
       updateRecordStudentDropdown();
       updateFeedbackTeacherDropdown();
       updateIdeaTeacherDropdown();
+      updateDevStatusTeacherDropdown();
     }
 
     function renderAllViews() {
@@ -5939,6 +7471,7 @@
       renderAttendedCoursesView();
       renderFeedbackView();
       renderIdeaView();
+      renderDevStatusView();
       updateDatalists();
       if (typeof renderAdminMemberPanel === "function") {
         renderAdminMemberPanel();
@@ -6211,9 +7744,12 @@
 
         await saveAttendedCourseToDb(record);
 
-        document.getElementById("recordCourseTitle").value = "";
-        document.getElementById("recordCoursePresenter").value = "";
-        document.getElementById("recordCourseMemo").value = "";
+        const elTitle = document.getElementById("recordCourseTitle");
+        if (elTitle) elTitle.value = "";
+        const elPres = document.getElementById("recordCoursePresenter");
+        if (elPres) elPres.value = "";
+        const elMemo = document.getElementById("recordCourseMemo");
+        if (elMemo) elMemo.value = "";
         if (customInput) customInput.value = "";
         if (selectEl) selectEl.value = "";
         document.getElementById("wrapRecordStudentCustom")?.classList.add("hidden");
@@ -6572,6 +8108,14 @@
       if (pwInput && !pwInput.value) {
         pwInput.value = "1234";
       }
+      currentIdeaImageDataUrl = "";
+      const previewContainer = document.getElementById("ideaImagePreviewContainer");
+      if (previewContainer) previewContainer.classList.add("hidden");
+      const previewEl = document.getElementById("ideaImagePreviewEl");
+      if (previewEl) previewEl.src = "";
+      const fileInput = document.getElementById("regIdeaFileInput");
+      if (fileInput) fileInput.value = "";
+
       openModal("modalRegisterIdea");
       safeRenderIcons();
     };
@@ -6645,6 +8189,7 @@
           teacherName,
           title,
           category,
+          imageUrl: currentIdeaImageDataUrl || "",
           painPoint,
           lectureIdea,
           cheerCount: 0,
@@ -6656,6 +8201,13 @@
 
         const formRegisterIdea = document.getElementById("formRegisterIdea");
         if (formRegisterIdea) formRegisterIdea.reset();
+        currentIdeaImageDataUrl = "";
+        const previewContainer = document.getElementById("ideaImagePreviewContainer");
+        if (previewContainer) previewContainer.classList.add("hidden");
+        const previewEl = document.getElementById("ideaImagePreviewEl");
+        if (previewEl) previewEl.src = "";
+        const fileInput = document.getElementById("regIdeaFileInput");
+        if (fileInput) fileInput.value = "";
 
         closeModal("modalRegisterIdea");
 
@@ -6751,6 +8303,21 @@
       const solInput = document.getElementById("editIdeaSolution");
       if (solInput) solInput.value = record.lectureIdea || "";
 
+      currentEditIdeaImageDataUrl = record.imageUrl || "";
+      const editPreviewContainer = document.getElementById("editIdeaImagePreviewContainer");
+      const editPreviewEl = document.getElementById("editIdeaImagePreviewEl");
+      const editFileInput = document.getElementById("editIdeaFileInput");
+      if (editFileInput) editFileInput.value = "";
+      if (editPreviewContainer && editPreviewEl) {
+        if (currentEditIdeaImageDataUrl) {
+          editPreviewEl.src = currentEditIdeaImageDataUrl;
+          editPreviewContainer.classList.remove("hidden");
+        } else {
+          editPreviewContainer.classList.add("hidden");
+          editPreviewEl.src = "";
+        }
+      }
+
       openModal("modalEditIdea");
       safeRenderIcons();
     };
@@ -6822,6 +8389,7 @@
         targetRecord.teacherName = teacherName;
         targetRecord.title = title;
         targetRecord.category = category;
+        targetRecord.imageUrl = currentEditIdeaImageDataUrl || "";
         targetRecord.painPoint = painPoint;
         targetRecord.lectureIdea = lectureIdea;
         if (enteredPw) {
@@ -6848,6 +8416,24 @@
           btnSubmit.classList.remove("opacity-50", "pointer-events-none");
         }
       }
+    };
+
+    window.openIdeaLightbox = function (recordId) {
+      const record = ideasData.find((i) => String(i.id) === String(recordId));
+      if (!record || !record.imageUrl) return;
+
+      const imgEl = document.getElementById("lightboxImage");
+      const titleEl = document.getElementById("lightboxTitle");
+      const badgeEl = document.getElementById("lightboxBadge");
+      const teacherEl = document.getElementById("lightboxTeacher");
+
+      if (imgEl) imgEl.src = record.imageUrl;
+      if (titleEl) titleEl.innerText = record.title || "강의 아이디어 참고 사진";
+      if (badgeEl) badgeEl.innerText = `💡 ${record.category || "아이디어"}`;
+      if (teacherEl) teacherEl.innerText = `${record.teacherName} 선생님 제안`;
+
+      openModal("modalFeedbackLightbox");
+      safeRenderIcons();
     };
 
     window.toggleIdeaCheer = async function (recordId) {
@@ -7594,10 +9180,6 @@
                   </span>
                   <span class="text-[10px] px-2 py-0.5 bg-indigo-100 text-indigo-800 font-bold rounded-full border border-indigo-200">누적 ${myAttendedCourses.length}건</span>
                 </div>
-                <button type="button" onclick="window.navigateToAttendedTabWithTeacher('${escapeHtml(teacherName)}')" class="text-xs font-bold text-indigo-700 hover:text-indigo-900 flex items-center gap-1 transition cursor-pointer">
-                  <span>수강한 강의 목록 탭에서 모아보기</span>
-                  <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
-                </button>
               </div>
               <div class="divide-y divide-indigo-100">
                 ${myAttendedCourses.map((att) => `
@@ -7635,7 +9217,7 @@
                   <i data-lucide="book-open" class="w-6 h-6"></i>
                 </div>
                 <p class="text-sm font-bold text-slate-800">${escapeHtml(teacherName)} 선생님의 수강 이력이 ${search ? '검색 결과에 없습니다.' : '아직 없습니다.'}</p>
-                <p class="text-xs text-slate-500 mt-1">${search ? '검색어를 변경하거나 초기화해보세요.' : '동료 선생님의 강의를 수강 신청하거나 [수강한 강의 목록] 탭에서 수강 기록을 남겨보세요!'}</p>
+                <p class="text-xs text-slate-500 mt-1">${search ? '검색어를 변경하거나 초기화해보세요.' : '강의 캘린더에서 동료 선생님의 강의를 수강 신청해보세요!'}</p>
               </div>
             `;
           }
@@ -7801,16 +9383,9 @@
 
     window.navigateToAttendedTabWithTeacher = function (teacherName) {
       closeModal("modalTeacherHistory");
-      const tabAttended = document.getElementById("tabBtnAttendedCourses");
-      if (tabAttended) {
-        tabAttended.click();
-        setTimeout(() => {
-          const filterEl = document.getElementById("filterAttendedTeacher");
-          if (filterEl) {
-            filterEl.value = teacherName;
-            renderAttendedCoursesView();
-          }
-        }, 50);
+      const tabCalendar = document.getElementById("tabBtnCalendar");
+      if (tabCalendar) {
+        tabCalendar.click();
       }
     };
 
@@ -7840,68 +9415,68 @@
     // Event Listeners Setup
     // ----------------------------------------------------
     function setupEventListeners() {
-      // 1. Navigation Tabs
-      const tabCalendar = document.getElementById("tabBtnCalendar");
+      // 1. Navigation Tabs (순서: 이번주 공지사항 - 강의 캘린더 - 아이디어 수집 - 강의 개발 현황 - 피드백 및 개선방향)
       const tabNotice = document.getElementById("tabBtnNotice");
-      const tabAttended = document.getElementById("tabBtnAttendedCourses");
-      const tabFeedback = document.getElementById("tabBtnFeedback");
+      const tabCalendar = document.getElementById("tabBtnCalendar");
       const tabIdea = document.getElementById("tabBtnIdea");
+      const tabDevStatus = document.getElementById("tabBtnDevStatus");
+      const tabFeedback = document.getElementById("tabBtnFeedback");
 
-      const secCalendar = document.getElementById("tabContentCalendar");
       const secNotice = document.getElementById("tabContentNotice");
-      const secAttended = document.getElementById("tabContentAttendedCourses");
-      const secFeedback = document.getElementById("tabContentFeedback");
+      const secCalendar = document.getElementById("tabContentCalendar");
       const secIdea = document.getElementById("tabContentIdea");
+      const secDevStatus = document.getElementById("tabContentDevStatus");
+      const secFeedback = document.getElementById("tabContentFeedback");
 
       function switchTab(activeTab, activeSec) {
-        [tabCalendar, tabNotice, tabAttended, tabFeedback, tabIdea].forEach((t) => {
+        [tabNotice, tabCalendar, tabIdea, tabDevStatus, tabFeedback].forEach((t) => {
           if (t) t.className = "flex items-center gap-2 py-2.5 px-4 text-xs sm:text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-800 transition cursor-pointer shrink-0";
         });
         if (activeTab) {
-          activeTab.className = "flex items-center gap-2 py-2.5 px-4 text-xs sm:text-sm font-semibold border-b-2 border-blue-600 text-blue-600 transition cursor-pointer shrink-0";
+          activeTab.className = "flex items-center gap-2 py-2.5 px-4 text-xs sm:text-sm font-semibold border-b-2 border-indigo-600 text-indigo-600 transition cursor-pointer shrink-0";
         }
 
-        [secCalendar, secNotice, secAttended, secFeedback, secIdea].forEach((s) => s?.classList.add("hidden"));
+        [secNotice, secCalendar, secIdea, secDevStatus, secFeedback].forEach((s) => s?.classList.add("hidden"));
         activeSec?.classList.remove("hidden");
 
-        if (activeSec === secCalendar && calendarInstance) {
-          setTimeout(() => calendarInstance.render(), 100);
-        } else if (activeSec === secNotice) {
+        if (activeSec === secNotice) {
           renderNoticeView();
-        } else if (activeSec === secAttended) {
-          updateRecordStudentDropdown();
-          renderAttendedCoursesView();
-        } else if (activeSec === secFeedback) {
-          updateFeedbackTeacherDropdown();
-          renderFeedbackView();
+        } else if (activeSec === secCalendar && calendarInstance) {
+          setTimeout(() => calendarInstance.render(), 100);
         } else if (activeSec === secIdea) {
           updateIdeaTeacherDropdown();
           renderIdeaView();
+        } else if (activeSec === secDevStatus) {
+          updateDevStatusTeacherDropdown();
+          renderDevStatusView();
+        } else if (activeSec === secFeedback) {
+          updateFeedbackTeacherDropdown();
+          renderFeedbackView();
         }
       }
-
-      tabCalendar?.addEventListener("click", () => {
-        switchTab(tabCalendar, secCalendar);
-        window.scrollTo({ top: 0, behavior: "smooth" });
-      });
 
       tabNotice?.addEventListener("click", () => {
         switchTab(tabNotice, secNotice);
         window.scrollTo({ top: 0, behavior: "smooth" });
       });
 
-      tabAttended?.addEventListener("click", () => {
-        switchTab(tabAttended, secAttended);
-        window.scrollTo({ top: 0, behavior: "smooth" });
-      });
-
-      tabFeedback?.addEventListener("click", () => {
-        switchTab(tabFeedback, secFeedback);
+      tabCalendar?.addEventListener("click", () => {
+        switchTab(tabCalendar, secCalendar);
         window.scrollTo({ top: 0, behavior: "smooth" });
       });
 
       tabIdea?.addEventListener("click", () => {
         switchTab(tabIdea, secIdea);
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      });
+
+      tabDevStatus?.addEventListener("click", () => {
+        switchTab(tabDevStatus, secDevStatus);
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      });
+
+      tabFeedback?.addEventListener("click", () => {
+        switchTab(tabFeedback, secFeedback);
         window.scrollTo({ top: 0, behavior: "smooth" });
       });
 
@@ -9022,6 +10597,212 @@
       const formEditIdea = document.getElementById("formEditIdea");
       formEditIdea?.addEventListener("submit", (e) => {
         window.submitEditIdea(e);
+      });
+
+      // Helper functions for idea photo preview
+      function setIdeaPreviewImage(url) {
+        currentIdeaImageDataUrl = url;
+        const previewContainer = document.getElementById("ideaImagePreviewContainer");
+        const previewEl = document.getElementById("ideaImagePreviewEl");
+        if (previewEl) previewEl.src = url;
+        if (previewContainer) {
+          if (url) previewContainer.classList.remove("hidden");
+          else previewContainer.classList.add("hidden");
+        }
+        safeRenderIcons();
+      }
+
+      window.setEditIdeaPreviewImage = function (url) {
+        currentEditIdeaImageDataUrl = url;
+        const previewContainer = document.getElementById("editIdeaImagePreviewContainer");
+        const previewEl = document.getElementById("editIdeaImagePreviewEl");
+        if (previewEl) previewEl.src = url;
+        if (previewContainer) {
+          if (url) previewContainer.classList.remove("hidden");
+          else previewContainer.classList.add("hidden");
+        }
+        safeRenderIcons();
+      };
+
+      // Preset photo buttons for Idea Registration
+      document.querySelectorAll(".btnIdeaPresetPhoto").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const presetKey = btn.getAttribute("data-preset");
+          if (presetKey && PRESET_IDEA_PHOTOS[presetKey]) {
+            setIdeaPreviewImage(PRESET_IDEA_PHOTOS[presetKey]);
+            showToast("추천 수업/아이디어 사진이 선택되었습니다.", "info");
+          }
+        });
+      });
+
+      // Remove photo button for Idea Registration
+      document.getElementById("btnRemoveIdeaImage")?.addEventListener("click", () => {
+        setIdeaPreviewImage("");
+        const fileInput = document.getElementById("regIdeaFileInput");
+        if (fileInput) fileInput.value = "";
+      });
+
+      // File upload for Idea Registration with canvas compression
+      document.getElementById("regIdeaFileInput")?.addEventListener("change", (e) => {
+        const file = e.target.files && e.target.files[0];
+        if (!file) return;
+
+        if (!file.type.startsWith("image/")) {
+          showToast("이미지 파일(JPG, PNG, WebP 등)만 업로드 가능합니다.", "error");
+          return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          const img = new Image();
+          img.onload = () => {
+            const maxDimension = 800;
+            let width = img.width;
+            let height = img.height;
+
+            if (width > maxDimension || height > maxDimension) {
+              if (width > height) {
+                height = Math.round((height * maxDimension) / width);
+                width = maxDimension;
+              } else {
+                width = Math.round((width * maxDimension) / height);
+                height = maxDimension;
+              }
+            }
+
+            const canvas = document.createElement("canvas");
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext("2d");
+            if (ctx) {
+              ctx.imageSmoothingEnabled = true;
+              ctx.imageSmoothingQuality = "high";
+              ctx.drawImage(img, 0, 0, width, height);
+              const compressedDataUrl = canvas.toDataURL("image/jpeg", 0.82);
+              setIdeaPreviewImage(compressedDataUrl);
+              showToast("아이디어 사진이 등록되었습니다!");
+            } else {
+              setIdeaPreviewImage(event.target.result);
+            }
+          };
+          img.onerror = () => {
+            showToast("이미지를 불러오는 데 실패했습니다.", "error");
+          };
+          img.src = event.target.result;
+        };
+        reader.readAsDataURL(file);
+      });
+
+      // Preset photo buttons for Idea Edit
+      document.querySelectorAll(".btnEditIdeaPresetPhoto").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const presetKey = btn.getAttribute("data-preset");
+          if (presetKey && PRESET_IDEA_PHOTOS[presetKey]) {
+            window.setEditIdeaPreviewImage(PRESET_IDEA_PHOTOS[presetKey]);
+            showToast("추천 수업/아이디어 사진이 선택되었습니다.", "info");
+          }
+        });
+      });
+
+      // Remove photo button for Idea Edit
+      document.getElementById("btnRemoveEditIdeaImage")?.addEventListener("click", () => {
+        window.setEditIdeaPreviewImage("");
+        const fileInput = document.getElementById("editIdeaFileInput");
+        if (fileInput) fileInput.value = "";
+      });
+
+      // File upload for Idea Edit with canvas compression
+      document.getElementById("editIdeaFileInput")?.addEventListener("change", (e) => {
+        const file = e.target.files && e.target.files[0];
+        if (!file) return;
+
+        if (!file.type.startsWith("image/")) {
+          showToast("이미지 파일(JPG, PNG, WebP 등)만 업로드 가능합니다.", "error");
+          return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          const img = new Image();
+          img.onload = () => {
+            const maxDimension = 800;
+            let width = img.width;
+            let height = img.height;
+
+            if (width > maxDimension || height > maxDimension) {
+              if (width > height) {
+                height = Math.round((height * maxDimension) / width);
+                width = maxDimension;
+              } else {
+                width = Math.round((width * maxDimension) / height);
+                height = maxDimension;
+              }
+            }
+
+            const canvas = document.createElement("canvas");
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext("2d");
+            if (ctx) {
+              ctx.imageSmoothingEnabled = true;
+              ctx.imageSmoothingQuality = "high";
+              ctx.drawImage(img, 0, 0, width, height);
+              const compressedDataUrl = canvas.toDataURL("image/jpeg", 0.82);
+              window.setEditIdeaPreviewImage(compressedDataUrl);
+              showToast("수정할 사진이 등록되었습니다!");
+            } else {
+              window.setEditIdeaPreviewImage(event.target.result);
+            }
+          };
+          img.onerror = () => {
+            showToast("이미지를 불러오는 데 실패했습니다.", "error");
+          };
+          img.src = event.target.result;
+        };
+        reader.readAsDataURL(file);
+      });
+
+      // Lecture Dev Status Listeners ("단계만 모아보기", 검색, 정렬, 폼)
+      document.querySelectorAll(".devStageBtn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          selectedDevStage = btn.getAttribute("data-stage") || "";
+          renderDevStatusView();
+        });
+      });
+
+      document.getElementById("filterDevTeacher")?.addEventListener("change", () => {
+        renderDevStatusView();
+      });
+
+      document.getElementById("sortDevOrder")?.addEventListener("change", () => {
+        renderDevStatusView();
+      });
+
+      const searchDevInput = document.getElementById("searchDevQuery");
+      const btnClearDevSearch = document.getElementById("btnClearDevSearch");
+
+      searchDevInput?.addEventListener("input", (e) => {
+        if (btnClearDevSearch) {
+          if (e.target.value.trim().length > 0) {
+            btnClearDevSearch.classList.remove("hidden");
+          } else {
+            btnClearDevSearch.classList.add("hidden");
+          }
+        }
+        renderDevStatusView();
+      });
+
+      btnClearDevSearch?.addEventListener("click", () => {
+        if (searchDevInput) searchDevInput.value = "";
+        btnClearDevSearch.classList.add("hidden");
+        renderDevStatusView();
+      });
+
+      document.getElementById("deleteDevPasswordInput")?.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          window.confirmDeleteDevStatus();
+        }
       });
 
       // Setup eye icon visibility toggles
