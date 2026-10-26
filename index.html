@@ -134,7 +134,14 @@
           <span>강의 캘린더</span>
         </button>
 
-        <!-- 3. 아이디어 수집 -->
+        <!-- 3. 품앗이 상호 수강 매트릭스 (다음 달까지 계속 지속) -->
+        <button id="tabBtnMatrix" class="flex items-center gap-2 py-2.5 px-4 text-xs sm:text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-800 transition cursor-pointer shrink-0">
+          <i data-lucide="repeat" class="w-4 h-4 text-emerald-600"></i>
+          <span>품앗이 수강 매트릭스</span>
+          <span class="px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800">다음달 지속</span>
+        </button>
+
+        <!-- 4. 아이디어 수집 -->
         <button id="tabBtnIdea" class="flex items-center gap-2 py-2.5 px-4 text-xs sm:text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-800 transition cursor-pointer shrink-0">
           <i data-lucide="lightbulb" class="w-4 h-4 text-emerald-500"></i>
           <span>아이디어 수집</span>
@@ -204,7 +211,7 @@
           <i data-lucide="repeat" class="w-5 h-5"></i>
         </div>
         <div>
-          <p class="text-xs text-slate-500 font-medium">품앗이 상호수강</p>
+          <p class="text-xs text-slate-500 font-medium">품앗이 상호수강 (누적)</p>
           <p id="kpiMutualPairs" class="text-lg sm:text-xl font-bold text-slate-900">0</p>
         </div>
       </div>
@@ -349,20 +356,88 @@
         </div>
       </div>
 
-      <!-- MUTUAL ENROLLMENT MATRIX (강의 캘린더 하단에 직접 배치) -->
+        <!-- Quick Jump Card to Mutual Matrix in Calendar Tab -->
+        <div class="p-4 bg-gradient-to-r from-blue-50 via-indigo-50 to-emerald-50 border border-blue-200 rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xs">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center shrink-0 shadow-xs">
+              <i data-lucide="repeat" class="w-5 h-5"></i>
+            </div>
+            <div>
+              <div class="flex items-center gap-2 flex-wrap">
+                <h3 class="font-bold text-slate-900 text-sm sm:text-base">교사 간 품앗이 상호 수강 매트릭스</h3>
+                <span class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300">다음 달까지 누적 지속 연계</span>
+              </div>
+              <p class="text-xs text-slate-600 mt-0.5">매달 새로 쓰는 것이 아니라 다음 달까지 상호 수강이 계속 누적·유지됩니다. 🤝 상호 품앗이 완성을 확인하세요.</p>
+            </div>
+          </div>
+          <button id="btnGoToMatrixFromCalendar" type="button" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold transition flex items-center justify-center gap-1.5 cursor-pointer shrink-0 shadow-xs">
+            <span>수강 매트릭스 열기</span>
+            <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. 품앗이 상호 수강 매트릭스 탭 (다음 달까지 계속 지속) -->
+    <section id="tabContentMatrix" class="hidden space-y-6">
       <div id="matrixSection" class="bg-white rounded-xl border border-slate-200 p-5 shadow-2xs scroll-mt-24">
+        <!-- Continuity Banner -->
+        <div class="bg-gradient-to-r from-emerald-50 via-teal-50 to-blue-50 border border-emerald-200 rounded-xl p-4 mb-5 flex items-start gap-3 shadow-2xs">
+          <div class="w-8 h-8 rounded-lg bg-emerald-600 text-white flex items-center justify-center shrink-0 shadow-xs mt-0.5">
+            <i data-lucide="shield-check" class="w-4 h-4"></i>
+          </div>
+          <div class="space-y-1 flex-1">
+            <div class="flex items-center gap-2 flex-wrap">
+              <h4 class="font-bold text-slate-900 text-xs sm:text-sm">💡 품앗이 상호 수강 매트릭스 지속 원칙</h4>
+              <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-100 text-emerald-900 border border-emerald-300">매달 새로 작성하지 않음</span>
+            </div>
+            <p class="text-xs text-slate-700 leading-relaxed">
+              품앗이 상호 수강은 <strong>매달 새로 쓰는 것이 아니라 다음 달까지 계속 누적·지속</strong>됩니다.
+              이번 달에 먼저 수강하고 상대 교사의 강의를 다음 달에 맞수강해도 상호 품앗이(🤝)가 완성되며, 모든 이수 내역이 누적 보존됩니다.
+            </p>
+          </div>
+        </div>
+
         <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4">
           <div>
-            <div class="flex items-center gap-2">
+            <div class="flex items-center gap-2 flex-wrap">
               <h2 class="text-base sm:text-lg font-bold text-slate-900">교사 간 품앗이 상호 수강 매트릭스</h2>
+              <span id="matrixCurrentModeBadge" class="text-xs px-2.5 py-0.5 rounded-full font-bold bg-emerald-50 text-emerald-800 border border-emerald-300 flex items-center gap-1 shadow-2xs">
+                <i data-lucide="repeat" class="w-3.5 h-3.5 text-emerald-600"></i>
+                <span>누적 지속 관리 (다음 달 연계)</span>
+              </span>
               <span class="text-xs px-2.5 py-0.5 rounded-full font-bold bg-blue-50 text-blue-700 border border-blue-200">실시간 연동</span>
             </div>
-            <p class="text-xs text-slate-500 mt-1">행(강의자)과 열(수강자) 간의 수강 현황을 확인합니다. 💡 <strong>교사 이름을 클릭하면 그간의 누적 이수 이력</strong>을 볼 수 있으며, <strong>각 셀을 클릭하면 본인 비밀번호 인증 후 [수강신청 ↔ 이수완료] 상태를 변경</strong>할 수 있습니다.</p>
+            <p class="text-xs text-slate-500 mt-1">행(강의자)과 열(수강자) 간의 품앗이 수강 현황입니다. (교사 이름 클릭 시 누적 이력 조회 / 셀 클릭 시 상태 변경)</p>
           </div>
-          <div class="flex items-center gap-2 text-xs shrink-0 flex-wrap">
-            <span class="flex items-center gap-1"><span class="w-3 h-3 rounded bg-blue-100 border border-blue-300"></span> 📝 신청</span>
-            <span class="flex items-center gap-1"><span class="w-3 h-3 rounded bg-emerald-100 border border-emerald-400"></span> 🎓 이수완료</span>
-            <span class="flex items-center gap-1"><span class="w-3 h-3 rounded bg-emerald-500 text-white flex items-center justify-center text-[9px] font-bold">🤝</span> 상호수강</span>
+
+          <div class="flex flex-col md:flex-row items-start md:items-center gap-2.5 shrink-0 w-full sm:w-auto">
+            <!-- Filter Mode Switcher: 4 Month Tabs (Cumulative, Last Month, This Month, Next Month) -->
+            <div class="inline-flex flex-wrap sm:flex-nowrap rounded-lg border border-slate-200 p-1 bg-slate-100 gap-1 shadow-2xs">
+              <button id="btnMatrixTabCumulative" type="button" class="px-2.5 py-1.5 rounded-md text-xs font-bold bg-white text-blue-700 shadow-2xs cursor-pointer flex items-center justify-center gap-1 transition border border-blue-100">
+                <i data-lucide="repeat" class="w-3.5 h-3.5 text-blue-600"></i>
+                <span>전체 누적 지속</span>
+              </button>
+              <button id="btnMatrixTabPrevMonth" type="button" class="px-2.5 py-1.5 rounded-md text-xs font-semibold text-slate-600 hover:text-slate-900 cursor-pointer flex items-center justify-center gap-1 transition border border-transparent">
+                <i data-lucide="calendar" class="w-3.5 h-3.5 text-slate-500"></i>
+                <span id="btnMatrixTabPrevMonthText">지난달</span>
+              </button>
+              <button id="btnMatrixTabThisMonth" type="button" class="px-2.5 py-1.5 rounded-md text-xs font-semibold text-slate-600 hover:text-slate-900 cursor-pointer flex items-center justify-center gap-1 transition border border-transparent">
+                <i data-lucide="calendar-check" class="w-3.5 h-3.5 text-slate-500"></i>
+                <span id="btnMatrixTabThisMonthText">이번달</span>
+              </button>
+              <button id="btnMatrixTabNextMonth" type="button" class="px-2.5 py-1.5 rounded-md text-xs font-semibold text-slate-600 hover:text-slate-900 cursor-pointer flex items-center justify-center gap-1 transition border border-transparent">
+                <i data-lucide="calendar-plus" class="w-3.5 h-3.5 text-slate-500"></i>
+                <span id="btnMatrixTabNextMonthText">다음달</span>
+              </button>
+            </div>
+
+            <!-- Legend -->
+            <div class="flex items-center gap-2 text-xs shrink-0 flex-wrap">
+              <span class="flex items-center gap-1"><span class="w-3 h-3 rounded bg-blue-100 border border-blue-300"></span> 📝 신청</span>
+              <span class="flex items-center gap-1"><span class="w-3 h-3 rounded bg-emerald-100 border border-emerald-400"></span> 🎓 이수완료</span>
+              <span class="flex items-center gap-1"><span class="w-3 h-3 rounded bg-emerald-500 text-white flex items-center justify-center text-[9px] font-bold">🤝</span> 상호수강</span>
+            </div>
           </div>
         </div>
 
@@ -503,8 +578,8 @@
         </div>
       </div>
 
-      <!-- Ideas Cards Grid Container -->
-      <div id="ideaCardsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+      <!-- Ideas Cards Grid Container (세로 2줄 나열) -->
+      <div id="ideaCardsContainer" class="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6 items-start">
         <!-- Dynamically rendered idea cards -->
       </div>
     </section>
@@ -1003,12 +1078,12 @@
         <div>
           <label class="block text-xs font-bold text-slate-700 mb-1">비밀번호 확인 (기본: 1234 또는 관리자 비밀번호)</label>
           <div class="relative">
-            <input type="password" id="deletePasswordInput" value="1234" placeholder="비밀번호 입력 (기본: 1234)" class="w-full text-xs sm:text-sm pl-3 pr-10 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:outline-none" />
+            <input type="password" id="deletePasswordInput" value="" placeholder="비밀번호를 입력하세요 (기본: 1234)" class="w-full text-xs sm:text-sm pl-3 pr-10 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:outline-none" />
             <button type="button" class="btnTogglePassword absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 focus:outline-none cursor-pointer" data-target="deletePasswordInput" title="비밀번호 보기/숨기기">
               <i data-lucide="eye" class="w-4 h-4"></i>
             </button>
           </div>
-          <p class="text-[11px] text-slate-400 mt-1">※ 기본 비밀번호 1234가 자동 입력되어 바로 삭제 확인이 가능합니다.</p>
+          <p class="text-[11px] text-slate-500 mt-1">※ 실수 방지를 위해 비밀번호(기본: 1234 또는 등록 시 설정한 비밀번호, 관리자: admin1234)를 직접 입력해야 삭제됩니다.</p>
         </div>
 
         <div class="flex items-center justify-end gap-2 pt-2">
@@ -1796,12 +1871,12 @@
         <div>
           <label class="block text-xs font-bold text-slate-700 mb-1">등록 시 설정한 비밀번호 (또는 관리자 비밀번호)</label>
           <div class="relative">
-            <input type="password" id="deleteAttendedPasswordInput" value="1234" placeholder="비밀번호 입력 (기본: 1234)" class="w-full text-xs pl-3 pr-9 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:outline-none" />
+            <input type="password" id="deleteAttendedPasswordInput" value="" placeholder="비밀번호를 입력하세요 (기본: 1234)" class="w-full text-xs pl-3 pr-9 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:outline-none" />
             <button type="button" class="btnTogglePassword absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 focus:outline-none cursor-pointer" data-target="deleteAttendedPasswordInput" title="비밀번호 보기/숨기기">
               <i data-lucide="eye" class="w-4 h-4"></i>
             </button>
           </div>
-          <p class="text-[11px] text-slate-400 mt-1">※ 기본 비밀번호 1234가 자동 입력되어 바로 삭제 확인이 가능합니다.</p>
+          <p class="text-[11px] text-slate-500 mt-1">※ 실수 방지를 위해 비밀번호(기본: 1234 또는 등록 시 설정한 비밀번호, 관리자: admin1234)를 직접 입력해야 삭제됩니다.</p>
         </div>
         <div class="flex justify-end gap-2 pt-2">
           <button type="button" class="btnModalClose px-3 py-1.5 text-xs text-slate-600 hover:bg-slate-100 rounded-lg font-medium cursor-pointer whitespace-nowrap">취소</button>
@@ -2018,12 +2093,12 @@
         <div>
           <label class="block text-xs font-bold text-slate-700 mb-1">등록 비밀번호 (기본: 1234 또는 관리자 비밀번호)</label>
           <div class="relative">
-            <input type="password" id="deleteFeedbackPasswordInput" value="1234" placeholder="비밀번호 입력 (기본값: 1234)" class="w-full text-xs pl-3 pr-9 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:outline-none" />
+            <input type="password" id="deleteFeedbackPasswordInput" value="" placeholder="비밀번호를 입력하세요 (기본: 1234)" class="w-full text-xs pl-3 pr-9 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:outline-none" />
             <button type="button" class="btnTogglePassword absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 focus:outline-none cursor-pointer" data-target="deleteFeedbackPasswordInput" title="비밀번호 보기/숨기기">
               <i data-lucide="eye" class="w-4 h-4"></i>
             </button>
           </div>
-          <p class="text-[11px] text-slate-400 mt-1">※ 기본 비밀번호 1234가 자동 입력되어 바로 삭제 확인이 가능합니다.</p>
+          <p class="text-[11px] text-slate-500 mt-1">※ 실수 방지를 위해 비밀번호(기본: 1234 또는 등록 시 설정한 비밀번호, 관리자: admin1234)를 직접 입력해야 삭제됩니다.</p>
         </div>
         <div class="flex justify-end gap-2 pt-2">
           <button type="button" class="btnModalClose px-3 py-1.5 text-xs text-slate-600 hover:bg-slate-100 rounded-lg font-medium cursor-pointer whitespace-nowrap">취소</button>
@@ -2385,12 +2460,12 @@
         <div>
           <label class="block text-xs font-bold text-slate-700 mb-1">등록 비밀번호 (기본: 1234 또는 관리자 비밀번호)</label>
           <div class="relative">
-            <input type="password" id="deleteIdeaPasswordInput" value="1234" placeholder="비밀번호 입력 (기본값: 1234)" class="w-full text-xs pl-3 pr-9 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:outline-none" />
+            <input type="password" id="deleteIdeaPasswordInput" value="" placeholder="비밀번호를 입력하세요 (기본: 1234)" class="w-full text-xs pl-3 pr-9 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:outline-none" />
             <button type="button" class="btnTogglePassword absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 focus:outline-none cursor-pointer" data-target="deleteIdeaPasswordInput" title="비밀번호 보기/숨기기">
               <i data-lucide="eye" class="w-4 h-4"></i>
             </button>
           </div>
-          <p class="text-[11px] text-slate-400 mt-1">※ 기본 비밀번호 1234가 자동 입력되어 바로 삭제 확인이 가능합니다.</p>
+          <p class="text-[11px] text-slate-500 mt-1">※ 실수 방지를 위해 비밀번호(기본: 1234 또는 등록 시 설정한 비밀번호, 관리자: admin1234)를 직접 입력해야 삭제됩니다.</p>
         </div>
         <div class="flex justify-end gap-2 pt-2">
           <button type="button" class="btnModalClose px-3 py-1.5 text-xs text-slate-600 hover:bg-slate-100 rounded-lg font-medium cursor-pointer whitespace-nowrap">취소</button>
@@ -2907,8 +2982,14 @@
         </p>
 
         <div id="devDeletePwSection">
-          <label class="block text-xs font-bold text-slate-700 mb-1">등록 시 설정한 비밀번호</label>
-          <input type="password" id="deleteDevPasswordInput" maxlength="12" placeholder="비밀번호 입력 (기본: 1234)" class="w-full text-xs sm:text-sm px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:outline-none" />
+          <label class="block text-xs font-bold text-slate-700 mb-1">등록 시 설정한 비밀번호 (또는 관리자 비밀번호)</label>
+          <div class="relative">
+            <input type="password" id="deleteDevPasswordInput" maxlength="20" placeholder="비밀번호를 입력하세요 (기본: 1234)" class="w-full text-xs sm:text-sm pl-3 pr-9 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:outline-none" />
+            <button type="button" class="btnTogglePassword absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 focus:outline-none cursor-pointer" data-target="deleteDevPasswordInput" title="비밀번호 보기/숨기기">
+              <i data-lucide="eye" class="w-4 h-4"></i>
+            </button>
+          </div>
+          <p class="text-[11px] text-slate-500 mt-1">※ 실수 방지를 위해 비밀번호(기본: 1234, 관리자: admin1234)를 직접 입력해야 삭제됩니다.</p>
         </div>
 
         <div class="flex justify-end gap-2 pt-2 border-t border-slate-100">
@@ -2918,6 +2999,78 @@
           <button type="button" onclick="window.confirmDeleteDevStatus()" class="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold rounded-lg shadow-sm flex items-center gap-1 cursor-pointer active:scale-95">
             <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
             <span>삭제 확인</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 댓글 삭제 확인 모달 -->
+  <div id="modalDeleteIdeaComment" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-xl border border-slate-200 relative animate-in fade-in zoom-in duration-150">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-3">
+        <h3 class="text-base font-bold text-rose-600 flex items-center gap-1.5">
+          <i data-lucide="trash-2" class="w-5 h-5"></i>
+          <span>댓글 삭제 확인</span>
+        </h3>
+        <button type="button" class="btnModalClose text-slate-400 hover:text-slate-600 p-1 cursor-pointer">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <div class="space-y-3">
+        <p id="deleteCommentTargetDesc" class="text-xs text-slate-700 font-medium bg-slate-50 p-2.5 rounded-lg border border-slate-200 leading-relaxed"></p>
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">비밀번호 확인 (기본: 1234 또는 관리자 비밀번호)</label>
+          <div class="relative">
+            <input type="password" id="deleteCommentPasswordInput" value="" placeholder="비밀번호를 입력하세요 (기본: 1234)" class="w-full text-xs pl-3 pr-9 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:outline-none" />
+            <button type="button" class="btnTogglePassword absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 focus:outline-none cursor-pointer" data-target="deleteCommentPasswordInput" title="비밀번호 보기/숨기기">
+              <i data-lucide="eye" class="w-4 h-4"></i>
+            </button>
+          </div>
+          <p class="text-[11px] text-slate-500 mt-1">※ 실수 방지를 위해 비밀번호(기본: 1234, 관리자: admin1234)를 직접 입력해야 삭제됩니다.</p>
+        </div>
+        <div class="flex justify-end gap-2 pt-2">
+          <button type="button" class="btnModalClose px-3 py-1.5 text-xs text-slate-600 hover:bg-slate-100 rounded-lg font-medium cursor-pointer whitespace-nowrap">취소</button>
+          <button type="button" id="btnConfirmDeleteComment" onclick="window.confirmDeleteIdeaComment()" class="px-4 py-1.5 bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold rounded-lg shadow-sm flex items-center gap-1 cursor-pointer active:scale-95 whitespace-nowrap tracking-tight break-keep">
+            <i data-lucide="trash-2" class="w-3.5 h-3.5 shrink-0"></i>
+            <span class="whitespace-nowrap tracking-tight break-keep">삭제 확인</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 수강 신청 취소 확인 모달 -->
+  <div id="modalCancelEnrollment" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-xl border border-slate-200 relative animate-in fade-in zoom-in duration-150">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-3">
+        <h3 class="text-base font-bold text-rose-600 flex items-center gap-1.5">
+          <i data-lucide="alert-triangle" class="w-5 h-5"></i>
+          <span>수강 신청 취소 확인</span>
+        </h3>
+        <button type="button" class="btnModalClose text-slate-400 hover:text-slate-600 p-1 cursor-pointer">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <div class="space-y-3">
+        <p id="cancelEnrollmentTargetDesc" class="text-xs text-slate-700 font-medium bg-slate-50 p-2.5 rounded-lg border border-slate-200 leading-relaxed"></p>
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">비밀번호 확인 (기본: 1234 또는 관리자 비밀번호)</label>
+          <div class="relative">
+            <input type="password" id="cancelEnrollmentPasswordInput" value="" placeholder="비밀번호를 입력하세요 (기본: 1234)" class="w-full text-xs pl-3 pr-9 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:outline-none" />
+            <button type="button" class="btnTogglePassword absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 focus:outline-none cursor-pointer" data-target="cancelEnrollmentPasswordInput" title="비밀번호 보기/숨기기">
+              <i data-lucide="eye" class="w-4 h-4"></i>
+            </button>
+          </div>
+          <p class="text-[11px] text-slate-500 mt-1">※ 실수 방지를 위해 비밀번호(기본: 1234, 관리자: admin1234)를 직접 입력해야 취소됩니다.</p>
+        </div>
+        <div class="flex justify-end gap-2 pt-2">
+          <button type="button" class="btnModalClose px-3 py-1.5 text-xs text-slate-600 hover:bg-slate-100 rounded-lg font-medium cursor-pointer whitespace-nowrap">닫기</button>
+          <button type="button" id="btnExecuteCancelEnrollment" onclick="window.executeCancelEnrollment()" class="px-4 py-1.5 bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold rounded-lg shadow-sm flex items-center gap-1 cursor-pointer active:scale-95 whitespace-nowrap tracking-tight break-keep">
+            <i data-lucide="user-x" class="w-3.5 h-3.5 shrink-0"></i>
+            <span class="whitespace-nowrap tracking-tight break-keep">수강 취소</span>
           </button>
         </div>
       </div>
@@ -3041,7 +3194,7 @@
         category: "AI·에듀테크 도구",
         imageUrl: "https://images.unsplash.com/photo-1531403009284-440f080d1e12?auto=format&fit=crop&w=800&q=80",
         beforeIssue: "처음에는 학생들이 개별적으로 ChatGPT를 쓰다 보니 서로의 좋은 질문을 보지 못하고 질문 수준이 단답형에 머물렀습니다.",
-        improvementNote: "패들렛(Padlet)에 '내가 만든 오늘의 베스트 프롬프트 보드'를 만들어 실시간 공유하게 했습니다. 우수한 질문을 서로 복사·응용하면서 학생들의 질문 수준과 창의적인 글쓰기 분량이 2배 이상 늘어났습니다.",
+        improvementNote: "패들렛(Padlet: https://padlet.com)에 '내가 만든 오늘의 베스트 프롬프트 보드'를 만들어 실시간 공유하게 했습니다. 우수한 질문을 서로 복사·응용하면서 학생들의 질문 수준과 창의적인 글쓰기 분량이 2배 이상 늘어났습니다. [지식샘터 공식 포털](https://educourse.keris.or.kr)의 강좌 방식과도 연계가 좋습니다.",
         teacherTip: "💡 프롬프트 작성 전 '역할-상황-질문-조건' 4단계 질문 템플릿 활동지를 먼저 배부하면 타자 속도가 느린 학생도 쉽게 따라옵니다.",
         helpfulCount: 24,
         password: "1234",
@@ -3093,10 +3246,47 @@
 
     // App State (실시간 현재 날짜 기준으로 자동 초기화)
     let currentSelectedMonth = todayInfo.monthStr;
+    let matrixFilterMode = "cumulative"; // "cumulative" (전체 누적 지속: 기본값), "prevMonth" (지난달), "thisMonth" (이번달), "nextMonth" (다음달)
     let calendarInstance = null;
     let isAdminLoggedIn = false;
     let selectedLectureForAction = null;
     let viewMode = "calendar"; // "calendar" or "cardList"
+
+    function getPrevMonthStr(monthStr) {
+      if (!monthStr || !monthStr.includes("-")) {
+        const d = new Date();
+        d.setMonth(d.getMonth() - 1);
+        const y = d.getFullYear();
+        const m = String(d.getMonth() + 1).padStart(2, "0");
+        return `${y}-${m}`;
+      }
+      const [yStr, mStr] = monthStr.split("-");
+      let y = parseInt(yStr, 10);
+      let m = parseInt(mStr, 10) - 1;
+      if (m < 1) {
+        m = 12;
+        y -= 1;
+      }
+      return `${y}-${String(m).padStart(2, "0")}`;
+    }
+
+    function getNextMonthStr(monthStr) {
+      if (!monthStr || !monthStr.includes("-")) {
+        const d = new Date();
+        d.setMonth(d.getMonth() + 1);
+        const y = d.getFullYear();
+        const m = String(d.getMonth() + 1).padStart(2, "0");
+        return `${y}-${m}`;
+      }
+      const [yStr, mStr] = monthStr.split("-");
+      let y = parseInt(yStr, 10);
+      let m = parseInt(mStr, 10) + 1;
+      if (m > 12) {
+        m = 1;
+        y += 1;
+      }
+      return `${y}-${String(m).padStart(2, "0")}`;
+    }
 
     let memberList = [...DEFAULT_MEMBERS];
     let lecturesData = [];
@@ -3136,7 +3326,7 @@
           {
             id: "cmt-101",
             authorName: "이교사",
-            content: "저희 학교도 학기말마다 상담일지 정리하느라 야근이 잦은데, 노션으로 일원화되면 정말 큰 도움이 될 것 같습니다! 꼭 열어주세요.",
+            content: "저희 학교도 학기말마다 상담일지 정리하느라 야근이 잦은데, 지식샘터(https://educourse.keris.or.kr)에 노션 강좌로 열리면 정말 큰 도움이 될 것 같습니다! [KERIS 정보 포털](https://www.keris.or.kr)도 참고해보세요.",
             createdAt: "2026-10-13T10:15:00.000Z"
           },
           {
@@ -3395,15 +3585,16 @@
     }
 
     // ----------------------------------------------------
-    // Orphan Enrollments Cleanup (캘린더-수강매트릭스 완벽 동기화)
+    // Enrollments Integrity Check (품앗이 상호 수강 매트릭스는 다음 달까지 계속 누적·지속)
     // ----------------------------------------------------
     function pruneOrphanEnrollments() {
-      if (!lecturesData || lecturesData.length === 0) {
+      // 품앗이 상호 수강 매트릭스는 매달 새로 쓰는 것이 아니라 다음 달까지 계속 누적·지속되어야 합니다.
+      // 따라서 월이 바뀌거나 특정 월의 강의 목록이 비어 있더라도 수강 신청 내역을 절대 삭제하지 않습니다.
+      if (!Array.isArray(enrollmentsData)) {
         enrollmentsData = [];
         return;
       }
-      const validLectureIds = new Set(lecturesData.map((l) => String(l.id)));
-      enrollmentsData = enrollmentsData.filter((e) => validLectureIds.has(String(e.lectureId)));
+      enrollmentsData = enrollmentsData.filter((e) => e && (e.studentName || e.presenterName));
     }
 
     // ----------------------------------------------------
@@ -3567,15 +3758,51 @@
       return "https://" + trimmed;
     }
 
-    // Helper: Rich text markdown bold formatter (**text** or <b>text</b>)
+    // Helper: Rich text markdown bold formatter (**text** or <b>text</b>) & Clickable Links auto-linker
     function formatRichContent(str) {
       if (!str) return "";
       let safe = escapeHtml(String(str));
-      // Replace **text** or __text__ or <b>text</b> or <strong>text</strong> with highlighted bold tag
+      const links = [];
+
+      // 1. Markdown link syntax: [label text](url)
+      safe = safe.replace(/\[([^\]\n]+)\]\(((?:https?:\/\/|www\.)[^\s\)]+|[^\s\)]+)\)/gi, (match, label, rawUrl) => {
+        const unescapedUrl = rawUrl.replace(/&amp;/g, "&");
+        const normUrl = normalizeUrl(unescapedUrl);
+        const token = `@@AUTOLINK${links.length}TOKEN@@`;
+        links.push(`<a href="${escapeHtml(normUrl)}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 font-semibold text-blue-600 hover:text-blue-800 underline decoration-blue-400 hover:decoration-blue-600 underline-offset-2 break-all transition cursor-pointer" onclick="event.stopPropagation();">${label}<svg class="w-3.5 h-3.5 inline-block shrink-0 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg></a>`);
+        return token;
+      });
+
+      // 2. Standalone raw URLs: https://..., http://..., or www....
+      const urlRegex = /(https?:\/\/[^\s<>"'\(\)]+|www\.[a-zA-Z0-9_\-~]+\.[^\s<>"'\(\)]+)/gi;
+      safe = safe.replace(urlRegex, (match) => {
+        let cleanUrl = match;
+        let trailing = "";
+        const trailingPunctMatch = cleanUrl.match(/([.,;:!?)]|&gt;)+$/);
+        if (trailingPunctMatch) {
+          trailing = trailingPunctMatch[0];
+          cleanUrl = cleanUrl.slice(0, -trailing.length);
+        }
+        const unescapedUrl = cleanUrl.replace(/&amp;/g, "&");
+        const normUrl = normalizeUrl(unescapedUrl);
+        const token = `@@AUTOLINK${links.length}TOKEN@@`;
+        links.push(`<a href="${escapeHtml(normUrl)}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 font-semibold text-blue-600 hover:text-blue-800 underline decoration-blue-400 hover:decoration-blue-600 underline-offset-2 break-all transition cursor-pointer" onclick="event.stopPropagation();">${cleanUrl}<svg class="w-3.5 h-3.5 inline-block shrink-0 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg></a>`);
+        return token + trailing;
+      });
+
+      // 3. Bold tags: **text** or __text__ or <b>text</b> or <strong>text</strong>
+      // Note: @@AUTOLINK...TOKEN@@ contains no underscores or asterisks, so __text__ will never collide!
       safe = safe.replace(/\*\*([\s\S]+?)\*\*/g, '<strong class="font-extrabold text-slate-950 bg-amber-200/60 px-1 py-0.5 rounded shadow-2xs">$1</strong>');
       safe = safe.replace(/__([\s\S]+?)__/g, '<strong class="font-extrabold text-slate-950 bg-amber-200/60 px-1 py-0.5 rounded shadow-2xs">$1</strong>');
       safe = safe.replace(/&lt;b&gt;([\s\S]+?)&lt;\/b&gt;/gi, '<strong class="font-extrabold text-slate-950 bg-amber-200/60 px-1 py-0.5 rounded shadow-2xs">$1</strong>');
       safe = safe.replace(/&lt;strong&gt;([\s\S]+?)&lt;\/strong&gt;/gi, '<strong class="font-extrabold text-slate-950 bg-amber-200/60 px-1 py-0.5 rounded shadow-2xs">$1</strong>');
+
+      // 4. Restore tokens safely using split/join
+      links.forEach((linkHtml, idx) => {
+        const token = `@@AUTOLINK${idx}TOKEN@@`;
+        safe = safe.split(token).join(linkHtml);
+      });
+
       return safe;
     }
 
@@ -5418,7 +5645,7 @@
                 <i data-lucide="trash-2" class="w-3.5 h-3.5 shrink-0"></i>
                 <span class="whitespace-nowrap tracking-tighter sm:tracking-tight break-keep">삭제</span>
               </button>
-              ${lec.url ? `<a href="${escapeHtml(lec.url)}" target="_blank" rel="noopener noreferrer" class="p-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs shrink-0" title="지식샘터 바로가기"><i data-lucide="external-link" class="w-4 h-4"></i></a>` : ''}
+              ${lec.url ? `<a href="${escapeHtml(normalizeUrl(lec.url))}" target="_blank" rel="noopener noreferrer" class="p-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs shrink-0" title="지식샘터 바로가기"><i data-lucide="external-link" class="w-4 h-4"></i></a>` : ''}
             </div>
           </div>
         `;
@@ -5429,12 +5656,84 @@
     }
 
     // ----------------------------------------------------
-    // Mutual Enrollment Matrix Table
+    // Mutual Enrollment Matrix Table (다음 달까지 계속 지속·연계)
     // ----------------------------------------------------
     function renderMatrixView() {
       const thead = document.getElementById("matrixThead");
       const tbody = document.getElementById("matrixTbody");
       if (!thead || !tbody) return;
+
+      // Calculate dynamic month strings and numbers for the 4 tabs
+      const baseMonthStr = todayInfo.monthStr;
+      const prevMonthStr = getPrevMonthStr(baseMonthStr);
+      const thisMonthStr = baseMonthStr;
+      const nextMonthStr = getNextMonthStr(baseMonthStr);
+
+      const prevMonthNum = parseInt(prevMonthStr.split("-")[1], 10);
+      const thisMonthNum = parseInt(thisMonthStr.split("-")[1], 10);
+      const nextMonthNum = parseInt(nextMonthStr.split("-")[1], 10);
+
+      const btnPrevText = document.getElementById("btnMatrixTabPrevMonthText");
+      const btnThisText = document.getElementById("btnMatrixTabThisMonthText");
+      const btnNextText = document.getElementById("btnMatrixTabNextMonthText");
+      if (btnPrevText) btnPrevText.innerText = `지난달 (${prevMonthNum}월)`;
+      if (btnThisText) btnThisText.innerText = `이번달 (${thisMonthNum}월)`;
+      if (btnNextText) btnNextText.innerText = `다음달 (${nextMonthNum}월)`;
+
+      // Determine active target month for filtering
+      let targetMonth = null;
+      let targetMonthLabel = "";
+      if (matrixFilterMode === "prevMonth") {
+        targetMonth = prevMonthStr;
+        targetMonthLabel = `지난달 (${prevMonthNum}월)`;
+      } else if (matrixFilterMode === "thisMonth") {
+        targetMonth = thisMonthStr;
+        targetMonthLabel = `이번달 (${thisMonthNum}월)`;
+      } else if (matrixFilterMode === "nextMonth") {
+        targetMonth = nextMonthStr;
+        targetMonthLabel = `다음달 (${nextMonthNum}월)`;
+      } else if (matrixFilterMode === "month") {
+        targetMonth = currentSelectedMonth || thisMonthStr;
+        const [y, m] = targetMonth.split("-");
+        targetMonthLabel = `${parseInt(m, 10)}월`;
+      }
+
+      // Update Filter Mode Controls in UI
+      const badgeMode = document.getElementById("matrixCurrentModeBadge");
+      if (badgeMode) {
+        if (matrixFilterMode === "cumulative") {
+          badgeMode.className = "text-xs px-2.5 py-0.5 rounded-full font-bold bg-emerald-50 text-emerald-800 border border-emerald-300 flex items-center gap-1 shadow-2xs";
+          badgeMode.innerHTML = `<i data-lucide="repeat" class="w-3.5 h-3.5 text-emerald-600"></i><span>전체 누적 지속 모드 (다음 달까지 계속 연계)</span>`;
+        } else if (matrixFilterMode === "prevMonth") {
+          badgeMode.className = "text-xs px-2.5 py-0.5 rounded-full font-bold bg-slate-100 text-slate-800 border border-slate-300 flex items-center gap-1 shadow-2xs";
+          badgeMode.innerHTML = `<i data-lucide="calendar" class="w-3.5 h-3.5 text-slate-600"></i><span>지난달 (${prevMonthNum}월) 품앗이 이력 조회</span>`;
+        } else if (matrixFilterMode === "thisMonth") {
+          badgeMode.className = "text-xs px-2.5 py-0.5 rounded-full font-bold bg-blue-50 text-blue-800 border border-blue-300 flex items-center gap-1 shadow-2xs";
+          badgeMode.innerHTML = `<i data-lucide="calendar-check" class="w-3.5 h-3.5 text-blue-600"></i><span>이번달 (${thisMonthNum}월) 품앗이 집중 현황</span>`;
+        } else if (matrixFilterMode === "nextMonth") {
+          badgeMode.className = "text-xs px-2.5 py-0.5 rounded-full font-bold bg-amber-50 text-amber-900 border border-amber-300 flex items-center gap-1 shadow-2xs";
+          badgeMode.innerHTML = `<i data-lucide="calendar-plus" class="w-3.5 h-3.5 text-amber-600"></i><span>다음달 (${nextMonthNum}월) 품앗이 사전 현황</span>`;
+        } else {
+          badgeMode.className = "text-xs px-2.5 py-0.5 rounded-full font-bold bg-blue-50 text-blue-800 border border-blue-300 flex items-center gap-1 shadow-2xs";
+          badgeMode.innerHTML = `<i data-lucide="calendar" class="w-3.5 h-3.5 text-blue-600"></i><span>${targetMonthLabel} 집중 보기</span>`;
+        }
+      }
+
+      // Update Tab Styles
+      const tabConfigs = [
+        { id: "btnMatrixTabCumulative", mode: "cumulative" },
+        { id: "btnMatrixTabPrevMonth", mode: "prevMonth" },
+        { id: "btnMatrixTabThisMonth", mode: "thisMonth" },
+        { id: "btnMatrixTabNextMonth", mode: "nextMonth" }
+      ];
+      const activeClass = "px-2.5 py-1.5 rounded-md text-xs font-bold bg-white text-blue-700 shadow-2xs cursor-pointer flex items-center justify-center gap-1 transition border border-blue-100";
+      const inactiveClass = "px-2.5 py-1.5 rounded-md text-xs font-semibold text-slate-600 hover:text-slate-900 cursor-pointer flex items-center justify-center gap-1 transition border border-transparent";
+      tabConfigs.forEach(({ id, mode }) => {
+        const el = document.getElementById(id);
+        if (el) {
+          el.className = (matrixFilterMode === mode) ? activeClass : inactiveClass;
+        }
+      });
 
       // Members to show in the matrix: all admin-registered members, plus any presenters/students
       const allActiveTeachers = new Set(memberList);
@@ -5445,7 +5744,13 @@
         if (e.studentName) allActiveTeachers.add(e.studentName);
         if (e.presenterName) allActiveTeachers.add(e.presenterName);
       });
-      const members = Array.from(allActiveTeachers).filter(Boolean);
+      if (Array.isArray(attendedCoursesData)) {
+        attendedCoursesData.forEach((ac) => {
+          if (ac.studentName) allActiveTeachers.add(ac.studentName);
+          if (ac.presenter) allActiveTeachers.add(ac.presenter);
+        });
+      }
+      const members = Array.from(allActiveTeachers).filter(Boolean).sort();
 
       if (members.length === 0) {
         thead.innerHTML = "";
@@ -5478,23 +5783,66 @@
       `;
 
       // Build lookup map for fast query by presenter->student
-      // STRICT FILTER: Only enrollments for active lectures matching currentSelectedMonth!
+      // Continuous cumulative matrix across all months or filtered by target month
       const validLectureMap = new Map(lecturesData.map((l) => [String(l.id), l]));
-      const monthEnrollments = enrollmentsData.filter((e) => {
-        const lec = validLectureMap.get(String(e.lectureId));
-        if (!lec) return false;
-        const lecMonth = lec.month || (lec.date ? lec.date.substring(0, 7) : null);
-        const enrMonth = e.month || lecMonth;
-        return enrMonth === currentSelectedMonth;
-      });
       const pairEnrollmentsMap = new Map();
-      monthEnrollments.forEach((e) => {
+
+      enrollmentsData.forEach((e) => {
+        if (!e || !e.presenterName || !e.studentName) return;
+        const lec = validLectureMap.get(String(e.lectureId));
+        const enrMonth = e.month || (lec && lec.month) || (lec && lec.date ? lec.date.substring(0, 7) : '') || (e.date ? e.date.substring(0, 7) : '');
+
+        // If target month mode selected, filter by targetMonth
+        if (targetMonth) {
+          if (!enrMonth || enrMonth !== targetMonth) {
+            return;
+          }
+        }
+
         const key = `${e.presenterName}->${e.studentName}`;
         if (!pairEnrollmentsMap.has(key)) {
           pairEnrollmentsMap.set(key, []);
         }
-        pairEnrollmentsMap.get(key).push(e);
+        pairEnrollmentsMap.get(key).push({
+          ...e,
+          lectureTitle: e.lectureTitle || (lec ? lec.title : '(등록된 강의)'),
+          month: enrMonth,
+          date: e.date || (lec ? lec.date : ''),
+          url: lec ? lec.url : ''
+        });
       });
+
+      // Also integrate attended courses (과거/타월 수강 이력도 품앗이에 반영)
+      if (Array.isArray(attendedCoursesData)) {
+        attendedCoursesData.forEach((ac) => {
+          if (!ac || !ac.presenter || !ac.studentName) return;
+          const acMonth = ac.date ? ac.date.substring(0, 7) : '';
+          if (targetMonth) {
+            if (!acMonth || acMonth !== targetMonth) {
+              return;
+            }
+          }
+          const key = `${ac.presenter}->${ac.studentName}`;
+          if (!pairEnrollmentsMap.has(key)) {
+            pairEnrollmentsMap.set(key, []);
+          }
+          const existing = pairEnrollmentsMap.get(key);
+          const already = existing.some((ex) => ex.lectureTitle === ac.title || (ex.date && ex.date === ac.date));
+          if (!already) {
+            existing.push({
+              id: ac.id || `att-${Date.now()}`,
+              lectureId: ac.id,
+              lectureTitle: ac.title,
+              studentName: ac.studentName,
+              presenterName: ac.presenter,
+              status: "completed",
+              month: acMonth,
+              date: ac.date || '',
+              isAttendedCourse: true
+            });
+          }
+        });
+      }
 
       let totalMutualPairs = 0;
 
@@ -5522,25 +5870,33 @@
             const hasCompleted = completedDirect.length > 0;
             const isMutualCompleted = isMutual && completedDirect.length > 0 && completedRev.length > 0;
 
-            const lectureTitles = directEnrs.map((enr) => {
-              const lec = lecturesData.find((l) => l.id === enr.lectureId);
-              const t = lec ? lec.title : "(등록된 강의)";
-              const st = enr.status === 'completed' ? '🎓 이수완료' : '📝 수강신청';
-              return `${t} [${st}]`;
+            // Months set for this pair
+            const directMonths = Array.from(new Set(directEnrs.map((e) => e.month).filter(Boolean))).map((m) => {
+              const part = m.split('-')[1];
+              return part ? `${parseInt(part, 10)}월` : m;
             });
+            const monthTagStr = directMonths.length > 0 ? `[${directMonths.join(",")}] ` : '';
 
-            const primaryTitle = directEnrs.map((enr) => {
-              const lec = lecturesData.find((l) => l.id === enr.lectureId);
-              return lec ? lec.title : "(등록된 강의)";
-            })[0];
+            // Cross-month bridge check
+            const allPairMonths = new Set();
+            directEnrs.forEach((e) => { if (e.month) allPairMonths.add(e.month); });
+            revEnrs.forEach((e) => { if (e.month) allPairMonths.add(e.month); });
+            const isCrossMonthMutual = isMutual && allPairMonths.size > 1;
 
-            const tooltip = `[${student}] 선생님이 신청한 [${presenter}] 강사의 강의:\n` +
-              lectureTitles.map((t, idx) => `${idx + 1}. ${t}`).join("\n") +
+            const primaryEnr = directEnrs[directEnrs.length - 1]; // latest
+            const primaryTitle = primaryEnr ? `${monthTagStr}${primaryEnr.lectureTitle || '(등록된 강의)'}` : "(등록된 강의)";
+
+            const tooltip = `[${student}] 선생님이 신청/이수한 [${presenter}] 강사의 강의 (다음 달까지 누적 지속):\n` +
+              directEnrs.map((enr, idx) => {
+                const m = enr.month ? `[${enr.month}] ` : (enr.date ? `[${enr.date}] ` : '');
+                const st = enr.status === 'completed' ? '🎓 이수완료' : '📝 수강신청';
+                return `${idx + 1}. ${m}${enr.lectureTitle || '(강의)'} (${st})`;
+              }).join("\n") +
               (isMutualCompleted
-                ? `\n\n🤝🎓 상호 맞이수 완료! (${presenter} 님과 서로 이수 완료)`
+                ? `\n\n🤝🎓 상호 맞이수 완료! (${presenter} 님과 서로 이수 완료 - 다음 달까지 계속 보존)`
                 : isMutual
-                ? `\n\n🤝 상호 품앗이 신청 중 (${presenter} 님도 수강 중)`
-                : `\n\n(클릭하여 본인 비밀번호 인증 후 이수완료/수강신청 상태 변경 및 상세 확인)`);
+                ? `\n\n🤝 상호 품앗이 진행 중! (${presenter} 님도 맞수강 중)`
+                : `\n\n💡 상대방(${presenter} 님)이 다음 달에 내 강의를 들으면 상호 품앗이 완성!\n(클릭하여 본인 비밀번호 인증 후 상태 변경/취소/약속)`);
 
             // Distinct badge style depending on completion status
             let badgeStyle = "bg-blue-50 text-blue-800 border-blue-200 hover:bg-blue-100";
@@ -5549,14 +5905,14 @@
 
             if (isMutualCompleted) {
               badgeStyle = "bg-emerald-100 text-emerald-950 border-emerald-400 hover:bg-emerald-200 ring-1 ring-emerald-400/60 shadow-2xs";
-              iconText = "🤝🎓";
-              statusLabel = "맞이수";
+              iconText = isCrossMonthMutual ? "🤝🎓✨" : "🤝🎓";
+              statusLabel = isCrossMonthMutual ? "연계맞이수" : "맞이수";
             } else if (isMutual) {
-              badgeStyle = "bg-emerald-50 text-emerald-800 border-emerald-300 hover:bg-emerald-100";
-              iconText = "🤝";
-              statusLabel = hasCompleted ? `이수${completedDirect.length}` : `${directEnrs.length}건`;
+              badgeStyle = "bg-emerald-50 text-emerald-800 border-emerald-300 hover:bg-emerald-100 ring-1 ring-emerald-300/50";
+              iconText = isCrossMonthMutual ? "🤝🗓️" : "🤝";
+              statusLabel = isCrossMonthMutual ? "다음달연계" : (hasCompleted ? `이수${completedDirect.length}` : `${directEnrs.length}건`);
             } else if (isAllCompleted) {
-              badgeStyle = "bg-emerald-50 text-emerald-900 border-emerald-300 hover:bg-emerald-100 shadow-2xs";
+              badgeStyle = "bg-teal-50 text-teal-900 border-teal-300 hover:bg-teal-100 shadow-2xs";
               iconText = "🎓";
               statusLabel = "이수";
             } else if (hasCompleted) {
@@ -5581,7 +5937,7 @@
           } else {
             return `
               <td class="p-1 border border-slate-200 align-middle">
-                <button type="button" onclick="window.openMatrixDetailModal('${escapeHtml(presenter)}', '${escapeHtml(student)}')" class="w-full min-h-[46px] p-1 rounded-lg text-slate-300 hover:text-blue-600 hover:bg-blue-50 transition cursor-pointer flex items-center justify-center text-xs" title="${escapeHtml(student)} 님은 아직 ${escapeHtml(presenter)} 강사의 강의를 수강하지 않았습니다. (클릭하여 개설 강의 확인)">
+                <button type="button" onclick="window.openMatrixDetailModal('${escapeHtml(presenter)}', '${escapeHtml(student)}')" class="w-full min-h-[46px] p-1 rounded-lg text-slate-300 hover:text-blue-600 hover:bg-blue-50 transition cursor-pointer flex items-center justify-center text-xs" title="${escapeHtml(student)} 님은 아직 ${escapeHtml(presenter)} 강사의 강의를 수강하지 않았습니다. (클릭하여 다음 달 포함 개설 강의 수강 또는 품앗이 약속)">
                   ·
                 </button>
               </td>
@@ -5607,7 +5963,12 @@
       if (kpiMutual) kpiMutual.innerText = totalMutualPairs;
 
       const statsText = document.getElementById("matrixStatsText");
-      if (statsText) statsText.innerText = `총 상호 품앗이 팀: ${totalMutualPairs}쌍`;
+      if (statsText) {
+        const modeLabel = matrixFilterMode === "cumulative"
+          ? "전체 누적 지속 모드 (다음 달까지 계속 연계)"
+          : `${targetMonthLabel || "선택 월"} 기준`;
+        statsText.innerText = `총 상호 품앗이: ${totalMutualPairs}쌍 · 등록 교사: ${members.length}명 (${modeLabel})`;
+      }
       safeRenderIcons();
     }
 
@@ -6009,7 +6370,7 @@
         descEl.innerHTML = `<strong>${escapeHtml(record.studentName)} 선생님</strong>의 수강 기록<br/><span class="text-slate-900 font-bold">"${escapeHtml(record.title)}"</span> (${escapeHtml(record.date)}) 을(를) 삭제하시겠습니까?`;
       }
       const pwInput = document.getElementById("deleteAttendedPasswordInput");
-      if (pwInput) pwInput.value = record.password || "1234";
+      if (pwInput) pwInput.value = "";
       openModal("modalDeleteAttendedRecord");
       if (pwInput) pwInput.focus();
     };
@@ -6231,7 +6592,7 @@
                     <i data-lucide="alert-circle" class="w-4 h-4 text-rose-600"></i>
                     <span>개선 전 시행착오 / 애로사항</span>
                   </p>
-                  <p class="text-sm sm:text-base text-slate-800 leading-relaxed">${formatRichContent(item.beforeIssue)}</p>
+                  <p class="text-sm sm:text-base text-slate-800 leading-relaxed whitespace-pre-line">${formatRichContent(item.beforeIssue)}</p>
                 </div>
               ` : ""}
 
@@ -6251,7 +6612,7 @@
                     <i data-lucide="sparkles" class="w-4 h-4 text-amber-600"></i>
                     <span>동료 강사를 위한 실천 꿀팁</span>
                   </p>
-                  <p class="text-sm sm:text-base text-amber-950 font-bold leading-relaxed">${formatRichContent(item.teacherTip)}</p>
+                  <p class="text-sm sm:text-base text-amber-950 font-bold leading-relaxed whitespace-pre-line">${formatRichContent(item.teacherTip)}</p>
                 </div>
               ` : ""}
             </div>
@@ -6556,8 +6917,8 @@
                     <i data-lucide="alert-circle" class="w-4 h-4 text-amber-600"></i>
                     <span>현장의 페인포인트 (불편·고민)</span>
                   </div>
-                  <p class="text-sm sm:text-base text-slate-800 leading-relaxed font-medium">
-                    "${formatRichContent(item.painPoint)}"
+                  <p class="text-sm sm:text-base text-slate-800 leading-relaxed font-medium whitespace-pre-line">
+                    ${formatRichContent(item.painPoint)}
                   </p>
                 </div>
               ` : ""}
@@ -6588,7 +6949,7 @@
               </div>
 
               <!-- Existing Comments List (Larger font, Bold formatting, Multiline support & Edit feature) -->
-              <div class="space-y-2 max-h-72 sm:max-h-96 overflow-y-auto pr-1">
+              <div class="space-y-2 max-h-60 sm:max-h-72 overflow-y-auto pr-1">
                 ${(item.comments && item.comments.length > 0) ? item.comments.map((cmt) => {
                   const isEditingThis = activeEditingComment && String(activeEditingComment.ideaId) === String(item.id) && String(activeEditingComment.commentId) === String(cmt.id);
 
@@ -6639,7 +7000,7 @@
                           <i data-lucide="edit-3" class="w-3 h-3 shrink-0"></i>
                           <span class="whitespace-nowrap tracking-tighter break-keep">수정</span>
                         </button>
-                        <button type="button" onclick="window.deleteIdeaComment('${escapeHtml(item.id)}', '${escapeHtml(cmt.id)}')" class="inline-flex items-center gap-0.5 px-2 py-1 text-[11px] text-slate-500 hover:text-rose-600 hover:bg-white border border-slate-200/70 rounded-md transition cursor-pointer whitespace-nowrap tracking-tighter break-keep" title="댓글 삭제">
+                        <button type="button" onclick="window.openDeleteIdeaCommentModal('${escapeHtml(item.id)}', '${escapeHtml(cmt.id)}')" class="inline-flex items-center gap-0.5 px-2 py-1 text-[11px] text-slate-500 hover:text-rose-600 hover:bg-white border border-slate-200/70 rounded-md transition cursor-pointer whitespace-nowrap tracking-tighter break-keep" title="댓글 삭제">
                           <i data-lucide="trash-2" class="w-3 h-3 shrink-0"></i>
                           <span class="whitespace-nowrap tracking-tighter break-keep">삭제</span>
                         </button>
@@ -6793,7 +7154,7 @@
         descEl.innerHTML = `<strong>${escapeHtml(record.teacherName)} 강사님</strong>의 피드백<br/><span class="text-slate-900 font-bold">"${escapeHtml(record.title)}"</span> 을(를) 삭제하시겠습니까?`;
       }
       const pwInput = document.getElementById("deleteFeedbackPasswordInput");
-      if (pwInput) pwInput.value = record.password || "1234";
+      if (pwInput) pwInput.value = "";
       openModal("modalDeleteFeedback");
       if (pwInput) pwInput.focus();
     };
@@ -7427,18 +7788,28 @@
       const record = devStatusData.find((d) => String(d.id) === String(activeDeletingDevStatusId));
       if (!record) return;
 
-      const inputPw = document.getElementById("deleteDevPasswordInput")?.value.trim() || "";
+      const pwInput = document.getElementById("deleteDevPasswordInput");
+      const inputPw = pwInput ? pwInput.value.trim() : "";
       const validPw = record.password || "1234";
 
-      if (!isAdminLoggedIn && inputPw !== validPw && inputPw !== "1234") {
-        showToast("비밀번호가 일치하지 않습니다.", "error");
-        return;
+      if (!isAdminLoggedIn) {
+        if (!inputPw) {
+          showToast("삭제를 진행하려면 비밀번호를 입력해주세요.", "error");
+          pwInput?.focus();
+          return;
+        }
+        if (inputPw !== validPw && inputPw !== "1234" && inputPw !== "admin1234") {
+          showToast("비밀번호가 일치하지 않습니다. (기본 비밀번호: 1234)", "error");
+          pwInput?.focus();
+          return;
+        }
       }
 
       expandedDevCardIds.delete(String(record.id));
       await deleteDevStatusFromDb(activeDeletingDevStatusId);
       closeModal("modalDeleteDevStatus");
-      showToast("강의 개발 현황이 삭제되었습니다.");
+      activeDeletingDevStatusId = null;
+      showToast("강의 개발 현황이 성공적으로 삭제되었습니다.", "info");
     };
 
     function updateDatalists() {
@@ -7643,7 +8014,7 @@
         descEl.innerHTML = `<strong>${escapeHtml(selectedLectureForAction.presenter)} 강사님</strong>의 강의<br/><span class="text-slate-900 font-bold">"${escapeHtml(selectedLectureForAction.title)}"</span> (${escapeHtml(selectedLectureForAction.date || "")}) 을(를) 삭제하시겠습니까?`;
       }
       const pwInput = document.getElementById("deletePasswordInput");
-      if (pwInput) pwInput.value = selectedLectureForAction.password || "1234";
+      if (pwInput) pwInput.value = "";
       openModal("modalDelete");
       if (pwInput) pwInput.focus();
     };
@@ -7651,13 +8022,22 @@
     window.confirmDeleteLecture = async function () {
       if (!selectedLectureForAction) return;
 
-      const pw = document.getElementById("deletePasswordInput")?.value.trim() || "";
+      const pwInput = document.getElementById("deletePasswordInput");
+      const pw = pwInput ? pwInput.value.trim() : "";
+
+      if (!pw) {
+        showToast("삭제를 진행하려면 비밀번호를 입력해주세요.", "error");
+        pwInput?.focus();
+        return;
+      }
+
       const targetPw = selectedLectureForAction.password || "1234";
       const isMaster = isAdminLoggedIn || pw === "admin1234";
-      const isOwner = !selectedLectureForAction.password || targetPw === "1234" || pw === targetPw || pw === "1234" || pw === "";
+      const isOwner = pw === targetPw || pw === "1234";
 
       if (!isMaster && !isOwner) {
         showToast("비밀번호가 일치하지 않습니다. (기본 비밀번호: 1234)", "error");
+        pwInput?.focus();
         return;
       }
 
@@ -7783,11 +8163,20 @@
 
       const pwInput = document.getElementById("deleteAttendedPasswordInput");
       const enteredPw = pwInput ? pwInput.value.trim() : "";
+
+      if (!enteredPw) {
+        showToast("삭제를 진행하려면 비밀번호를 입력해주세요.", "error");
+        pwInput?.focus();
+        return;
+      }
+
+      const targetPw = targetRecord.password || "1234";
       const isMaster = isAdminLoggedIn || enteredPw === "admin1234";
-      const isOwner = !targetRecord.password || targetRecord.password === "1234" || enteredPw === (targetRecord.password || "1234") || enteredPw === "1234" || enteredPw === "";
+      const isOwner = enteredPw === targetPw || enteredPw === "1234";
 
       if (!isMaster && !isOwner) {
         showToast("비밀번호가 일치하지 않습니다. (관리자 비밀번호 또는 기본: 1234)", "error");
+        pwInput?.focus();
         return;
       }
 
@@ -7935,11 +8324,20 @@
 
       const pwInput = document.getElementById("deleteFeedbackPasswordInput");
       const enteredPw = pwInput ? pwInput.value.trim() : "";
+
+      if (!enteredPw) {
+        showToast("삭제를 진행하려면 비밀번호를 입력해주세요.", "error");
+        pwInput?.focus();
+        return;
+      }
+
+      const targetPw = targetRecord.password || "1234";
       const isMaster = isAdminLoggedIn || enteredPw === "admin1234";
-      const isOwner = !targetRecord.password || targetRecord.password === "1234" || enteredPw === (targetRecord.password || "1234") || enteredPw === "1234" || enteredPw === "";
+      const isOwner = enteredPw === targetPw || enteredPw === "1234";
 
       if (!isMaster && !isOwner) {
         showToast("비밀번호가 일치하지 않습니다. (기본 비밀번호: 1234)", "error");
+        pwInput?.focus();
         return;
       }
 
@@ -8237,7 +8635,7 @@
         descEl.innerHTML = `<strong>${escapeHtml(record.teacherName)} 선생님</strong>의 강의 아이디어<br/><span class="text-slate-900 font-bold">"${escapeHtml(record.title)}"</span> 을(를) 삭제하시겠습니까?`;
       }
       const pwInput = document.getElementById("deleteIdeaPasswordInput");
-      if (pwInput) pwInput.value = record.password || "1234";
+      if (pwInput) pwInput.value = "";
       openModal("modalDeleteIdea");
       if (pwInput) pwInput.focus();
     };
@@ -8253,11 +8651,20 @@
 
       const pwInput = document.getElementById("deleteIdeaPasswordInput");
       const enteredPw = pwInput ? pwInput.value.trim() : "";
+
+      if (!enteredPw) {
+        showToast("삭제를 진행하려면 비밀번호를 입력해주세요.", "error");
+        pwInput?.focus();
+        return;
+      }
+
+      const targetPw = targetRecord.password || "1234";
       const isMaster = isAdminLoggedIn || enteredPw === "admin1234";
-      const isOwner = !targetRecord.password || targetRecord.password === "1234" || enteredPw === (targetRecord.password || "1234") || enteredPw === "1234" || enteredPw === "";
+      const isOwner = enteredPw === targetPw || enteredPw === "1234";
 
       if (!isMaster && !isOwner) {
         showToast("비밀번호가 일치하지 않습니다. (기본 비밀번호: 1234)", "error");
+        pwInput?.focus();
         return;
       }
 
@@ -8519,9 +8926,51 @@
       }
     };
 
-    window.deleteIdeaComment = async function (ideaId, commentId) {
+    let activeDeletingCommentInfo = null;
+
+    window.openDeleteIdeaCommentModal = function (ideaId, commentId) {
       const idea = ideasData.find((i) => String(i.id) === String(ideaId));
       if (!idea || !Array.isArray(idea.comments)) return;
+      const cmt = idea.comments.find((c) => String(c.id) === String(commentId));
+      if (!cmt) return;
+
+      activeDeletingCommentInfo = { ideaId: String(ideaId), commentId: String(commentId) };
+      const descEl = document.getElementById("deleteCommentTargetDesc");
+      if (descEl) {
+        const shortContent = cmt.content.length > 35 ? cmt.content.substring(0, 35) + "..." : cmt.content;
+        descEl.innerHTML = `<strong>${escapeHtml(cmt.authorName)} 선생님</strong>의 댓글<br/><span class="text-slate-900 font-bold">"${escapeHtml(shortContent)}"</span> 을(를) 삭제하시겠습니까?`;
+      }
+      const pwInput = document.getElementById("deleteCommentPasswordInput");
+      if (pwInput) pwInput.value = "";
+      openModal("modalDeleteIdeaComment");
+      if (pwInput) pwInput.focus();
+    };
+
+    window.confirmDeleteIdeaComment = async function () {
+      if (!activeDeletingCommentInfo) return;
+      const { ideaId, commentId } = activeDeletingCommentInfo;
+      const idea = ideasData.find((i) => String(i.id) === String(ideaId));
+      if (!idea || !Array.isArray(idea.comments)) {
+        closeModal("modalDeleteIdeaComment");
+        return;
+      }
+
+      const pwInput = document.getElementById("deleteCommentPasswordInput");
+      const enteredPw = pwInput ? pwInput.value.trim() : "";
+      if (!enteredPw) {
+        showToast("삭제를 진행하려면 비밀번호를 입력해주세요.", "error");
+        pwInput?.focus();
+        return;
+      }
+
+      const isMaster = isAdminLoggedIn || enteredPw === "admin1234";
+      const isOwner = enteredPw === "1234" || (idea.password && enteredPw === idea.password);
+
+      if (!isMaster && !isOwner) {
+        showToast("비밀번호가 일치하지 않습니다. (기본 비밀번호: 1234)", "error");
+        pwInput?.focus();
+        return;
+      }
 
       if (activeEditingComment && activeEditingComment.commentId === String(commentId)) {
         activeEditingComment = null;
@@ -8529,7 +8978,13 @@
 
       idea.comments = idea.comments.filter((c) => String(c.id) !== String(commentId));
       await saveIdeaToDb(idea);
-      showToast("댓글이 삭제되었습니다.", "info");
+      closeModal("modalDeleteIdeaComment");
+      activeDeletingCommentInfo = null;
+      showToast("댓글이 성공적으로 삭제되었습니다.", "info");
+    };
+
+    window.deleteIdeaComment = function (ideaId, commentId) {
+      window.openDeleteIdeaCommentModal(ideaId, commentId);
     };
 
     window.openEditIdeaComment = function (ideaId, commentId) {
@@ -8667,9 +9122,50 @@
     // ----------------------------------------------------
     // Matrix Detail & Enrollment Cancellation
     // ----------------------------------------------------
-    window.confirmCancelEnrollment = async function (enrId, studentName, fromMatrix = false, presenterName = "", currentStudent = "") {
-      // NOTE: Removed native confirm() dialog because browsers in iframes block it.
+    let activeCancelingEnrollmentInfo = null;
+
+    window.confirmCancelEnrollment = function (enrId, studentName, fromMatrix = false, presenterName = "", currentStudent = "", fromTeacherHistory = false) {
+      activeCancelingEnrollmentInfo = { enrId, studentName, fromMatrix, presenterName, currentStudent, fromTeacherHistory };
+      const enr = enrollmentsData.find((e) => String(e.id) === String(enrId));
+      const lec = enr ? lecturesData.find((l) => l.id === enr.lectureId) : null;
+      const descEl = document.getElementById("cancelEnrollmentTargetDesc");
+      if (descEl) {
+        descEl.innerHTML = `<strong>${escapeHtml(studentName)} 선생님</strong>의 수강 신청<br/><span class="text-slate-900 font-bold">"${escapeHtml(lec ? lec.title : '선택한 강의')}"</span> 을(를) 취소하시겠습니까?`;
+      }
+      const pwInput = document.getElementById("cancelEnrollmentPasswordInput");
+      if (pwInput) pwInput.value = "";
+      openModal("modalCancelEnrollment");
+      if (pwInput) pwInput.focus();
+    };
+
+    window.executeCancelEnrollment = async function () {
+      if (!activeCancelingEnrollmentInfo) return;
+      const { enrId, studentName, fromMatrix, presenterName, currentStudent, fromTeacherHistory } = activeCancelingEnrollmentInfo;
+
+      const pwInput = document.getElementById("cancelEnrollmentPasswordInput");
+      const enteredPw = pwInput ? pwInput.value.trim() : "";
+      if (!enteredPw) {
+        showToast("수강 취소를 진행하려면 비밀번호를 입력해주세요.", "error");
+        pwInput?.focus();
+        return;
+      }
+
+      const enr = enrollmentsData.find((e) => String(e.id) === String(enrId));
+      const lec = enr ? lecturesData.find((l) => l.id === enr.lectureId) : null;
+      const targetPw = (lec && lec.password) ? lec.password : "1234";
+      const isMaster = isAdminLoggedIn || enteredPw === "admin1234";
+      const isOwner = enteredPw === "1234" || enteredPw === targetPw;
+
+      if (!isMaster && !isOwner) {
+        showToast("비밀번호가 일치하지 않습니다. (기본 비밀번호: 1234)", "error");
+        pwInput?.focus();
+        return;
+      }
+
       await deleteEnrollmentFromDb(enrId);
+      closeModal("modalCancelEnrollment");
+      activeCancelingEnrollmentInfo = null;
+      showToast(`${studentName} 선생님의 수강 신청이 취소되었습니다.`, "info");
 
       // Refresh Detail modal if currently open
       const detailModal = document.getElementById("modalDetail");
@@ -8693,11 +9189,15 @@
         }
       }
 
-      // Refresh Teacher History modal if currently open
-      const historyModal = document.getElementById("modalTeacherHistory");
-      if (historyModal && !historyModal.classList.contains("hidden")) {
-        if (window.currentHistoryTeacher) {
-          window.openTeacherHistoryModal(window.currentHistoryTeacher);
+      // Refresh Teacher History modal if open
+      if (fromTeacherHistory) {
+        window.openTeacherHistoryModal(studentName);
+      } else {
+        const historyModal = document.getElementById("modalTeacherHistory");
+        if (historyModal && !historyModal.classList.contains("hidden")) {
+          if (window.currentHistoryTeacher) {
+            window.openTeacherHistoryModal(window.currentHistoryTeacher);
+          }
         }
       }
     };
@@ -8779,79 +9279,150 @@
       if (!modal) return;
 
       const validLectureMap = new Map(lecturesData.map((l) => [String(l.id), l]));
-      const directEnrs = enrollmentsData.filter((e) => {
-        const lec = validLectureMap.get(String(e.lectureId));
-        if (!lec) return false;
-        const lecMonth = lec.month || (lec.date ? lec.date.substring(0, 7) : null);
-        const enrMonth = e.month || lecMonth;
-        return e.presenterName === presenter && e.studentName === student && enrMonth === currentSelectedMonth;
-      });
 
-      const revEnrs = enrollmentsData.filter((e) => {
-        const lec = validLectureMap.get(String(e.lectureId));
-        if (!lec) return false;
-        const lecMonth = lec.month || (lec.date ? lec.date.substring(0, 7) : null);
-        const enrMonth = e.month || lecMonth;
-        return e.presenterName === student && e.studentName === presenter && enrMonth === currentSelectedMonth;
-      });
+      // 1. Collect Direct Enrollments (Student took Presenter's lecture)
+      const directEnrs = [
+        ...enrollmentsData
+          .filter((e) => e && e.presenterName === presenter && e.studentName === student)
+          .map((e) => {
+            const lec = validLectureMap.get(String(e.lectureId));
+            return {
+              ...e,
+              lectureTitle: e.lectureTitle || (lec ? lec.title : '(등록된 강의)'),
+              month: e.month || (lec && lec.month) || (lec && lec.date ? lec.date.substring(0, 7) : '') || (e.date ? e.date.substring(0, 7) : ''),
+              date: e.date || (lec ? lec.date : ''),
+              url: lec ? lec.url : ''
+            };
+          }),
+        ...(Array.isArray(attendedCoursesData)
+          ? attendedCoursesData
+              .filter((ac) => ac && ac.presenter === presenter && ac.studentName === student)
+              .map((ac) => ({
+                id: ac.id || `att-${Date.now()}`,
+                lectureId: ac.id,
+                lectureTitle: ac.title,
+                studentName: ac.studentName,
+                presenterName: ac.presenter,
+                status: 'completed',
+                date: ac.date || '',
+                month: ac.date ? ac.date.substring(0, 7) : '',
+                isAttendedCourse: true
+              }))
+          : [])
+      ];
+
+      // 2. Collect Reverse Enrollments (Presenter took Student's lecture)
+      const revEnrs = [
+        ...enrollmentsData
+          .filter((e) => e && e.presenterName === student && e.studentName === presenter)
+          .map((e) => {
+            const lec = validLectureMap.get(String(e.lectureId));
+            return {
+              ...e,
+              lectureTitle: e.lectureTitle || (lec ? lec.title : '(등록된 강의)'),
+              month: e.month || (lec && lec.month) || (lec && lec.date ? lec.date.substring(0, 7) : '') || (e.date ? e.date.substring(0, 7) : ''),
+              date: e.date || (lec ? lec.date : ''),
+              url: lec ? lec.url : ''
+            };
+          }),
+        ...(Array.isArray(attendedCoursesData)
+          ? attendedCoursesData
+              .filter((ac) => ac && ac.presenter === student && ac.studentName === presenter)
+              .map((ac) => ({
+                id: ac.id || `att-${Date.now()}`,
+                lectureId: ac.id,
+                lectureTitle: ac.title,
+                studentName: ac.studentName,
+                presenterName: ac.presenter,
+                status: 'completed',
+                date: ac.date || '',
+                month: ac.date ? ac.date.substring(0, 7) : '',
+                isAttendedCourse: true
+              }))
+          : [])
+      ];
 
       const isMutual = directEnrs.length > 0 && revEnrs.length > 0;
+      const completedDirect = directEnrs.filter((e) => e.status === "completed");
+      const completedRev = revEnrs.filter((e) => e.status === "completed");
+      const isMutualCompleted = isMutual && completedDirect.length > 0 && completedRev.length > 0;
 
       // Status Badge
       const statusBadge = document.getElementById("matrixDetailStatusBadge");
       const titleEl = document.getElementById("matrixDetailTitle");
-      if (isMutual) {
+      if (isMutualCompleted) {
+        statusBadge.className = "text-xs px-2.5 py-0.5 rounded-full font-bold bg-emerald-100 text-emerald-950 border border-emerald-400";
+        statusBadge.innerHTML = "🤝🎓 상호 품앗이 맞이수 완성 (다음 달까지 영구 보존)";
+      } else if (isMutual) {
         statusBadge.className = "text-xs px-2.5 py-0.5 rounded-full font-bold bg-emerald-50 text-emerald-700 border border-emerald-300";
-        statusBadge.innerHTML = "🤝 상호 품앗이 수강 완성";
+        statusBadge.innerHTML = "🤝 상호 품앗이 수강 완성 (지속 유지 중)";
       } else if (directEnrs.length > 0) {
         statusBadge.className = "text-xs px-2.5 py-0.5 rounded-full font-bold bg-blue-50 text-blue-700 border border-blue-200";
-        statusBadge.innerHTML = "단방향 수강 신청";
+        statusBadge.innerHTML = "📝 단방향 신청 (상대방의 다음 달 맞수강 대기)";
       } else {
         statusBadge.className = "text-xs px-2.5 py-0.5 rounded-full font-bold bg-slate-100 text-slate-600 border border-slate-200";
         statusBadge.innerHTML = "미수강 상태";
       }
 
-      titleEl.innerText = `${student} 선생님 → ${presenter} 강사님 수강 현황`;
+      titleEl.innerText = `${student} 선생님 ↔ ${presenter} 강사님 상호 수강 현황`;
+
+      // Next month string for commit buttons
+      const nextMonthStr = getNextMonthStr(currentSelectedMonth);
+      const [nmY, nmM] = nextMonthStr.split('-');
+      const nextMonthLabel = `${nmY}년 ${parseInt(nmM, 10)}월`;
 
       // Direct List (student took presenter's lecture)
-      document.getElementById("matrixDirectHeading").innerText = `${student} 님이 수강 중인 ${presenter} 강사님의 강의`;
+      document.getElementById("matrixDirectHeading").innerText = `${student} 님이 수강 중인 ${presenter} 강사님의 강의 (다음 달까지 누적 지속)`;
       document.getElementById("matrixDirectCount").innerText = `${directEnrs.length}건`;
 
       const directListEl = document.getElementById("matrixDirectList");
       if (directEnrs.length === 0) {
-        const presenterLecs = lecturesData.filter((l) => l.presenter === presenter && (l.month === currentSelectedMonth || (l.date && l.date.startsWith(currentSelectedMonth))));
-        if (presenterLecs.length === 0) {
-          directListEl.innerHTML = `
+        // Show presenter's lectures across all months so student can enroll
+        const presenterLecs = lecturesData.filter((l) => l.presenter === presenter);
+        directListEl.innerHTML = `
+          <div class="p-3 bg-amber-50/80 border border-amber-200 rounded-xl text-xs text-amber-900 mb-2">
+            💡 <strong>상호 수강 지속 안내</strong>: 품앗이는 매달 새로 쓰는 것이 아니라 다음 달까지 계속 누적됩니다.
+            아래 ${escapeHtml(presenter)} 강사님의 개설 강좌(다음 달 포함)를 신청하거나 [다음 달 품앗이 약속]을 등록해보세요!
+          </div>
+          <div class="mb-3 flex items-center justify-between p-3 bg-indigo-50 border border-indigo-200 rounded-xl">
+            <div>
+              <p class="text-xs font-bold text-indigo-950">🤝 ${nextMonthLabel}(다음 달) 맞수강 품앗이 약속</p>
+              <p class="text-[11px] text-indigo-700 mt-0.5">다음 달 강좌가 아직 열리지 않았어도 상호 품앗이 약속을 미리 등록할 수 있습니다.</p>
+            </div>
+            <button type="button" onclick="window.promiseMutualForNextMonth('${escapeHtml(presenter)}', '${escapeHtml(student)}')" class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-bold shrink-0 transition cursor-pointer shadow-xs">
+              약속 등록
+            </button>
+          </div>
+          ${presenterLecs.length === 0 ? `
             <div class="p-4 text-xs text-slate-500 bg-slate-50 border border-slate-200 rounded-xl text-center">
-              <p class="font-medium text-slate-700">선택된 달에 ${escapeHtml(presenter)} 강사님이 개설한 강의가 없습니다.</p>
+              <p class="font-medium text-slate-700">${escapeHtml(presenter)} 강사님이 개설한 강의가 없습니다.</p>
               <button type="button" onclick="window.openRegisterForPresenter('${escapeHtml(presenter)}')" class="mt-2.5 inline-flex items-center gap-1 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold transition cursor-pointer shadow-2xs">
                 <i data-lucide="plus-circle" class="w-3.5 h-3.5"></i>
                 <span>${escapeHtml(presenter)} 강사로 강의 개설하기</span>
               </button>
             </div>
-          `;
-          safeRenderIcons();
-        } else {
-          directListEl.innerHTML = `
-            <div class="p-3 bg-amber-50/70 border border-amber-200 rounded-xl text-xs text-amber-900 mb-2">
-              아직 수강 신청 내역이 없습니다. 아래 ${escapeHtml(presenter)} 강사님의 개설 강좌를 수강하고 품앗이를 완성해보세요!
-            </div>
-            ${presenterLecs.map((lec) => `
-              <div class="p-3 bg-white border border-slate-200 rounded-xl shadow-2xs flex items-center justify-between gap-2">
+          ` : presenterLecs.map((lec) => {
+            const monthLabel = lec.month || (lec.date ? lec.date.substring(0, 7) : '');
+            return `
+              <div class="p-3 bg-white border border-slate-200 rounded-xl shadow-2xs flex items-center justify-between gap-2 mb-2">
                 <div class="flex-1 min-w-0">
-                  <div class="text-xs font-bold text-slate-900 truncate">${escapeHtml(lec.title)}</div>
-                  <div class="text-[11px] text-slate-500 mt-0.5">${escapeHtml(lec.date)} (${escapeHtml(lec.time)}) · 정원 ${lec.currentCount || 0}/${lec.maxCount || 10}</div>
+                  <div class="flex items-center gap-1.5 mb-0.5 flex-wrap">
+                    ${monthLabel ? `<span class="text-[10px] px-1.5 py-0.5 bg-indigo-50 text-indigo-700 font-bold rounded border border-indigo-200">${escapeHtml(monthLabel)}</span>` : ''}
+                    <div class="text-xs font-bold text-slate-900 truncate">${escapeHtml(lec.title)}</div>
+                  </div>
+                  <div class="text-[11px] text-slate-500 mt-0.5">${escapeHtml(lec.date || '')} (${escapeHtml(lec.time || '')}) · 정원 ${lec.currentCount || 0}/${lec.maxCount || 10}</div>
                 </div>
                 <button type="button" onclick="window.quickEnrollFromMatrix('${escapeHtml(lec.id)}', '${escapeHtml(student)}', '${escapeHtml(presenter)}')" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold shrink-0 transition cursor-pointer">
                   수강 신청
                 </button>
               </div>
-            `).join("")}
-          `;
-        }
+            `;
+          }).join("")}
+        `;
+        safeRenderIcons();
       } else {
         directListEl.innerHTML = directEnrs.map((enr) => {
-          const lec = lecturesData.find((l) => l.id === enr.lectureId);
+          const lec = validLectureMap.get(String(enr.lectureId));
           const isCompleted = enr.status === "completed";
           const statusBadge = isCompleted
             ? `<span class="px-2 py-0.5 bg-emerald-100 text-emerald-800 font-bold text-[10px] rounded-md border border-emerald-300 flex items-center gap-1 shrink-0">🎓 이수완료</span>`
@@ -8867,16 +9438,22 @@
                 <span>🎓 이수 완료</span>
               </button>`;
 
+          const monthTag = enr.month || (lec && (lec.month || (lec.date ? lec.date.substring(0, 7) : '')));
+          const urlStr = enr.url || (lec ? lec.url : '');
+          const isCommit = enr.isCommitment;
+
           return `
             <div class="p-3 bg-white border border-slate-200 rounded-xl shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
               <div class="flex-1 min-w-0">
                 <div class="flex items-center gap-1.5 mb-1 flex-wrap">
                   ${statusBadge}
-                  <span class="text-xs font-bold text-slate-900 truncate" title="${escapeHtml(lec ? lec.title : '(등록된 강의)')}">${escapeHtml(lec ? lec.title : "(등록된 강의)")}</span>
+                  ${monthTag ? `<span class="text-[10px] px-1.5 py-0.5 rounded font-bold bg-slate-100 text-slate-700 border border-slate-200">${escapeHtml(monthTag)}</span>` : ''}
+                  ${isCommit ? `<span class="text-[10px] px-1.5 py-0.5 rounded font-bold bg-purple-50 text-purple-700 border border-purple-200">🤝 약속</span>` : ''}
+                  <span class="text-xs font-bold text-slate-900 truncate" title="${escapeHtml(enr.lectureTitle || '(등록된 강의)')}">${escapeHtml(enr.lectureTitle || "(등록된 강의)")}</span>
                 </div>
                 <p class="text-xs text-slate-500 flex items-center gap-2">
-                  <span>${escapeHtml(lec ? lec.date : "")} ${escapeHtml(lec ? lec.time : "")}</span>
-                  ${lec && lec.url ? `<a href="${escapeHtml(lec.url)}" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline flex items-center gap-0.5 text-[11px]">지식샘터 바로가기 <i data-lucide="external-link" class="w-3 h-3"></i></a>` : ""}
+                  <span>${escapeHtml(enr.date || (lec ? lec.date : ''))}</span>
+                  ${urlStr ? `<a href="${escapeHtml(normalizeUrl(urlStr))}" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline flex items-center gap-0.5 text-[11px]">지식샘터 바로가기 <i data-lucide="external-link" class="w-3 h-3"></i></a>` : ""}
                 </p>
               </div>
               <div class="flex items-center gap-2 shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-100">
@@ -8895,12 +9472,12 @@
       const mutualSec = document.getElementById("matrixMutualSection");
       if (isMutual) {
         mutualSec.classList.remove("hidden");
-        document.getElementById("matrixMutualHeading").innerText = `🤝 ${presenter} 님이 맞수강 중인 ${student} 강사님의 강의`;
+        document.getElementById("matrixMutualHeading").innerText = `🤝 ${presenter} 님이 맞수강 중인 ${student} 강사님의 강의 (다음 달까지 누적 지속)`;
         document.getElementById("matrixMutualCount").innerText = `${revEnrs.length}건`;
 
         const mutualListEl = document.getElementById("matrixMutualList");
         mutualListEl.innerHTML = revEnrs.map((enr) => {
-          const lec = lecturesData.find((l) => l.id === enr.lectureId);
+          const lec = validLectureMap.get(String(enr.lectureId));
           const isRevCompleted = enr.status === "completed";
           const revStatusBadge = isRevCompleted
             ? `<span class="px-2 py-0.5 bg-emerald-200 text-emerald-950 font-bold text-[10px] rounded-md border border-emerald-400 flex items-center gap-1 shrink-0">🎓 맞이수 완료</span>`
@@ -8916,16 +9493,22 @@
                 <span>🎓 이수 완료</span>
               </button>`;
 
+          const revMonthTag = enr.month || (lec && (lec.month || (lec.date ? lec.date.substring(0, 7) : '')));
+          const urlStr = enr.url || (lec ? lec.url : '');
+          const isCommit = enr.isCommitment;
+
           return `
             <div class="p-3 bg-emerald-50/50 border border-emerald-200 rounded-xl shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
               <div class="flex-1 min-w-0">
                 <div class="flex items-center gap-1.5 mb-1 flex-wrap">
                   ${revStatusBadge}
-                  <span class="text-xs font-bold text-slate-900 truncate" title="${escapeHtml(lec ? lec.title : '(등록된 강의)')}">${escapeHtml(lec ? lec.title : "(등록된 강의)")}</span>
+                  ${revMonthTag ? `<span class="text-[10px] px-1.5 py-0.5 rounded font-bold bg-emerald-100/70 text-emerald-900 border border-emerald-300">${escapeHtml(revMonthTag)}</span>` : ''}
+                  ${isCommit ? `<span class="text-[10px] px-1.5 py-0.5 rounded font-bold bg-purple-50 text-purple-700 border border-purple-200">🤝 약속</span>` : ''}
+                  <span class="text-xs font-bold text-slate-900 truncate" title="${escapeHtml(enr.lectureTitle || '(등록된 강의)')}">${escapeHtml(enr.lectureTitle || "(등록된 강의)")}</span>
                 </div>
                 <p class="text-xs text-slate-500 flex items-center gap-2">
-                  <span>${escapeHtml(lec ? lec.date : "")} ${escapeHtml(lec ? lec.time : "")}</span>
-                  ${lec && lec.url ? `<a href="${escapeHtml(lec.url)}" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline flex items-center gap-0.5 text-[11px]">지식샘터 바로가기 <i data-lucide="external-link" class="w-3 h-3"></i></a>` : ""}
+                  <span>${escapeHtml(enr.date || (lec ? lec.date : ''))}</span>
+                  ${urlStr ? `<a href="${escapeHtml(normalizeUrl(urlStr))}" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline flex items-center gap-0.5 text-[11px]">지식샘터 바로가기 <i data-lucide="external-link" class="w-3 h-3"></i></a>` : ""}
                 </p>
               </div>
               <div class="flex items-center gap-2 shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-emerald-100">
@@ -8938,6 +9521,42 @@
             </div>
           `;
         }).join("");
+      } else if (directEnrs.length > 0) {
+        // One-way: Show prompt to complete mutual exchange next month
+        mutualSec.classList.remove("hidden");
+        document.getElementById("matrixMutualHeading").innerText = `🤝 상대방(${presenter} 님)의 맞수강 대기 중`;
+        document.getElementById("matrixMutualCount").innerText = `0건`;
+        const mutualListEl = document.getElementById("matrixMutualList");
+        
+        const studentLecs = lecturesData.filter((l) => l.presenter === student);
+        mutualListEl.innerHTML = `
+          <div class="p-3.5 bg-blue-50/70 border border-blue-200 rounded-xl space-y-2.5">
+            <p class="text-xs text-blue-900 leading-relaxed font-medium">
+              💡 <strong>${student}</strong> 선생님이 수강 신청/이수했습니다. 
+              <strong>${presenter}</strong> 선생님이 ${student} 강사님의 강의(다음 달 포함)를 수강하면 🤝 상호 품앗이가 완성됩니다!
+            </p>
+            <div class="flex flex-wrap items-center gap-2 pt-1">
+              <button type="button" onclick="window.promiseMutualForNextMonth('${escapeHtml(student)}', '${escapeHtml(presenter)}')" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold transition flex items-center gap-1 cursor-pointer shadow-xs">
+                <i data-lucide="repeat" class="w-3.5 h-3.5"></i>
+                <span>🤝 ${nextMonthLabel}(다음 달) 맞수강 품앗이 약속 등록</span>
+              </button>
+            </div>
+            ${studentLecs.length > 0 ? `
+              <div class="mt-2 space-y-1.5">
+                <p class="text-[11px] font-bold text-slate-700">현재 개설된 ${student} 강사님의 강좌:</p>
+                ${studentLecs.map((lec) => `
+                  <div class="p-2 bg-white rounded-lg border border-slate-200 flex items-center justify-between gap-2 text-xs">
+                    <span class="truncate font-semibold text-slate-800">[${escapeHtml(lec.month || (lec.date ? lec.date.substring(0, 7) : ''))}] ${escapeHtml(lec.title)}</span>
+                    <button type="button" onclick="window.quickEnrollFromMatrix('${escapeHtml(lec.id)}', '${escapeHtml(presenter)}', '${escapeHtml(student)}')" class="px-2.5 py-1 bg-blue-600 text-white rounded text-[11px] font-bold shrink-0 hover:bg-blue-700 transition cursor-pointer">
+                      수강 신청
+                    </button>
+                  </div>
+                `).join("")}
+              </div>
+            ` : ''}
+          </div>
+        `;
+        safeRenderIcons();
       } else {
         mutualSec.classList.add("hidden");
       }
@@ -8958,16 +9577,25 @@
     };
 
     window.quickEnrollFromMatrix = async function (lectureId, studentName, presenterName) {
-      const lec = lecturesData.find((l) => l.id === lectureId);
+      const lec = lecturesData.find((l) => String(l.id) === String(lectureId));
       if (!lec) return;
 
       const newEnr = {
         id: `enr-${Date.now()}`,
         lectureId: lec.id,
+        lectureTitle: lec.title || "",
         studentName,
         presenterName: lec.presenter,
-        month: lec.month || currentSelectedMonth
+        date: lec.date || "",
+        month: lec.month || (lec.date ? lec.date.substring(0, 7) : currentSelectedMonth),
+        status: "applied",
+        createdAt: new Date().toISOString()
       };
+
+      if (!memberList.includes(studentName)) {
+        memberList.push(studentName);
+        await saveMembersToDb(memberList);
+      }
 
       await addEnrollmentToDb(newEnr);
 
@@ -8976,6 +9604,42 @@
       }
       showToast(`${studentName} 선생님의 수강 신청이 완료되었습니다!`);
       window.openMatrixDetailModal(presenterName, studentName);
+    };
+
+    window.promiseMutualForNextMonth = async function (presenter, student) {
+      const nextMonthStr = getNextMonthStr(currentSelectedMonth);
+      const [y, m] = nextMonthStr.split('-');
+      const label = `${y}년 ${parseInt(m, 10)}월`;
+
+      const newEnr = {
+        id: `promise-${Date.now()}`,
+        lectureId: `commitment-${Date.now()}`,
+        lectureTitle: `[${label} 다음달 맞수강 품앗이 약속]`,
+        studentName: student,
+        presenterName: presenter,
+        date: `${nextMonthStr}-01`,
+        month: nextMonthStr,
+        status: "applied",
+        isCommitment: true,
+        createdAt: new Date().toISOString()
+      };
+
+      if (!memberList.includes(student)) {
+        memberList.push(student);
+        await saveMembersToDb(memberList);
+      }
+      if (!memberList.includes(presenter)) {
+        memberList.push(presenter);
+        await saveMembersToDb(memberList);
+      }
+
+      await addEnrollmentToDb(newEnr);
+
+      if (typeof confetti === "function") {
+        confetti({ particleCount: 45, spread: 60, origin: { y: 0.7 } });
+      }
+      showToast(`🤝 ${student} 님과 ${presenter} 강사님의 ${label}(다음 달) 상호 품앗이 약속이 등록되었습니다!`);
+      window.openMatrixDetailModal(presenter, student);
     };
 
     window.openChangeStatusModal = function (enrId, studentName, presenterName, targetStatus, fromHistory = false) {
@@ -9283,7 +9947,7 @@
                           <div class="text-[11px] text-slate-500 flex flex-wrap items-center gap-2">
                             ${lecDate ? `<span>📅 ${escapeHtml(lecDate)}</span>` : ''}
                             ${lecMonth ? `<span class="text-slate-400">(${escapeHtml(lecMonth)} 개설)</span>` : ''}
-                            ${lec && lec.url ? `<a href="${escapeHtml(lec.url)}" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline inline-flex items-center gap-0.5 font-medium">지식샘터 강좌 링크 <i data-lucide="external-link" class="w-3 h-3"></i></a>` : ''}
+                            ${lec && lec.url ? `<a href="${escapeHtml(normalizeUrl(lec.url))}" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline inline-flex items-center gap-0.5 font-medium">지식샘터 강좌 링크 <i data-lucide="external-link" class="w-3 h-3"></i></a>` : ''}
                           </div>
                         </div>
                         <div class="flex items-center gap-2 shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-100 flex-wrap">
@@ -9375,10 +10039,8 @@
       safeRenderIcons();
     };
 
-    window.cancelFromHistoryModal = async function (enrId, studentName, presenterName) {
-      await deleteEnrollmentFromDb(enrId);
-      showToast(`${studentName} 선생님의 수강 신청이 취소되었습니다.`, "info");
-      window.openTeacherHistoryModal(studentName);
+    window.cancelFromHistoryModal = function (enrId, studentName, presenterName) {
+      window.confirmCancelEnrollment(enrId, studentName, false, presenterName, studentName, true);
     };
 
     window.navigateToAttendedTabWithTeacher = function (teacherName) {
@@ -9415,34 +10077,38 @@
     // Event Listeners Setup
     // ----------------------------------------------------
     function setupEventListeners() {
-      // 1. Navigation Tabs (순서: 이번주 공지사항 - 강의 캘린더 - 아이디어 수집 - 강의 개발 현황 - 피드백 및 개선방향)
+      // 1. Navigation Tabs (순서: 이번주 공지사항 - 강의 캘린더 - 품앗이 수강 매트릭스 - 아이디어 수집 - 강의 개발 현황 - 피드백 및 개선방향)
       const tabNotice = document.getElementById("tabBtnNotice");
       const tabCalendar = document.getElementById("tabBtnCalendar");
+      const tabMatrix = document.getElementById("tabBtnMatrix");
       const tabIdea = document.getElementById("tabBtnIdea");
       const tabDevStatus = document.getElementById("tabBtnDevStatus");
       const tabFeedback = document.getElementById("tabBtnFeedback");
 
       const secNotice = document.getElementById("tabContentNotice");
       const secCalendar = document.getElementById("tabContentCalendar");
+      const secMatrix = document.getElementById("tabContentMatrix");
       const secIdea = document.getElementById("tabContentIdea");
       const secDevStatus = document.getElementById("tabContentDevStatus");
       const secFeedback = document.getElementById("tabContentFeedback");
 
       function switchTab(activeTab, activeSec) {
-        [tabNotice, tabCalendar, tabIdea, tabDevStatus, tabFeedback].forEach((t) => {
+        [tabNotice, tabCalendar, tabMatrix, tabIdea, tabDevStatus, tabFeedback].forEach((t) => {
           if (t) t.className = "flex items-center gap-2 py-2.5 px-4 text-xs sm:text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-800 transition cursor-pointer shrink-0";
         });
         if (activeTab) {
           activeTab.className = "flex items-center gap-2 py-2.5 px-4 text-xs sm:text-sm font-semibold border-b-2 border-indigo-600 text-indigo-600 transition cursor-pointer shrink-0";
         }
 
-        [secNotice, secCalendar, secIdea, secDevStatus, secFeedback].forEach((s) => s?.classList.add("hidden"));
+        [secNotice, secCalendar, secMatrix, secIdea, secDevStatus, secFeedback].forEach((s) => s?.classList.add("hidden"));
         activeSec?.classList.remove("hidden");
 
         if (activeSec === secNotice) {
           renderNoticeView();
         } else if (activeSec === secCalendar && calendarInstance) {
           setTimeout(() => calendarInstance.render(), 100);
+        } else if (activeSec === secMatrix) {
+          renderMatrixView();
         } else if (activeSec === secIdea) {
           updateIdeaTeacherDropdown();
           renderIdeaView();
@@ -9465,6 +10131,11 @@
         window.scrollTo({ top: 0, behavior: "smooth" });
       });
 
+      tabMatrix?.addEventListener("click", () => {
+        switchTab(tabMatrix, secMatrix);
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      });
+
       tabIdea?.addEventListener("click", () => {
         switchTab(tabIdea, secIdea);
         window.scrollTo({ top: 0, behavior: "smooth" });
@@ -9481,11 +10152,55 @@
       });
 
       document.getElementById("btnScrollToMatrix")?.addEventListener("click", () => {
-        switchTab(tabCalendar, secCalendar);
-        setTimeout(() => {
-          document.getElementById("matrixSection")?.scrollIntoView({ behavior: "smooth", block: "start" });
-        }, 80);
+        switchTab(tabMatrix, secMatrix);
+        window.scrollTo({ top: 0, behavior: "smooth" });
       });
+
+      document.getElementById("btnGoToMatrixFromCalendar")?.addEventListener("click", () => {
+        switchTab(tabMatrix, secMatrix);
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      });
+
+      // Filter Mode Tabs in Matrix (전체 누적 지속, 지난달, 이번달, 다음달)
+      document.getElementById("btnMatrixTabCumulative")?.addEventListener("click", () => {
+        matrixFilterMode = "cumulative";
+        renderMatrixView();
+        showToast("전체 누적 지속 매트릭스(다음 달까지 계속 연계) 모드로 전환되었습니다.", "info");
+      });
+
+      document.getElementById("btnMatrixTabPrevMonth")?.addEventListener("click", () => {
+        matrixFilterMode = "prevMonth";
+        renderMatrixView();
+        const prevM = getPrevMonthStr(todayInfo.monthStr);
+        const mNum = parseInt(prevM.split("-")[1], 10);
+        showToast(`지난달 (${mNum}월) 품앗이 이력 조회 모드로 전환되었습니다.`, "info");
+      });
+
+      document.getElementById("btnMatrixTabThisMonth")?.addEventListener("click", () => {
+        matrixFilterMode = "thisMonth";
+        renderMatrixView();
+        const mNum = parseInt(todayInfo.monthStr.split("-")[1], 10);
+        showToast(`이번달 (${mNum}월) 품앗이 집중 현황 모드로 전환되었습니다.`, "info");
+      });
+
+      document.getElementById("btnMatrixTabNextMonth")?.addEventListener("click", () => {
+        matrixFilterMode = "nextMonth";
+        renderMatrixView();
+        const nextM = getNextMonthStr(todayInfo.monthStr);
+        const mNum = parseInt(nextM.split("-")[1], 10);
+        showToast(`다음달 (${mNum}월) 품앗이 사전 현황 모드로 전환되었습니다.`, "info");
+      });
+
+      // Clicking KPI Mutual Pairs box jumps to Matrix
+      const kpiCard = document.getElementById("kpiMutualPairs")?.closest(".bg-white");
+      if (kpiCard) {
+        kpiCard.classList.add("cursor-pointer", "hover:border-blue-400", "transition");
+        kpiCard.title = "클릭하여 품앗이 상호 수강 매트릭스로 이동";
+        kpiCard.addEventListener("click", () => {
+          switchTab(tabMatrix, secMatrix);
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        });
+      }
 
       document.getElementById("btnBannerViewNotice")?.addEventListener("click", () => {
         switchTab(tabNotice, secNotice);
@@ -9750,34 +10465,11 @@
 
       // 8. Delete Lecture Modal & Action
       document.getElementById("btnOpenDeleteModal")?.addEventListener("click", () => {
-        if (!selectedLectureForAction) return;
-        closeModal("modalDetail");
-        const descEl = document.getElementById("deleteLectureTargetDesc");
-        if (descEl) {
-          descEl.innerHTML = `<strong>${escapeHtml(selectedLectureForAction.presenter)} 강사님</strong>의 강의<br/><span class="text-slate-900 font-bold">"${escapeHtml(selectedLectureForAction.title)}"</span> (${escapeHtml(selectedLectureForAction.date || "")}) 을(를) 삭제하시겠습니까?`;
-        }
-        const pwInput = document.getElementById("deletePasswordInput");
-        if (pwInput) pwInput.value = selectedLectureForAction.password || "1234";
-        openModal("modalDelete");
-        if (pwInput) pwInput.focus();
+        window.openDeleteModal();
       });
 
       document.getElementById("btnConfirmDeleteLecture")?.addEventListener("click", async () => {
-        if (!selectedLectureForAction) return;
-
-        const pw = document.getElementById("deletePasswordInput").value.trim();
-        const targetPw = selectedLectureForAction.password || "1234";
-        const isMaster = isAdminLoggedIn || pw === "admin1234";
-        const isOwner = !selectedLectureForAction.password || targetPw === "1234" || pw === targetPw || pw === "1234" || pw === "";
-
-        if (!isMaster && !isOwner) {
-          showToast("비밀번호가 일치하지 않습니다. (기본 비밀번호: 1234)", "error");
-          return;
-        }
-
-        await deleteLectureFromDb(selectedLectureForAction.id);
-        closeModal("modalDelete");
-        showToast("강의가 성공적으로 삭제되었습니다.", "info");
+        await window.confirmDeleteLecture();
       });
 
       document.getElementById("deletePasswordInput")?.addEventListener("keydown", (e) => {
@@ -10250,28 +10942,7 @@
 
       // Confirm Delete Attended Course Record
       document.getElementById("btnConfirmDeleteAttended")?.addEventListener("click", async () => {
-        if (!activeDeletingAttendedId) return;
-
-        const targetRecord = attendedCoursesData.find((r) => String(r.id) === String(activeDeletingAttendedId));
-        if (!targetRecord) {
-          closeModal("modalDeleteAttendedRecord");
-          return;
-        }
-
-        const pwInput = document.getElementById("deleteAttendedPasswordInput");
-        const enteredPw = pwInput ? pwInput.value.trim() : "";
-        const isMaster = isAdminLoggedIn || enteredPw === "admin1234";
-        const isOwner = !targetRecord.password || targetRecord.password === "1234" || enteredPw === (targetRecord.password || "1234") || enteredPw === "1234" || enteredPw === "";
-
-        if (!isMaster && !isOwner) {
-          showToast("비밀번호가 일치하지 않습니다. (관리자 비밀번호 또는 기본: 1234)", "error");
-          return;
-        }
-
-        await deleteAttendedCourseFromDb(activeDeletingAttendedId);
-        closeModal("modalDeleteAttendedRecord");
-        activeDeletingAttendedId = null;
-        showToast("수강 기록이 성공적으로 삭제되었습니다.", "info");
+        await window.confirmDeleteAttended();
       });
 
       document.getElementById("deleteAttendedPasswordInput")?.addEventListener("keydown", (e) => {
@@ -10431,28 +11102,7 @@
 
       // Confirm Delete Feedback
       document.getElementById("btnConfirmDeleteFeedback")?.addEventListener("click", async () => {
-        if (!activeDeletingFeedbackId) return;
-
-        const targetRecord = feedbacksData.find((f) => String(f.id) === String(activeDeletingFeedbackId));
-        if (!targetRecord) {
-          closeModal("modalDeleteFeedback");
-          return;
-        }
-
-        const pwInput = document.getElementById("deleteFeedbackPasswordInput");
-        const enteredPw = pwInput ? pwInput.value.trim() : "";
-        const isMaster = isAdminLoggedIn || enteredPw === "admin1234";
-        const isOwner = !targetRecord.password || targetRecord.password === "1234" || enteredPw === (targetRecord.password || "1234") || enteredPw === "1234" || enteredPw === "";
-
-        if (!isMaster && !isOwner) {
-          showToast("비밀번호가 일치하지 않습니다. (기본 비밀번호: 1234)", "error");
-          return;
-        }
-
-        await deleteFeedbackFromDb(activeDeletingFeedbackId);
-        closeModal("modalDeleteFeedback");
-        activeDeletingFeedbackId = null;
-        showToast("개선 피드백이 성공적으로 삭제되었습니다.", "info");
+        await window.confirmDeleteFeedback();
       });
 
       document.getElementById("deleteFeedbackPasswordInput")?.addEventListener("keydown", (e) => {
@@ -10802,6 +11452,20 @@
         if (e.key === "Enter") {
           e.preventDefault();
           window.confirmDeleteDevStatus();
+        }
+      });
+
+      document.getElementById("deleteCommentPasswordInput")?.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          window.confirmDeleteIdeaComment();
+        }
+      });
+
+      document.getElementById("cancelEnrollmentPasswordInput")?.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          window.executeCancelEnrollment();
         }
       });
 
