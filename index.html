@@ -100,7 +100,7 @@
           </div>
 
           <!-- Register Lecture Button (Optimized for Mobile & PC) -->
-          <button id="btnOpenRegisterModal" type="button" onclick="window.openRegisterModal()" class="inline-flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3.5 py-1.5 sm:py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs sm:text-sm font-bold rounded-lg shadow-sm transition cursor-pointer active:scale-95 whitespace-nowrap shrink-0 tracking-tighter sm:tracking-tight break-keep" title="지식샘터 새 강의 등록">
+          <button id="btnOpenRegisterModal" type="button" class="inline-flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3.5 py-1.5 sm:py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs sm:text-sm font-bold rounded-lg shadow-sm transition cursor-pointer active:scale-95 whitespace-nowrap shrink-0 tracking-tighter sm:tracking-tight break-keep" title="지식샘터 새 강의 등록">
             <i data-lucide="plus-circle" class="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0"></i>
             <span class="whitespace-nowrap tracking-tighter sm:tracking-tight break-keep font-bold">강의 등록</span>
           </button>
@@ -173,7 +173,7 @@
       <span id="mobileDbStatusBadge" class="text-xs font-medium text-emerald-600">● Firestore 동기화 활성</span>
     </div>
     <div class="flex gap-2 pt-1 flex-nowrap">
-      <button id="btnMobileRegister" type="button" onclick="window.openRegisterModal()" class="flex-1 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-1.5 cursor-pointer active:scale-95 whitespace-nowrap tracking-tighter sm:tracking-tight break-keep shadow-xs">
+      <button id="btnMobileRegister" type="button" class="flex-1 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-1.5 cursor-pointer active:scale-95 whitespace-nowrap tracking-tighter sm:tracking-tight break-keep shadow-xs">
         <i data-lucide="plus-circle" class="w-4 h-4 shrink-0"></i>
         <span class="whitespace-nowrap tracking-tighter sm:tracking-tight break-keep font-bold">강의 등록</span>
       </button>
@@ -479,7 +479,7 @@
             </p>
           </div>
           
-          <button id="btnOpenRegisterIdea" type="button" onclick="window.openRegisterIdeaModal()" class="self-start md:self-center shrink-0 px-4 py-2.5 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-slate-950 font-bold text-xs sm:text-sm rounded-xl shadow-lg hover:shadow-xl transition flex items-center gap-2 cursor-pointer active:scale-95">
+          <button id="btnOpenRegisterIdea" type="button" class="self-start md:self-center shrink-0 px-4 py-2.5 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-slate-950 font-bold text-xs sm:text-sm rounded-xl shadow-lg hover:shadow-xl transition flex items-center gap-2 cursor-pointer active:scale-95">
             <i data-lucide="plus-circle" class="w-4 h-4 text-slate-950"></i>
             <span>강의 아이디어 등록</span>
           </button>
@@ -783,7 +783,7 @@
             </p>
           </div>
           
-          <button id="btnOpenRegisterFeedback" type="button" onclick="window.openRegisterFeedbackModal()" class="self-start md:self-center shrink-0 px-4 py-2.5 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-950 font-bold text-xs sm:text-sm rounded-xl shadow-lg hover:shadow-xl transition flex items-center gap-2 cursor-pointer active:scale-95">
+          <button id="btnOpenRegisterFeedback" type="button" class="self-start md:self-center shrink-0 px-4 py-2.5 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-950 font-bold text-xs sm:text-sm rounded-xl shadow-lg hover:shadow-xl transition flex items-center gap-2 cursor-pointer active:scale-95">
             <i data-lucide="camera" class="w-4 h-4 text-slate-950"></i>
             <span>피드백 및 개선방향 등록</span>
           </button>
@@ -918,7 +918,7 @@
         </button>
       </div>
 
-      <form id="formRegisterLecture" onsubmit="window.submitRegisterLecture(event); return false;" class="space-y-4">
+      <form id="formRegisterLecture" class="space-y-4">
         <div>
           <label class="block text-xs font-bold text-slate-700 mb-1">강의명 *</label>
           <input type="text" id="regTitle" placeholder="예: [초등] AI 도구를 활용한 수업 디자인" class="w-full text-xs sm:text-sm px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none" />
@@ -1075,7 +1075,7 @@
               <i data-lucide="edit-3" class="w-3.5 h-3.5 shrink-0"></i>
               <span class="whitespace-nowrap tracking-tighter sm:tracking-tight break-keep">수강현황 / 강의 수정</span>
             </button>
-            <button type="button" id="btnOpenDeleteModal" onclick="window.openDeleteModal()" class="text-[11px] sm:text-xs text-rose-600 hover:text-rose-800 font-semibold flex items-center gap-1 px-2 sm:px-2.5 py-1.5 hover:bg-rose-50 border border-transparent hover:border-rose-200 rounded-lg transition cursor-pointer whitespace-nowrap tracking-tighter sm:tracking-tight break-keep">
+            <button type="button" id="btnOpenDeleteModal" class="text-[11px] sm:text-xs text-rose-600 hover:text-rose-800 font-semibold flex items-center gap-1 px-2 sm:px-2.5 py-1.5 hover:bg-rose-50 border border-transparent hover:border-rose-200 rounded-lg transition cursor-pointer whitespace-nowrap tracking-tighter sm:tracking-tight break-keep">
               <i data-lucide="trash-2" class="w-3.5 h-3.5 shrink-0"></i>
               <span class="whitespace-nowrap tracking-tighter sm:tracking-tight break-keep">삭제</span>
             </button>
@@ -1114,7 +1114,7 @@
 
         <div class="flex items-center justify-end gap-2 pt-2">
           <button type="button" class="btnModalClose px-3 py-1.5 bg-slate-100 text-slate-700 text-xs font-semibold rounded-lg hover:bg-slate-200 cursor-pointer whitespace-nowrap">취소</button>
-          <button type="button" id="btnConfirmDeleteLecture" onclick="window.confirmDeleteLecture()" class="px-3.5 py-1.5 bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold rounded-lg shadow-sm flex items-center gap-1 cursor-pointer active:scale-95 whitespace-nowrap tracking-tight break-keep">
+          <button type="button" id="btnConfirmDeleteLecture" class="px-3.5 py-1.5 bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold rounded-lg shadow-sm flex items-center gap-1 cursor-pointer active:scale-95 whitespace-nowrap tracking-tight break-keep">
             <i data-lucide="trash-2" class="w-3.5 h-3.5 shrink-0"></i>
             <span class="whitespace-nowrap tracking-tight break-keep">삭제 확인</span>
           </button>
@@ -1353,16 +1353,18 @@
 
   <!-- 5. 관리자 모드 / 회원 관리 모달 -->
   <div id="modalAdmin" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-xl border border-slate-200 relative animate-in fade-in zoom-in duration-150">
-      <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-4">
+    <div class="bg-white rounded-2xl max-w-md w-full p-5 sm:p-6 shadow-xl border border-slate-200 relative animate-in fade-in zoom-in duration-150 max-h-[92vh] flex flex-col overflow-hidden">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-4 shrink-0">
         <h3 class="text-base sm:text-lg font-bold text-slate-900 flex items-center gap-2">
           <i data-lucide="shield-check" class="w-5 h-5 text-indigo-600"></i>
           <span>관리자 대시보드</span>
         </h3>
-        <button type="button" class="btnModalClose text-slate-400 hover:text-slate-600 p-1">
+        <button type="button" class="btnModalClose text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-lg p-1.5 transition cursor-pointer" title="닫기">
           <i data-lucide="x" class="w-5 h-5"></i>
         </button>
       </div>
+
+      <div class="flex-1 overflow-y-auto pr-0.5 space-y-4">
 
       <!-- Password section if not logged in -->
       <div id="adminLoginSection" class="space-y-3">
@@ -1376,14 +1378,14 @@
             </button>
           </div>
         </div>
-        <div class="flex items-center justify-between text-xs pt-1">
-          <span class="text-slate-400">초기 기본값: admin1234</span>
+        <div class="flex items-center justify-between gap-2 text-xs pt-1 flex-wrap">
+          <span class="text-slate-400">초기 설정값: admin1234</span>
           <button type="button" onclick="window.openAdminPasswordRecoveryModal()" class="text-indigo-600 hover:text-indigo-800 font-semibold underline decoration-indigo-300 hover:decoration-indigo-600 cursor-pointer flex items-center gap-1 transition">
-            <i data-lucide="help-circle" class="w-3.5 h-3.5"></i>
-            <span>비밀번호를 잊으셨나요?</span>
+            <i data-lucide="mail" class="w-3.5 h-3.5"></i>
+            <span>비밀번호를 잊으셨나요? (임시 비밀번호 전송)</span>
           </button>
         </div>
-        <button type="button" id="btnAdminLoginSubmit" class="w-full py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs sm:text-sm font-bold rounded-lg shadow-sm">
+        <button type="button" id="btnAdminLoginSubmit" class="w-full py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs sm:text-sm font-bold rounded-lg shadow-sm cursor-pointer">
           관리자 인증
         </button>
       </div>
@@ -1505,12 +1507,21 @@
           </button>
         </div>
       </div>
+      </div>
+
+      <!-- Persistent Bottom Footer with Close Button -->
+      <div class="pt-3 mt-4 border-t border-slate-100 flex items-center justify-end gap-2 shrink-0">
+        <button type="button" class="btnModalClose px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs sm:text-sm font-bold rounded-lg transition cursor-pointer flex items-center gap-1.5">
+          <i data-lucide="x" class="w-4 h-4"></i>
+          <span>닫기</span>
+        </button>
+      </div>
 
     </div>
   </div>
 
   <!-- 5-1-1. 관리자 비밀번호 및 복구 이메일 변경 모달 -->
-  <div id="modalAdminChangePassword" class="hidden fixed inset-0 z-55 overflow-y-auto bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+  <div id="modalAdminChangePassword" class="hidden fixed inset-0 z-[70] overflow-y-auto bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4" style="z-index: 70;">
     <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200 relative animate-in fade-in zoom-in duration-150">
       <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-4">
         <h3 class="text-base sm:text-lg font-bold text-slate-900 flex items-center gap-2">
@@ -1580,8 +1591,8 @@
     </div>
   </div>
 
-  <!-- 5-1-2. 관리자 비밀번호 찾기 (복구 이메일로 임시 비밀번호 발송) 모달 -->
-  <div id="modalAdminPasswordRecovery" class="hidden fixed inset-0 z-55 overflow-y-auto bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+  <!-- 5-1-2. 관리자 비밀번호 찾기 (복구 이메일로 임시 비밀번호 전송) 모달 -->
+  <div id="modalAdminPasswordRecovery" class="hidden fixed inset-0 z-[70] overflow-y-auto bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4" style="z-index: 70;">
     <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200 relative animate-in fade-in zoom-in duration-150">
       <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-4">
         <h3 class="text-base sm:text-lg font-bold text-slate-900 flex items-center gap-2">
@@ -1594,38 +1605,45 @@
       </div>
 
       <div class="space-y-4">
-        <div class="bg-amber-50/80 border border-amber-200 rounded-xl p-3.5 text-xs text-amber-900 space-y-1">
-          <p class="font-bold flex items-center gap-1 text-amber-950">
-            <i data-lucide="info" class="w-4 h-4 text-amber-600 shrink-0"></i>
-            <span>등록된 관리자 이메일로 임시 비밀번호를 발송합니다</span>
-          </p>
+        <div class="bg-amber-50/80 border border-amber-200 rounded-xl p-3.5 text-xs text-amber-900 space-y-1.5">
+          <div class="flex items-center justify-between gap-2 flex-wrap">
+            <p class="font-bold flex items-center gap-1 text-amber-950">
+              <i data-lucide="info" class="w-4 h-4 text-amber-600 shrink-0"></i>
+              <span>복구 이메일로 임시 비밀번호를 전송합니다</span>
+            </p>
+            <span id="recoveryMailStatusBadge" class="text-[10px] px-2 py-0.5 rounded-full font-bold bg-white/80 text-slate-600 border border-amber-200">확인 중...</span>
+          </div>
           <p class="text-[11px] text-amber-800 leading-relaxed">
-            관리자 보안을 위해 시스템에 사전 등록된 복구 이메일 주소를 입력해주세요. 일치하는 경우 새 임시 비밀번호가 즉시 생성되어 전송됩니다.
+            등록된 관리자 복구 이메일 주소를 입력하고 <strong>[임시 비밀번호 전송하기]</strong>를 누르면 새 임시 비밀번호가 발급·적용되어 이메일로 전송됩니다.
           </p>
         </div>
 
         <div>
           <label class="block text-xs font-bold text-slate-700 mb-1">등록된 관리자 복구 이메일 주소</label>
           <input type="email" id="recoveryEmailInput" placeholder="예: ysw3400@gmail.com" class="w-full text-xs sm:text-sm px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none" />
-          <p class="text-[11px] text-slate-400 mt-1">※ 현재 등록된 이메일: <strong id="recoveryEmailHint" class="text-slate-600 font-mono">ysw***@gmail.com</strong></p>
+          <p class="text-[11px] text-slate-400 mt-1">※ 현재 등록된 복구 이메일: <strong id="recoveryEmailHint" class="text-slate-600 font-mono">ysw***@gmail.com</strong></p>
         </div>
 
-        <!-- Temporary password result notice (발송 성공 시 즉시 표시) -->
-        <div id="recoveryResultBox" class="hidden bg-emerald-50 border border-emerald-300 rounded-xl p-4 space-y-2">
-          <div class="flex items-center gap-1.5 text-xs font-bold text-emerald-900">
+        <!-- Temporary password result notice (전송 및 적용 완료 시 표시) -->
+        <div id="recoveryResultBox" class="hidden bg-emerald-50 border border-emerald-300 rounded-xl p-4 space-y-2.5">
+          <div id="recoveryResultTitle" class="flex items-center gap-1.5 text-xs font-bold text-emerald-900">
             <i data-lucide="check-circle" class="w-4 h-4 text-emerald-600"></i>
-            <span>임시 비밀번호가 발송 및 발급되었습니다!</span>
+            <span>임시 비밀번호가 전송 및 적용되었습니다!</span>
           </div>
           <p class="text-xs text-slate-700 leading-relaxed" id="recoveryResultMessage">
-            등록하신 이메일로 임시 비밀번호가 전송되었습니다.
+            등록하신 복구 이메일로 임시 비밀번호가 전송되었습니다.
           </p>
-          <div class="bg-white p-2.5 rounded-lg border border-emerald-200 text-center font-mono">
-            <span class="text-xs text-slate-500 block mb-0.5">발급된 임시 비밀번호</span>
+          <div id="displayTempPasswordBox" class="hidden bg-white p-2.5 rounded-lg border border-emerald-200 text-center font-mono">
+            <span class="text-xs text-slate-500 block mb-0.5">발급·적용된 임시 비밀번호</span>
             <strong id="displayTempPassword" class="text-base text-emerald-700 tracking-wider select-all cursor-pointer">******</strong>
           </div>
-          <button type="button" onclick="window.applyTempPasswordAndLogin()" class="w-full py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold shadow-xs transition flex items-center justify-center gap-1">
+          <button type="button" id="btnApplyTempLogin" onclick="window.applyTempPasswordAndLogin()" class="hidden w-full py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold shadow-xs transition flex items-center justify-center gap-1 cursor-pointer">
             <i data-lucide="log-in" class="w-3.5 h-3.5"></i>
             <span>이 임시 비밀번호로 즉시 로그인하기</span>
+          </button>
+          <button type="button" id="btnGoToAdminLoginWithTemp" onclick="closeModal('modalAdminPasswordRecovery'); setTimeout(() => document.getElementById('adminPasswordInput')?.focus(), 100);" class="w-full py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-bold shadow-xs transition flex items-center justify-center gap-1 cursor-pointer">
+            <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i>
+            <span>로그인 창으로 돌아가서 임시 비밀번호 입력하기</span>
           </button>
         </div>
 
@@ -1633,7 +1651,7 @@
           <button type="button" class="btnModalClose px-3 py-2 text-xs text-slate-600 hover:bg-slate-100 rounded-lg font-medium cursor-pointer">닫기</button>
           <button type="button" id="btnSubmitAdminRecovery" onclick="window.sendAdminTempPasswordEmail()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded-lg shadow-sm flex items-center gap-1.5 cursor-pointer active:scale-95 transition">
             <i data-lucide="send" class="w-3.5 h-3.5"></i>
-            <span>임시 비밀번호 이메일 발송</span>
+            <span>임시 비밀번호 전송하기</span>
           </button>
         </div>
       </div>
@@ -2075,7 +2093,7 @@
         </div>
         <div class="flex justify-end gap-2 pt-2">
           <button type="button" class="btnModalClose px-3 py-1.5 text-xs text-slate-600 hover:bg-slate-100 rounded-lg font-medium cursor-pointer whitespace-nowrap">취소</button>
-          <button type="button" id="btnConfirmDeleteAttended" onclick="window.confirmDeleteAttended()" class="px-4 py-1.5 bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold rounded-lg shadow-sm flex items-center gap-1 cursor-pointer active:scale-95 whitespace-nowrap tracking-tight break-keep">
+          <button type="button" id="btnConfirmDeleteAttended" class="px-4 py-1.5 bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold rounded-lg shadow-sm flex items-center gap-1 cursor-pointer active:scale-95 whitespace-nowrap tracking-tight break-keep">
             <i data-lucide="trash-2" class="w-3.5 h-3.5 shrink-0"></i>
             <span class="whitespace-nowrap tracking-tight break-keep">삭제 확인</span>
           </button>
@@ -2297,7 +2315,7 @@
         </div>
         <div class="flex justify-end gap-2 pt-2">
           <button type="button" class="btnModalClose px-3 py-1.5 text-xs text-slate-600 hover:bg-slate-100 rounded-lg font-medium cursor-pointer whitespace-nowrap">취소</button>
-          <button type="button" id="btnConfirmDeleteFeedback" onclick="window.confirmDeleteFeedback()" class="px-4 py-1.5 bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold rounded-lg shadow-sm flex items-center gap-1 cursor-pointer active:scale-95 whitespace-nowrap tracking-tight break-keep">
+          <button type="button" id="btnConfirmDeleteFeedback" class="px-4 py-1.5 bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold rounded-lg shadow-sm flex items-center gap-1 cursor-pointer active:scale-95 whitespace-nowrap tracking-tight break-keep">
             <i data-lucide="trash-2" class="w-3.5 h-3.5 shrink-0"></i>
             <span class="whitespace-nowrap tracking-tight break-keep">삭제 확인</span>
           </button>
@@ -2664,7 +2682,7 @@
         </div>
         <div class="flex justify-end gap-2 pt-2">
           <button type="button" class="btnModalClose px-3 py-1.5 text-xs text-slate-600 hover:bg-slate-100 rounded-lg font-medium cursor-pointer whitespace-nowrap">취소</button>
-          <button type="button" id="btnConfirmDeleteIdea" onclick="window.confirmDeleteIdea()" class="px-4 py-1.5 bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold rounded-lg shadow-sm flex items-center gap-1 cursor-pointer active:scale-95 whitespace-nowrap tracking-tight break-keep">
+          <button type="button" id="btnConfirmDeleteIdea" class="px-4 py-1.5 bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold rounded-lg shadow-sm flex items-center gap-1 cursor-pointer active:scale-95 whitespace-nowrap tracking-tight break-keep">
             <i data-lucide="trash-2" class="w-3.5 h-3.5 shrink-0"></i>
             <span class="whitespace-nowrap tracking-tight break-keep">삭제 확인</span>
           </button>
@@ -3273,7 +3291,7 @@
   </div>
 
   <!-- Toast Notification Container -->
-  <div id="toastContainer" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+  <div id="toastContainer" class="fixed bottom-5 right-5 z-[200] flex flex-col gap-2 pointer-events-none" style="z-index: 9999;"></div>
 
   <!-- ==================== JAVASCRIPT LOGIC ==================== -->
   <script>
@@ -3494,8 +3512,51 @@
     function checkIsAdminPassword(pw) {
       if (!pw || typeof pw !== "string") return false;
       const trimmed = pw.trim();
-      return trimmed === currentAdminPassword || trimmed === "admin1234";
+      const activePw = (currentAdminPassword && currentAdminPassword.trim()) ? currentAdminPassword.trim() : "admin1234";
+      return trimmed === activePw;
     }
+
+    window.updateAdminSettingsUI = function () {
+      const emailBadge = document.getElementById("adminRecoveryEmailBadge");
+      const currentEmailEl = document.getElementById("adminCurrentEmailText");
+      const hintEl = document.getElementById("recoveryEmailHint");
+      if (currentEmailEl) {
+        currentEmailEl.innerText = currentAdminRecoveryEmail || "미등록 (ysw3400@gmail.com)";
+      }
+      if (emailBadge) {
+        emailBadge.innerText = currentAdminRecoveryEmail ? "이메일 연동" : "이메일 미등록";
+      }
+      if (hintEl) {
+        if (currentAdminRecoveryEmail && currentAdminRecoveryEmail.includes("@")) {
+          const parts = currentAdminRecoveryEmail.split("@");
+          const user = parts[0];
+          const domain = parts[1];
+          const maskedUser = user.length <= 3 ? user[0] + "***" : user.substring(0, 3) + "***";
+          hintEl.innerText = `${maskedUser}@${domain}`;
+        } else {
+          hintEl.innerText = "등록된 복구 이메일 없음";
+        }
+      }
+    };
+
+    window.updateAdminUI = function () {
+      const adminBtnLabel = document.getElementById("adminBtnLabel");
+      const loginSec = document.getElementById("adminLoginSection");
+      const panelSec = document.getElementById("adminPanelSection");
+      if (adminBtnLabel) {
+        adminBtnLabel.innerText = isAdminLoggedIn ? "관리자 (ON)" : "관리자";
+      }
+      if (isAdminLoggedIn) {
+        loginSec?.classList.add("hidden");
+        panelSec?.classList.remove("hidden");
+      } else {
+        loginSec?.classList.remove("hidden");
+        panelSec?.classList.add("hidden");
+      }
+      window.updateAdminSettingsUI();
+      if (typeof renderNoticeView === "function") renderNoticeView();
+      if (typeof renderDevStatusView === "function") renderDevStatusView();
+    };
     let activeChangingEnr = null;
     let attendedCoursesData = [...DEFAULT_ATTENDED_COURSES];
     let activeDeletingAttendedId = null;
@@ -3926,7 +3987,7 @@
       const container = document.getElementById("toastContainer");
       if (!container) return;
       const toast = document.createElement("div");
-      const bg = type === "error" ? "bg-rose-600" : type === "info" ? "bg-slate-800" : "bg-emerald-600";
+      const bg = type === "error" ? "bg-rose-600" : type === "warning" ? "bg-amber-600" : type === "info" ? "bg-slate-800" : "bg-emerald-600";
       toast.className = `${bg} text-white px-4 py-2.5 rounded-xl shadow-lg text-xs sm:text-sm font-semibold flex items-center gap-2 pointer-events-auto transition-all transform translate-y-2 opacity-0 duration-200`;
       toast.innerHTML = `<span>${message}</span>`;
       container.appendChild(toast);
@@ -4578,6 +4639,17 @@
               if (typeof updateAdminSettingsUI === "function") {
                 updateAdminSettingsUI();
               }
+              // Hydrate server store in case server restarted cleanly
+              fetch("/api/admin/hydrate-credentials", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  password: currentAdminPassword,
+                  recoveryEmail: currentAdminRecoveryEmail,
+                  isTemporaryPassword: Boolean(data.isTemporaryPassword),
+                  updatedAt: data.updatedAt || null
+                })
+              }).catch(() => {});
             }
           },
           (err) => {
@@ -5092,7 +5164,11 @@
       
       if (!isAdminLoggedIn) {
         showToast("행사를 삭제하려면 관리자 권한이 필요합니다. 관리자 모드로 로그인해주세요.", "warning");
+        closeModal("modalEventDetail");
+        document.getElementById("adminLoginSection")?.classList.remove("hidden");
+        document.getElementById("adminPanelSection")?.classList.add("hidden");
         openModal("modalAdmin");
+        setTimeout(() => document.getElementById("adminPasswordInput")?.focus(), 100);
         return;
       }
 
@@ -5108,7 +5184,10 @@
       if (!eventId) return;
       if (!isAdminLoggedIn) {
         showToast("행사를 삭제하려면 관리자 권한이 필요합니다. 관리자 모드로 로그인해주세요.", "warning");
+        document.getElementById("adminLoginSection")?.classList.remove("hidden");
+        document.getElementById("adminPanelSection")?.classList.add("hidden");
         openModal("modalAdmin");
+        setTimeout(() => document.getElementById("adminPasswordInput")?.focus(), 100);
         return;
       }
 
@@ -7967,7 +8046,7 @@
       const inputPw = document.getElementById("editDevPassword")?.value.trim() || "";
       const validPw = record.password || "1234";
 
-      if (!isAdminLoggedIn && inputPw !== validPw && inputPw !== "1234") {
+      if (!isAdminLoggedIn && inputPw !== validPw && inputPw !== "1234" && !checkIsAdminPassword(inputPw)) {
         showToast("비밀번호가 일치하지 않습니다.", "error");
         return;
       }
@@ -8108,9 +8187,15 @@
     // ----------------------------------------------------
     // Modal Helpers & Global Action Handlers
     // ----------------------------------------------------
+    let topModalZIndex = 60;
+
     function openModal(modalId) {
       const el = document.getElementById(modalId);
-      if (el) el.classList.remove("hidden");
+      if (el) {
+        topModalZIndex += 2;
+        el.style.zIndex = String(topModalZIndex);
+        el.classList.remove("hidden");
+      }
     }
 
     function closeModal(modalId) {
@@ -10592,19 +10677,31 @@
         if (isAdminLoggedIn) {
           document.getElementById("adminLoginSection")?.classList.add("hidden");
           document.getElementById("adminPanelSection")?.classList.remove("hidden");
+          window.updateAdminSettingsUI();
           renderAdminMemberPanel();
         } else {
           document.getElementById("adminLoginSection")?.classList.remove("hidden");
           document.getElementById("adminPanelSection")?.classList.add("hidden");
         }
         openModal("modalAdmin");
+        safeRenderIcons();
       });
 
-      // 5. Modal Close Buttons
+      // 5. Modal Close Buttons & Escape Key
       document.querySelectorAll(".btnModalClose").forEach((btn) => {
         btn.addEventListener("click", () => {
           btn.closest(".fixed")?.classList.add("hidden");
         });
+      });
+
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && !e.defaultPrevented) {
+          const openModals = Array.from(document.querySelectorAll('div[id^="modal"]:not(.hidden)'));
+          if (openModals.length > 0) {
+            openModals.sort((a, b) => (parseInt(a.style.zIndex || "50", 10) - parseInt(b.style.zIndex || "50", 10)));
+            openModals[openModals.length - 1].classList.add("hidden");
+          }
+        }
       });
 
       // 6. Lecture Registration Form Submit
@@ -10973,50 +11070,97 @@
         if (isAdminLoggedIn) {
           document.getElementById("adminLoginSection")?.classList.add("hidden");
           document.getElementById("adminPanelSection")?.classList.remove("hidden");
+          window.updateAdminSettingsUI();
           renderAdminMemberPanel();
         } else {
           document.getElementById("adminLoginSection")?.classList.remove("hidden");
           document.getElementById("adminPanelSection")?.classList.add("hidden");
         }
         openModal("modalAdmin");
+        safeRenderIcons();
       });
 
-      function updateAdminSettingsUI() {
-        const emailBadge = document.getElementById("adminRecoveryEmailBadge");
-        const currentEmailEl = document.getElementById("adminCurrentEmailText");
-        const hintEl = document.getElementById("recoveryEmailHint");
-        if (currentEmailEl) {
-          currentEmailEl.innerText = currentAdminRecoveryEmail || "미등록 (ysw3400@gmail.com)";
-        }
-        if (emailBadge) {
-          emailBadge.innerText = currentAdminRecoveryEmail ? "이메일 연동" : "이메일 미등록";
-        }
-        if (hintEl) {
-          if (currentAdminRecoveryEmail && currentAdminRecoveryEmail.includes("@")) {
-            const parts = currentAdminRecoveryEmail.split("@");
-            const user = parts[0];
-            const domain = parts[1];
-            const maskedUser = user.length <= 3 ? user[0] + "***" : user.substring(0, 3) + "***";
-            hintEl.innerText = `${maskedUser}@${domain}`;
-          } else {
-            hintEl.innerText = "등록된 복구 이메일 없음";
+      const updateAdminSettingsUI = window.updateAdminSettingsUI;
+
+      async function syncAdminCredentialsFromServer() {
+        try {
+          const resp = await fetch("/api/admin/credentials");
+          if (!resp.ok) return null;
+          const data = await resp.json();
+          if (data && data.ok) {
+            if (data.recoveryEmail && typeof data.recoveryEmail === "string") {
+              currentAdminRecoveryEmail = data.recoveryEmail.trim();
+              saveLocalData();
+              updateAdminSettingsUI();
+            }
+            const statusBadge = document.getElementById("recoveryMailStatusBadge");
+            if (statusBadge) {
+              if (data.mailConfigured) {
+                statusBadge.className = "text-[10px] px-2 py-0.5 rounded-full font-bold bg-emerald-100 text-emerald-800 border border-emerald-300";
+                statusBadge.innerText = `● 실제 메일 발송 연동 (${String(data.mailProvider || "SMTP").toUpperCase()})`;
+              } else {
+                statusBadge.className = "text-[10px] px-2 py-0.5 rounded-full font-bold bg-amber-100 text-amber-800 border border-amber-300";
+                statusBadge.innerText = "● 메일 서버 미설정 (화면 안내 병행)";
+              }
+            }
           }
+          return data;
+        } catch (e) {
+          return null;
         }
       }
 
-      function handleAdminLogin() {
-        const pw = document.getElementById("adminPasswordInput").value.trim();
-        if (checkIsAdminPassword(pw)) {
+      syncAdminCredentialsFromServer();
+
+      async function handleAdminLogin() {
+        const pwInput = document.getElementById("adminPasswordInput");
+        const pw = pwInput ? pwInput.value.trim() : "";
+        if (!pw) {
+          showToast("관리자 비밀번호를 입력해주세요.", "error");
+          pwInput?.focus();
+          return;
+        }
+
+        let isValid = false;
+        let isTemp = false;
+
+        try {
+          const resp = await fetch("/api/admin/verify-password", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ password: pw })
+          });
+          if (resp.ok) {
+            const data = await resp.json();
+            isValid = Boolean(data.valid);
+            isTemp = Boolean(data.isTemporaryPassword);
+          } else {
+            isValid = checkIsAdminPassword(pw);
+          }
+        } catch (e) {
+          isValid = checkIsAdminPassword(pw);
+        }
+
+        if (isValid) {
+          // Keep local currentAdminPassword synced so modal checks work seamlessly
+          currentAdminPassword = pw;
+          saveLocalData();
+
           isAdminLoggedIn = true;
           document.getElementById("adminLoginSection")?.classList.add("hidden");
           document.getElementById("adminPanelSection")?.classList.remove("hidden");
           document.getElementById("adminBtnLabel").innerText = "관리자 (ON)";
-          document.getElementById("adminPasswordInput").value = "";
+          if (pwInput) pwInput.value = "";
           updateAdminSettingsUI();
           renderAdminMemberPanel();
           renderNoticeView();
           renderDevStatusView();
-          showToast("관리자 모드로 인증되었습니다.");
+
+          if (isTemp) {
+            showToast("임시 비밀번호로 관리자 인증되었습니다. [비밀번호/이메일 변경]에서 새 비밀번호로 변경해주세요.", "warning");
+          } else {
+            showToast("관리자 모드로 인증되었습니다.");
+          }
 
           if (window.adminPendingAction === "editNotice") {
             window.adminPendingAction = null;
@@ -11029,7 +11173,7 @@
             window.scrollTo({ top: 0, behavior: "smooth" });
           }
         } else {
-          showToast("관리자 비밀번호가 올바르지 않습니다. (비밀번호 분실 시 [비밀번호를 잊으셨나요?] 이용)", "error");
+          showToast("관리자 비밀번호가 올바르지 않습니다. (분실 시 [임시 비밀번호 전송] 이용)", "error");
         }
       }
 
@@ -11060,8 +11204,8 @@
         const newPwConfirm = document.getElementById("inputAdminNewPwConfirm")?.value.trim() || "";
         const recoveryEmail = document.getElementById("inputAdminRecoveryEmail")?.value.trim() || "";
 
-        if (!checkIsAdminPassword(currentPwInput)) {
-          showToast("현재 관리자 비밀번호가 일치하지 않습니다.", "error");
+        if (!currentPwInput) {
+          showToast("현재 관리자 비밀번호를 입력해주세요.", "error");
           document.getElementById("inputAdminCurrentPw")?.focus();
           return;
         }
@@ -11084,7 +11228,39 @@
           return;
         }
 
-        // Apply new credentials
+        // Verify current password & persist on server
+        let serverVerified = false;
+        try {
+          const resp = await fetch("/api/admin/change-password", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              currentPassword: currentPwInput,
+              newPassword: newPwInput,
+              recoveryEmail
+            })
+          });
+          const data = await resp.json();
+          if (resp.status === 401) {
+            showToast(data.error || "현재 관리자 비밀번호가 일치하지 않습니다.", "error");
+            document.getElementById("inputAdminCurrentPw")?.focus();
+            return;
+          }
+          if (!resp.ok || !data.ok) {
+            showToast(data.error || "비밀번호 변경 중 오류가 발생했습니다.", "error");
+            return;
+          }
+          serverVerified = true;
+        } catch (err) {
+          console.warn("Server change-password fallback:", err);
+          if (!checkIsAdminPassword(currentPwInput)) {
+            showToast("현재 관리자 비밀번호가 일치하지 않습니다.", "error");
+            document.getElementById("inputAdminCurrentPw")?.focus();
+            return;
+          }
+        }
+
+        // Apply new credentials locally & Firestore
         currentAdminPassword = newPwInput;
         currentAdminRecoveryEmail = recoveryEmail;
 
@@ -11095,6 +11271,7 @@
             await db.collection("settings").doc("admin_credentials").set({
               password: currentAdminPassword,
               recoveryEmail: currentAdminRecoveryEmail,
+              isTemporaryPassword: false,
               updatedAt: new Date().toISOString()
             }, { merge: true });
           } catch (err) {
@@ -11116,23 +11293,19 @@
         if (emailInput) emailInput.value = "";
         const resBox = document.getElementById("recoveryResultBox");
         if (resBox) resBox.classList.add("hidden");
+        const btnSubmit = document.getElementById("btnSubmitAdminRecovery");
+        if (btnSubmit) {
+          btnSubmit.disabled = false;
+          btnSubmit.innerHTML = `<i data-lucide="send" class="w-3.5 h-3.5"></i><span>임시 비밀번호 전송하기</span>`;
+        }
+        syncAdminCredentialsFromServer();
         updateAdminSettingsUI();
         openModal("modalAdminPasswordRecovery");
         safeRenderIcons();
         setTimeout(() => document.getElementById("recoveryEmailInput")?.focus(), 100);
       };
 
-      // Generate random temporary password
-      function generateTempPassword() {
-        const chars = "abcdefghjkmnpqrstuvwxyz23456789";
-        let str = "univ-";
-        for (let i = 0; i < 6; i++) {
-          str += chars.charAt(Math.floor(Math.random() * chars.length));
-        }
-        return str;
-      }
-
-      // Send Temporary Password to Admin Email
+      // Send Temporary Password to Admin Recovery Email & Apply Immediately
       window.sendAdminTempPasswordEmail = async function () {
         const inputEl = document.getElementById("recoveryEmailInput");
         const enteredEmail = inputEl ? inputEl.value.trim().toLowerCase() : "";
@@ -11143,101 +11316,103 @@
           return;
         }
 
-        const registeredEmail = (currentAdminRecoveryEmail || "ysw3400@gmail.com").trim().toLowerCase();
-
-        if (enteredEmail !== registeredEmail) {
-          showToast("입력하신 이메일이 등록된 관리자 복구 이메일과 일치하지 않습니다.", "error");
-          inputEl?.focus();
-          return;
-        }
-
         const btnSubmit = document.getElementById("btnSubmitAdminRecovery");
         if (btnSubmit) {
           btnSubmit.disabled = true;
-          btnSubmit.innerHTML = `<i data-lucide="loader-2" class="w-3.5 h-3.5 animate-spin"></i><span>발송 중...</span>`;
+          btnSubmit.innerHTML = `<i data-lucide="loader-2" class="w-3.5 h-3.5 animate-spin"></i><span>임시 비밀번호 전송 중...</span>`;
           safeRenderIcons();
         }
 
         try {
-          const tempPw = generateTempPassword();
+          const resp = await fetch("/api/admin/send-reset-email", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email: enteredEmail })
+          });
+          const data = await resp.json();
 
-          // Call server-side email dispatch endpoint
-          let serverSuccess = false;
-          try {
-            const resp = await fetch("/api/admin/send-reset-email", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ email: enteredEmail, tempPassword: tempPw })
-            });
-            const data = await resp.json();
-            if (data.ok) serverSuccess = true;
-          } catch (e) {
-            console.warn("Server email dispatch proxy fallback:", e);
+          if (!resp.ok || !data.ok) {
+            showToast(data.error || "입력하신 이메일이 등록된 복구 이메일과 일치하지 않습니다.", "error");
+            inputEl?.focus();
+            return;
           }
 
-          // Update current admin password to the new temp password
-          currentAdminPassword = tempPw;
-          saveLocalData();
-
-          if (db && isFirebaseActive) {
-            try {
-              await db.collection("settings").doc("admin_credentials").set({
-                password: currentAdminPassword,
-                recoveryEmail: currentAdminRecoveryEmail,
-                updatedAt: new Date().toISOString()
-              }, { merge: true });
-            } catch (err) {}
-          }
-
-          // Show confirmation in UI
           const resBox = document.getElementById("recoveryResultBox");
+          const titleEl = document.getElementById("recoveryResultTitle");
           const msgEl = document.getElementById("recoveryResultMessage");
+          const pwBox = document.getElementById("displayTempPasswordBox");
           const dispEl = document.getElementById("displayTempPassword");
+          const btnApplyLogin = document.getElementById("btnApplyTempLogin");
 
-          if (msgEl) {
-            msgEl.innerText = `${enteredEmail} 주소로 임시 비밀번호가 전송되었습니다. 아래 임시 비밀번호로 즉시 로그인할 수 있습니다.`;
-          }
-          if (dispEl) {
-            dispEl.innerText = tempPw;
-          }
-          if (resBox) {
-            resBox.classList.remove("hidden");
+          if (data.emailSent) {
+            // Real email dispatched via SMTP / Gmail / Resend
+            if (resBox) resBox.className = "bg-emerald-50 border border-emerald-300 rounded-xl p-4 space-y-2.5";
+            if (titleEl) {
+              titleEl.className = "flex items-center gap-1.5 text-xs font-bold text-emerald-900";
+              titleEl.innerHTML = `<i data-lucide="mail-check" class="w-4 h-4 text-emerald-600"></i><span>임시 비밀번호가 이메일로 실제 전송되었습니다!</span>`;
+            }
+            if (msgEl) {
+              msgEl.innerText = `${data.email} 주소로 새 임시 비밀번호가 전송되었으며 시스템에 즉시 적용되었습니다. 메일함(스팸함 포함)을 확인하신 후 로그인해주세요.`;
+            }
+            if (pwBox) pwBox.classList.add("hidden");
+            if (btnApplyLogin) btnApplyLogin.classList.add("hidden");
+            showToast(`📩 ${data.email} 주소로 임시 비밀번호가 전송 및 적용되었습니다!`);
+          } else {
+            // Mail server env vars not configured: temp password applied on server & shown for fallback access
+            const issuedPw = data.tempPassword || "";
+            if (issuedPw) {
+              currentAdminPassword = issuedPw;
+              saveLocalData();
+              if (db && isFirebaseActive) {
+                try {
+                  await db.collection("settings").doc("admin_credentials").set({
+                    password: currentAdminPassword,
+                    recoveryEmail: currentAdminRecoveryEmail,
+                    isTemporaryPassword: true,
+                    updatedAt: new Date().toISOString()
+                  }, { merge: true });
+                } catch (err) {}
+              }
+            }
+
+            if (resBox) resBox.className = "bg-amber-50 border border-amber-300 rounded-xl p-4 space-y-2.5";
+            if (titleEl) {
+              titleEl.className = "flex items-center gap-1.5 text-xs font-bold text-amber-950";
+              titleEl.innerHTML = `<i data-lucide="alert-triangle" class="w-4 h-4 text-amber-600"></i><span>임시 비밀번호가 발급 및 즉시 적용되었습니다!</span>`;
+            }
+            if (msgEl) {
+              msgEl.innerText = `서버 메일 환경변수(GMAIL_APP_PASSWORD / RESEND_API_KEY)가 아직 미설정되어 실제 메일함 발송은 대기 상태입니다. 아래 임시 비밀번호가 시스템에 즉시 적용되었으니 복사하여 로그인하시거나 바로 로그인 버튼을 눌러주세요.`;
+            }
+            if (dispEl) dispEl.innerText = issuedPw;
+            if (pwBox) pwBox.classList.remove("hidden");
+            if (btnApplyLogin) btnApplyLogin.classList.remove("hidden");
+            showToast(`🔑 임시 비밀번호가 발급되어 즉시 적용되었습니다!`, "warning");
           }
 
-          showToast(`📩 ${enteredEmail}로 임시 비밀번호가 발송되었습니다!`, "info");
+          if (resBox) resBox.classList.remove("hidden");
+          safeRenderIcons();
         } catch (err) {
           console.error("sendAdminTempPasswordEmail error:", err);
-          showToast("임시 비밀번호 발송 중 오류가 발생했습니다.", "error");
+          showToast("임시 비밀번호 전송 중 서버와 통신하지 못했습니다.", "error");
         } finally {
           if (btnSubmit) {
             btnSubmit.disabled = false;
-            btnSubmit.innerHTML = `<i data-lucide="send" class="w-3.5 h-3.5"></i><span>임시 비밀번호 재발송</span>`;
+            btnSubmit.innerHTML = `<i data-lucide="send" class="w-3.5 h-3.5"></i><span>임시 비밀번호 다시 전송하기</span>`;
             safeRenderIcons();
           }
         }
       };
 
       // Quick apply temp password and authenticate
-      window.applyTempPasswordAndLogin = function () {
+      window.applyTempPasswordAndLogin = async function () {
         const dispEl = document.getElementById("displayTempPassword");
         const tempPw = dispEl ? dispEl.innerText.trim() : "";
         if (!tempPw) return;
 
+        const adminPwInput = document.getElementById("adminPasswordInput");
+        if (adminPwInput) adminPwInput.value = tempPw;
         closeModal("modalAdminPasswordRecovery");
-        isAdminLoggedIn = true;
-
-        document.getElementById("adminLoginSection")?.classList.add("hidden");
-        document.getElementById("adminPanelSection")?.classList.remove("hidden");
-        document.getElementById("adminBtnLabel").innerText = "관리자 (ON)";
-        document.getElementById("adminPasswordInput").value = "";
-
-        updateAdminSettingsUI();
-        renderAdminMemberPanel();
-        renderNoticeView();
-        renderDevStatusView();
-        openModal("modalAdmin");
-
-        showToast("임시 비밀번호로 관리자 로그인되었습니다! [비밀번호/이메일 변경]에서 새 비밀번호로 변경해주세요.", "info");
+        await handleAdminLogin();
       };
 
       document.getElementById("btnAdminLoginSubmit")?.addEventListener("click", handleAdminLogin);
@@ -11245,6 +11420,13 @@
         if (e.key === "Enter") {
           e.preventDefault();
           handleAdminLogin();
+        }
+      });
+
+      document.getElementById("recoveryEmailInput")?.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          window.sendAdminTempPasswordEmail();
         }
       });
 
