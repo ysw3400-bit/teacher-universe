@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>교사유니버스 - 지식샘터 강의 공유 및 수강 매트릭스</title>
   <meta name="description" content="교사유니버스 구성원들의 지식샘터 강의 등록, 실시간 수강 신청 및 상호 이수 현황 매트릭스 대시보드" />
   <meta property="og:title" content="교사유니버스 - 지식샘터 강의 공유 및 수강 매트릭스" />
@@ -49,6 +49,43 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 
   <style>
+    /* Global Mobile & Touch Optimization */
+    html, body {
+      overflow-x: hidden;
+      -webkit-tap-highlight-color: transparent;
+    }
+    button, a, select {
+      touch-action: manipulation;
+    }
+    .scrollbar-none {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+    .scrollbar-none::-webkit-scrollbar {
+      display: none;
+    }
+
+    /* Sticky Matrix Table Header & First Column */
+    #matrixTable thead th {
+      position: sticky;
+      top: 0;
+      z-index: 15;
+      background-color: #f1f5f9;
+    }
+    #matrixTable thead th:first-child {
+      left: 0;
+      z-index: 25;
+      background-color: #e2e8f0;
+      box-shadow: 2px 0 6px -2px rgba(15, 23, 42, 0.08);
+    }
+    #matrixTable tbody td:first-child {
+      position: sticky;
+      left: 0;
+      z-index: 10;
+      background-color: #f8fafc;
+      box-shadow: 2px 0 6px -2px rgba(15, 23, 42, 0.08);
+    }
+
     /* FullCalendar styling */
     .fc { font-family: inherit; }
     .fc .fc-toolbar.fc-header-toolbar { margin-bottom: 0.5rem; }
@@ -58,7 +95,31 @@
     .fc-day-sat .fc-daygrid-day-number { color: #2563eb; }
     .fc-day-sun .fc-daygrid-day-number { color: #dc2626; }
     .fc-event { border: none !important; border-radius: 4px; padding: 2px 4px; font-size: 0.75rem; cursor: pointer; margin-bottom: 2px; }
-    
+
+    /* Mobile-specific optimizations (prevents iOS focus zoom & tightens calendar) */
+    @media (max-width: 639px) {
+      input:not([type="checkbox"]):not([type="radio"]),
+      select,
+      textarea {
+        font-size: 16px !important;
+      }
+      .fc-daygrid-day-frame {
+        min-height: 68px !important;
+      }
+      .fc-daygrid-day-number {
+        font-size: 0.72rem;
+        padding: 2px 3px;
+      }
+      .fc-event {
+        padding: 1px 2px;
+        font-size: 0.68rem;
+      }
+      .fc-daygrid-more-link {
+        font-size: 10px !important;
+        font-weight: 700;
+      }
+    }
+
     /* Scrollbar */
     ::-webkit-scrollbar { width: 6px; height: 6px; }
     ::-webkit-scrollbar-track { background: #f1f5f9; }
@@ -70,17 +131,17 @@
 
   <!-- ==================== HEADER ==================== -->
   <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-xs">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex items-center justify-between h-16">
+    <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-14 sm:h-16 gap-2">
         
         <!-- Logo & Title -->
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-xl bg-linear-to-tr from-blue-600 to-indigo-600 flex items-center justify-center text-white shadow-sm font-bold text-lg">
+        <div class="flex items-center gap-2 sm:gap-3 min-w-0">
+          <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-linear-to-tr from-blue-600 to-indigo-600 flex items-center justify-center text-white shadow-sm font-bold text-base sm:text-lg shrink-0">
             교
           </div>
-          <div>
+          <div class="min-w-0">
             <div class="flex items-center gap-2">
-              <h1 class="text-base sm:text-lg font-bold text-slate-900 leading-tight">교사유니버스</h1>
+              <h1 class="text-base sm:text-lg font-bold text-slate-900 leading-tight truncate">교사유니버스</h1>
               <span id="headerDbBadge" class="hidden sm:inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
                 <span id="headerDbDot" class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
                 <span id="headerDbText">Firestore 연결됨</span>
@@ -106,8 +167,9 @@
           </button>
 
           <!-- Admin Mode Button -->
-          <button id="btnOpenAdminModal" type="button" class="inline-flex items-center gap-1 px-2 sm:px-2.5 py-1.5 sm:py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs sm:text-sm font-medium rounded-lg border border-slate-200 transition cursor-pointer shrink-0" title="관리자 모드">
+          <button id="btnOpenAdminModal" type="button" class="relative inline-flex items-center gap-1 px-2 sm:px-2.5 py-1.5 sm:py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs sm:text-sm font-medium rounded-lg border border-slate-200 transition cursor-pointer shrink-0" title="관리자 모드">
             <i data-lucide="shield" class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-600 shrink-0"></i>
+            <span id="adminStatusDot" class="hidden w-2 h-2 rounded-full bg-emerald-500 shrink-0"></span>
             <span id="adminBtnLabel" class="hidden md:inline whitespace-nowrap tracking-tight break-keep">관리자</span>
           </button>
 
@@ -177,63 +239,63 @@
         <i data-lucide="plus-circle" class="w-4 h-4 shrink-0"></i>
         <span class="whitespace-nowrap tracking-tighter sm:tracking-tight break-keep font-bold">강의 등록</span>
       </button>
-      <button id="btnMobileAdmin" class="flex-1 py-2.5 bg-slate-100 text-slate-800 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-1.5 border border-slate-200 cursor-pointer active:scale-95 whitespace-nowrap tracking-tight break-keep">
+      <button id="btnMobileAdmin" type="button" class="flex-1 py-2.5 bg-slate-100 text-slate-800 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-1.5 border border-slate-200 cursor-pointer active:scale-95 whitespace-nowrap tracking-tight break-keep">
         <i data-lucide="shield" class="w-4 h-4 text-slate-600 shrink-0"></i>
-        <span class="whitespace-nowrap tracking-tight break-keep">관리자 모드</span>
+        <span id="mobileAdminBtnLabel" class="whitespace-nowrap tracking-tight break-keep">관리자 모드</span>
       </button>
     </div>
   </div>
 
   <!-- ==================== MAIN CONTENT ==================== -->
-  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+  <main class="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6">
 
     <!-- KPI Summary Cards -->
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
-      <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-2xs flex items-center gap-3">
-        <div class="w-10 h-10 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
-          <i data-lucide="book-open" class="w-5 h-5"></i>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-3 mb-5 sm:mb-6">
+      <div class="bg-white p-3 sm:p-4 rounded-xl border border-slate-200 shadow-2xs flex items-center gap-2.5 sm:gap-3 min-w-0">
+        <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
+          <i data-lucide="book-open" class="w-4 h-4 sm:w-5 sm:h-5"></i>
         </div>
-        <div>
-          <p class="text-xs text-slate-500 font-medium">이번 달 강의</p>
+        <div class="min-w-0">
+          <p class="text-[11px] sm:text-xs text-slate-500 font-medium truncate">이번 달 강의</p>
           <p id="kpiMonthLectures" class="text-lg sm:text-xl font-bold text-slate-900">0</p>
         </div>
       </div>
-      <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-2xs flex items-center gap-3">
-        <div class="w-10 h-10 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
-          <i data-lucide="users" class="w-5 h-5"></i>
+      <div class="bg-white p-3 sm:p-4 rounded-xl border border-slate-200 shadow-2xs flex items-center gap-2.5 sm:gap-3 min-w-0">
+        <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
+          <i data-lucide="users" class="w-4 h-4 sm:w-5 sm:h-5"></i>
         </div>
-        <div>
-          <p class="text-xs text-slate-500 font-medium">총 수강 신청</p>
+        <div class="min-w-0">
+          <p class="text-[11px] sm:text-xs text-slate-500 font-medium truncate">총 수강 신청</p>
           <p id="kpiTotalEnrollments" class="text-lg sm:text-xl font-bold text-slate-900">0</p>
         </div>
       </div>
-      <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-2xs flex items-center gap-3">
-        <div class="w-10 h-10 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0">
-          <i data-lucide="repeat" class="w-5 h-5"></i>
+      <div class="bg-white p-3 sm:p-4 rounded-xl border border-slate-200 shadow-2xs flex items-center gap-2.5 sm:gap-3 min-w-0">
+        <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0">
+          <i data-lucide="repeat" class="w-4 h-4 sm:w-5 sm:h-5"></i>
         </div>
-        <div>
-          <p class="text-xs text-slate-500 font-medium">품앗이 상호수강 (누적)</p>
+        <div class="min-w-0">
+          <p class="text-[11px] sm:text-xs text-slate-500 font-medium truncate">품앗이 상호수강</p>
           <p id="kpiMutualPairs" class="text-lg sm:text-xl font-bold text-slate-900">0</p>
         </div>
       </div>
-      <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-2xs flex items-center gap-3">
-        <div class="w-10 h-10 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center shrink-0">
-          <i data-lucide="user-check" class="w-5 h-5"></i>
+      <div class="bg-white p-3 sm:p-4 rounded-xl border border-slate-200 shadow-2xs flex items-center gap-2.5 sm:gap-3 min-w-0">
+        <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center shrink-0">
+          <i data-lucide="user-check" class="w-4 h-4 sm:w-5 sm:h-5"></i>
         </div>
-        <div>
-          <p class="text-xs text-slate-500 font-medium">등록 교사 회원</p>
+        <div class="min-w-0">
+          <p class="text-[11px] sm:text-xs text-slate-500 font-medium truncate">등록 교사 회원</p>
           <p id="kpiMemberCount" class="text-lg sm:text-xl font-bold text-slate-900">0</p>
         </div>
       </div>
     </div>
 
     <!-- Quick Notice Banner -->
-    <div id="quickNoticeBanner" class="bg-blue-50/70 border border-blue-200 rounded-xl p-3.5 mb-6 flex items-center justify-between gap-3">
-      <div class="flex items-center gap-2 text-xs sm:text-sm text-blue-900">
+    <div id="quickNoticeBanner" class="bg-blue-50/70 border border-blue-200 rounded-xl p-3 sm:p-3.5 mb-5 sm:mb-6 flex items-center justify-between gap-2 sm:gap-3">
+      <div class="flex items-center gap-2 text-xs sm:text-sm text-blue-900 min-w-0">
         <span class="px-2 py-0.5 rounded-full bg-blue-600 text-white font-bold text-xs shrink-0">공지</span>
         <span id="bannerNoticeTitle" class="font-semibold truncate">공지사항을 불러오는 중입니다...</span>
       </div>
-      <button id="btnBannerViewNotice" class="text-xs font-bold text-blue-700 hover:text-blue-900 shrink-0 flex items-center gap-0.5">
+      <button id="btnBannerViewNotice" class="text-xs font-bold text-blue-700 hover:text-blue-900 shrink-0 flex items-center gap-0.5 cursor-pointer">
         자세히 보기 <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
       </button>
     </div>
@@ -243,22 +305,22 @@
       <div class="bg-white rounded-xl border border-slate-200 shadow-2xs overflow-hidden">
         
         <!-- Notice Header -->
-        <div class="p-6 bg-slate-900 text-white flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div class="p-4 sm:p-6 bg-slate-900 text-white flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div>
             <div class="flex items-center gap-2 mb-1">
               <span id="noticeBadge" class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-blue-500 text-white">이번 주 필독</span>
               <span id="noticeDateRange" class="text-xs text-slate-300">2026. 09. 07 ~ 2026. 09. 13</span>
             </div>
-            <h2 id="noticeTitleDisplay" class="text-xl sm:text-2xl font-bold text-white">지식샘터 9월 강의 품앗이 수강 신청 안내</h2>
+            <h2 id="noticeTitleDisplay" class="text-lg sm:text-2xl font-bold text-white leading-snug">지식샘터 9월 강의 품앗이 수강 신청 안내</h2>
           </div>
-          <button id="btnEditNoticeModal" class="px-3.5 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs sm:text-sm font-semibold rounded-lg flex items-center gap-1.5 shadow-sm transition">
+          <button id="btnEditNoticeModal" class="px-3.5 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs sm:text-sm font-semibold rounded-lg flex items-center gap-1.5 shadow-sm transition cursor-pointer shrink-0">
             <i data-lucide="edit-3" class="w-4 h-4"></i>
             <span>공지사항 수정</span>
           </button>
         </div>
 
         <!-- Notice Content Body -->
-        <div class="p-6 space-y-6">
+        <div class="p-4 sm:p-6 space-y-5 sm:space-y-6">
           <div class="prose max-w-none text-slate-700 leading-relaxed text-sm sm:text-base space-y-4" id="noticeBodyDisplay">
             <p>선생님 여러분 안녕하세요! 9월 지식샘터 강의 등록 및 수강 신청 안내드립니다.</p>
             <div class="bg-blue-50 border-l-4 border-blue-600 p-4 rounded-r-lg">
@@ -291,7 +353,7 @@
     <section id="tabContentCalendar" class="hidden space-y-6">
       
       <!-- Calendar View Control Bar -->
-      <div class="bg-white rounded-xl border border-slate-200 p-4 shadow-2xs">
+      <div class="bg-white rounded-xl border border-slate-200 p-3 sm:p-4 shadow-2xs">
         <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4">
           <div class="flex items-center gap-2 sm:gap-3 flex-wrap">
             <h2 id="calendarTitleText" class="text-base sm:text-lg font-bold text-slate-900 whitespace-nowrap tracking-tight break-keep">강의 캘린더</h2>
@@ -348,7 +410,7 @@
 
         <!-- FullCalendar Container -->
         <div id="calendarWrapper">
-          <div id="calendar" class="min-h-[520px]"></div>
+          <div id="calendar" class="min-h-[380px] sm:min-h-[520px]"></div>
         </div>
 
         <!-- Card List Alternative View (hidden by default on desktop, switchable) -->
@@ -376,18 +438,17 @@
             <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
           </button>
         </div>
-      </div>
     </section>
 
     <!-- 3. 품앗이 상호 수강 매트릭스 탭 (다음 달까지 계속 지속) -->
     <section id="tabContentMatrix" class="hidden space-y-6">
-      <div id="matrixSection" class="bg-white rounded-xl border border-slate-200 p-5 shadow-2xs scroll-mt-24">
+      <div id="matrixSection" class="bg-white rounded-xl border border-slate-200 p-3.5 sm:p-5 shadow-2xs scroll-mt-24">
         <!-- Continuity Banner -->
-        <div class="bg-gradient-to-r from-emerald-50 via-teal-50 to-blue-50 border border-emerald-200 rounded-xl p-4 mb-5 flex items-start gap-3 shadow-2xs">
+        <div class="bg-gradient-to-r from-emerald-50 via-teal-50 to-blue-50 border border-emerald-200 rounded-xl p-3.5 sm:p-4 mb-4 sm:mb-5 flex items-start gap-3 shadow-2xs">
           <div class="w-8 h-8 rounded-lg bg-emerald-600 text-white flex items-center justify-center shrink-0 shadow-xs mt-0.5">
             <i data-lucide="shield-check" class="w-4 h-4"></i>
           </div>
-          <div class="space-y-1 flex-1">
+          <div class="space-y-1 flex-1 min-w-0">
             <div class="flex items-center gap-2 flex-wrap">
               <h4 class="font-bold text-slate-900 text-xs sm:text-sm">💡 품앗이 상호 수강 매트릭스 지속 원칙</h4>
               <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-100 text-emerald-900 border border-emerald-300">매달 새로 작성하지 않음</span>
@@ -400,7 +461,7 @@
         </div>
 
         <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4">
-          <div>
+          <div class="min-w-0">
             <div class="flex items-center gap-2 flex-wrap">
               <h2 class="text-base sm:text-lg font-bold text-slate-900">교사 간 품앗이 상호 수강 매트릭스</h2>
               <span id="matrixCurrentModeBadge" class="text-xs px-2.5 py-0.5 rounded-full font-bold bg-emerald-50 text-emerald-800 border border-emerald-300 flex items-center gap-1 shadow-2xs">
@@ -414,7 +475,7 @@
 
           <div class="flex flex-col md:flex-row items-start md:items-center gap-2.5 shrink-0 w-full sm:w-auto">
             <!-- Filter Mode Switcher: 4 Month Tabs (Cumulative, Last Month, This Month, Next Month) -->
-            <div class="inline-flex flex-wrap sm:flex-nowrap rounded-lg border border-slate-200 p-1 bg-slate-100 gap-1 shadow-2xs">
+            <div class="grid grid-cols-2 sm:inline-flex rounded-lg border border-slate-200 p-1 bg-slate-100 gap-1 shadow-2xs w-full sm:w-auto">
               <button id="btnMatrixTabCumulative" type="button" class="px-2.5 py-1.5 rounded-md text-xs font-bold bg-white text-blue-700 shadow-2xs cursor-pointer flex items-center justify-center gap-1 transition border border-blue-100">
                 <i data-lucide="repeat" class="w-3.5 h-3.5 text-blue-600"></i>
                 <span>전체 누적 지속</span>
@@ -442,8 +503,13 @@
           </div>
         </div>
 
+        <!-- Mobile Swipe Hint -->
+        <div class="sm:hidden flex items-center justify-between text-[11px] text-slate-500 bg-slate-50 border border-slate-200 rounded-lg px-3 py-1.5 mb-2">
+          <span>👆 좌우로 스와이프하여 전체 매트릭스를 확인하세요 (강사명 고정)</span>
+        </div>
+
         <!-- Scrollable Matrix Table -->
-        <div class="overflow-x-auto border border-slate-200 rounded-lg">
+        <div class="overflow-auto max-h-[68vh] sm:max-h-[72vh] border border-slate-200 rounded-lg relative">
           <table id="matrixTable" class="min-w-full text-xs text-center border-collapse">
             <thead id="matrixThead" class="bg-slate-100 text-slate-700 font-bold border-b border-slate-200"></thead>
             <tbody id="matrixTbody" class="divide-y divide-slate-200"></tbody>
@@ -460,7 +526,7 @@
     <!-- 3. 아이디어 수집 탭 -->
     <section id="tabContentIdea" class="hidden space-y-6">
       <!-- Idea Banner & Header -->
-      <div class="bg-gradient-to-r from-emerald-950 via-slate-900 to-teal-950 rounded-2xl p-6 sm:p-7 text-white shadow-md relative overflow-hidden">
+      <div class="bg-gradient-to-r from-emerald-950 via-slate-900 to-teal-950 rounded-2xl p-4 sm:p-7 text-white shadow-md relative overflow-hidden">
         <div class="absolute -right-10 -bottom-10 w-48 h-48 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none"></div>
         <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-5">
           <div class="space-y-2 max-w-2xl">
@@ -558,11 +624,11 @@
           </div>
 
           <!-- Secondary Filters: Teacher dropdown & Sort -->
-          <div class="flex items-center gap-2 shrink-0">
-            <select id="filterIdeaTeacher" class="text-xs px-2.5 py-1.5 border border-slate-300 rounded-lg bg-white text-slate-700 focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+          <div class="flex items-center gap-2 w-full md:w-auto shrink-0">
+            <select id="filterIdeaTeacher" class="flex-1 min-w-0 sm:flex-none text-xs px-2.5 py-1.5 border border-slate-300 rounded-lg bg-white text-slate-700 focus:ring-2 focus:ring-emerald-500 focus:outline-none">
               <option value="">모든 제안 교사 보기</option>
             </select>
-            <select id="sortIdeaOrder" class="text-xs px-2.5 py-1.5 border border-slate-300 rounded-lg bg-white text-slate-700 focus:ring-2 focus:ring-emerald-500 focus:outline-none font-medium">
+            <select id="sortIdeaOrder" class="flex-1 min-w-0 sm:flex-none text-xs px-2.5 py-1.5 border border-slate-300 rounded-lg bg-white text-slate-700 focus:ring-2 focus:ring-emerald-500 focus:outline-none font-medium">
               <option value="latest">최신 등록순</option>
               <option value="cheers">💡 개설 응원 많은순</option>
             </select>
@@ -588,7 +654,7 @@
     <!-- 4. 강의 개발 현황 탭 (관리자 전용) -->
     <section id="tabContentDevStatus" class="hidden space-y-6">
       <!-- Admin Lock Screen (비관리자 접속 시 노출) -->
-      <div id="devStatusLockedNotice" class="bg-white rounded-2xl border-2 border-dashed border-amber-300 p-8 sm:p-12 text-center shadow-sm">
+      <div id="devStatusLockedNotice" class="bg-white rounded-2xl border-2 border-dashed border-amber-300 p-6 sm:p-12 text-center shadow-sm">
         <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-amber-50 text-amber-700 flex items-center justify-center border border-amber-200 shadow-xs">
           <i data-lucide="lock" class="w-8 h-8"></i>
         </div>
@@ -609,7 +675,7 @@
       <!-- Admin Authenticated Content (관리자 인증 시 노출) -->
       <div id="devStatusAdminAuthorizedArea" class="space-y-6 hidden">
         <!-- Hero Banner -->
-        <div class="bg-gradient-to-r from-indigo-700 via-indigo-600 to-purple-600 rounded-2xl p-6 sm:p-8 text-white shadow-md relative overflow-hidden">
+        <div class="bg-gradient-to-r from-indigo-700 via-indigo-600 to-purple-600 rounded-2xl p-4 sm:p-8 text-white shadow-md relative overflow-hidden">
           <div class="absolute -right-8 -bottom-8 opacity-10 pointer-events-none">
             <i data-lucide="layers" class="w-64 h-64"></i>
           </div>
@@ -740,11 +806,12 @@
           </div>
 
           <!-- Filters: Teacher Select & Sort Order -->
-          <div class="flex items-center gap-2 shrink-0">
-            <select id="filterDevTeacher" class="text-xs px-2.5 py-2 border border-slate-300 rounded-lg bg-white text-slate-700 focus:ring-2 focus:ring-indigo-500 focus:outline-none font-medium">
+          <div class="flex items-center gap-2 w-full sm:w-auto shrink-0">
+            <select id="filterDevTeacher" class="flex-1 min-w-0 sm:flex-none text-xs px-2.5 py-2 border border-slate-300 rounded-lg bg-white text-slate-700 focus:ring-2 focus:ring-indigo-500 focus:outline-none font-medium">
               <option value="">모든 강사 보기</option>
             </select>
-            <select id="sortDevOrder" class="text-xs px-2.5 py-2 border border-slate-300 rounded-lg bg-white text-slate-700 focus:ring-2 focus:ring-indigo-500 focus:outline-none font-medium">
+            <select id="sortDevOrder" class="flex-1 min-w-0 sm:flex-none text-xs px-2.5 py-2 border border-slate-300 rounded-lg bg-white text-slate-700 focus:ring-2 focus:ring-indigo-500 focus:outline-none font-medium">
+              <option value="fixed" selected>기본 고정순 (위치 고정)</option>
               <option value="latest">최신 업데이트순</option>
               <option value="stageAsc">단계 순차순 (1&rarr;4단계)</option>
               <option value="stageDesc">단계 완성순 (4&rarr;1단계)</option>
@@ -764,7 +831,7 @@
     <!-- 5. 피드백 및 개선방향 탭 -->
     <section id="tabContentFeedback" class="hidden space-y-6">
       <!-- Feedback Banner & Header -->
-      <div class="bg-gradient-to-r from-amber-900 via-slate-900 to-indigo-950 rounded-2xl p-6 sm:p-7 text-white shadow-md relative overflow-hidden">
+      <div class="bg-gradient-to-r from-amber-900 via-slate-900 to-indigo-950 rounded-2xl p-4 sm:p-7 text-white shadow-md relative overflow-hidden">
         <div class="absolute -right-10 -bottom-10 w-48 h-48 bg-amber-500/10 rounded-full blur-2xl pointer-events-none"></div>
         <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-5">
           <div class="space-y-2 max-w-2xl">
@@ -862,11 +929,11 @@
           </div>
 
           <!-- Secondary Filters: Teacher dropdown & Sort -->
-          <div class="flex items-center gap-2 shrink-0">
-            <select id="filterFeedbackTeacher" class="text-xs px-2.5 py-1.5 border border-slate-300 rounded-lg bg-white text-slate-700 focus:ring-2 focus:ring-amber-500 focus:outline-none">
+          <div class="flex items-center gap-2 w-full md:w-auto shrink-0">
+            <select id="filterFeedbackTeacher" class="flex-1 min-w-0 sm:flex-none text-xs px-2.5 py-1.5 border border-slate-300 rounded-lg bg-white text-slate-700 focus:ring-2 focus:ring-amber-500 focus:outline-none">
               <option value="">모든 강사 보기</option>
             </select>
-            <select id="sortFeedbackOrder" class="text-xs px-2.5 py-1.5 border border-slate-300 rounded-lg bg-white text-slate-700 focus:ring-2 focus:ring-amber-500 focus:outline-none font-medium">
+            <select id="sortFeedbackOrder" class="flex-1 min-w-0 sm:flex-none text-xs px-2.5 py-1.5 border border-slate-300 rounded-lg bg-white text-slate-700 focus:ring-2 focus:ring-amber-500 focus:outline-none font-medium">
               <option value="latest">최신 등록순</option>
               <option value="hearts">❤️ 도움됐어요 많은순</option>
             </select>
@@ -884,10 +951,12 @@
       </div>
 
       <!-- Feedback Cards Grid Container -->
-      <div id="feedbackCardsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+      <div id="feedbackCardsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
         <!-- Dynamically rendered feedback cards -->
       </div>
     </section>
+
+  </main>
 
   <!-- ==================== FOOTER ==================== -->
   <footer class="bg-white border-t border-slate-200 py-6 mt-auto">
@@ -906,8 +975,8 @@
   <!-- ==================== MODALS ==================== -->
 
   <!-- 1. 강의 등록 모달 -->
-  <div id="modalRegister" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-xl border border-slate-200 relative animate-in fade-in zoom-in duration-150">
+  <div id="modalRegister" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/50 backdrop-blur-xs flex items-start sm:items-center justify-center p-2.5 sm:p-4">
+    <div class="bg-white rounded-2xl max-w-lg w-full p-4 sm:p-6 my-auto shadow-xl border border-slate-200 relative animate-in fade-in zoom-in duration-150">
       <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-4">
         <h3 class="text-base sm:text-lg font-bold text-slate-900 flex items-center gap-2 whitespace-nowrap tracking-tight break-keep">
           <i data-lucide="plus-circle" class="w-5 h-5 text-blue-600 shrink-0"></i>
@@ -986,8 +1055,8 @@
   </div>
 
   <!-- 2. 강의 상세 및 수강 신청 모달 -->
-  <div id="modalDetail" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-xl border border-slate-200 relative animate-in fade-in zoom-in duration-150">
+  <div id="modalDetail" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/50 backdrop-blur-xs flex items-start sm:items-center justify-center p-2.5 sm:p-4">
+    <div class="bg-white rounded-2xl max-w-lg w-full p-4 sm:p-6 my-auto shadow-xl border border-slate-200 relative animate-in fade-in zoom-in duration-150">
       <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-4">
         <span id="detailMonthBadge" class="text-xs px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-700 font-bold border border-blue-200">2026. 09</span>
         <button type="button" class="btnModalClose text-slate-400 hover:text-slate-600 p-1">
@@ -1087,8 +1156,8 @@
   </div>
 
   <!-- 3. 강의 삭제 확인 모달 -->
-  <div id="modalDelete" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-xl border border-slate-200 relative animate-in fade-in zoom-in duration-150">
+  <div id="modalDelete" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/50 backdrop-blur-xs flex items-start sm:items-center justify-center p-2.5 sm:p-4">
+    <div class="bg-white rounded-2xl max-w-sm w-full p-4 sm:p-6 my-auto shadow-xl border border-slate-200 relative animate-in fade-in zoom-in duration-150">
       <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-3">
         <h3 class="text-base font-bold text-rose-600 flex items-center gap-1.5">
           <i data-lucide="alert-triangle" class="w-5 h-5"></i>
@@ -1124,8 +1193,8 @@
   </div>
 
   <!-- 3-1. 강사 본인 인증 모달 (수강현황 수정 전 비밀번호 확인) -->
-  <div id="modalVerifyPresenter" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-xl border border-slate-200 relative animate-in fade-in zoom-in duration-150">
+  <div id="modalVerifyPresenter" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/50 backdrop-blur-xs flex items-start sm:items-center justify-center p-2.5 sm:p-4">
+    <div class="bg-white rounded-2xl max-w-sm w-full p-4 sm:p-6 my-auto shadow-xl border border-slate-200 relative animate-in fade-in zoom-in duration-150">
       <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-3">
         <h3 class="text-base font-bold text-slate-900 flex items-center gap-1.5">
           <i data-lucide="lock" class="w-4 h-4 text-blue-600"></i>
@@ -1161,8 +1230,8 @@
   </div>
 
   <!-- 3-2. 강사 전용 수강신청 현황 및 강의 수정 모달 -->
-  <div id="modalEditLecture" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-xl border border-slate-200 relative animate-in fade-in zoom-in duration-150">
+  <div id="modalEditLecture" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/50 backdrop-blur-xs flex items-start sm:items-center justify-center p-2.5 sm:p-4">
+    <div class="bg-white rounded-2xl max-w-lg w-full p-4 sm:p-6 my-auto shadow-xl border border-slate-200 relative animate-in fade-in zoom-in duration-150">
       <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-4">
         <div>
           <span class="text-xs px-2.5 py-0.5 rounded-full font-bold bg-blue-50 text-blue-700 border border-blue-200">
@@ -1240,7 +1309,7 @@
 
         <div>
           <label class="block text-xs font-bold text-slate-700 mb-1">지식샘터 강좌 URL</label>
-          <input type="url" id="editLecUrl" class="w-full text-xs sm:text-sm px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none" />
+          <input type="text" id="editLecUrl" placeholder="https://educourse.keris.or.kr" class="w-full text-xs sm:text-sm px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none" />
         </div>
 
         <div class="flex items-center justify-end gap-2 pt-3 border-t border-slate-100">
@@ -1255,8 +1324,8 @@
   </div>
 
   <!-- 4. 공지사항 수정 모달 -->
-  <div id="modalEditNotice" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-xl border border-slate-200 relative animate-in fade-in zoom-in duration-150">
+  <div id="modalEditNotice" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/50 backdrop-blur-xs flex items-start sm:items-center justify-center p-2.5 sm:p-4">
+    <div class="bg-white rounded-2xl max-w-lg w-full p-4 sm:p-6 my-auto shadow-xl border border-slate-200 relative animate-in fade-in zoom-in duration-150">
       <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-4">
         <h3 class="text-base sm:text-lg font-bold text-slate-900 flex items-center gap-2">
           <i data-lucide="edit-3" class="w-5 h-5 text-blue-600"></i>
@@ -1313,7 +1382,7 @@
             </div>
             <div>
               <label class="block text-[11px] font-semibold text-slate-600 mb-1">연동 URL</label>
-              <input type="url" id="editNoticeLink" placeholder="https://educourse.keris.or.kr" class="w-full text-xs sm:text-sm px-3 py-1.5 bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none" />
+              <input type="text" id="editNoticeLink" placeholder="https://educourse.keris.or.kr" class="w-full text-xs sm:text-sm px-3 py-1.5 bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none" />
             </div>
           </div>
         </div>
@@ -1334,7 +1403,7 @@
             </div>
             <div>
               <label class="block text-[11px] font-semibold text-slate-600 mb-1">참고 사이트 연동 URL</label>
-              <input type="url" id="editNoticeRefLinkUrl" placeholder="예: https://www.keris.or.kr" class="w-full text-xs sm:text-sm px-3 py-1.5 bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none" />
+              <input type="text" id="editNoticeRefLinkUrl" placeholder="예: https://www.keris.or.kr" class="w-full text-xs sm:text-sm px-3 py-1.5 bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none" />
             </div>
           </div>
           <p class="text-[11px] text-slate-500 mt-0.5">💡 배너명과 연동 URL을 적으면 공지사항 하단에 바로가기 배너가 자동 노출됩니다.</p>
@@ -1352,8 +1421,8 @@
   </div>
 
   <!-- 5. 관리자 모드 / 회원 관리 모달 -->
-  <div id="modalAdmin" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl max-w-md w-full p-5 sm:p-6 shadow-xl border border-slate-200 relative animate-in fade-in zoom-in duration-150 max-h-[92vh] flex flex-col overflow-hidden">
+  <div id="modalAdmin" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/50 backdrop-blur-xs flex items-start sm:items-center justify-center p-2.5 sm:p-4">
+    <div class="bg-white rounded-2xl max-w-md w-full p-4 sm:p-6 my-auto shadow-xl border border-slate-200 relative animate-in fade-in zoom-in duration-150 max-h-[92vh] flex flex-col overflow-hidden">
       <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-4 shrink-0">
         <h3 class="text-base sm:text-lg font-bold text-slate-900 flex items-center gap-2">
           <i data-lucide="shield-check" class="w-5 h-5 text-indigo-600"></i>
@@ -1521,8 +1590,8 @@
   </div>
 
   <!-- 5-1-1. 관리자 비밀번호 및 복구 이메일 변경 모달 -->
-  <div id="modalAdminChangePassword" class="hidden fixed inset-0 z-[70] overflow-y-auto bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4" style="z-index: 70;">
-    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200 relative animate-in fade-in zoom-in duration-150">
+  <div id="modalAdminChangePassword" class="hidden fixed inset-0 z-[70] overflow-y-auto bg-slate-900/60 backdrop-blur-xs flex items-start sm:items-center justify-center p-2.5 sm:p-4" style="z-index: 70;">
+    <div class="bg-white rounded-2xl max-w-md w-full p-4 sm:p-6 my-auto shadow-2xl border border-slate-200 relative animate-in fade-in zoom-in duration-150">
       <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-4">
         <h3 class="text-base sm:text-lg font-bold text-slate-900 flex items-center gap-2">
           <i data-lucide="key-round" class="w-5 h-5 text-indigo-600"></i>
@@ -1592,8 +1661,8 @@
   </div>
 
   <!-- 5-1-2. 관리자 비밀번호 찾기 (복구 이메일로 임시 비밀번호 전송) 모달 -->
-  <div id="modalAdminPasswordRecovery" class="hidden fixed inset-0 z-[70] overflow-y-auto bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4" style="z-index: 70;">
-    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200 relative animate-in fade-in zoom-in duration-150">
+  <div id="modalAdminPasswordRecovery" class="hidden fixed inset-0 z-[70] overflow-y-auto bg-slate-900/60 backdrop-blur-xs flex items-start sm:items-center justify-center p-2.5 sm:p-4" style="z-index: 70;">
+    <div class="bg-white rounded-2xl max-w-md w-full p-4 sm:p-6 my-auto shadow-2xl border border-slate-200 relative animate-in fade-in zoom-in duration-150">
       <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-4">
         <h3 class="text-base sm:text-lg font-bold text-slate-900 flex items-center gap-2">
           <i data-lucide="key" class="w-5 h-5 text-amber-600"></i>
@@ -1659,8 +1728,8 @@
   </div>
 
   <!-- 5-2. 캘린더 행사/공식일정 등록 및 수정 모달 (관리자 권한) -->
-  <div id="modalCalendarEventForm" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 relative animate-in fade-in zoom-in duration-150 max-h-[92vh] overflow-y-auto">
+  <div id="modalCalendarEventForm" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/50 backdrop-blur-xs flex items-start sm:items-center justify-center p-2.5 sm:p-4">
+    <div class="bg-white rounded-2xl max-w-lg w-full p-4 sm:p-6 my-auto shadow-2xl border border-slate-200 relative animate-in fade-in zoom-in duration-150 max-h-[92vh] overflow-y-auto">
       <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-4 sticky top-0 bg-white z-10">
         <h3 class="text-base sm:text-lg font-bold text-slate-900 flex items-center gap-2">
           <i data-lucide="calendar-plus" class="w-5 h-5 text-purple-600"></i>
@@ -1774,8 +1843,8 @@
   </div>
 
   <!-- 5-3. 캘린더 행사 상세 팝업 모달 -->
-  <div id="modalEventDetail" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 relative animate-in fade-in zoom-in duration-150">
+  <div id="modalEventDetail" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/50 backdrop-blur-xs flex items-start sm:items-center justify-center p-2.5 sm:p-4">
+    <div class="bg-white rounded-2xl max-w-lg w-full p-4 sm:p-6 my-auto shadow-2xl border border-slate-200 relative animate-in fade-in zoom-in duration-150">
       <div class="flex items-start justify-between pb-3 border-b border-slate-100 mb-4">
         <div class="space-y-1">
           <div class="flex items-center gap-2">
@@ -1834,8 +1903,8 @@
   </div>
 
   <!-- 6. 품앗이 수강 상세 확인 및 수강 취소 모달 -->
-  <div id="modalMatrixDetail" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-xl border border-slate-200 relative animate-in fade-in zoom-in duration-150">
+  <div id="modalMatrixDetail" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/50 backdrop-blur-xs flex items-start sm:items-center justify-center p-2.5 sm:p-4">
+    <div class="bg-white rounded-2xl max-w-lg w-full p-4 sm:p-6 my-auto shadow-xl border border-slate-200 relative animate-in fade-in zoom-in duration-150">
       <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-4">
         <div>
           <span id="matrixDetailStatusBadge" class="text-xs px-2.5 py-0.5 rounded-full font-bold bg-blue-50 text-blue-700 border border-blue-200">
@@ -1891,8 +1960,8 @@
   </div>
 
   <!-- 7. 교사별 누적 수강 이력 및 이수 관리 모달 -->
-  <div id="modalTeacherHistory" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl max-w-2xl w-full p-5 sm:p-6 shadow-xl border border-slate-200 relative animate-in fade-in zoom-in duration-150 max-h-[92vh] flex flex-col">
+  <div id="modalTeacherHistory" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/50 backdrop-blur-xs flex items-start sm:items-center justify-center p-2.5 sm:p-4">
+    <div class="bg-white rounded-2xl max-w-2xl w-full p-4 sm:p-6 my-auto shadow-xl border border-slate-200 relative animate-in fade-in zoom-in duration-150 max-h-[92vh] flex flex-col">
       
       <!-- Modal Header -->
       <div class="flex items-start justify-between pb-3 border-b border-slate-100 shrink-0">
@@ -1975,8 +2044,8 @@
   </div>
 
   <!-- 8. 수강 및 이수 상태 변경 모달 (본인 비밀번호 인증) -->
-  <div id="modalChangeStatus" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-xl border border-slate-200 relative animate-in fade-in zoom-in duration-150">
+  <div id="modalChangeStatus" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/50 backdrop-blur-xs flex items-start sm:items-center justify-center p-2.5 sm:p-4">
+    <div class="bg-white rounded-2xl max-w-sm w-full p-4 sm:p-6 my-auto shadow-xl border border-slate-200 relative animate-in fade-in zoom-in duration-150">
       
       <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-4">
         <div class="flex items-center gap-2">
@@ -2067,8 +2136,8 @@
   </div>
 
   <!-- 9. 수강한 강의 기록 삭제 확인 모달 -->
-  <div id="modalDeleteAttendedRecord" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-xl border border-slate-200 relative animate-in fade-in zoom-in duration-150">
+  <div id="modalDeleteAttendedRecord" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/50 backdrop-blur-xs flex items-start sm:items-center justify-center p-2.5 sm:p-4">
+    <div class="bg-white rounded-2xl max-w-sm w-full p-4 sm:p-6 my-auto shadow-xl border border-slate-200 relative animate-in fade-in zoom-in duration-150">
       <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-4">
         <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
           <i data-lucide="trash-2" class="w-5 h-5 text-rose-600"></i>
@@ -2103,8 +2172,8 @@
   </div>
 
   <!-- 10. 피드백 및 개선방향 등록 모달 -->
-  <div id="modalRegisterFeedback" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl max-w-xl w-full p-6 shadow-2xl border border-slate-200 relative animate-in fade-in zoom-in duration-150 max-h-[92vh] overflow-y-auto">
+  <div id="modalRegisterFeedback" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/50 backdrop-blur-xs flex items-start sm:items-center justify-center p-2.5 sm:p-4">
+    <div class="bg-white rounded-2xl max-w-xl w-full p-4 sm:p-6 my-auto shadow-2xl border border-slate-200 relative animate-in fade-in zoom-in duration-150 max-h-[92vh] overflow-y-auto">
       <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-4 sticky top-0 bg-white z-10">
         <h3 class="text-base sm:text-lg font-bold text-slate-900 flex items-center gap-2">
           <i data-lucide="sparkles" class="w-5 h-5 text-amber-500"></i>
@@ -2267,7 +2336,7 @@
   </div>
 
   <!-- 11. 피드백 사진 크게 보기 (라이트박스) 모달 -->
-  <div id="modalFeedbackLightbox" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
+  <div id="modalFeedbackLightbox" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-2 sm:p-4">
     <div class="relative max-w-4xl w-full bg-slate-900 rounded-2xl overflow-hidden shadow-2xl border border-slate-700 flex flex-col animate-in fade-in zoom-in duration-150">
       <div class="p-3 bg-slate-900 text-white flex items-center justify-between border-b border-slate-800">
         <div class="flex items-center gap-2">
@@ -2289,8 +2358,8 @@
   </div>
 
   <!-- 12. 피드백 삭제 확인 모달 -->
-  <div id="modalDeleteFeedback" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-xl border border-slate-200 relative animate-in fade-in zoom-in duration-150">
+  <div id="modalDeleteFeedback" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/50 backdrop-blur-xs flex items-start sm:items-center justify-center p-2.5 sm:p-4">
+    <div class="bg-white rounded-2xl max-w-sm w-full p-4 sm:p-6 my-auto shadow-xl border border-slate-200 relative animate-in fade-in zoom-in duration-150">
       <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-4">
         <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
           <i data-lucide="trash-2" class="w-5 h-5 text-rose-600"></i>
@@ -2325,8 +2394,8 @@
   </div>
 
   <!-- 11-2. 수업 피드백 및 개선방향 수정 모달 -->
-  <div id="modalEditFeedback" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl max-w-xl w-full p-6 shadow-2xl border border-slate-200 relative animate-in fade-in zoom-in duration-150 max-h-[92vh] overflow-y-auto">
+  <div id="modalEditFeedback" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/50 backdrop-blur-xs flex items-start sm:items-center justify-center p-2.5 sm:p-4">
+    <div class="bg-white rounded-2xl max-w-xl w-full p-4 sm:p-6 my-auto shadow-2xl border border-slate-200 relative animate-in fade-in zoom-in duration-150 max-h-[92vh] overflow-y-auto">
       <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-4 sticky top-0 bg-white z-10">
         <h3 class="text-base sm:text-lg font-bold text-slate-900 flex items-center gap-2">
           <i data-lucide="edit-3" class="w-5 h-5 text-amber-500"></i>
@@ -2484,8 +2553,8 @@
   </div>
 
   <!-- 12. 강의 아이디어 등록 모달 (페인포인트 & 강의 아이디어 및 벤치마킹 포인트 작성) -->
-  <div id="modalRegisterIdea" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl max-w-xl w-full p-6 shadow-2xl border border-slate-200 relative animate-in fade-in zoom-in duration-150 max-h-[92vh] overflow-y-auto">
+  <div id="modalRegisterIdea" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/50 backdrop-blur-xs flex items-start sm:items-center justify-center p-2.5 sm:p-4">
+    <div class="bg-white rounded-2xl max-w-xl w-full p-4 sm:p-6 my-auto shadow-2xl border border-slate-200 relative animate-in fade-in zoom-in duration-150 max-h-[92vh] overflow-y-auto">
       <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-3 sticky top-0 bg-white z-10">
         <h3 class="text-base sm:text-lg font-bold text-slate-900 flex items-center gap-2">
           <i data-lucide="lightbulb" class="w-5 h-5 text-emerald-600"></i>
@@ -2656,8 +2725,8 @@
   </div>
 
   <!-- 13. 강의 아이디어 삭제 확인 모달 -->
-  <div id="modalDeleteIdea" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-xl border border-slate-200 relative animate-in fade-in zoom-in duration-150">
+  <div id="modalDeleteIdea" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/50 backdrop-blur-xs flex items-start sm:items-center justify-center p-2.5 sm:p-4">
+    <div class="bg-white rounded-2xl max-w-sm w-full p-4 sm:p-6 my-auto shadow-xl border border-slate-200 relative animate-in fade-in zoom-in duration-150">
       <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-3">
         <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
           <i data-lucide="trash-2" class="w-5 h-5 text-rose-600"></i>
@@ -2692,8 +2761,8 @@
   </div>
 
   <!-- 13-2. 강의 아이디어 수정 모달 -->
-  <div id="modalEditIdea" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl max-w-xl w-full p-6 shadow-2xl border border-slate-200 relative animate-in fade-in zoom-in duration-150 max-h-[92vh] overflow-y-auto">
+  <div id="modalEditIdea" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/50 backdrop-blur-xs flex items-start sm:items-center justify-center p-2.5 sm:p-4">
+    <div class="bg-white rounded-2xl max-w-xl w-full p-4 sm:p-6 my-auto shadow-2xl border border-slate-200 relative animate-in fade-in zoom-in duration-150 max-h-[92vh] overflow-y-auto">
       <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-4 sticky top-0 bg-white z-10">
         <h3 class="text-base sm:text-lg font-bold text-slate-900 flex items-center gap-2">
           <i data-lucide="edit-3" class="w-5 h-5 text-emerald-600"></i>
@@ -2848,9 +2917,9 @@
   </div>
 
   <!-- 14. 강의 개발 현황 등록 모달 -->
-  <div id="modalRegisterDevStatus" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl max-w-xl w-full p-6 shadow-2xl border border-slate-200 relative animate-in fade-in zoom-in duration-150 max-h-[92vh] overflow-y-auto">
-      <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-3 sticky top-0 bg-white z-10">
+  <div id="modalRegisterDevStatus" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/50 backdrop-blur-xs flex items-start sm:items-center justify-center p-2.5 sm:p-4">
+    <div class="bg-white rounded-2xl max-w-2xl w-full p-4 sm:p-6 my-auto shadow-2xl border border-slate-200 relative animate-in fade-in zoom-in duration-150 max-h-[92vh] overflow-y-auto">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-3 sticky top-0 -mx-4 px-4 sm:-mx-6 sm:px-6 -mt-4 pt-4 sm:-mt-6 sm:pt-6 bg-white/95 backdrop-blur-xs z-10">
         <h3 class="text-base sm:text-lg font-bold text-slate-900 flex items-center gap-2">
           <i data-lucide="layers" class="w-5 h-5 text-indigo-600"></i>
           <span>내 강의 개발 현황 등록</span>
@@ -2955,56 +3024,82 @@
 
         <!-- 기존 개설 강의 작성칸 -->
         <div class="bg-emerald-50/70 p-3.5 rounded-xl border border-emerald-200 space-y-1.5">
-          <div class="flex items-center justify-between">
+          <div class="flex flex-wrap items-center justify-between gap-1.5">
             <label class="block text-xs font-bold text-emerald-900 flex items-center gap-1.5">
               <i data-lucide="book-open" class="w-4 h-4 text-emerald-600"></i>
               <span>기존 개설 강의 (강사 이력 및 기존 운영 강좌)</span>
             </label>
-            <div class="flex items-center gap-1.5">
+            <div class="flex items-center gap-1 flex-wrap">
               <button type="button" onclick="window.applyBoldToField('regDevPastCourses')" class="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 bg-emerald-100 hover:bg-emerald-200 text-emerald-900 rounded border border-emerald-300 transition cursor-pointer" title="선택한 텍스트 굵게 강조 (**강조**)">
                 <i data-lucide="bold" class="w-3 h-3"></i>
                 <span>굵게 B</span>
               </button>
-              <span class="text-[11px] text-emerald-800 font-medium">선택 작성</span>
+              <button type="button" onclick="window.adjustDevTextareaHeight('regDevPastCourses', 140)" class="inline-flex items-center gap-0.5 text-[11px] font-bold px-2 py-0.5 bg-white hover:bg-emerald-100 text-emerald-800 rounded border border-emerald-300 transition cursor-pointer" title="입력칸 높이 늘리기">
+                <i data-lucide="plus" class="w-3 h-3"></i>
+                <span>늘리기</span>
+              </button>
+              <button type="button" onclick="window.adjustDevTextareaHeight('regDevPastCourses', -140)" class="inline-flex items-center gap-0.5 text-[11px] font-bold px-2 py-0.5 bg-white hover:bg-emerald-100 text-emerald-700 rounded border border-emerald-200 transition cursor-pointer" title="입력칸 높이 줄이기">
+                <i data-lucide="minus" class="w-3 h-3"></i>
+                <span>줄이기</span>
+              </button>
+              <span class="text-[11px] text-emerald-800 font-medium ml-0.5">선택 작성</span>
             </div>
           </div>
-          <textarea id="regDevPastCourses" rows="2" placeholder="예: [초등] 노션으로 끝내는 학급 경영 기본편, 생성형 AI를 활용한 학생 맞춤형 평가 설계 워크숍 등 기존에 진행했던 강의 목록을 적어주세요." class="w-full text-xs sm:text-sm px-3 py-2 border border-emerald-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none bg-white"></textarea>
+          <textarea id="regDevPastCourses" rows="3" data-min-height="88" oninput="window.autoResizeDevTextarea(this)" onpointerup="window.syncDraggedDevTextarea(this)" placeholder="예: [초등] 노션으로 끝내는 학급 경영 기본편, 생성형 AI를 활용한 학생 맞춤형 평가 설계 워크숍 등 기존에 진행했던 강의 목록을 적어주세요." class="w-full text-xs sm:text-sm px-3 py-2 border border-emerald-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none bg-white resize-y min-h-[88px] overflow-y-auto leading-relaxed"></textarea>
         </div>
 
         <!-- 1. 내용 작성칸 (어느 정도 진행됐는지 기입) -->
         <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200 space-y-1.5">
-          <div class="flex items-center justify-between">
+          <div class="flex flex-wrap items-center justify-between gap-1.5">
             <label class="block text-xs font-bold text-slate-800 flex items-center gap-1.5">
               <i data-lucide="file-text" class="w-4 h-4 text-indigo-600"></i>
               <span>진행 내용 (어느 정도 진행됐는지 상세 기입) *</span>
             </label>
-            <button type="button" onclick="window.applyBoldToField('regDevContent')" class="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 bg-slate-200 hover:bg-slate-300 text-slate-800 rounded border border-slate-300 transition cursor-pointer" title="선택한 텍스트 굵게 강조 (**강조**)">
-              <i data-lucide="bold" class="w-3 h-3"></i>
-              <span>굵게 B</span>
-            </button>
+            <div class="flex items-center gap-1 flex-wrap">
+              <button type="button" onclick="window.applyBoldToField('regDevContent')" class="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 bg-slate-200 hover:bg-slate-300 text-slate-800 rounded border border-slate-300 transition cursor-pointer" title="선택한 텍스트 굵게 강조 (**강조**)">
+                <i data-lucide="bold" class="w-3 h-3"></i>
+                <span>굵게 B</span>
+              </button>
+              <button type="button" onclick="window.adjustDevTextareaHeight('regDevContent', 140)" class="inline-flex items-center gap-0.5 text-[11px] font-bold px-2 py-0.5 bg-white hover:bg-indigo-50 text-indigo-700 rounded border border-indigo-200 transition cursor-pointer" title="입력칸 높이 늘리기">
+                <i data-lucide="plus" class="w-3 h-3"></i>
+                <span>늘리기</span>
+              </button>
+              <button type="button" onclick="window.adjustDevTextareaHeight('regDevContent', -140)" class="inline-flex items-center gap-0.5 text-[11px] font-bold px-2 py-0.5 bg-white hover:bg-slate-100 text-slate-600 rounded border border-slate-300 transition cursor-pointer" title="입력칸 높이 줄이기">
+                <i data-lucide="minus" class="w-3 h-3"></i>
+                <span>줄이기</span>
+              </button>
+            </div>
           </div>
-          <textarea id="regDevContent" required rows="3" placeholder="예: 단원별 핵심 활동 3가지를 정리 완료하고 교사용 지도서와 활동지 초안을 70% 완성했습니다. 다음 주까지 실습 슬라이드 마무리 예정입니다." class="w-full text-xs sm:text-sm px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-white"></textarea>
+          <textarea id="regDevContent" required rows="5" data-min-height="136" oninput="window.autoResizeDevTextarea(this)" onpointerup="window.syncDraggedDevTextarea(this)" placeholder="예: 단원별 핵심 활동 3가지를 정리 완료하고 교사용 지도서와 활동지 초안을 70% 완성했습니다. 다음 주까지 실습 슬라이드 마무리 예정입니다." class="w-full text-xs sm:text-sm px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-white resize-y min-h-[136px] overflow-y-auto leading-relaxed"></textarea>
         </div>
 
         <!-- 2. 하단: 어려움을 느끼는 부분이 무엇인지 기록하는 칸 -->
         <div class="bg-amber-50/70 p-3.5 rounded-xl border border-amber-200 space-y-1.5">
-          <div class="flex items-center justify-between">
+          <div class="flex flex-wrap items-center justify-between gap-1.5">
             <label class="block text-xs font-bold text-amber-900 flex items-center gap-1.5">
               <i data-lucide="help-circle" class="w-4 h-4 text-amber-600"></i>
               <span>하단: 어려움을 느끼는 부분 (고민 및 동료 피드백 요청)</span>
             </label>
-            <div class="flex items-center gap-1.5">
+            <div class="flex items-center gap-1 flex-wrap">
               <button type="button" onclick="window.applyBoldToField('regDevDifficulties')" class="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 bg-amber-100 hover:bg-amber-200 text-amber-900 rounded border border-amber-300 transition cursor-pointer" title="선택한 텍스트 굵게 강조 (**강조**)">
                 <i data-lucide="bold" class="w-3 h-3"></i>
                 <span>굵게 B</span>
               </button>
-              <span class="text-[11px] text-amber-800 font-medium">선택 작성</span>
+              <button type="button" onclick="window.adjustDevTextareaHeight('regDevDifficulties', 140)" class="inline-flex items-center gap-0.5 text-[11px] font-bold px-2 py-0.5 bg-white hover:bg-amber-100 text-amber-900 rounded border border-amber-300 transition cursor-pointer" title="입력칸 높이 늘리기">
+                <i data-lucide="plus" class="w-3 h-3"></i>
+                <span>늘리기</span>
+              </button>
+              <button type="button" onclick="window.adjustDevTextareaHeight('regDevDifficulties', -140)" class="inline-flex items-center gap-0.5 text-[11px] font-bold px-2 py-0.5 bg-white hover:bg-amber-100 text-amber-700 rounded border border-amber-200 transition cursor-pointer" title="입력칸 높이 줄이기">
+                <i data-lucide="minus" class="w-3 h-3"></i>
+                <span>줄이기</span>
+              </button>
+              <span class="text-[11px] text-amber-800 font-medium ml-0.5">선택 작성</span>
             </div>
           </div>
-          <textarea id="regDevDifficulties" rows="2" placeholder="예: 학생들이 태블릿으로 동시 접속할 때 계정 로그인 오류가 우려되어 오프라인 보조 매뉴얼 구성 방식에 대한 조언이 필요합니다." class="w-full text-xs sm:text-sm px-3 py-2 border border-amber-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:outline-none bg-white"></textarea>
+          <textarea id="regDevDifficulties" rows="4" data-min-height="112" oninput="window.autoResizeDevTextarea(this)" onpointerup="window.syncDraggedDevTextarea(this)" placeholder="예: 학생들이 태블릿으로 동시 접속할 때 계정 로그인 오류가 우려되어 오프라인 보조 매뉴얼 구성 방식에 대한 조언이 필요합니다." class="w-full text-xs sm:text-sm px-3 py-2 border border-amber-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:outline-none bg-white resize-y min-h-[112px] overflow-y-auto leading-relaxed"></textarea>
         </div>
 
-        <div class="flex justify-end gap-2 pt-3 border-t border-slate-100">
+        <div class="flex justify-end gap-2 pt-3 border-t border-slate-100 sticky bottom-0 -mx-4 px-4 sm:-mx-6 sm:px-6 -mb-4 pb-4 sm:-mb-6 sm:pb-6 bg-white/95 backdrop-blur-xs z-10">
           <button type="button" class="btnModalClose px-4 py-2 text-xs sm:text-sm text-slate-600 hover:bg-slate-100 rounded-lg font-medium cursor-pointer whitespace-nowrap">
             취소
           </button>
@@ -3018,9 +3113,9 @@
   </div>
 
   <!-- 15. 강의 개발 현황 수정 모달 -->
-  <div id="modalEditDevStatus" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl max-w-xl w-full p-6 shadow-2xl border border-slate-200 relative animate-in fade-in zoom-in duration-150 max-h-[92vh] overflow-y-auto">
-      <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-3 sticky top-0 bg-white z-10">
+  <div id="modalEditDevStatus" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/50 backdrop-blur-xs flex items-start sm:items-center justify-center p-2.5 sm:p-4">
+    <div class="bg-white rounded-2xl max-w-2xl w-full p-4 sm:p-6 my-auto shadow-2xl border border-slate-200 relative animate-in fade-in zoom-in duration-150 max-h-[92vh] overflow-y-auto">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-3 sticky top-0 -mx-4 px-4 sm:-mx-6 sm:px-6 -mt-4 pt-4 sm:-mt-6 sm:pt-6 bg-white/95 backdrop-blur-xs z-10">
         <h3 class="text-base sm:text-lg font-bold text-slate-900 flex items-center gap-2">
           <i data-lucide="edit-3" class="w-5 h-5 text-indigo-600"></i>
           <span>강의 개발 현황 수정</span>
@@ -3031,27 +3126,15 @@
       </div>
 
       <form id="formEditDevStatus" onsubmit="window.submitEditDevStatus(event); return false;" class="space-y-4">
-        <!-- Teacher name & Password -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <div>
-            <label class="block text-xs font-bold text-slate-700 mb-1 flex items-center justify-between">
-              <span>강사 닉네임 *</span>
-              <span class="text-[11px] text-indigo-600 font-normal">회원 명단 선택</span>
-            </label>
-            <select id="editDevTeacherSelect" required class="w-full text-xs sm:text-sm px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-white">
-              <option value="">강사를 선택하세요</option>
-            </select>
-          </div>
-          <div>
-            <label class="block text-xs font-bold text-slate-700 mb-1">비밀번호 확인 *</label>
-            <div class="relative">
-              <input type="password" id="editDevPassword" required maxlength="12" placeholder="등록 시 비밀번호 (기본: 1234)" class="w-full text-xs sm:text-sm pl-3 pr-9 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none" />
-              <button type="button" class="btnTogglePassword absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 focus:outline-none cursor-pointer" data-target="editDevPassword" title="비밀번호 보기/숨기기">
-                <i data-lucide="eye" class="w-4 h-4"></i>
-              </button>
-            </div>
-            <p class="text-[10px] text-slate-400 mt-0.5">※ 등록 시 설정한 비밀번호(기본: 1234)를 입력하세요.</p>
-          </div>
+        <!-- Teacher name -->
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1 flex items-center justify-between">
+            <span>강사 닉네임 *</span>
+            <span class="text-[11px] text-indigo-600 font-normal">회원 명단 선택</span>
+          </label>
+          <select id="editDevTeacherSelect" required class="w-full text-xs sm:text-sm px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-white">
+            <option value="">강사를 선택하세요</option>
+          </select>
         </div>
 
         <!-- Course Title & Category -->
@@ -3116,53 +3199,81 @@
 
         <!-- 기존 개설 강의 작성칸 -->
         <div class="bg-emerald-50/70 p-3.5 rounded-xl border border-emerald-200 space-y-1.5">
-          <div class="flex items-center justify-between">
+          <div class="flex flex-wrap items-center justify-between gap-1.5">
             <label class="block text-xs font-bold text-emerald-900 flex items-center gap-1.5">
               <i data-lucide="book-open" class="w-4 h-4 text-emerald-600"></i>
               <span>기존 개설 강의 (강사 이력 및 기존 운영 강좌)</span>
             </label>
-            <div class="flex items-center gap-1.5">
+            <div class="flex items-center gap-1 flex-wrap">
               <button type="button" onclick="window.applyBoldToField('editDevPastCourses')" class="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 bg-emerald-100 hover:bg-emerald-200 text-emerald-900 rounded border border-emerald-300 transition cursor-pointer" title="선택한 텍스트 굵게 강조 (**강조**)">
                 <i data-lucide="bold" class="w-3 h-3"></i>
                 <span>굵게 B</span>
               </button>
-              <span class="text-[11px] text-emerald-800 font-medium">선택 작성</span>
+              <button type="button" onclick="window.adjustDevTextareaHeight('editDevPastCourses', 140)" class="inline-flex items-center gap-0.5 text-[11px] font-bold px-2 py-0.5 bg-white hover:bg-emerald-100 text-emerald-800 rounded border border-emerald-300 transition cursor-pointer" title="입력칸 높이 늘리기">
+                <i data-lucide="plus" class="w-3 h-3"></i>
+                <span>늘리기</span>
+              </button>
+              <button type="button" onclick="window.adjustDevTextareaHeight('editDevPastCourses', -140)" class="inline-flex items-center gap-0.5 text-[11px] font-bold px-2 py-0.5 bg-white hover:bg-emerald-100 text-emerald-700 rounded border border-emerald-200 transition cursor-pointer" title="입력칸 높이 줄이기">
+                <i data-lucide="minus" class="w-3 h-3"></i>
+                <span>줄이기</span>
+              </button>
+              <span class="text-[11px] text-emerald-800 font-medium ml-0.5">선택 작성</span>
             </div>
           </div>
-          <textarea id="editDevPastCourses" rows="2" placeholder="예: [초등] 노션으로 끝내는 학급 경영 기본편 등 기존에 진행했던 강의 목록을 적어주세요." class="w-full text-xs sm:text-sm px-3 py-2 border border-emerald-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none bg-white"></textarea>
+          <textarea id="editDevPastCourses" rows="3" data-min-height="88" oninput="window.autoResizeDevTextarea(this)" onpointerup="window.syncDraggedDevTextarea(this)" placeholder="예: [초등] 노션으로 끝내는 학급 경영 기본편 등 기존에 진행했던 강의 목록을 적어주세요." class="w-full text-xs sm:text-sm px-3 py-2 border border-emerald-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none bg-white resize-y min-h-[88px] overflow-y-auto leading-relaxed"></textarea>
         </div>
 
         <!-- 1. 내용 작성칸 -->
         <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200 space-y-1.5">
-          <div class="flex items-center justify-between">
+          <div class="flex flex-wrap items-center justify-between gap-1.5">
             <label class="block text-xs font-bold text-slate-800 flex items-center gap-1.5">
               <i data-lucide="file-text" class="w-4 h-4 text-indigo-600"></i>
-              <span>진행 내용 (어느 정도 진행됐는지 상세 기입) *</span>
+              <span>현재 진행 내용 및 진도 상황 (상세 기입) *</span>
             </label>
-            <button type="button" onclick="window.applyBoldToField('editDevContent')" class="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 bg-slate-200 hover:bg-slate-300 text-slate-800 rounded border border-slate-300 transition cursor-pointer" title="선택한 텍스트 굵게 강조 (**강조**)">
-              <i data-lucide="bold" class="w-3 h-3"></i>
-              <span>굵게 B</span>
-            </button>
+            <div class="flex items-center gap-1 flex-wrap">
+              <button type="button" onclick="window.applyBoldToField('editDevContent')" class="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 bg-slate-200 hover:bg-slate-300 text-slate-800 rounded border border-slate-300 transition cursor-pointer" title="선택한 텍스트 굵게 강조 (**강조**)">
+                <i data-lucide="bold" class="w-3 h-3"></i>
+                <span>굵게 B</span>
+              </button>
+              <button type="button" onclick="window.adjustDevTextareaHeight('editDevContent', 140)" class="inline-flex items-center gap-0.5 text-[11px] font-bold px-2 py-0.5 bg-white hover:bg-indigo-50 text-indigo-700 rounded border border-indigo-200 transition cursor-pointer" title="입력칸 높이 늘리기">
+                <i data-lucide="plus" class="w-3 h-3"></i>
+                <span>늘리기</span>
+              </button>
+              <button type="button" onclick="window.adjustDevTextareaHeight('editDevContent', -140)" class="inline-flex items-center gap-0.5 text-[11px] font-bold px-2 py-0.5 bg-white hover:bg-slate-100 text-slate-600 rounded border border-slate-300 transition cursor-pointer" title="입력칸 높이 줄이기">
+                <i data-lucide="minus" class="w-3 h-3"></i>
+                <span>줄이기</span>
+              </button>
+            </div>
           </div>
-          <textarea id="editDevContent" required rows="3" class="w-full text-xs sm:text-sm px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-white"></textarea>
+          <textarea id="editDevContent" required rows="5" data-min-height="136" oninput="window.autoResizeDevTextarea(this)" onpointerup="window.syncDraggedDevTextarea(this)" class="w-full text-xs sm:text-sm px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-white resize-y min-h-[136px] overflow-y-auto leading-relaxed"></textarea>
         </div>
 
         <!-- 2. 하단: 어려움을 느끼는 부분 -->
         <div class="bg-amber-50/70 p-3.5 rounded-xl border border-amber-200 space-y-1.5">
-          <div class="flex items-center justify-between">
+          <div class="flex flex-wrap items-center justify-between gap-1.5">
             <label class="block text-xs font-bold text-amber-900 flex items-center gap-1.5">
               <i data-lucide="help-circle" class="w-4 h-4 text-amber-600"></i>
               <span>하단: 어려움을 느끼는 부분 (고민 및 동료 피드백 요청)</span>
             </label>
-            <button type="button" onclick="window.applyBoldToField('editDevDifficulties')" class="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 bg-amber-100 hover:bg-amber-200 text-amber-900 rounded border border-amber-300 transition cursor-pointer" title="선택한 텍스트 굵게 강조 (**강조**)">
-              <i data-lucide="bold" class="w-3 h-3"></i>
-              <span>굵게 B</span>
-            </button>
+            <div class="flex items-center gap-1 flex-wrap">
+              <button type="button" onclick="window.applyBoldToField('editDevDifficulties')" class="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 bg-amber-100 hover:bg-amber-200 text-amber-900 rounded border border-amber-300 transition cursor-pointer" title="선택한 텍스트 굵게 강조 (**강조**)">
+                <i data-lucide="bold" class="w-3 h-3"></i>
+                <span>굵게 B</span>
+              </button>
+              <button type="button" onclick="window.adjustDevTextareaHeight('editDevDifficulties', 140)" class="inline-flex items-center gap-0.5 text-[11px] font-bold px-2 py-0.5 bg-white hover:bg-amber-100 text-amber-900 rounded border border-amber-300 transition cursor-pointer" title="입력칸 높이 늘리기">
+                <i data-lucide="plus" class="w-3 h-3"></i>
+                <span>늘리기</span>
+              </button>
+              <button type="button" onclick="window.adjustDevTextareaHeight('editDevDifficulties', -140)" class="inline-flex items-center gap-0.5 text-[11px] font-bold px-2 py-0.5 bg-white hover:bg-amber-100 text-amber-700 rounded border border-amber-200 transition cursor-pointer" title="입력칸 높이 줄이기">
+                <i data-lucide="minus" class="w-3 h-3"></i>
+                <span>줄이기</span>
+              </button>
+            </div>
           </div>
-          <textarea id="editDevDifficulties" rows="2" class="w-full text-xs sm:text-sm px-3 py-2 border border-amber-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:outline-none bg-white"></textarea>
+          <textarea id="editDevDifficulties" rows="4" data-min-height="112" oninput="window.autoResizeDevTextarea(this)" onpointerup="window.syncDraggedDevTextarea(this)" class="w-full text-xs sm:text-sm px-3 py-2 border border-amber-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:outline-none bg-white resize-y min-h-[112px] overflow-y-auto leading-relaxed"></textarea>
         </div>
 
-        <div class="flex justify-end gap-2 pt-3 border-t border-slate-100">
+        <div class="flex justify-end gap-2 pt-3 border-t border-slate-100 sticky bottom-0 -mx-4 px-4 sm:-mx-6 sm:px-6 -mb-4 pb-4 sm:-mb-6 sm:pb-6 bg-white/95 backdrop-blur-xs z-10">
           <button type="button" class="btnModalClose px-4 py-2 text-xs sm:text-sm text-slate-600 hover:bg-slate-100 rounded-lg font-medium cursor-pointer whitespace-nowrap">
             취소
           </button>
@@ -3176,8 +3287,8 @@
   </div>
 
   <!-- 16. 강의 개발 현황 삭제 모달 -->
-  <div id="modalDeleteDevStatus" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-2xl border border-slate-200 relative animate-in fade-in zoom-in duration-150">
+  <div id="modalDeleteDevStatus" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/50 backdrop-blur-xs flex items-start sm:items-center justify-center p-2.5 sm:p-4">
+    <div class="bg-white rounded-2xl max-w-sm w-full p-4 sm:p-6 my-auto shadow-2xl border border-slate-200 relative animate-in fade-in zoom-in duration-150">
       <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-4">
         <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
           <i data-lucide="trash-2" class="w-5 h-5 text-rose-600"></i>
@@ -3219,8 +3330,8 @@
   </div>
 
   <!-- 댓글 삭제 확인 모달 -->
-  <div id="modalDeleteIdeaComment" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-xl border border-slate-200 relative animate-in fade-in zoom-in duration-150">
+  <div id="modalDeleteIdeaComment" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/50 backdrop-blur-xs flex items-start sm:items-center justify-center p-2.5 sm:p-4">
+    <div class="bg-white rounded-2xl max-w-sm w-full p-4 sm:p-6 my-auto shadow-xl border border-slate-200 relative animate-in fade-in zoom-in duration-150">
       <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-3">
         <h3 class="text-base font-bold text-rose-600 flex items-center gap-1.5">
           <i data-lucide="trash-2" class="w-5 h-5"></i>
@@ -3255,8 +3366,8 @@
   </div>
 
   <!-- 수강 신청 취소 확인 모달 -->
-  <div id="modalCancelEnrollment" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-xl border border-slate-200 relative animate-in fade-in zoom-in duration-150">
+  <div id="modalCancelEnrollment" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/50 backdrop-blur-xs flex items-start sm:items-center justify-center p-2.5 sm:p-4">
+    <div class="bg-white rounded-2xl max-w-sm w-full p-4 sm:p-6 my-auto shadow-xl border border-slate-200 relative animate-in fade-in zoom-in duration-150">
       <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-3">
         <h3 class="text-base font-bold text-rose-600 flex items-center gap-1.5">
           <i data-lucide="alert-triangle" class="w-5 h-5"></i>
@@ -3291,7 +3402,7 @@
   </div>
 
   <!-- Toast Notification Container -->
-  <div id="toastContainer" class="fixed bottom-5 right-5 z-[200] flex flex-col gap-2 pointer-events-none" style="z-index: 9999;"></div>
+  <div id="toastContainer" class="fixed bottom-4 left-3 right-3 sm:left-auto sm:right-5 sm:max-w-sm z-[200] flex flex-col gap-2 pointer-events-none" style="z-index: 9999;"></div>
 
   <!-- ==================== JAVASCRIPT LOGIC ==================== -->
   <script>
@@ -3541,10 +3652,38 @@
 
     window.updateAdminUI = function () {
       const adminBtnLabel = document.getElementById("adminBtnLabel");
+      const adminBtn = document.getElementById("btnOpenAdminModal");
+      const adminStatusDot = document.getElementById("adminStatusDot");
+      const mobileAdminBtn = document.getElementById("btnMobileAdmin");
+      const mobileAdminLabel = document.getElementById("mobileAdminBtnLabel");
       const loginSec = document.getElementById("adminLoginSection");
       const panelSec = document.getElementById("adminPanelSection");
       if (adminBtnLabel) {
         adminBtnLabel.innerText = isAdminLoggedIn ? "관리자 (ON)" : "관리자";
+      }
+      if (adminBtn) {
+        if (isAdminLoggedIn) {
+          adminBtn.classList.remove("bg-slate-100", "hover:bg-slate-200", "text-slate-700", "border-slate-200");
+          adminBtn.classList.add("bg-indigo-50", "hover:bg-indigo-100", "text-indigo-700", "border-indigo-300");
+        } else {
+          adminBtn.classList.remove("bg-indigo-50", "hover:bg-indigo-100", "text-indigo-700", "border-indigo-300");
+          adminBtn.classList.add("bg-slate-100", "hover:bg-slate-200", "text-slate-700", "border-slate-200");
+        }
+      }
+      if (adminStatusDot) {
+        adminStatusDot.classList.toggle("hidden", !isAdminLoggedIn);
+      }
+      if (mobileAdminLabel) {
+        mobileAdminLabel.innerText = isAdminLoggedIn ? "관리자 모드 (ON)" : "관리자 모드";
+      }
+      if (mobileAdminBtn) {
+        if (isAdminLoggedIn) {
+          mobileAdminBtn.classList.remove("bg-slate-100", "text-slate-800", "border-slate-200");
+          mobileAdminBtn.classList.add("bg-indigo-50", "text-indigo-700", "border-indigo-300");
+        } else {
+          mobileAdminBtn.classList.remove("bg-indigo-50", "text-indigo-700", "border-indigo-300");
+          mobileAdminBtn.classList.add("bg-slate-100", "text-slate-800", "border-slate-200");
+        }
       }
       if (isAdminLoggedIn) {
         loginSec?.classList.add("hidden");
@@ -3913,8 +4052,43 @@
     }
 
     // ----------------------------------------------------
-    // Lecture Dev Status Deduplication (강의 개발 현황 중복 방지 및 1인 1개발현황 보장)
+    // Lecture Dev Status Fixed Ordering & Deduplication
     // ----------------------------------------------------
+    function sortDevStatusFixed(list) {
+      if (!Array.isArray(list)) return [];
+      const memberIndexMap = new Map();
+      (Array.isArray(memberList) ? memberList : []).forEach((name, idx) => {
+        const trimmed = (name || "").trim();
+        if (trimmed && !memberIndexMap.has(trimmed)) {
+          memberIndexMap.set(trimmed, idx);
+        }
+      });
+      const defaultIndexMap = new Map();
+      (Array.isArray(DEFAULT_DEV_STATUS) ? DEFAULT_DEV_STATUS : []).forEach((item, idx) => {
+        if (item && item.id) {
+          defaultIndexMap.set(String(item.id), idx);
+        }
+      });
+
+      return [...list].sort((a, b) => {
+        const nameA = (a?.teacherName || "").trim();
+        const nameB = (b?.teacherName || "").trim();
+        const mIdxA = memberIndexMap.has(nameA) ? memberIndexMap.get(nameA) : Number.MAX_SAFE_INTEGER;
+        const mIdxB = memberIndexMap.has(nameB) ? memberIndexMap.get(nameB) : Number.MAX_SAFE_INTEGER;
+        if (mIdxA !== mIdxB) return mIdxA - mIdxB;
+
+        const dIdxA = defaultIndexMap.has(String(a?.id)) ? defaultIndexMap.get(String(a.id)) : Number.MAX_SAFE_INTEGER;
+        const dIdxB = defaultIndexMap.has(String(b?.id)) ? defaultIndexMap.get(String(b.id)) : Number.MAX_SAFE_INTEGER;
+        if (dIdxA !== dIdxB) return dIdxA - dIdxB;
+
+        const cA = a?.createdAt || "";
+        const cB = b?.createdAt || "";
+        if (cA !== cB) return cA.localeCompare(cB);
+
+        return String(a?.id || "").localeCompare(String(b?.id || ""));
+      });
+    }
+
     function deduplicateDevStatus(list) {
       if (!Array.isArray(list)) return [];
       const seenIds = new Set();
@@ -3923,7 +4097,7 @@
       const result = [];
       const duplicateIdsToRemove = [];
 
-      // Sort by updatedAt/createdAt descending so the most recent status is always preserved
+      // Sort a temporary copy by updatedAt/createdAt descending only to keep the most recent status on duplicate resolution
       const sorted = [...list].filter((d) => d && d.id && !deletedDevStatusIds.has(String(d.id)) && !d._deleted && !d.deleted);
       sorted.sort((a, b) => (b.updatedAt || b.createdAt || "").localeCompare(a.updatedAt || a.createdAt || ""));
 
@@ -3967,7 +4141,7 @@
         });
       }
 
-      return result;
+      return sortDevStatusFixed(result);
     }
 
     // ----------------------------------------------------
@@ -4078,6 +4252,63 @@
       // Allow it to grow smoothly up to 360px without cutting off, with minimum 64px
       const newHeight = Math.max(Math.min(scrollH + 4, 360), 64);
       el.style.height = newHeight + "px";
+    };
+
+    // Helper: Auto-resize & manual height adjustment for Dev Status textareas
+    window.autoResizeDevTextarea = function (el, resetState) {
+      if (!el) return;
+      if (resetState) {
+        delete el.dataset.manualMinHeight;
+        delete el.dataset.shrinkLocked;
+        el.style.height = "";
+      }
+      if (el.dataset.shrinkLocked === "1") return;
+      const baseMin = Number(el.dataset.minHeight) || 100;
+      const manualMin = Number(el.dataset.manualMinHeight) || 0;
+      const targetMin = Math.max(baseMin, manualMin);
+      el.style.height = "auto";
+      const contentH = Math.min(el.scrollHeight + 8, 600);
+      const finalH = Math.max(targetMin, contentH);
+      el.style.height = finalH + "px";
+    };
+
+    window.adjustDevTextareaHeight = function (fieldId, delta) {
+      const el = document.getElementById(fieldId);
+      if (!el) return;
+      const baseMin = Number(el.dataset.minHeight) || 100;
+      const currentH = el.offsetHeight || parseInt(el.style.height, 10) || baseMin;
+      if (delta > 0) {
+        delete el.dataset.shrinkLocked;
+        const targetH = Math.min(Math.max(currentH + delta, el.scrollHeight + 24), 960);
+        el.dataset.manualMinHeight = String(targetH);
+        el.style.height = targetH + "px";
+      } else {
+        const targetH = Math.max(baseMin, currentH + delta);
+        if (targetH <= baseMin) {
+          delete el.dataset.manualMinHeight;
+        } else {
+          el.dataset.manualMinHeight = String(targetH);
+        }
+        if (targetH < el.scrollHeight) {
+          el.dataset.shrinkLocked = "1";
+        } else {
+          delete el.dataset.shrinkLocked;
+        }
+        el.style.height = targetH + "px";
+      }
+      el.focus({ preventScroll: true });
+    };
+
+    window.syncDraggedDevTextarea = function (el) {
+      if (!el) return;
+      const currentH = el.offsetHeight;
+      if (!currentH) return;
+      el.dataset.manualMinHeight = String(currentH);
+      if (currentH < el.scrollHeight - 4) {
+        el.dataset.shrinkLocked = "1";
+      } else {
+        delete el.dataset.shrinkLocked;
+      }
     };
 
     // Helper: Apply or toggle bold markdown formatting (**text**)
@@ -4636,8 +4867,8 @@
                 currentAdminRecoveryEmail = data.recoveryEmail.trim();
               }
               saveLocalData();
-              if (typeof updateAdminSettingsUI === "function") {
-                updateAdminSettingsUI();
+              if (typeof window.updateAdminSettingsUI === "function") {
+                window.updateAdminSettingsUI();
               }
               // Hydrate server store in case server restarted cleanly
               fetch("/api/admin/hydrate-credentials", {
@@ -4866,7 +5097,6 @@
               });
             }
             const list = Array.from(listMap.values()).filter((d) => d && !deletedDevStatusIds.has(String(d.id)) && !d._deleted && !d.deleted);
-            list.sort((a, b) => (b.updatedAt || b.createdAt || "").localeCompare(a.updatedAt || a.createdAt || ""));
             devStatusData = deduplicateDevStatus(list);
             saveLocalData();
             renderDevStatusView();
@@ -5035,7 +5265,7 @@
         const enteredPw = pwInput ? pwInput.value.trim() : "";
         if (checkIsAdminPassword(enteredPw)) {
           isAdminLoggedIn = true;
-          if (typeof updateAdminUI === "function") updateAdminUI();
+          if (typeof window.updateAdminUI === "function") window.updateAdminUI();
         } else {
           showToast("관리자 비밀번호가 올바르지 않습니다.", "error");
           if (pwInput) pwInput.focus();
@@ -5433,11 +5663,11 @@
       if (idx >= 0) {
         devStatusData[idx] = record;
       } else {
-        devStatusData.unshift(record);
+        devStatusData.push(record);
       }
       devStatusData = deduplicateDevStatus(devStatusData);
-      devStatusData.sort((a, b) => (b.updatedAt || b.createdAt || "").localeCompare(a.updatedAt || a.createdAt || ""));
       saveLocalData();
+      updateDevStatusTeacherDropdown();
       renderDevStatusView();
       syncDeletedDefaultsToFirestore();
 
@@ -5586,7 +5816,7 @@
       enrollmentsData.push(newEnrollment);
 
       // Increment course enrolledCount
-      const targetLec = lecturesData.find((l) => l.id === newEnrollment.lectureId);
+      const targetLec = lecturesData.find((l) => String(l.id) === String(newEnrollment.lectureId));
       if (targetLec) {
         targetLec.currentCount = (targetLec.currentCount || 0) + 1;
         targetLec.enrolledCount = targetLec.currentCount;
@@ -5596,9 +5826,9 @@
 
       if (db && isFirebaseActive) {
         try {
-          await db.collection("enrollments").doc(newEnrollment.id).set(newEnrollment);
+          await db.collection("enrollments").doc(String(newEnrollment.id)).set(newEnrollment);
           if (targetLec) {
-            await db.collection("courses").doc(targetLec.id).update({
+            await db.collection("courses").doc(String(targetLec.id)).update({
               enrolledCount: (typeof firebase !== 'undefined' && firebase.firestore && firebase.firestore.FieldValue)
                 ? firebase.firestore.FieldValue.increment(1)
                 : targetLec.currentCount,
@@ -5693,6 +5923,7 @@
       }
 
       try {
+        const isMobileViewport = window.innerWidth < 640;
         calendarInstance = new FullCalendar.Calendar(calendarEl, {
           initialView: "dayGridMonth",
           locale: "ko",
@@ -5701,7 +5932,7 @@
           nowIndicator: true,
           showNonCurrentDates: false,
           fixedWeekCount: false,
-          dayMaxEvents: 4,
+          dayMaxEvents: isMobileViewport ? 2 : 4,
           height: "auto",
           eventContent: function (arg) {
             const props = arg.event.extendedProps;
@@ -5715,15 +5946,15 @@
 
               return {
                 html: `
-                  <div class="p-1 rounded ${colorClasses} shadow-xs border transition cursor-pointer hover:brightness-110">
-                    <div class="flex items-center justify-between gap-1 mb-0.5">
+                  <div class="p-0.5 sm:p-1 rounded ${colorClasses} shadow-xs border transition cursor-pointer hover:brightness-110">
+                    <div class="hidden sm:flex items-center justify-between gap-1 mb-0.5">
                       <span class="font-extrabold text-[10px] tracking-tight bg-black/25 px-1 py-0.2 rounded truncate flex items-center gap-0.5">
                         <span>📌</span>
                         <span>${escapeHtml(props.category || "행사")}</span>
                       </span>
                       ${props.time ? `<span class="text-[9px] font-medium opacity-90 truncate">${escapeHtml(props.time)}</span>` : ""}
                     </div>
-                    <div class="text-[11px] font-bold truncate leading-tight">${escapeHtml(arg.event.title)}</div>
+                    <div class="text-[10px] sm:text-[11px] font-bold truncate leading-tight"><span class="sm:hidden">📌 </span>${escapeHtml(arg.event.title)}</div>
                   </div>
                 `
               };
@@ -5736,12 +5967,12 @@
 
             return {
               html: `
-                <div class="p-1 rounded bg-white shadow-2xs border border-slate-200 hover:border-blue-400 transition cursor-pointer">
-                  <div class="flex items-center justify-between gap-1 mb-0.5">
-                    <span class="font-bold text-[11px] text-slate-800 truncate">${escapeHtml(props.presenter || "")}</span>
-                    <span class="text-[10px] px-1 py-0.2 rounded font-semibold ${badgeBg}">${curr}/${max}</span>
+                <div class="p-0.5 sm:p-1 rounded bg-white shadow-2xs border border-slate-200 hover:border-blue-400 transition cursor-pointer">
+                  <div class="flex items-center justify-between gap-0.5 sm:gap-1 sm:mb-0.5">
+                    <span class="font-bold text-[10px] sm:text-[11px] text-slate-800 truncate">${escapeHtml(props.presenter || "")}</span>
+                    <span class="text-[9px] sm:text-[10px] px-1 py-0.2 rounded font-semibold ${badgeBg} shrink-0">${curr}/${max}</span>
                   </div>
-                  <div class="text-[11px] text-slate-600 truncate">${escapeHtml(arg.event.title)}</div>
+                  <div class="hidden sm:block text-[11px] text-slate-600 truncate">${escapeHtml(arg.event.title)}</div>
                 </div>
               `
             };
@@ -5759,6 +5990,16 @@
         });
 
         calendarInstance.render();
+
+        let calResizeTimer = null;
+        window.addEventListener("resize", () => {
+          if (calResizeTimer) clearTimeout(calResizeTimer);
+          calResizeTimer = setTimeout(() => {
+            if (!calendarInstance) return;
+            calendarInstance.setOption("dayMaxEvents", window.innerWidth < 640 ? 2 : 4);
+            calendarInstance.updateSize();
+          }, 150);
+        });
       } catch (err) {
         console.warn("FullCalendar setup warning:", err);
       }
@@ -7553,8 +7794,10 @@
         });
       }
 
-      const sortOrder = document.getElementById("sortDevOrder")?.value || "latest";
-      if (sortOrder === "stageAsc") {
+      const sortOrder = document.getElementById("sortDevOrder")?.value || "fixed";
+      if (sortOrder === "latest") {
+        filtered.sort((a, b) => (b.updatedAt || b.createdAt || "").localeCompare(a.updatedAt || a.createdAt || ""));
+      } else if (sortOrder === "stageAsc") {
         filtered.sort((a, b) => {
           const stepA = (DEV_STAGE_META[a.stage] || { step: 99 }).step;
           const stepB = (DEV_STAGE_META[b.stage] || { step: 99 }).step;
@@ -7569,7 +7812,7 @@
       } else if (sortOrder === "name") {
         filtered.sort((a, b) => (a.teacherName || "").localeCompare(b.teacherName || "", "ko"));
       } else {
-        filtered.sort((a, b) => (b.updatedAt || b.createdAt || "").localeCompare(a.updatedAt || a.createdAt || ""));
+        filtered = sortDevStatusFixed(filtered);
       }
 
       return filtered;
@@ -7669,8 +7912,9 @@
           emoji: "📌"
         };
 
+        const safeTeacherName = (item.teacherName || "강사").trim() || "강사";
         const isExpanded = expandedDevCardIds.has(String(item.id));
-        const avatarBg = avatarColors[Math.abs(item.teacherName.split("").reduce((acc, c) => acc + c.charCodeAt(0), 0)) % avatarColors.length];
+        const avatarBg = avatarColors[Math.abs(safeTeacherName.split("").reduce((acc, c) => acc + c.charCodeAt(0), 0)) % avatarColors.length];
         const dateStr = (item.updatedAt || item.createdAt || "").substring(0, 10);
 
         return `
@@ -7680,7 +7924,7 @@
               <!-- Left: Teacher Name with avatar, badge, and Course Title -->
               <div class="flex items-center gap-3.5 min-w-0 flex-1">
                 <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl ${avatarBg} text-white font-extrabold text-sm sm:text-base flex items-center justify-center shrink-0 shadow-2xs">
-                  ${escapeHtml(item.teacherName.charAt(0))}
+                  ${escapeHtml(safeTeacherName.charAt(0))}
                 </div>
                 <div class="min-w-0 flex-1">
                   <div class="flex items-center gap-2 flex-wrap">
@@ -7773,7 +8017,7 @@
                       강사 개설 이력
                     </span>
                   </div>
-                  <div class="text-xs sm:text-sm text-slate-700 leading-relaxed whitespace-pre-line bg-slate-50/70 p-3.5 rounded-lg border border-slate-100">
+                  <div class="text-xs sm:text-sm text-slate-700 leading-relaxed whitespace-pre-line break-words [overflow-wrap:anywhere] bg-slate-50/70 p-3.5 rounded-lg border border-slate-100">
                     ${formatRichContent(item.pastCourses || item.existingCourses || "(등록된 기존 개설 강의가 없습니다)")}
                   </div>
                 </div>
@@ -7789,7 +8033,7 @@
                       어느 정도 진행됐는지 기입
                     </span>
                   </div>
-                  <div class="text-xs sm:text-sm text-slate-700 leading-relaxed whitespace-pre-line bg-slate-50/70 p-3.5 rounded-lg border border-slate-100">
+                  <div class="text-xs sm:text-sm text-slate-700 leading-relaxed whitespace-pre-line break-words [overflow-wrap:anywhere] bg-slate-50/70 p-3.5 rounded-lg border border-slate-100">
                     ${formatRichContent(item.content || "(진행 내용이 아직 입력되지 않았습니다)")}
                   </div>
                 </div>
@@ -7805,7 +8049,7 @@
                       동료 교사 협력 포인트
                     </span>
                   </div>
-                  <div class="text-xs sm:text-sm text-amber-950 leading-relaxed whitespace-pre-line bg-white/90 p-3.5 rounded-lg border border-amber-200">
+                  <div class="text-xs sm:text-sm text-amber-950 leading-relaxed whitespace-pre-line break-words [overflow-wrap:anywhere] bg-white/90 p-3.5 rounded-lg border border-amber-200">
                     ${formatRichContent(item.difficulties || "💡 특별한 어려움 없이 순조롭게 진행 중입니다. 동료 선생님들의 조언과 응원을 환영합니다!")}
                   </div>
                 </div>
@@ -7890,6 +8134,14 @@
       const pwInput = document.getElementById("regDevPassword");
       if (pwInput) pwInput.value = "1234";
       openModal("modalRegisterDevStatus");
+      const resizeRegFields = () => {
+        ["regDevPastCourses", "regDevContent", "regDevDifficulties"].forEach((id) => {
+          const field = document.getElementById(id);
+          if (field) window.autoResizeDevTextarea(field, true);
+        });
+      };
+      resizeRegFields();
+      requestAnimationFrame(resizeRegFields);
       safeRenderIcons();
     };
 
@@ -8026,10 +8278,14 @@
       const diffInput = document.getElementById("editDevDifficulties");
       if (diffInput) diffInput.value = record.difficulties || "";
 
-      const pwInput = document.getElementById("editDevPassword");
-      if (pwInput) pwInput.value = "";
-
       openModal("modalEditDevStatus");
+      const resizeEditFields = () => {
+        [pastCoursesInput, contentInput, diffInput].forEach((field) => {
+          if (field) window.autoResizeDevTextarea(field, true);
+        });
+      };
+      resizeEditFields();
+      requestAnimationFrame(resizeEditFields);
       safeRenderIcons();
     };
 
@@ -8042,14 +8298,6 @@
 
       const record = devStatusData.find((d) => String(d.id) === String(activeEditingDevStatusId));
       if (!record) return;
-
-      const inputPw = document.getElementById("editDevPassword")?.value.trim() || "";
-      const validPw = record.password || "1234";
-
-      if (!isAdminLoggedIn && inputPw !== validPw && inputPw !== "1234" && !checkIsAdminPassword(inputPw)) {
-        showToast("비밀번호가 일치하지 않습니다.", "error");
-        return;
-      }
 
       const teacher = document.getElementById("editDevTeacherSelect")?.value.trim();
       const courseTitle = document.getElementById("editDevCourseTitle")?.value.trim();
@@ -8189,18 +8437,51 @@
     // ----------------------------------------------------
     let topModalZIndex = 60;
 
+    function syncBodyScrollLock() {
+      const anyModalOpen = document.querySelectorAll('div[id^="modal"]:not(.hidden)').length > 0;
+      document.body.style.overflow = anyModalOpen ? "hidden" : "";
+    }
+
+    function resetModalPasswordToggles(modalEl) {
+      if (!modalEl) return;
+      modalEl.querySelectorAll(".btnTogglePassword").forEach((btn) => {
+        const targetId = btn.getAttribute("data-target");
+        const input = targetId ? document.getElementById(targetId) : null;
+        if (input && input.type === "text") {
+          input.type = "password";
+        }
+        const icon = btn.querySelector("i");
+        if (icon) {
+          icon.setAttribute("data-lucide", "eye");
+        }
+      });
+    }
+
     function openModal(modalId) {
       const el = document.getElementById(modalId);
       if (el) {
         topModalZIndex += 2;
         el.style.zIndex = String(topModalZIndex);
+        el.scrollTop = 0;
+        const innerScroll = el.querySelector('[class*="overflow-y-auto"]');
+        if (innerScroll) innerScroll.scrollTop = 0;
+        resetModalPasswordToggles(el);
         el.classList.remove("hidden");
+        syncBodyScrollLock();
+        safeRenderIcons();
       }
     }
 
     function closeModal(modalId) {
       const el = document.getElementById(modalId);
-      if (el) el.classList.add("hidden");
+      if (el) {
+        resetModalPasswordToggles(el);
+        el.classList.add("hidden");
+        if (modalId === "modalAdmin") {
+          window.adminPendingAction = null;
+        }
+        syncBodyScrollLock();
+      }
     }
 
     // [Global Action Handlers for Registration & Deletion]
@@ -8755,10 +9036,14 @@
       safeRenderIcons();
     };
 
+    let isSubmittingEditFeedback = false;
+
     window.submitEditFeedback = async function (e) {
       if (e && typeof e.preventDefault === "function") {
         e.preventDefault();
       }
+
+      if (isSubmittingEditFeedback) return;
 
       if (!activeEditingFeedbackId) {
         closeModal("modalEditFeedback");
@@ -8809,28 +9094,46 @@
         return;
       }
 
-      targetRecord.teacherName = teacherName;
-      targetRecord.title = title;
-      targetRecord.date = date;
-      targetRecord.category = category;
-      targetRecord.imageUrl = currentEditFeedbackImageDataUrl || targetRecord.imageUrl || "";
-      targetRecord.beforeIssue = beforeIssue;
-      targetRecord.improvementNote = improvementNote;
-      targetRecord.teacherTip = teacherTip;
-      if (enteredPw) {
-        targetRecord.password = enteredPw;
+      isSubmittingEditFeedback = true;
+      const btnSubmit = document.getElementById("btnSubmitEditFeedback");
+      if (btnSubmit) {
+        btnSubmit.disabled = true;
+        btnSubmit.classList.add("opacity-50", "pointer-events-none");
       }
-      targetRecord.updatedAt = new Date().toISOString();
 
-      await saveFeedbackToDb(targetRecord);
+      try {
+        targetRecord.teacherName = teacherName;
+        targetRecord.title = title;
+        targetRecord.date = date;
+        targetRecord.category = category;
+        targetRecord.imageUrl = currentEditFeedbackImageDataUrl || "";
+        targetRecord.beforeIssue = beforeIssue;
+        targetRecord.improvementNote = improvementNote;
+        targetRecord.teacherTip = teacherTip;
+        if (enteredPw) {
+          targetRecord.password = enteredPw;
+        }
+        targetRecord.updatedAt = new Date().toISOString();
 
-      closeModal("modalEditFeedback");
-      activeEditingFeedbackId = null;
+        await saveFeedbackToDb(targetRecord);
 
-      if (typeof confetti === "function") {
-        confetti({ particleCount: 50, spread: 65, origin: { y: 0.6 } });
+        closeModal("modalEditFeedback");
+        activeEditingFeedbackId = null;
+
+        if (typeof confetti === "function") {
+          confetti({ particleCount: 50, spread: 65, origin: { y: 0.6 } });
+        }
+        showToast(`${teacherName} 강사님의 개선 피드백이 성공적으로 수정되었습니다! ✨`);
+      } catch (err) {
+        console.error("피드백 수정 오류:", err);
+        showToast("피드백 수정 중 오류가 발생했습니다.", "error");
+      } finally {
+        isSubmittingEditFeedback = false;
+        if (btnSubmit) {
+          btnSubmit.disabled = false;
+          btnSubmit.classList.remove("opacity-50", "pointer-events-none");
+        }
       }
-      showToast(`${teacherName} 강사님의 개선 피드백이 성공적으로 수정되었습니다! ✨`);
     };
 
     // [Idea Collection Window Handlers]
@@ -9277,8 +9580,9 @@
       activeDeletingCommentInfo = { ideaId: String(ideaId), commentId: String(commentId) };
       const descEl = document.getElementById("deleteCommentTargetDesc");
       if (descEl) {
-        const shortContent = cmt.content.length > 35 ? cmt.content.substring(0, 35) + "..." : cmt.content;
-        descEl.innerHTML = `<strong>${escapeHtml(cmt.authorName)} 선생님</strong>의 댓글<br/><span class="text-slate-900 font-bold">"${escapeHtml(shortContent)}"</span> 을(를) 삭제하시겠습니까?`;
+        const rawContent = cmt.content || "";
+        const shortContent = rawContent.length > 35 ? rawContent.substring(0, 35) + "..." : rawContent;
+        descEl.innerHTML = `<strong>${escapeHtml(cmt.authorName || "교사")} 선생님</strong>의 댓글<br/><span class="text-slate-900 font-bold">"${escapeHtml(shortContent)}"</span> 을(를) 삭제하시겠습니까?`;
       }
       const pwInput = document.getElementById("deleteCommentPasswordInput");
       if (pwInput) pwInput.value = "";
@@ -9433,7 +9737,7 @@
 
       // Enrolled list
       const listEl = document.getElementById("detailEnrollmentList");
-      const lecEnrollments = enrollmentsData.filter((e) => e.lectureId === lec.id);
+      const lecEnrollments = enrollmentsData.filter((e) => String(e.lectureId) === String(lec.id));
       document.getElementById("detailEnrolledTotal").innerText = `총 ${lecEnrollments.length}명`;
 
       if (lecEnrollments.length === 0) {
@@ -9455,7 +9759,7 @@
     }
 
     window.viewLectureDetail = function (lectureId) {
-      const lec = lecturesData.find((l) => l.id === lectureId);
+      const lec = lecturesData.find((l) => String(l.id) === String(lectureId));
       if (lec) openDetailModal(lec);
     };
 
@@ -9467,7 +9771,7 @@
     window.confirmCancelEnrollment = function (enrId, studentName, fromMatrix = false, presenterName = "", currentStudent = "", fromTeacherHistory = false) {
       activeCancelingEnrollmentInfo = { enrId, studentName, fromMatrix, presenterName, currentStudent, fromTeacherHistory };
       const enr = enrollmentsData.find((e) => String(e.id) === String(enrId));
-      const lec = enr ? lecturesData.find((l) => l.id === enr.lectureId) : null;
+      const lec = enr ? lecturesData.find((l) => String(l.id) === String(enr.lectureId)) : null;
       const descEl = document.getElementById("cancelEnrollmentTargetDesc");
       if (descEl) {
         descEl.innerHTML = `<strong>${escapeHtml(studentName)} 선생님</strong>의 수강 신청<br/><span class="text-slate-900 font-bold">"${escapeHtml(lec ? lec.title : '선택한 강의')}"</span> 을(를) 취소하시겠습니까?`;
@@ -9491,7 +9795,7 @@
       }
 
       const enr = enrollmentsData.find((e) => String(e.id) === String(enrId));
-      const lec = enr ? lecturesData.find((l) => l.id === enr.lectureId) : null;
+      const lec = enr ? lecturesData.find((l) => String(l.id) === String(enr.lectureId)) : null;
       const targetPw = (lec && lec.password) ? lec.password : "1234";
       const isMaster = isAdminLoggedIn || checkIsAdminPassword(enteredPw);
       const isOwner = enteredPw === "1234" || enteredPw === targetPw;
@@ -9920,6 +10224,19 @@
       const lec = lecturesData.find((l) => String(l.id) === String(lectureId));
       if (!lec) return;
 
+      if (studentName === lec.presenter) {
+        showToast("본인이 개설한 강의에는 수강 신청할 수 없습니다.", "error");
+        return;
+      }
+
+      const isAlreadyEnrolled = enrollmentsData.some(
+        (e) => String(e.lectureId) === String(lec.id) && e.studentName === studentName
+      );
+      if (isAlreadyEnrolled) {
+        showToast("이미 수강 신청이 완료된 강의입니다.", "info");
+        return;
+      }
+
       const newEnr = {
         id: `enr-${Date.now()}`,
         lectureId: lec.id,
@@ -9950,6 +10267,14 @@
       const nextMonthStr = getNextMonthStr(currentSelectedMonth);
       const [y, m] = nextMonthStr.split('-');
       const label = `${y}년 ${parseInt(m, 10)}월`;
+
+      const alreadyPromised = enrollmentsData.some(
+        (e) => e.isCommitment && e.studentName === student && e.presenterName === presenter && e.month === nextMonthStr
+      );
+      if (alreadyPromised) {
+        showToast(`${student} 님과 ${presenter} 강사님의 ${label} 맞수강 품앗이 약속은 이미 등록되어 있습니다.`, "info");
+        return;
+      }
 
       const newEnr = {
         id: `promise-${Date.now()}`,
@@ -10258,7 +10583,7 @@
                 </div>
                 <div class="divide-y divide-slate-100">
                   ${enrList.map((enr) => {
-                    const lec = lecturesData.find((l) => l.id === enr.lectureId);
+                    const lec = lecturesData.find((l) => String(l.id) === String(enr.lectureId));
                     const lecTitle = lec ? lec.title : "(등록된 강의)";
                     const lecDate = lec ? `${lec.date || ''} ${lec.time || ''}` : '';
                     const lecMonth = enr.month || (lec ? lec.month : '');
@@ -10358,7 +10683,7 @@
                 </div>
                 <div class="divide-y divide-slate-100">
                   ${enrList.map((enr) => {
-                    const lec = lecturesData.find((l) => l.id === enr.lectureId);
+                    const lec = lecturesData.find((l) => String(l.id) === String(enr.lectureId));
                     return `
                       <div class="p-3 flex items-center justify-between gap-2">
                         <div class="flex-1 min-w-0">
@@ -10434,10 +10759,13 @@
 
       function switchTab(activeTab, activeSec) {
         [tabNotice, tabCalendar, tabMatrix, tabIdea, tabDevStatus, tabFeedback].forEach((t) => {
-          if (t) t.className = "flex items-center gap-2 py-2.5 px-4 text-xs sm:text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-800 transition cursor-pointer shrink-0";
+          if (t) t.className = "flex items-center gap-2 py-2.5 px-3 sm:px-4 text-xs sm:text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-800 transition cursor-pointer shrink-0";
         });
         if (activeTab) {
-          activeTab.className = "flex items-center gap-2 py-2.5 px-4 text-xs sm:text-sm font-semibold border-b-2 border-indigo-600 text-indigo-600 transition cursor-pointer shrink-0";
+          activeTab.className = "flex items-center gap-2 py-2.5 px-3 sm:px-4 text-xs sm:text-sm font-semibold border-b-2 border-indigo-600 text-indigo-600 transition cursor-pointer shrink-0";
+          if (typeof activeTab.scrollIntoView === "function") {
+            activeTab.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+          }
         }
 
         [secNotice, secCalendar, secMatrix, secIdea, secDevStatus, secFeedback].forEach((s) => s?.classList.add("hidden"));
@@ -10446,7 +10774,12 @@
         if (activeSec === secNotice) {
           renderNoticeView();
         } else if (activeSec === secCalendar && calendarInstance) {
-          setTimeout(() => calendarInstance.render(), 100);
+          setTimeout(() => {
+            calendarInstance.render();
+            if (typeof calendarInstance.updateSize === "function") {
+              calendarInstance.updateSize();
+            }
+          }, 100);
         } else if (activeSec === secMatrix) {
           renderMatrixView();
         } else if (activeSec === secIdea) {
@@ -10634,17 +10967,20 @@
 
       btnViewCalendar?.addEventListener("click", () => {
         viewMode = "calendar";
-        btnViewCalendar.className = "px-2.5 py-1 rounded-md text-xs font-bold bg-white text-slate-800 shadow-2xs";
-        btnViewCardList.className = "px-2.5 py-1 rounded-md text-xs font-semibold text-slate-600 hover:text-slate-900";
+        btnViewCalendar.className = "px-2.5 py-1 rounded-md text-xs font-bold bg-white text-slate-800 shadow-2xs cursor-pointer";
+        btnViewCardList.className = "px-2.5 py-1 rounded-md text-xs font-semibold text-slate-600 hover:text-slate-900 cursor-pointer";
         calendarWrapper?.classList.remove("hidden");
         cardListWrapper?.classList.add("hidden");
-        if (calendarInstance) calendarInstance.render();
+        if (calendarInstance) {
+          calendarInstance.render();
+          if (typeof calendarInstance.updateSize === "function") calendarInstance.updateSize();
+        }
       });
 
       btnViewCardList?.addEventListener("click", () => {
         viewMode = "cardList";
-        btnViewCardList.className = "px-2.5 py-1 rounded-md text-xs font-bold bg-white text-slate-800 shadow-2xs";
-        btnViewCalendar.className = "px-2.5 py-1 rounded-md text-xs font-semibold text-slate-600 hover:text-slate-900";
+        btnViewCardList.className = "px-2.5 py-1 rounded-md text-xs font-bold bg-white text-slate-800 shadow-2xs cursor-pointer";
+        btnViewCalendar.className = "px-2.5 py-1 rounded-md text-xs font-semibold text-slate-600 hover:text-slate-900 cursor-pointer";
         calendarWrapper?.classList.add("hidden");
         cardListWrapper?.classList.remove("hidden");
         renderCardListView();
@@ -10659,38 +10995,38 @@
 
       document.getElementById("btnMobileRegister")?.addEventListener("click", () => {
         mobileDrawer?.classList.add("hidden");
-        const dateInput = document.getElementById("regDate");
-        if (dateInput && !dateInput.value) {
-          dateInput.value = getTodayDateInfo().dateStr;
-        }
-        const pwInput = document.getElementById("regPassword");
-        if (pwInput && !pwInput.value) {
-          pwInput.value = "1234";
-        }
-        updatePresenterDropdown();
-        openModal("modalRegister");
-        safeRenderIcons();
+        window.openRegisterModal();
       });
 
       document.getElementById("btnMobileAdmin")?.addEventListener("click", () => {
         mobileDrawer?.classList.add("hidden");
+        window.adminPendingAction = null;
+        window.updateAdminUI();
         if (isAdminLoggedIn) {
-          document.getElementById("adminLoginSection")?.classList.add("hidden");
-          document.getElementById("adminPanelSection")?.classList.remove("hidden");
-          window.updateAdminSettingsUI();
           renderAdminMemberPanel();
-        } else {
-          document.getElementById("adminLoginSection")?.classList.remove("hidden");
-          document.getElementById("adminPanelSection")?.classList.add("hidden");
         }
         openModal("modalAdmin");
         safeRenderIcons();
       });
 
-      // 5. Modal Close Buttons & Escape Key
+      // 5. Modal Close Buttons, Backdrop Tap & Escape Key
       document.querySelectorAll(".btnModalClose").forEach((btn) => {
         btn.addEventListener("click", () => {
-          btn.closest(".fixed")?.classList.add("hidden");
+          const modalEl = btn.closest('div[id^="modal"]') || btn.closest(".fixed");
+          if (modalEl && modalEl.id) {
+            closeModal(modalEl.id);
+          } else {
+            modalEl?.classList.add("hidden");
+            syncBodyScrollLock();
+          }
+        });
+      });
+
+      document.querySelectorAll('div[id^="modal"]').forEach((modalEl) => {
+        modalEl.addEventListener("click", (e) => {
+          if (e.target === modalEl && modalEl.id) {
+            closeModal(modalEl.id);
+          }
         });
       });
 
@@ -10699,24 +11035,16 @@
           const openModals = Array.from(document.querySelectorAll('div[id^="modal"]:not(.hidden)'));
           if (openModals.length > 0) {
             openModals.sort((a, b) => (parseInt(a.style.zIndex || "50", 10) - parseInt(b.style.zIndex || "50", 10)));
-            openModals[openModals.length - 1].classList.add("hidden");
+            const topModal = openModals[openModals.length - 1];
+            if (topModal.id) closeModal(topModal.id);
+            else topModal.classList.add("hidden");
           }
         }
       });
 
       // 6. Lecture Registration Form Submit
       document.getElementById("btnOpenRegisterModal")?.addEventListener("click", () => {
-        const dateInput = document.getElementById("regDate");
-        if (dateInput && !dateInput.value) {
-          dateInput.value = getTodayDateInfo().dateStr;
-        }
-        const pwInput = document.getElementById("regPassword");
-        if (pwInput && !pwInput.value) {
-          pwInput.value = "1234";
-        }
-        updatePresenterDropdown();
-        openModal("modalRegister");
-        safeRenderIcons();
+        window.openRegisterModal();
       });
 
       // Presenter Select Dropdown Change Event
@@ -10794,9 +11122,13 @@
         const newEnr = {
           id: `enr-${Date.now()}`,
           lectureId: selectedLectureForAction.id,
+          lectureTitle: selectedLectureForAction.title || "",
           studentName,
           presenterName: selectedLectureForAction.presenter,
-          month: selectedLectureForAction.month || currentSelectedMonth
+          date: selectedLectureForAction.date || "",
+          month: selectedLectureForAction.month || currentSelectedMonth,
+          status: "applied",
+          createdAt: new Date().toISOString()
         };
 
         if (!memberList.includes(studentName)) {
@@ -10864,6 +11196,13 @@
         openEditLectureModal(selectedLectureForAction);
       });
 
+      document.getElementById("verifyPresenterPasswordInput")?.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          document.getElementById("btnSubmitVerifyPresenter")?.click();
+        }
+      });
+
       // Stepper for Current Count
       document.getElementById("btnDecrementCurrentCount")?.addEventListener("click", () => {
         const input = document.getElementById("editLecCurrentCount");
@@ -10915,6 +11254,13 @@
         input.value = "";
         renderEditLectureStudentChips();
         showToast(`${newName} 선생님이 명단에 추가되었습니다.`);
+      });
+
+      document.getElementById("editLecNewStudentInput")?.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          document.getElementById("btnAddStudentToEditList")?.click();
+        }
       });
 
       // Submit Edit Lecture & Enrollment Form
@@ -10972,9 +11318,13 @@
             const newEnrObj = {
               id: item.id || `enr-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
               lectureId: selectedLectureForAction.id,
+              lectureTitle: title,
               studentName: item.name,
               presenterName: selectedLectureForAction.presenter,
-              month
+              date,
+              month,
+              status: "applied",
+              createdAt: new Date().toISOString()
             };
             enrollmentsData.push(newEnrObj);
             if (db && isFirebaseActive) {
@@ -11067,6 +11417,7 @@
 
       // 10. Admin Modal & Login
       document.getElementById("btnOpenAdminModal")?.addEventListener("click", () => {
+        window.adminPendingAction = null;
         if (isAdminLoggedIn) {
           document.getElementById("adminLoginSection")?.classList.add("hidden");
           document.getElementById("adminPanelSection")?.classList.remove("hidden");
@@ -11088,7 +11439,8 @@
           if (!resp.ok) return null;
           const data = await resp.json();
           if (data && data.ok) {
-            if (data.recoveryEmail && typeof data.recoveryEmail === "string") {
+            const hasSavedLocalEmail = Boolean(localStorage.getItem("kyosa_admin_recovery_email"));
+            if (data.recoveryEmail && typeof data.recoveryEmail === "string" && (data.updatedAt || !hasSavedLocalEmail)) {
               currentAdminRecoveryEmail = data.recoveryEmail.trim();
               saveLocalData();
               updateAdminSettingsUI();
@@ -11147,14 +11499,9 @@
           saveLocalData();
 
           isAdminLoggedIn = true;
-          document.getElementById("adminLoginSection")?.classList.add("hidden");
-          document.getElementById("adminPanelSection")?.classList.remove("hidden");
-          document.getElementById("adminBtnLabel").innerText = "관리자 (ON)";
           if (pwInput) pwInput.value = "";
-          updateAdminSettingsUI();
+          window.updateAdminUI();
           renderAdminMemberPanel();
-          renderNoticeView();
-          renderDevStatusView();
 
           if (isTemp) {
             showToast("임시 비밀번호로 관리자 인증되었습니다. [비밀번호/이메일 변경]에서 새 비밀번호로 변경해주세요.", "warning");
@@ -11432,11 +11779,7 @@
 
       document.getElementById("btnAdminLogout")?.addEventListener("click", () => {
         isAdminLoggedIn = false;
-        document.getElementById("adminLoginSection")?.classList.remove("hidden");
-        document.getElementById("adminPanelSection")?.classList.add("hidden");
-        document.getElementById("adminBtnLabel").innerText = "관리자";
-        renderNoticeView();
-        renderDevStatusView();
+        window.updateAdminUI();
         showToast("관리자 로그아웃 되었습니다.", "info");
       });
 
@@ -11733,11 +12076,7 @@
         reader.readAsDataURL(file);
       });
 
-      // Feedback Form Submit Handler
-      const formRegisterFeedback = document.getElementById("formRegisterFeedback");
-      formRegisterFeedback?.addEventListener("submit", (e) => {
-        window.submitFeedback(e);
-      });
+      // Feedback Form uses inline onsubmit handler (submitFeedback)
 
       // Category filter buttons
       document.querySelectorAll(".fbCatBtn").forEach((btn) => {
@@ -11857,22 +12196,9 @@
         reader.readAsDataURL(file);
       });
 
-      const formEditFeedback = document.getElementById("formEditFeedback");
-      formEditFeedback?.addEventListener("submit", (e) => {
-        window.submitEditFeedback(e);
-      });
-
-      // ====================================================
-      // 11. Idea Collection Tab Event Listeners
-      // ====================================================
-
+      // Edit Feedback & Register Idea forms use inline onsubmit handlers
       document.getElementById("btnOpenRegisterIdea")?.addEventListener("click", () => {
         window.openRegisterIdeaModal();
-      });
-
-      const formRegisterIdea = document.getElementById("formRegisterIdea");
-      formRegisterIdea?.addEventListener("submit", (e) => {
-        window.submitIdea(e);
       });
 
       document.getElementById("btnConfirmDeleteIdea")?.addEventListener("click", () => {
@@ -11921,11 +12247,7 @@
         renderIdeaView();
       });
 
-      // Idea Edit Modal Listeners
-      const formEditIdea = document.getElementById("formEditIdea");
-      formEditIdea?.addEventListener("submit", (e) => {
-        window.submitEditIdea(e);
-      });
+      // Edit Idea form uses inline onsubmit handler (submitEditIdea)
 
       // Helper functions for idea photo preview
       function setIdeaPreviewImage(url) {
@@ -12170,7 +12492,8 @@
       // 5. Setup Event Listeners
       setupEventListeners();
 
-      // 6. Initial Render
+      // 6. Initial Render & Sync Admin UI
+      window.updateAdminUI();
       renderAllViews();
     });
   </script>
